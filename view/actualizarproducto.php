@@ -124,13 +124,13 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                             </div>
                                             <div class="col-md-12 col-sm-12 col-xs-12 text-center m-2">
                                                 <input type="file" id="fileImage" accept="image/png, image/jpeg, image/gif, image/svg" style="display: none" />
-                                                <label for="fileImage" class="btn btn-secondary m-0">
+                                                <label for="fileImage" class="btn btn-outline-secondary m-0">
                                                     <div class="content-button">
                                                         <img src="./images/photo.png" width="22" />
                                                         <span></span>
                                                     </div>
                                                 </label>
-                                                <button class="btn btn-danger" id="btnRemove">
+                                                <button class="btn btn-outline-secondary" id="btnRemove">
                                                     <img src="./images/remove-gray.png" width="22" />
                                                 </button>
                                             </div>
@@ -218,6 +218,15 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             <div class="card-body">
                                 <!--  -->
                                 <div class="row">
+                                    <div class="col-md-12 col-sm-12 col-xs-12 ">
+                                        <div class="form-group border-bottom mt-3">
+                                            <label for="cbCosto">El producto utiliza inventario&nbsp;&nbsp;</label>
+                                            <input type="checkbox" id="cbCosto">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row" id="divCosto">
                                     <div class="col-md-6 col-sm-12 col-xs-12">
                                         <div class="row">
                                             <div class="col-md-12 col-sm-12 col-xs-12">
@@ -304,19 +313,19 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                             <div class="col-md-4 col-sm-12 col-xs-12">
                                                 <label>Precio General <i class="text-danger fa fa-info-circle"></i></label>
                                                 <div class="form-group">
-                                                    <input type="number" class="form-control" placeholder="Precio General" id="txtPrecioGeneral" />
+                                                    <input type="text" class="form-control" placeholder="Precio General" id="txtPrecioGeneral" />
                                                 </div>
                                             </div>
                                             <div class="col-md-4 col-sm-12 col-xs-12">
                                                 <label>Precio 2 </label>
                                                 <div class="form-group">
-                                                    <input type="number" class="form-control" placeholder="Precio 2" id="txtPrecio2" />
+                                                    <input type="text" class="form-control" placeholder="Precio 2" id="txtPrecio2" />
                                                 </div>
                                             </div>
                                             <div class="col-md-4 col-sm-12 col-xs-12">
                                                 <label>Precio 3 </label>
                                                 <div class="form-group">
-                                                    <input type="number" class="form-control" placeholder="Precio 3" id="txtPrecio3" />
+                                                    <input type="text" class="form-control" placeholder="Precio 3" id="txtPrecio3" />
                                                 </div>
                                             </div>
                                         </div>
@@ -335,10 +344,10 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
                                     <div class="col-md-12 col-sm-12 col-xs-12" id="divPrecioPersonalizado" style="display:none;">
                                         <div class="row">
-                                            <div class="col-md-8 col-sm-12 col-xs-12">
+                                            <div class="col-md-6 col-sm-12 col-xs-12">
                                                 <label>Precio General <i class="text-danger fa fa-info-circle"></i></label>
                                                 <div class="form-group">
-                                                    <input type="number" class="form-control" placeholder="Clave del producto" id="txtPrecioGeneralPersonalizado" />
+                                                    <input type="text" class="form-control" placeholder="Clave del producto" id="txtPrecioGeneralPersonalizado" />
                                                 </div>
                                             </div>
                                             <div class="col-md-4 col-sm-12 col-xs-12">
@@ -512,6 +521,14 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 //     }
                 // });
 
+                $("#cbCosto").change(function() {
+                    if ($("#cbCosto").is(":checked")) {
+                        $("#divCosto").removeClass("disabled");
+                    } else {
+                        $("#divCosto").addClass("disabled");
+                    }
+                });
+
                 $("#txtCosto").keypress(function(event) {
                     var key = window.Event ? event.which : event.keyCode;
                     var c = String.fromCharCode(key);
@@ -577,6 +594,50 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     }
                 });
 
+                $("#txtPrecioGeneral").keypress(function(event) {
+                    var key = window.Event ? event.which : event.keyCode;
+                    var c = String.fromCharCode(key);
+                    if ((c < '0' || c > '9') && (c != '\b') && (c != '.')) {
+                        event.preventDefault();
+                    }
+                    if (c == '.' && $("#txtPrecioGeneral").val().includes(".")) {
+                        event.preventDefault();
+                    }
+                });
+
+                $("#txtPrecio2").keypress(function(event) {
+                    var key = window.Event ? event.which : event.keyCode;
+                    var c = String.fromCharCode(key);
+                    if ((c < '0' || c > '9') && (c != '\b') && (c != '.')) {
+                        event.preventDefault();
+                    }
+                    if (c == '.' && $("#txtPrecio2").val().includes(".")) {
+                        event.preventDefault();
+                    }
+                });
+
+                $("#txtPrecio3").keypress(function(event) {
+                    var key = window.Event ? event.which : event.keyCode;
+                    var c = String.fromCharCode(key);
+                    if ((c < '0' || c > '9') && (c != '\b') && (c != '.')) {
+                        event.preventDefault();
+                    }
+                    if (c == '.' && $("#txtPrecio3").val().includes(".")) {
+                        event.preventDefault();
+                    }
+                });
+
+                $("#txtPrecioGeneralPersonalizado").keypress(function(event) {
+                    var key = window.Event ? event.which : event.keyCode;
+                    var c = String.fromCharCode(key);
+                    if ((c < '0' || c > '9') && (c != '\b') && (c != '.')) {
+                        event.preventDefault();
+                    }
+                    if (c == '.' && $("#txtPrecioGeneralPersonalizado").val().includes(".")) {
+                        event.preventDefault();
+                    }
+                });
+
                 $("#rbPrecioNormal").change(function() {
                     $("#divPrecioPersonalizado").css("display", "none");
                     $("#divPrecioNormal").css("display", "block");
@@ -593,7 +654,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         '   <td><input type="number" class="form-control"  value="0.00"></td>' +
                         '   <td><input type="number" class="form-control"  value="0"></td>' +
                         '   <td class="td-center">' +
-                        '    <button class="btn btn-default" onclick="removePrecio(\'' + $("#tbPrecios tr").length + '\')"><img src="./images/remove.png" width="18" /></button>' +
+                        '    <button class="btn btn-outline-secondary" onclick="removePrecio(\'' + $("#tbPrecios tr").length + '\')"><img src="./images/remove.png" width="18" /></button>' +
                         '   </td>' +
                         ' </tr>');
                 });
@@ -605,7 +666,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             '   <td><input type="number" class="form-control" value="0.00"></td>' +
                             '   <td><input type="number" class="form-control" value="0"></td>' +
                             '   <td class="td-center">' +
-                            '    <button class="btn btn-default" onclick="removePrecio(\'' + $("#tbPrecios tr").length + '\')"><img src="./images/remove.png" width="18" /></button>' +
+                            '    <button class="btn btn-outline-secondary" onclick="removePrecio(\'' + $("#tbPrecios tr").length + '\')"><img src="./images/remove.png" width="18" /></button>' +
                             '   </td>' +
                             ' </tr>');
                     }
@@ -925,6 +986,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 "PrecioCompra": !tools.isNumeric($("#txtCosto").val()) ? 0 : $("#txtCosto").val().trim(),
                                 "PrecioVentaGeneral": $("#rbPrecioNormal").is(":checked") ? !tools.isNumeric($("#txtPrecioGeneral").val().trim()) ? 0 : $("#txtPrecioGeneral").val().trim() : !tools.isNumeric($("#txtPrecioGeneralPersonalizado").val().trim()) ? 0 : $("#txtPrecioGeneralPersonalizado").val().trim(),
                                 "Lote": $("#cbLote").is(":checked") ? 1 : 0,
+                                "Inventario": $("#cbCosto").is(":checked") ? 1 : 0,
+
                                 "ValorInventario": $("#rbGranelSalida").is(":checked") ? 3 : $("#rbMonedaSalida").is(":checked") ? 2 : 1,
                                 "ClaveUnica": $("#txtClaveUnica").val(),
                                 "Imagen": image,
@@ -967,7 +1030,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     method: 'GET',
                     data: {
                         type: "getproducto",
-                        idSuministro: idSuministro
+                        "idSuministro": idSuministro
                     },
                     beforeSend: function() {
 
@@ -978,7 +1041,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             $("#txtClave").val(suministro.Clave);
                             $("#txtClaveAlterna").val(suministro.ClaveAlterna);
                             $("#txtDescripcion").val(suministro.NombreMarca);
-                            
+
                             if (suministro.NuevaImagen == "") {
                                 $("#lblImagen").attr("src", "./images/noimage.jpg");
                                 imageByte = null;
@@ -1018,12 +1081,14 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             if (suministro.TipoPrecio == 1) {
                                 $("#rbPrecioNormal").prop("checked", true);
                                 $("#txtPrecioGeneral").val(suministro.PrecioVentaGeneral);
-                                let precio2 = result.precios[0].Valor != null || result.precios[0].Valor != undefined ? result.precios[0].Valor : 0;
-                                let precio3 = result.precios[1].Valor != null || result.precios[1].Valor != undefined ? result.precios[1].Valor : 0;
-                                $("#txtPrecio2").val(precio2);
-                                $("#txtPrecio3").val(precio3);
-                                $("#divPrecioPersonalizado").css("display", "none");
-                                $("#divPrecioNormal").css("display", "block");
+                                if (result.precios.length != 0) {
+                                    let precio2 = result.precios[0].Valor != null || result.precios[0].Valor != undefined ? result.precios[0].Valor : 0;
+                                    let precio3 = result.precios[1].Valor != null || result.precios[1].Valor != undefined ? result.precios[1].Valor : 0;
+                                    $("#txtPrecio2").val(precio2);
+                                    $("#txtPrecio3").val(precio3);
+                                    $("#divPrecioPersonalizado").css("display", "none");
+                                    $("#divPrecioNormal").css("display", "block");
+                                }
                             } else {
                                 $("#rbPrecioPersonalizado").prop("checked", true);
                                 $("#txtPrecioGeneralPersonalizado").val(suministro.PrecioVentaGeneral);
@@ -1055,6 +1120,13 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             $("#txtPresentacion").val(suministro.PresentacionNombre);
                             $("#txtClaveUnica").val(suministro.ClaveSat);
                             $("#cbLote").prop("checked", suministro.Lote == 0 ? false : true);
+                            $("#cbCosto").prop("checked", suministro.Inventario == 0 ? false : true);
+                            if ($("#cbCosto").is(":checked")) {
+                                $("#divCosto").removeClass("disabled");
+                            } else {
+                                $("#divCosto").addClass("disabled");
+                            }
+
                             tools.AlertSuccess("Producto", "Se cargo correctamento los datos.");
                         } else {
                             tools.AlertWarning("Producto", result.message);

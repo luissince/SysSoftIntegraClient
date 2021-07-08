@@ -264,7 +264,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         <label>Generar Excel:</label>
                         <div class="form-group">
                             <button class="btn btn-success" id="btnExcel">
-                                <i class="fa fa-file-excel"></i> Excel por Fecha
+                                <i class="fa fa-file-excel-o"></i> Excel por Fecha
                             </button>
                         </div>
                     </div>
@@ -422,18 +422,16 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     event.preventDefault();
                 });
 
+
                 $("#btnEnvioMasivo").click(function() {
-                    tools.ModalDialog("Ventas", "¿Está seguro de continuar con el envío?", function(value) {
-                        if (value == true) {
-                            for (let venta of arrayVentas) {
-                                if (venta.Estado !== "ANULADO") {
-                                    if (venta.Xmlsunat !== "0") {
-                                        firmarMasivaXml(venta.IdVenta);
-                                    }
-                                }
-                            }
-                        }
-                    });
+                    onEventEnvioMasivo();
+                });
+
+                $("#btnEnvioMasivo").keypress(function(event) {
+                    if (event.keyCode == 13) {
+                        onEventEnvioMasivo();
+                        event.preventDefault();
+                    }
                 });
 
                 $("#btnCloseModal").click(function(event) {
@@ -504,7 +502,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             arrayVentas = object.data;
                             tbody.empty();
                             if (arrayVentas.length == 0) {
-                                tbody.append('<tr><td class="text-center" colspan="11"><p>No hay datos para mostrar.</p></td></tr>');                                
+                                tbody.append('<tr><td class="text-center" colspan="11"><p>No hay datos para mostrar.</p></td></tr>');
                                 lblPaginaActual.html(0);
                                 lblPaginaSiguiente.html(0);
                                 lblTotalVenta.html("Total de venta por Fecha:&nbsp; S/ " + tools.formatMoney(parseFloat(object.suma)));
@@ -527,7 +525,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                         estado = '<div class="badge badge-success">COBRADO</div>';
                                     } else if (venta.Tipo == 2 && venta.Estado == 2) {
                                         estado = '<div class="badge badge-warning">POR COBRAR</div>';
-                                    } else if (venta.Tipo == 1 && venta.Estado == 2) {
+                                    } else if (venta.Tipo == 1 && venta.Estado == 4) {
                                         estado = '<div class="badge badge-primary">POR LLEVAR</div>';
                                     } else {
                                         estado = '<div class="badge badge-danger">ANULADO</div>';
@@ -536,12 +534,12 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                     let total = venta.Simbolo + " " + tools.formatMoney(venta.Total);
 
                                     let estadosunat = venta.Estado == 3 ?
-                                        ('<button class="btn btn-default btn-sm" onclick="firmarXml(\'' + venta.IdVenta + '\')"><img src="./images/error.svg" width="26" /></button>') :
+                                        ('<button class="btn btn-secondary btn-sm" onclick="firmarXml(\'' + venta.IdVenta + '\')"><img src="./images/error.svg" width="26" /></button>') :
                                         (venta.Xmlsunat === "" ?
-                                            '<button class="btn btn-default btn-sm" onclick="firmarXml(\'' + venta.IdVenta + '\')"><img src="./images/reuse.svg" width="26"/></button>' :
+                                            '<button class="btn btn-secondary btn-sm" onclick="firmarXml(\'' + venta.IdVenta + '\')"><img src="./images/reuse.svg" width="26"/></button>' :
                                             venta.Xmlsunat === "0" ?
-                                            '<button class="btn btn-default btn-sm"><img src="./images/accept.svg" width="26" /></button>' :
-                                            '<button class="btn btn-default btn-sm" onclick="firmarXml(\'' + venta.IdVenta + '\')"><img src="./images/unable.svg" width="26" /></button>'
+                                            '<button class="btn btn-secondary btn-sm"><img src="./images/accept.svg" width="26" /></button>' :
+                                            '<button class="btn btn-secondary btn-sm" onclick="firmarXml(\'' + venta.IdVenta + '\')"><img src="./images/unable.svg" width="26" /></button>'
                                         );
 
                                     let descripcion = '<p class="recortar-texto">' + (venta.Xmldescripcion === "" ? "Por Generar Xml" : venta.Xmldescripcion) + '</p>';
@@ -686,34 +684,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 });
             }
 
-            function firmarMasivaXml(idventa) {
-                $.ajax({
-                    url: "../app/examples/boleta.php",
-                    method: "GET",
-                    data: {
-                        idventa: idventa
-                    },
-                    beforeSend: function() {
-                        tools.ModalAlertInfo("Ventas", "Firmando xml y enviando a la sunat.");
-                    },
-                    success: function(result) {
-                        let object = result;
-                        if (object.state === true) {
-                            if (object.accept === true) {
-                                tools.ModalAlertSuccess("Ventas", "Resultado: Código " + object.code + " " + object.description);
-                            } else {
-                                tools.ModalAlertWarning("Ventas", "Resultado: Código " + object.code + " " + object.description);
-                            }
-                        } else {
-                            tools.ModalAlertWarning("Ventas", "Resultado: Código " + object.code + " " + object.description);
-                        }
-                    },
-                    error: function(error) {
-                        tools.ModalAlertError("Ventas", "Error en el momento de firmar el xml: " + error.responseText);
-                    }
-                });
-            }
-
             function resumenDiarioXml(idventa, comprobante, resumen) {
                 tools.ModalDialog("Emitir resumen díario", "¿Se anulará el documento: " + comprobante + ", y se creará el siguiente resumen individual: RC-" + resumen + "-1, estás seguro de anular el documento? los cambios no se podrán revertir!", function(value) {
                     if (value == true) {
@@ -781,6 +751,109 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 });
             }
 
+            function firmarMasivaXml(idventa) {
+                $.ajax({
+                    url: "../app/examples/boleta.php",
+                    method: "GET",
+                    data: {
+                        idventa: idventa
+                    },
+                    beforeSend: function() {
+                        tools.ModalAlertInfo("Ventas", "Firmando xml y enviando a la sunat.");
+                    },
+                    success: function(result) {
+                        let object = result;
+                        if (object.state === true) {
+                            if (object.accept === true) {
+                                tools.ModalAlertSuccess("Ventas", "Resultado: Código " + object.code + " " + object.description);
+                            } else {
+                                tools.ModalAlertWarning("Ventas", "Resultado: Código " + object.code + " " + object.description);
+                            }
+                        } else {
+                            tools.ModalAlertWarning("Ventas", "Resultado: Código " + object.code + " " + object.description);
+                        }
+                    },
+                    error: function(error) {
+                        tools.ModalAlertError("Ventas", "Error en el momento de firmar el xml: " + error.responseText);
+                    }
+                });
+            }
+
+            function resumenDiarioMasivoXml(idventa) {
+                $.ajax({
+                    url: "../app/examples/resumen.php",
+                    method: "GET",
+                    data: {
+                        idventa: idventa
+                    },
+                    beforeSend: function() {
+                        tools.ModalAlertInfo("Ventas", "Firmando xml y enviando a la sunat.");
+                    },
+                    success: function(result) {
+                        let object = result;
+                        if (object.state === true) {
+                            if (object.accept === true) {
+                                tools.ModalAlertSuccess("Ventas", "Resultado: Código " + object.code + " " + object.description);
+                            } else {
+                                tools.ModalAlertWarning("Ventas", "Resultado: Código " + object.code + " " + object.description);
+                            }
+                        } else {
+                            tools.ModalAlertWarning("Ventas", "Resultado: Código " + object.code + " " + object.description);
+                        }
+                    },
+                    error: function(error) {
+                        tools.ModalAlertError("Ventas", "Error en el momento de firmar el xml: " + error.responseText);
+                    }
+                });
+            }
+
+            function comunicacionBajaMasivoXml(idventa) {
+                $.ajax({
+                    url: "../app/examples/comunicacionbaja.php",
+                    method: "GET",
+                    data: {
+                        idventa: idventa
+                    },
+                    beforeSend: function() {
+                        tools.ModalAlertInfo("Ventas", "Firmando xml y enviando a la sunat.");
+                    },
+                    success: function(result) {
+                        let object = result;
+                        if (object.state === true) {
+                            if (object.accept === true) {
+                                tools.ModalAlertSuccess("Ventas", "Resultado: Código " + object.code + " " + object.description);
+                            } else {
+                                tools.ModalAlertWarning("Ventas", "Resultado: Código " + object.code + " " + object.description);
+                            }
+                        } else {
+                            tools.ModalAlertWarning("Ventas", "Resultado: Código " + object.code + " " + object.description);
+                        }
+                    },
+                    error: function(error) {
+                        tools.ModalAlertError("Ventas", "Error en el momento de firmar el xml: " + error.responseText);
+                    }
+                });
+            }
+
+            function onEventEnvioMasivo() {
+                tools.ModalDialog("Ventas", "¿Está seguro de continuar con el envío?", function(value) {
+                    if (value == true) {
+                        for (let venta of arrayVentas) {
+                            if (venta.Estado !== "3") {
+                                if (venta.Xmlsunat !== "0") {
+                                    firmarMasivaXml(venta.IdVenta);
+                                }
+                            } else {
+                                if (venta.Serie.toUpperCase().includes("B")) {
+                                    resumenDiarioMasivoXml(venta.IdVenta);
+                                } else if (venta.Serie.toUpperCase().includes("F")) {
+                                    comunicacionBajaMasivoXml(venta.IdVenta);
+                                }
+                            }
+                        }
+                    }
+                });
+            }
 
             function openPdf(idVenta) {
                 window.open("../app/sunat/pdfingresos.php?idVenta=" + idVenta, "_blank");

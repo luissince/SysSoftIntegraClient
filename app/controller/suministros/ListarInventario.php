@@ -17,18 +17,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     $posicionPagina = $_GET['posicionPagina'];
     $filasPorPagina = $_GET['filasPorPagina'];
     //$search = $_GET['search'];
-    $suministros = SuministrosADO::ListarInventario($producto, $existencia, $nombre, $opcion, $categoria, $marca,$posicionPagina,$filasPorPagina);
-    $total = SuministrosADO::ListarInventarioCount($producto, $existencia, $nombre, $opcion, $categoria, $marca);
-    if (is_array($suministros)) {
-         print json_encode(array(
+    $result = SuministrosADO::ListarInventario($producto, $existencia, $nombre, $opcion, $categoria, $marca, $posicionPagina, $filasPorPagina);
+    if (is_array($result)) {
+        print json_encode(array(
             "estado" => 1,
-            "data" => $suministros,
-            "total" => $total
+            "data" => $result[0],
+            "total" => $result[1]
         ));
     } else {
         print json_encode(array(
             "estado" => 2,
-            "mensaje" => $suministros
+            "mensaje" => $result
         ));
     }
     exit();

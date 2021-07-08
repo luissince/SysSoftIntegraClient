@@ -303,7 +303,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 state = false;
                             } else {
                                 for (let detalle of result.data) {
-
                                     let estadosunat = detalle.Xmlsunat === "" ?
                                         '<button class="btn btn-default" onclick="firmarXml(\'' + detalle.IdNotaCredito + '\')"><img src="./images/reuse.svg" width="26"/></button>' :
                                         detalle.Xmlsunat === "0" ?
@@ -318,7 +317,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                         '<td>' + detalle.SerieNotaCredito + '-' + detalle.NumeracionNotaCredito + '</td>' +
                                         '<td>' + detalle.NumeroDocumento + '<br>' + detalle.Informacion + '</td>' +
                                         '<td>Comprobante Editado' + '<br>' + detalle.Serie + '-' + detalle.Numeracion + '</td>' +
-                                        '<td>' + tools.formatMoney(detalle.Total) + '</td>' +
+                                        '<td>' + detalle.Simbolo + " " + tools.formatMoney(detalle.Total) + '</td>' +
                                         '<td>' + estadosunat + '</td>' +
                                         '<td>' + descripcion + '</td>' +
                                         '</tr>');

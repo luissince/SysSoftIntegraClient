@@ -12,16 +12,16 @@
         <ul class="app-menu">
 
                 <li>
-                        <a class="app-menu__item" href="index.php">
+                        <a class="app-menu__item" id="tab-index" href="index.php">
                                 <i class="app-menu__icon fa fa-dashboard"></i>
                                 <span class="app-menu__label">Dashboard</span>
                         </a>
                 </li>
 
-                <li class="treeview"><a class="app-menu__item" href="#" data-toggle="treeview"><i class="app-menu__icon fa fa-external-link-square" style="transform: rotate(180deg) translateX(12px);"></i><span class="app-menu__label">Ingresos</span><i class="treeview-indicator fa fa-angle-right"></i></a>
+                <li class="treeview" id="treeview-ingresos"><a class="app-menu__item" href="#" data-toggle="treeview"><i class="app-menu__icon fa fa-external-link-square" style="transform: rotate(180deg) translateX(12px);"></i><span class="app-menu__label">Ingresos</span><i class="treeview-indicator fa fa-angle-right"></i></a>
                         <ul class="treeview-menu">
-                                <li><a class="app-menu__item" href="ventas.php"><i class="app-menu__icon fa fa-minus"></i><span class="app-menu__label">Ventas</span></a></li>
-                                <li><a class="app-menu__item" href="notacredito.php"><i class="app-menu__icon fa fa-minus"></i><span class="app-menu__label">Nota de Crédito</span></a></li>
+                                <li><a class="app-menu__item" id="tab-ventas" href="ventas.php"><i class="app-menu__icon fa fa-minus"></i><span class="app-menu__label">Ventas</span></a></li>
+                                <li><a class="app-menu__item" id="tab-notacredito" href="notacredito.php"><i class="app-menu__icon fa fa-minus"></i><span class="app-menu__label">Nota de Crédito</span></a></li>
                         </ul>
                 </li>
 
@@ -39,12 +39,12 @@
                         </ul>
                 </li>
 
-                <li class="treeview"><a class="app-menu__item" href="#" data-toggle="treeview"><i class="app-menu__icon fa fa-cubes"></i><span class="app-menu__label">Inventario</span><i class="treeview-indicator fa fa-angle-right"></i></a>
+                <li class="treeview" id="treeview-inventario"><a class="app-menu__item" href="#" data-toggle="treeview"><i class="app-menu__icon fa fa-cubes"></i><span class="app-menu__label">Inventario</span><i class="treeview-indicator fa fa-angle-right"></i></a>
                         <ul class="treeview-menu">
-                                <li><a class="app-menu__item" href="productos.php"><i class="app-menu__icon fa fa-minus"></i><span class="app-menu__label">Productos</span></a></li>
-                                <li><a class="app-menu__item" href="inventario.php"><i class="app-menu__icon fa fa-minus"></i><span class="app-menu__label">Inventario</span></a></li>
-                                <li><a class="app-menu__item" href="kardexproducto.php"><i class="app-menu__icon fa fa-minus"></i><span class="app-menu__label">Kardex</span></a></li>
-                                <li><a class="app-menu__item" href="ajustes.php"><i class="app-menu__icon fa fa-minus"></i><span class="app-menu__label">Ajuste de Inventario</span></a></li>
+                                <li><a class="app-menu__item" id="tab-productos" href="productos.php"><i class="app-menu__icon fa fa-minus"></i><span class="app-menu__label">Productos</span></a></li>
+                                <li><a class="app-menu__item" id="tab-inventario" href="inventario.php"><i class="app-menu__icon fa fa-minus"></i><span class="app-menu__label">Inventario</span></a></li>
+                                <li><a class="app-menu__item" id="tab-kardexproducto" href="kardexproducto.php"><i class="app-menu__icon fa fa-minus"></i><span class="app-menu__label">Kardex</span></a></li>
+                                <li><a class="app-menu__item" id="tab-ajustes" href="ajustes.php"><i class="app-menu__icon fa fa-minus"></i><span class="app-menu__label">Ajuste de Inventario</span></a></li>
                         </ul>
                 </li>
 
@@ -73,25 +73,81 @@
                 </li>
 
                 <li>
-                        <a class="app-menu__item" href="#">
+                        <a class="app-menu__item" id="tab-reportes" href="#">
                                 <i class="app-menu__icon fa fa-bar-chart"></i>
                                 <span class="app-menu__label">Gráficos</span>
                         </a>
                 </li>
 
                 <li>
-                        <a class="app-menu__item" href="#">
+                        <a class="app-menu__item" id="tab-graficos" href="#">
                                 <i class="app-menu__icon fa fa-laptop"></i>
                                 <span class="app-menu__label">Tienda en Línea</span>
                         </a>
                 </li>
 
 
-                <li class="treeview"><a class="app-menu__item" href="#" data-toggle="treeview"><i class="app-menu__icon fa fa-cog"></i><span class="app-menu__label">Configuración</span><i class="treeview-indicator fa fa-angle-right"></i></a>
+                <li class="treeview" id="treeview-configuracion"><a class="app-menu__item" href="#" data-toggle="treeview"><i class="app-menu__icon fa fa-cog"></i><span class="app-menu__label">Configuración</span><i class="treeview-indicator fa fa-angle-right"></i></a>
                         <ul class="treeview-menu">
-                                <li><a class="app-menu__item" href="empresa.php"><i class="app-menu__icon fa fa-minus"></i><span class="app-menu__label">Empresa</span></a></li>
+                                <li><a class="app-menu__item" id="tab-empresa" href="empresa.php"><i class="app-menu__icon fa fa-minus"></i><span class="app-menu__label">Empresa</span></a></li>
                         </ul>
                 </li>
 
         </ul>
 </aside>
+
+<script>
+        /// Url actual
+        let url = window.location.href;
+
+        /// Elementos de li
+        const tabs = [
+                "index", "ventas", "notacredito",
+                "productos", "inventario", "kardexproducto", "ajustes",
+                "registrarproducto", "actualizarproducto",
+                "empresa"
+        ];
+
+        tabs.forEach(e => {
+                /// Agregar .php y ver si lo contiene en la url
+                if (url.indexOf(e + ".php") !== -1) {
+                        /// Agregar tab- para hacer que coincida la Id
+                        setActive("tab-" + e);
+                }
+
+        });
+
+        /// Funcion que asigna la clase active
+        function setActive(id) {
+                if (id == "tab-ventas" || id == "tab-notacredito") {
+                        document.getElementById("treeview-ingresos").setAttribute("class", "treeview is-expanded");
+                        if (id == "tab-ventas") {
+                                document.getElementById("tab-ventas").setAttribute("class", "app-menu__item active");
+                        } else if (id == "tab-notacredito") {
+                                document.getElementById("tab-notacredito").setAttribute("class", "app-menu__item active");
+                        }
+                } else if (id == "tab-productos" || id == "tab-inventario" || id == "tab-kardexproducto" || id == "tab-ajustes" || id == "tab-registrarproducto" || id == "tab-actualizarproducto") {
+                        document.getElementById("treeview-inventario").setAttribute("class", "treeview is-expanded");
+                        if (id == "tab-productos") {
+                                document.getElementById("tab-productos").setAttribute("class", "app-menu__item active");
+                        } else if (id == "tab-inventario") {
+                                document.getElementById("tab-inventario").setAttribute("class", "app-menu__item active");
+                        } else if (id == "tab-kardexproducto") {
+                                document.getElementById("tab-kardexproducto").setAttribute("class", "app-menu__item active");
+                        } else if (id == "tab-ajustes") {
+                                document.getElementById("tab-ajustes").setAttribute("class", "app-menu__item active");
+                        } else if (id == "tab-registrarproducto") {
+                                document.getElementById("tab-productos").setAttribute("class", "app-menu__item active");
+                        } else if (id == "tab-actualizarproducto") {
+                                document.getElementById("tab-productos").setAttribute("class", "app-menu__item active");
+                        }
+                } else if (id == "tab-empresa") {
+                        document.getElementById("treeview-configuracion").setAttribute("class", "treeview is-expanded");
+                        if (id == "tab-empresa") {
+                                document.getElementById("tab-empresa").setAttribute("class", "app-menu__item active");
+                        }
+                } else {
+                        document.getElementById(id).setAttribute("class", "app-menu__item active");
+                }
+        }
+</script>
