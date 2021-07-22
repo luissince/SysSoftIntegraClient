@@ -96,7 +96,7 @@ if (!is_array($detalleventa)) {
         $importeNetoTotal = $importeBrutoTotal + $impuestoTotal;
 
         $item1 = new SaleDetail();
-        $item1->setCodProducto($value['ClaveSat'])            
+        $item1->setCodProducto($value['ClaveSat'])
             ->setUnidad($value['CodigoUnidad'])
             ->setCantidad(round($cantidad, 2, PHP_ROUND_HALF_UP))
             ->setDescripcion($value['NombreMarca'])
@@ -138,8 +138,7 @@ if (!is_array($detalleventa)) {
                 "accept" => $cdr->isAccepted(),
                 "id" => $cdr->getId(),
                 "code" => $cdr->getCode(),
-                "description" => $cdr->getDescription(),
-                "dd" => $util
+                "description" => $cdr->getDescription()
             ));
         } else {
             VentasADO::CambiarEstadoSunatVenta($idventa, $cdr->getCode(), $cdr->getDescription(), $hash, $see->getFactory()->getLastXml());

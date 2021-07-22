@@ -137,6 +137,24 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 <!-- /.card-header -->
                                 <div class="card-body">
                                     <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="tile">
+                                                <h3 class="tile-title">Line Chart</h3>
+                                                <div class="embed-responsive embed-responsive-16by9">
+                                                    <canvas class="embed-responsive-item" id="lineChartDemo" width="444" height="249" style="width: 444px; height: 249px;"></canvas>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="tile">
+                                                <h3 class="tile-title">Bar Chart</h3>
+                                                <div class="embed-responsive embed-responsive-16by9">
+                                                    <canvas class="embed-responsive-item" id="barChartDemo" width="444" height="249" style="width: 444px; height: 249px;"></canvas>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- <div class="row">
                                         <div class="col-md-12">
                                             <p class="text-center">
                                                 <strong id="lblMesActual">Ventas: --, --</strong>
@@ -157,7 +175,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> -->
                                 </div>
                             </div>
                             <!-- /.card -->
@@ -173,7 +191,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 </div>
                                 <!-- /.card-header -->
                                 <div class="card-body p-0">
-                                    <ul class="products-list product-list-in-card pl-2 pr-2" id="tvProductos">
+                                    <ul class="product-list-in-card pl-2 pr-2" id="tvProductos">
 
                                     </ul>
                                 </div>
@@ -205,13 +223,13 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                                 </div>
                                                 <div class="col-md-12 col-sm-12 col-xs-12 text-center">
                                                     <div class="form-group">
-                                                        <button class="btn btn-default" id="btnPaginaAnteriorAgotados">
+                                                        <button class="btn btn-secondary" id="btnPaginaAnteriorAgotados">
                                                             <i class="fa fa fa-arrow-circle-left"></i>
                                                         </button>
                                                         <span class="m-2" id="lblPaginaActualAgotados">0</span>
                                                         <span class="m-2">de</span>
                                                         <span class="m-2" id="lblPaginaSiguienteAgotados">0</span>
-                                                        <button class="btn btn-default" id="btnPaginaSiguienteAgotados">
+                                                        <button class="btn btn-secondary" id="btnPaginaSiguienteAgotados">
                                                             <i class="fa fa fa-arrow-circle-right"></i>
                                                         </button>
                                                     </div>
@@ -227,13 +245,13 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                                 </div>
                                                 <div class="col-md-12 col-sm-12 col-xs-12 text-center">
                                                     <div class="form-group">
-                                                        <button class="btn btn-default" id="btnPaginaAnteriorPorAgotarse">
+                                                        <button class="btn btn-secondary" id="btnPaginaAnteriorPorAgotarse">
                                                             <i class="fa fa fa-arrow-circle-left"></i>
                                                         </button>
                                                         <span class="m-2" id="lblPaginaActualPorAgotarse">0</span>
                                                         <span class="m-2">de</span>
                                                         <span class="m-2" id="lblPaginaSiguientePorAgotarse">0</span>
-                                                        <button class="btn btn-default" id="btnPaginaSiguientePorAgotarse">
+                                                        <button class="btn btn-secondary" id="btnPaginaSiguientePorAgotarse">
                                                             <i class="fa fa fa-arrow-circle-right"></i>
                                                         </button>
                                                     </div>
@@ -272,8 +290,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
             let filasPorPaginaPorAgotarse = 7;
             let totalPaginacionPorAgotarse = 0;
 
-            var salesChart = $("#sales-chart");
-            var ctxb = salesChart.get(0).getContext("2d");
+            // var salesChart = $("#sales-chart");
+            // var ctxb = salesChart.get(0).getContext("2d");
 
             $(document).ready(function() {
 
@@ -342,17 +360,18 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         totalCuentasPorPagar.html(result.data[0].TotalCuentasPagar);
                         let productosVendidos = result.data[0].ProductosMasVendidos;
                         for (let data of productosVendidos) {
-                            let image = "./image/noimage.jpg";
+                            let image = "./images/noimage.jpg";
                             if (data.Imagen != '') {
                                 image = ("data:image/png;base64," + data.Imagen);
                             }
                             productoVendidos.append('<li class="item">' +
                                 '<div class="product-img">' +
-                                '    <img src="' + image + '" alt="Product Image" class="img-size-100">' +
+                                '    <img src="' + image + '" alt="Product Image" class="img-size-70">' +
                                 '</div>' +
                                 '<div class="product-info">' +
-                                '    <a href="javascript:void(0)" class="product-title">' + data.NombreMarca + '' +
-                                '        <span class="badge badge-warning float-right">' + tools.formatMoney(data.Cantidad, 0) + ' ' + data.Medida + '</span></a>' +
+                                '    <span class="product-title text-primary">' + data.NombreMarca + '' +
+                                '    </span>' +
+                                '    <span class="product-price badge badge-warning float-right">' + tools.formatMoney(data.Cantidad, 0) + ' ' + data.Medida + '</span>' +
                                 '</div>' +
                                 '</li>');
                         }
@@ -386,7 +405,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 dataActual[11] = tools.formatMoney(value.Monto)
                             }
                         }
-                        diagramaVentas(dataActual)
+                        diagramaVentas(dataActual);
                         ProductosAgotados(result);
                         ProductosPorAgotarse(result);
                     },
@@ -486,10 +505,10 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
 
             function diagramaVentas(dataActual, dataPasada) {
-                let data = {
+                var data = {
                     labels: ["ENE", "FEB", "MAR", "ABR", "MAY", "JUN", "JUL", "AGO", "SET", "OCT", "NOV", "DIC"],
                     datasets: [{
-                            label: "Año actual",
+                            label: "Años Actual",
                             fillColor: "#007bff",
                             strokeColor: "#007bff",
                             pointColor: "#007bff",
@@ -499,7 +518,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             data: dataActual
                         },
                         {
-                            label: "Año pasado",
+                            label: "Año Pasado",
                             fillColor: "#212529",
                             strokeColor: "#212529",
                             pointColor: "#212529",
@@ -510,9 +529,31 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         }
                     ]
                 };
+                var pdata = [{
+                        value: 300,
+                        color: "#F7464A",
+                        highlight: "#FF5A5E",
+                        label: "Red"
+                    },
+                    {
+                        value: 50,
+                        color: "#46BFBD",
+                        highlight: "#5AD3D1",
+                        label: "Green"
+                    },
+                    {
+                        value: 100,
+                        color: "#FDB45C",
+                        highlight: "#FFC870",
+                        label: "Yellow"
+                    }
+                ]
+
+                var ctxl = $("#lineChartDemo").get(0).getContext("2d");
+                var lineChart = new Chart(ctxl).Line(data);
+
+                var ctxb = $("#barChartDemo").get(0).getContext("2d");
                 var barChart = new Chart(ctxb).Bar(data);
-
-
             }
         </script>
     </body>

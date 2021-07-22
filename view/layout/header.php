@@ -10,15 +10,10 @@
                 <i class="fa fa fa-shopping-cart fa-lg"></i> <span class="app-nav_text">Punto de Venta<span>
             </a>
         </li>
-        <li class="dropdown">
-            <a class="app-nav__item" href="javascript:void(0)">
-                <i class="fa fa-hand-pointer-o fa-lg"></i> <span class="app-nav_text">Marcar Entreda<span>
-            </a>
-        </li>
         <li class="dropdown"><a class="app-nav__item" href="#" data-toggle="dropdown" aria-label="Show notifications"><i class="fa fa-bell-o fa-lg"></i><span id="lblNumeroNotificaciones" class="pl-1 pr-1 badge-warning rounded h7">0</span></a>
-            <ul class="app-notification dropdown-menu dropdown-menu-right">              
+            <ul class="app-notification dropdown-menu dropdown-menu-right">
                 <div class="app-notification__content" id="divNotificaciones">
-                    
+
                 </div>
                 <li class="app-notification__footer" id="lblNotificaciones"><span>Lista de Notificaciones</span></li>
             </ul>

@@ -28,30 +28,46 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 <div class="row">
                     <div class="col-md-12 col-sm-12 col-xs-12">
                         <div class="form-group">
-                            <button class="btn btn-danger" id="btnReload">
+                            <button class="btn btn-secondary" id="btnReload">
                                 <i class="fa fa-refresh"></i> Recargar
                             </button>
-                            <button class="btn btn-secondary">
-                                <i class="fa fa-file"></i> Reporte
+                            <button class="btn btn-danger" id="btnPdf">
+                                <i class="fa fa-file-pdf-o"></i> Pdf
                             </button>
+                            <button class="btn btn-success" id="btnExcel">
+                                <i class="fa fa-file-excel-o"></i> Excel
+                            </button>
+
                         </div>
                     </div>
                 </div>
 
                 <div class="row">
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <label>Buscar por clave:</label>
                         <div class="form-group">
                             <input type="text" class="form-control" placeholder="Ingrese la clave o clave alterna" id="txtClaveProducto">
                         </div>
                     </div>
-                    <div class="col-md-5">
+                    <div class="col-md-4">
                         <label>Buscar por descripción:</label>
                         <div class="form-group">
                             <input type="text" class="form-control" placeholder="Ingrese la descripción del producto" id="txtDescripcionProducto">
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
+                        <label>Opciones de cantidades:</label>
+                        <div class="form-group">
+                            <select class="form-control" id="cbCantidades">
+                                <option value="0">Todas las Cantidades</option>
+                                <option value="1">Cantidades negativas</option>
+                                <option value="2">Cantidades intermedias</option>
+                                <option value="3">Cantidades necesaria</option>
+                                <option value="4">Cantidades excedentes</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
                         <label>Paginación:</label>
                         <div class="form-group">
                             <button class="btn btn-primary" id="btnAnterior">
@@ -107,10 +123,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
             let lblPaginaActual = $("#lblPaginaActual");
             let lblPaginaSiguiente = $("#lblPaginaSiguiente");
 
-            let txtClaveProducto = $("#txtClaveProducto");
-            let txtDescripcionProducto = $("#txtDescripcionProducto");
-
-            $(document).ready(function() {              
+            $(document).ready(function() {
 
                 loadInitInventario();
 
@@ -132,22 +145,45 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     }
                 });
 
-                $("#btnReload").on("click", function(event) {
+                $("#btnReload").click(function(event) {
                     loadInitInventario();
                 });
 
-                $("#btnReload").on("keydown", function(event) {
+                $("#btnReload").keypress(function(event) {
                     if (event.keyCode === 13) {
                         loadInitInventario();
                     }
+                    event.preventDefault();
                 });
 
-                txtClaveProducto.on("keyup", function() {
+                $("#btnPdf").click(function() {
+
+                });
+
+                $("#btnPdf").keypress(function(event) {
+                    if (event.keyCode == 13) {
+
+                    }
+                    event.preventDefault();
+                });
+
+                $("#btnPdf").click(function() {
+
+                });
+
+                $("#btnPdf").keypress(function(event) {
+                    if (event.keyCode == 13) {
+
+                    }
+                    event.preventDefault();
+                });
+
+                $("#txtClaveProducto").on("keyup", function() {
                     if (event.keyCode !== 9 && event.keyCode !== 18) {
-                        if (txtClaveProducto.val().trim() !== "") {
+                        if ($("#txtClaveProducto").val().trim() !== "") {
                             if (!state) {
                                 paginacion = 1;
-                                fillInventarioTable(txtClaveProducto.val(), "", 1);
+                                fillInventarioTable(1, $("#txtClaveProducto").val(), "", 0);
                                 opcion = 1;
                             }
                         }
@@ -155,35 +191,42 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
                 });
 
-                txtDescripcionProducto.on("keyup", function() {
+                $("#txtDescripcionProducto").on("keyup", function() {
                     if (event.keyCode !== 9 && event.keyCode !== 18) {
-                        if (txtDescripcionProducto.val().trim() !== "") {
+                        if ($("#txtDescripcionProducto").val().trim() !== "") {
                             if (!state) {
                                 paginacion = 1;
-                                fillInventarioTable("", txtDescripcionProducto.val(), 2);
+                                fillInventarioTable(2, "", $("#txtDescripcionProducto").val(), 0);
                                 opcion = 2;
                             }
                         }
                     }
                 });
 
-                $("#tbList").on("click", "tr", function(event) {
-                    $(".selected-table-tr").removeClass("selected-table-tr");
-                    $(this).addClass("selected-table-tr");
+                $("#cbCantidades").change(function() {
+                    if (!state) {
+                        paginacion = 1;
+                        fillInventarioTable(3, "", "", $("#cbCantidades").val());
+                        opcion = 3;
+                    }
                 });
+
 
             });
 
             function onEventPaginacion() {
                 switch (opcion) {
                     case 0:
-                        fillInventarioTable("", "", 0);
+                        fillInventarioTable(0, "", "", 0);
                         break;
                     case 1:
-                        fillInventarioTable(txtClaveProducto.val(), "", 1);
+                        fillInventarioTable(1, $("#txtClaveProducto").val(), "", 0);
                         break;
                     case 2:
-                        fillInventarioTable("", txtDescripcionProducto.val(), 2);
+                        fillInventarioTable(2, "", $("#txtDescripcionProducto").val(), 0);
+                        break;
+                    case 3:
+                        fillInventarioTable(3, "", "", $("#cbCantidades").val());
                         break;
                 }
             }
@@ -191,18 +234,18 @@ if (!isset($_SESSION['IdEmpleado'])) {
             function loadInitInventario() {
                 if (!state) {
                     paginacion = 1;
-                    fillInventarioTable("", "", 0);
+                    fillInventarioTable(0, "", "", 0);
                     opcion = 0;
                 }
             }
 
-            function fillInventarioTable(producto, nombre, opcion) {
+            function fillInventarioTable(opcion, clave, nombre, existencia) {
                 $.ajax({
                     url: "../app/controller/suministros/ListarInventario.php",
                     method: "GET",
                     data: {
-                        "producto": producto,
-                        "existencia": 0,
+                        "producto": clave,
+                        "existencia": existencia,
                         "nombre": nombre,
                         "opcion": opcion,
                         "categoria": 0,
@@ -229,18 +272,16 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 tbody.empty();
                                 for (let suministro of suministros) {
                                     tbody.append('<tr>' +
-                                        '<td data-label="N°" class="td-center">' + suministro.count + '</td>' +
-                                        '<td data-label="Descripción" class="td-left">' + suministro.Clave + (suministro.ClaveAlterna === "" ? "" : "-" + suministro.ClaveAlterna) + "</br>" + suministro.NombreMarca + '</td>' +
-                                        '<td data-label="Categoría" class="td-left">' + suministro.Categoria + '</td>' +
-                                        '<td data-label="Marca" class="td-left">' + suministro.Marca + '</td>' +
-                                        '<td data-label="Cantidad" class="td-right ' + (suministro.Cantidad <= 0 ? "text-danger " : "text-success") + '">' +
-                                        tools.formatMoney(suministro.Cantidad) + " " + suministro.UnidadCompra +
-                                        '</td>' +
+                                        '<td class="td-center">' + suministro.count + '</td>' +
+                                        '<td class="td-left">' + suministro.Clave + (suministro.ClaveAlterna === "" ? "" : "-" + suministro.ClaveAlterna) + "</br>" + suministro.NombreMarca + '</td>' +
+                                        '<td class="td-left">' + suministro.Categoria + '</td>' +
+                                        '<td class="td-left">' + suministro.Marca + '</td>' +
+                                        '<td class="' + (suministro.Cantidad <= 0 ? "td-right  text-danger " : " td-right text-success") + '">' + tools.formatMoney(suministro.Cantidad) + " " + suministro.UnidadCompra + '</td>' +
                                         //                                            '<td data-label="Costo General" class="td-right">' + formatMoney(suministro.PrecioCompra) + '</td>' +
                                         //                                            '<td data-label="Precio General" class="td-right">' + formatMoney(suministro.PrecioVentaGeneral) + '</td>' +
-                                        '<td data-label="Inv.Min / Inv.Max" class="td-right">' + (tools.formatMoney(suministro.StockMinimo) + " - " + tools.formatMoney(suministro.StockMaximo)) + '</td>' +
-                                        '<td data-label="Estado" class="td-center">' + (suministro.Inventario === "1" ? "Si" : "No") + '</td>' +
-                                        '<td data-label="Estado" class="td-center">' + (suministro.Estado === "1" ? "Activo" : "Inactivo") + '</td>' +
+                                        '<td class="td-right">' + (tools.formatMoney(suministro.StockMinimo) + " - " + tools.formatMoney(suministro.StockMaximo)) + '</td>' +
+                                        '<td class="' + (suministro.Inventario === "1" ? "td-center text-success" : "td-center text-danger") + '">' + (suministro.Inventario === "1" ? "Si" : "No") + '</td>' +
+                                        '<td class="td-center">' + (suministro.Estado === "1" ? "Activo" : "Inactivo") + '</td>' +
                                         '</tr>');
                                 }
                                 totalPaginacion = parseInt(Math.ceil((parseFloat(object.total) / filasPorPagina)));

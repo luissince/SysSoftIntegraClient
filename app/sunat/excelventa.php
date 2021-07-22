@@ -108,9 +108,21 @@ $documento->setActiveSheetIndex(0)
     ->setCellValue("M3", "OBSERVACIÓN");
 
 $cel = 4;
-foreach ($ventas as $key => $value) { 
+foreach ($ventas as $key => $value) {
+    $documento->getActiveSheet()->getStyle('A' . $cel . ':M' . $cel . '')->applyFromArray(array(
+        'fill' => array(
+            'type' => Fill::FILL_SOLID,
+            'color' => array('rgb' => 'E5E4E2')
+        ),
+        'font'  => array(
+            'bold'  =>  false
+        ),
+        'alignment' => array(
+            'horizontal' => Alignment::HORIZONTAL_LEFT
+        )
+    ));
 
-    if (intval($value["Estado"]) !== 2 && $value["Xmlsunat"] === '0') {
+    if ($value["Estado"] === "C") {
         $documento->getActiveSheet()->getStyle('A' . $cel . ':M' . $cel . '')->applyFromArray(array(
             'font'  => array(
                 'bold'  =>  false,
@@ -120,7 +132,6 @@ foreach ($ventas as $key => $value) {
                 'horizontal' => Alignment::HORIZONTAL_LEFT
             )
         ));
-
         $documento->getActiveSheet()->getStyle("J" . $cel)->getNumberFormat()->setFormatCode('0.00');
         $documento->getActiveSheet()->getStyle("K" . $cel)->getNumberFormat()->setFormatCode('0.00');
         $documento->getActiveSheet()->getStyle("L" . $cel)->getNumberFormat()->setFormatCode('0.00');
@@ -169,6 +180,67 @@ foreach ($ventas as $key => $value) {
             ->setCellValue("L" . $cel, strval(round($value["Base"] + $value["Igv"], 2, PHP_ROUND_HALF_UP)))
             ->setCellValue("M" . $cel, strval($value["Xmldescripcion"]));
     }
+
+
+    // if ($value["Estado"] == "1" && $value["Xmlsunat"] === '0') {
+    //     $documento->getActiveSheet()->getStyle('A' . $cel . ':M' . $cel . '')->applyFromArray(array(
+    //         'font'  => array(
+    //             'bold'  =>  false,
+    //             'color' => array('rgb' => '000000')
+    //         ),
+    //         'alignment' => array(
+    //             'horizontal' => Alignment::HORIZONTAL_LEFT
+    //         )
+    //     ));
+
+    //     $documento->getActiveSheet()->getStyle("J" . $cel)->getNumberFormat()->setFormatCode('0.00');
+    //     $documento->getActiveSheet()->getStyle("K" . $cel)->getNumberFormat()->setFormatCode('0.00');
+    //     $documento->getActiveSheet()->getStyle("L" . $cel)->getNumberFormat()->setFormatCode('0.00');
+
+    //     $documento->setActiveSheetIndex(0)
+    //         ->setCellValue("A" . $cel,  strval($value["Id"]))
+    //         ->setCellValue("B" . $cel, strval($value["FechaVenta"]))
+    //         ->setCellValue("C" . $cel, strval($value["TipoDocumento"]))
+    //         ->setCellValue("D" . $cel, strval($value["NumeroDocumento"]))
+    //         ->setCellValue("E" . $cel, strval($value["Informacion"]))
+    //         ->setCellValue("F" . $cel, strval($value["TipoComprobante"]))
+    //         ->setCellValue("G" . $cel, strval($value["Serie"]))
+    //         ->setCellValue("H" . $cel, strval($value["Numeracion"]))
+    //         ->setCellValue("I" . $cel, strval($value["Estado"]))
+    //         ->setCellValue("J" . $cel, strval(round($value["Base"], 2, PHP_ROUND_HALF_UP)))
+    //         ->setCellValue("K" . $cel, strval(round($value["Igv"], 2, PHP_ROUND_HALF_UP)))
+    //         ->setCellValue("L" . $cel, strval(round($value["Base"] + $value["Igv"], 2, PHP_ROUND_HALF_UP)))
+    //         ->setCellValue("M" . $cel, strval($value["Xmldescripcion"]));
+    // } else {
+    //     $documento->getActiveSheet()->getStyle('A' . $cel . ':M' . $cel . '')->applyFromArray(array(
+    //         'font'  => array(
+    //             'bold'  =>  false,
+    //             'color' => array('rgb' => 'd10505')
+    //         ),
+    //         'alignment' => array(
+    //             'horizontal' => Alignment::HORIZONTAL_LEFT
+    //         )
+    //     ));
+
+    //     $documento->getActiveSheet()->getStyle("J" . $cel)->getNumberFormat()->setFormatCode('0.00');
+    //     $documento->getActiveSheet()->getStyle("K" . $cel)->getNumberFormat()->setFormatCode('0.00');
+    //     $documento->getActiveSheet()->getStyle("L" . $cel)->getNumberFormat()->setFormatCode('0.00');
+
+    //     $documento->setActiveSheetIndex(0)
+    //         ->setCellValue("A" . $cel,  strval($value["Id"]))
+    //         ->setCellValue("B" . $cel, strval($value["FechaVenta"]))
+    //         ->setCellValue("C" . $cel, strval($value["TipoDocumento"]))
+    //         ->setCellValue("D" . $cel, strval($value["NumeroDocumento"]))
+    //         ->setCellValue("E" . $cel, strval($value["Informacion"]))
+    //         ->setCellValue("F" . $cel, strval($value["TipoComprobante"]))
+    //         ->setCellValue("G" . $cel, strval($value["Serie"]))
+    //         ->setCellValue("H" . $cel, strval($value["Numeracion"]))
+    //         ->setCellValue("I" . $cel, strval($value["Estado"]))
+    //         ->setCellValue("J" . $cel, strval(round($value["Base"], 2, PHP_ROUND_HALF_UP)))
+    //         ->setCellValue("K" . $cel, strval(round($value["Igv"], 2, PHP_ROUND_HALF_UP)))
+    //         ->setCellValue("L" . $cel, strval(round($value["Base"] + $value["Igv"], 2, PHP_ROUND_HALF_UP)))
+    //         ->setCellValue("M" . $cel, strval($value["Xmldescripcion"]));
+    // }
 
 
     $cel++;

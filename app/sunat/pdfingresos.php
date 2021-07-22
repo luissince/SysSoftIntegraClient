@@ -14,7 +14,7 @@ if (is_array($ventaDatos)) {
     $empresa = $ventaDatos[2];
 
     //$logo = ($empresa->Image == "" ? './../../view/image/logo.png':"data:image/png;base64,".$empresa->Image);
-    $photo = $empresa->Image == "" ?  "<img src=\"./../../view/image/logo.png\"/>" :"<img src=\"data:image/jpg;base64, ".$empresa->Image."\"/>";
+    $photo = $empresa->Image == "" ?  "<img src=\"./../../view/image/logo.png\"/>" : "<img src=\"data:image/jpg;base64, " . $empresa->Image . "\"/>";
 
     $gcl = new GenerateCoinToLetters();
 
@@ -194,7 +194,7 @@ if (is_array($ventaDatos)) {
             <div class="cont-header">
                 <div class="caja-info-uno">
                     <div class="logo" alt="">
-                        '. $photo.'
+                        ' . $photo . '
                     </div>
                     <div class="texto">
                         <p style="font-size:11pt; line-height: 15px">' . $empresa->RazonSocial . '</p><br>                
@@ -209,7 +209,7 @@ if (is_array($ventaDatos)) {
                 </div>
                 <div class="caja-info-dos">
                     <p style="line-height: 35px; padding-top:10px;">R.U.C.: ' . $empresa->NumeroDocumento . '</p>
-                    <p style="line-height: 35px;">'.$venta->Comprobante.' ELECTRÓNICO</p>
+                    <p style="line-height: 35px;">' . $venta->Comprobante . ' ELECTRÓNICO</p>
                     <p style="line-height: 35px;">' . $venta->Serie . '-' . $venta->Numeracion . '</p>         
                 </div>
             </div>
@@ -306,9 +306,9 @@ if (is_array($ventaDatos)) {
                             </table>
                         </div>
                         <div width="100%" height="2%" style="padding-top:10px; padding-top:20px; font-size:8pt; text-align:center;">
-                            Cta. Ahorros Scotiabank: 1670143096<br>
-                            CTa. Ahorros BCP: 191-38640771080 <br>
-                            CTa. Corriente BCP: 191-2412-5720-13<br>
+                            Cta. Ahorros Scotiabank: <br>
+                            CTa. Ahorros BCP:  <br>
+                            CTa. Corriente BCP: <br>
                         </div>
                     </div>
                     <div class="footer-right">

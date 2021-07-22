@@ -67,8 +67,12 @@ class VentasADO
             $comandoTotal->execute();
             $resultTotal = $comandoTotal->fetchColumn();
 
-            $comandoSuma = Database::getInstance()->getDb()->prepare("SELECT ISNULL(SUM(Total),0) FROM VentaTB as v left join NotaCreditoTB as nc on nc.IdVenta = v.IdVenta
-            WHERE CAST(v.FechaVenta AS DATE) BETWEEN ? AND ? AND v.Tipo = 1 AND v.Estado = 1 and nc.IdNotaCredito is null");
+            $comandoSuma = Database::getInstance()->getDb()->prepare("SELECT 
+            ISNULL(sum(dv.Cantidad*(dv.PrecioVenta-dv.Descuento)),0)
+            FROM VentaTB as v 
+            INNER JOIN DetalleVentaTB as dv on dv.IdVenta = v.IdVenta
+            LEFT JOIN NotaCreditoTB as nc on nc.IdVenta = v.IdVenta
+            WHERE CAST(v.FechaVenta AS DATE) BETWEEN ? AND ? AND v.Tipo = 1 AND v.Estado <> 3 and nc.IdNotaCredito is null");
             $comandoSuma->bindParam(1, $fechaInicial, PDO::PARAM_STR);
             $comandoSuma->bindParam(2, $fechaFinal, PDO::PARAM_STR);
             $comandoSuma->execute();
@@ -386,7 +390,7 @@ class VentasADO
             while ($row = $cmdProductos->fetch()) {
                 $count++;
                 array_push($arrayDetalle, array(
-                    "Id"=>$count,
+                    "Id" => $count,
                     "IdSuministro" => $row["IdSuministro"],
                     "Clave" => $row["Clave"],
                     "NombreMarca" => $row["NombreMarca"],
@@ -509,8 +513,12 @@ class VentasADO
 
         try {
 
-            $comandoTotalVentas = Database::getInstance()->getDb()->prepare("SELECT sum(Total) FROM VentaTB 
-            WHERE FechaVenta = ? AND Estado = 1");
+            $comandoTotalVentas = Database::getInstance()->getDb()->prepare("SELECT 
+            ISNULL(sum(dv.Cantidad*(dv.PrecioVenta-dv.Descuento)),0) AS Monto
+            FROM VentaTB as v 
+            INNER JOIN DetalleVentaTB as dv on dv.IdVenta = v.IdVenta
+            LEFT JOIN NotaCreditoTB as nc on nc.IdVenta = v.IdVenta
+            WHERE CAST(v.FechaVenta AS DATE) = ? AND v.Tipo = 1 AND v.Estado <> 3 and nc.IdNotaCredito is null");
             $comandoTotalVentas->bindParam(1, $fecha, PDO::PARAM_STR);
             $comandoTotalVentas->execute();
 
@@ -1162,16 +1170,17 @@ class VentasADO
                 $count++;
                 array_push($arrayNotaCredito, array(
                     "Id" => $count,
-                    "IdVenta" => $row["IdVenta"], 
-                    "IdNotaCredito" => $row["IdNotaCredito"],                 
+                    "IdVenta" => $row["IdVenta"],
+                    "IdNotaCredito" => $row["IdNotaCredito"],
                     "FechaNotaCredito" => $row["FechaRegistro"],
                     "HoraNotaCredito" => $row["HoraRegistro"],
                     "SerieNotaCredito" => $row["SerieNotaCredito"],
-                    "NumeracionNotaCredito" => $row["NumeracioNotaCredito"],                           
+                    "NumeracionNotaCredito" => $row["NumeracioNotaCredito"],
                     "Serie" => $row["SerieVenta"],
-                    "Numeracion" => $row["NumeracionVenta"],                           
+                    "Numeracion" => $row["NumeracionVenta"],
                     "NumeroDocumento" => $row["NumeroDocumento"],
                     "Informacion" => $row["Informacion"],
+                    "Simbolo" => $row["Simbolo"],
                     "Total" => floatval($row["Total"]),
                     "Xmlsunat" => $row["Xmlsunat"],
                     "Xmldescripcion" => $row["Xmldescripcion"],
