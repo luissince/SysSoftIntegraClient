@@ -6,7 +6,7 @@
     <!-- Navbar Right Menu-->
     <ul class="app-nav">
         <li class="dropdown">
-            <a class="app-nav__item" href="#">
+            <a class="app-nav__item" href="puntoventa.php">
                 <i class="fa fa fa-shopping-cart fa-lg"></i> <span class="app-nav_text">Punto de Venta<span>
             </a>
         </li>

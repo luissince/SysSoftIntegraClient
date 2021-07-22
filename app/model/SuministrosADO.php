@@ -493,6 +493,28 @@ class SuministrosADO
                         ));
                     }
 
+                    $suministroKardex = Database::getInstance()->getDb()->prepare("INSERT INTO KardexSuministroTB
+                    (IdSuministro,
+                    Fecha,
+                    Hora,
+                    Tipo,
+                    Movimiento,
+                    Detalle,
+                    Cantidad,
+                    Costo,
+                    Total)
+                    VALUES(?,GETDATE(),GETDATE(),?,?,?,?,?,?)");
+
+                    $suministroKardex->execute(array(
+                        $idSuministro,
+                        1,
+                        2,
+                        "INVENTARIO INICIAL",
+                        $suministro["Cantidad"],
+                        $suministro["PrecioCompra"],
+                        $suministro["PrecioCompra"] * $suministro["Cantidad"],
+                    ));
+
                     Database::getInstance()->getDb()->commit();
                     return "registrado";
                 }

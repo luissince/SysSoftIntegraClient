@@ -82,7 +82,7 @@ body {
     font-weight: normal;
     font-style: normal;
     line-height: 1.5;
-    color: #212529;
+    color: #020203;
     text-align: left;
     background-color: #E5E5E5;
 }
@@ -172,13 +172,13 @@ sup {
 }
 
 a {
-    color: #009688;
+    color: var(--principal);
     text-decoration: none;
     background-color: transparent;
 }
 
 a:hover {
-    color: #004a43;
+    color:  var(--blue);
     text-decoration: underline;
 }
 
@@ -214,6 +214,21 @@ figure {
 img {
     vertical-align: middle;
     border-style: none;
+}
+
+.img-size-100{
+    height: 100px;
+    width: 100px;
+}
+
+.img-size-70{
+    height: 70px;
+    width: 70px;
+}
+
+.img-size-50{
+    height: 50px;
+    width: 50px;
 }
 
 svg {
@@ -288,10 +303,11 @@ button::-moz-focus-inner, [type="button"]::-moz-focus-inner, [type="reset"]::-mo
 input[type="radio"], input[type="checkbox"] {
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
-    padding: 0;
-    -ms-transform: scale(1.5);
-    -webkit-transform: scale(1.5);
-    transform: scale(1.4);
+    padding: 0px;
+    margin: 0px 5px;
+    -ms-transform: scale(1.6);
+    -webkit-transform: scale(1.6);
+    transform: scale(1.6);
 }
 
 input[type="date"], input[type="time"], input[type="datetime-local"], input[type="month"] {
@@ -382,7 +398,7 @@ h3, .h3 {
 }
 
 h4, .h4 {
-    font-size: 1.15rem;
+    font-size: 1.0rem;
 }
 
 h5, .h5 {
@@ -1659,7 +1675,7 @@ pre code {
 .table {
     width: 100%;
     margin-bottom: 1rem;
-    color: #212529;
+    color: #020203;
     cursor: pointer;
 }
 
@@ -2485,7 +2501,7 @@ textarea.form-control {
     -ms-user-select: none;
     user-select: none;
     background-color: transparent;
-    border: 2px solid transparent;
+    border: 1px solid transparent;
     padding: 0.375rem 0.75rem;
     font-size: 0.85rem;
     line-height: 1.5;
@@ -2559,37 +2575,37 @@ a.btn.disabled, fieldset:disabled a.btn {
 }
 
 .btn-secondary {
-    color: #FFF;
-    background-color: #6c757d;
-    border-color: #6c757d;
+    color: #020203;
+    background-color: #cccccc;
+    border-color: #cccccc;
 }
 
 .btn-secondary:hover {
-    color: #FFF;
-    background-color: #5a6268;
-    border-color: #545b62;
+    color: #020203;
+    background-color: rgba(153, 153, 153,0.5);
+    border-color: rgba(153, 153, 153,0.5);
 }
 
 .btn-secondary:focus, .btn-secondary.focus {
-    -webkit-box-shadow: 0 0 0 0 rgba(130, 138, 145, 0.5);
-    box-shadow: 0 0 0 0 rgba(130, 138, 145, 0.5);
+    -webkit-box-shadow: 0 0 0 0 rgba(153, 153, 153,0.5);
+    box-shadow: 0 0 0 0 rgba(153, 153, 153,0.5);
 }
 
 .btn-secondary.disabled, .btn-secondary:disabled {
-    color: #FFF;
-    background-color: #6c757d;
-    border-color: #6c757d;
+    color: #020203;
+    background-color: #999999;
+    border-color: #999999;
 }
 
 .btn-secondary:not(:disabled):not(.disabled):active, .btn-secondary:not(:disabled):not(.disabled).active, .show>.btn-secondary.dropdown-toggle {
-    color: #FFF;
-    background-color: #545b62;
-    border-color: #4e555b;
+    color: #020203;
+    background-color: #999999;
+    border-color: #999999;
 }
 
 .btn-secondary:not(:disabled):not(.disabled):active:focus, .btn-secondary:not(:disabled):not(.disabled).active:focus, .show>.btn-secondary.dropdown-toggle:focus {
-    -webkit-box-shadow: 0 0 0 0 rgba(130, 138, 145, 0.5);
-    box-shadow: 0 0 0 0 rgba(130, 138, 145, 0.5);
+    -webkit-box-shadow: 0 0 0 0 rgba(153, 153, 153,0.5);
+    box-shadow: 0 0 0 0 rgba(153, 153, 153,0.5);
 }
 
 .btn-success {
@@ -4728,7 +4744,7 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
 }
 
 .card-header {
-    padding: 0.4rem 1.25rem;
+    padding: 0.4rem 0.6rem;
     margin-bottom: 0;
     background-color: white;
     border-bottom: 1px solid rgba(0, 0, 0, 0.125);
@@ -5843,6 +5859,11 @@ button.close {
 
 a.close.disabled {
     pointer-events: none;
+}
+
+.disabled{
+    pointer-events: none;
+    opacity: 0.4;
 }
 
 .toast {
@@ -9816,7 +9837,7 @@ a.text-secondary:hover, a.text-secondary:focus {
 }
 
 .text-success {
-    color: #28a745 !important;
+    color: #008e20 !important;
 }
 
 a.text-success:hover, a.text-success:focus {
@@ -13467,10 +13488,9 @@ be a descendant of the grid when it is being dragged.
     font-family: var(--font-family-roboto-bold);
     padding: 0 15px;
     font-size: 20px;
-    font-weight: bold;
+    font-weight: normal;
     line-height: 50px;
-    -webkit-box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2);
-    box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2);
+    border-right: 1px solid  rgba(0,0,0,.12);
 }
 
 @media (min-width: 768px) {
@@ -13788,7 +13808,7 @@ be a descendant of the grid when it is being dragged.
 }
 
 .app-menu__item.active, .app-menu__item:hover, .app-menu__item:focus {
-    background: #354a33;
+    background: var(--principal);
     border-left-color: #fe104c;
     text-decoration: none;
     color: #fff;
@@ -13830,7 +13850,7 @@ be a descendant of the grid when it is being dragged.
     -webkit-transition: max-height 0.3s ease;
     -o-transition: max-height 0.3s ease;
     transition: max-height 0.3s ease;
-    background: var(--blue);
+    background: #0d1214;
 }
 
 .treeview-item {
@@ -14550,8 +14570,8 @@ be a descendant of the grid when it is being dragged.
     display: flex;
     border-radius: 4px;
     color: #FFF;
-    margin-top: 30px;
-    margin-bottom: 30px;
+    margin-top: 20px;
+    margin-bottom: 20px;
     -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
 }
@@ -14624,7 +14644,7 @@ be a descendant of the grid when it is being dragged.
 }
 
 .widget-small.warning {
-    background-color: #ffc107;
+    background-color: #ea920d;
 }
 
 .widget-small.warning.coloured-icon {
@@ -14633,7 +14653,7 @@ be a descendant of the grid when it is being dragged.
 }
 
 .widget-small.warning.coloured-icon .icon {
-    background-color: #ffc107;
+    background-color: #ea920d;
     color: #fff;
 }
 
@@ -15273,4 +15293,31 @@ be a descendant of the grid when it is being dragged.
     background-size: cover;
     background-position: center;
     min-height: 330px;
+}
+
+
+.product-list-in-card{
+    list-style: none;
+}
+
+.product-list-in-card>.item{
+    display: flex;
+    flex-wrap: wrap;
+    padding: 10px;
+}
+
+.product-list-in-card>.item>.product-info{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 10px;
+}
+
+.product-list-in-card>.item>.product-info>.product-title{
+    width: auto;
+}
+
+.product-list-in-card>.item>.product-info>.product-price{
+    max-width: 150px;
+    min-width: auto;
 }
