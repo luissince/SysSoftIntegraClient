@@ -1,9 +1,10 @@
-<?php 
+<?php
 
 set_time_limit(300); //evita el error 20 segundos de peticion
 
 include_once('../model/SuministrosADO.php');
 require __DIR__ . "/lib/phpspreadsheet/vendor/autoload.php";
+
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
@@ -23,16 +24,15 @@ $worksheetData = $reader->listWorksheetInfo($inputFileName);
 
 foreach ($worksheetData as $worksheet) {
 
-$sheetName = $worksheet['worksheetName'];
+    $sheetName = $worksheet['worksheetName'];
 
-/**  Load $inputFileName to a Spreadsheet Object  **/
-$reader->setLoadSheetsOnly($sheetName);
-$spreadsheet = $reader->load($inputFileName);
+    /**  Load $inputFileName to a Spreadsheet Object  **/
+    $reader->setLoadSheetsOnly($sheetName);
+    $spreadsheet = $reader->load($inputFileName);
 
-$worksheet = $spreadsheet->getActiveSheet();
-$rows = $worksheet->toArray();
-array_push($array ,$rows);
-
+    $worksheet = $spreadsheet->getActiveSheet();
+    $rows = $worksheet->toArray();
+    array_push($array, $rows);
 }
 
 
@@ -53,10 +53,10 @@ $html = '<table>
 
 $count = 0;
 
- for($i = 0; $i<count($array);$i++){
-     $row = $array[$i];  
-    for($j = 0; $j < count($row); $j++){
-        if($j>6){
+for ($i = 0; $i < count($array); $i++) {
+    $row = $array[$i];
+    for ($j = 0; $j < count($row); $j++) {
+        if ($j > 0) {
             $count++;
             //number_format(round(($venta->SubTotal), 2, PHP_ROUND_HALF_UP), 2, '.', '')
             //<td>'.(str_contains('http',$row[$j][1])?"telachupo": $row[$j][1]).'</td>
@@ -70,8 +70,8 @@ $count = 0;
             // <td>'.number_format(round(($row[$j][7]), 2, PHP_ROUND_HALF_UP), 2, '.', '').'</td>
             // <td>'.number_format(round(($row[$j][9]), 2, PHP_ROUND_HALF_UP), 2, '.', '').'</td>
             // </tr>';
-            $suministro["Clave"]  = (preg_match('/\bhttp\b/',$row[$j][1])? "CB".$count: $row[$j][1]);
-            $suministro["ClaveAlterna"] = (preg_match('/\bhttp\b/',$row[$j][2])? "CA".$count: $row[$j][2]);
+            $suministro["Clave"]  =  $row[$j][1];
+            $suministro["ClaveAlterna"] =  "" . $row[$j][2];
             $suministro["NombreMarca"] = trim(strtoupper($row[$j][3]));
             $suministro["NombreGenerico"] = "";
 
@@ -82,61 +82,60 @@ $count = 0;
             $suministro["UnidadVenta"] = 3;
 
             $suministro["Estado"] = 1;
-            $suministro["StockMinimo"] = round(($row[$j][5]), 2, PHP_ROUND_HALF_UP);
-            $suministro["StockMaximo"] = 10;
-            $suministro["Cantidad"] = round(($row[$j][6]), 2, PHP_ROUND_HALF_UP);
+            $suministro["StockMinimo"] = is_numeric($row[$j][10]) ? round(($row[$j][10]), 2, PHP_ROUND_HALF_UP) : 0;
+            $suministro["StockMaximo"] = is_numeric($row[$j][9]) ? round(($row[$j][9]), 2, PHP_ROUND_HALF_UP) : 0;
+            $suministro["Cantidad"] = is_numeric($row[$j][8]) ? round(($row[$j][8]), 2, PHP_ROUND_HALF_UP) : 0;
 
             $suministro["Impuesto"] = 1;
             $suministro["TipoPrecio"] = 1;
-            $suministro["PrecioCompra"] = round(($row[$j][7]), 2, PHP_ROUND_HALF_UP);
-            $suministro["PrecioVentaGeneral"] = round(($row[$j][9]), 2, PHP_ROUND_HALF_UP);
-            $suministro["Lote"] =0;
+            $suministro["PrecioCompra"] = is_numeric($row[$j][4]) ? round(($row[$j][4]), 2, PHP_ROUND_HALF_UP) : 0;
+            $suministro["PrecioVentaGeneral"] = is_numeric($row[$j][5]) ? round(($row[$j][5]), 2, PHP_ROUND_HALF_UP) : 0;
+            $suministro["Lote"] = 0;
+            $suministro["Inventario"] = 1;
             $suministro["ValorInventario"] = 1;
 
             $suministro["ClaveUnica"] = "";
             $suministro["Imagen"] = null;
 
             $suministro["ListaPrecios"] = array(array(
-                "nombre" =>"Precio 2",
-                "valor" => round(($row[$j][9]), 2, PHP_ROUND_HALF_UP),
-                "factor" => 0
-            ),array(
-                "nombre" =>"Precio 3",
-                "valor" => round(($row[$j][9]), 2, PHP_ROUND_HALF_UP),
-                "factor" => 0
+                "nombre" => "Precio 2",
+                "valor" => is_numeric($row[$j][6]) ? round(($row[$j][6]), 2, PHP_ROUND_HALF_UP) : 0,
+                "factor" => 1
+            ), array(
+                "nombre" => "Precio 3",
+                "valor" => is_numeric($row[$j][7]) ? round(($row[$j][7]), 2, PHP_ROUND_HALF_UP) : 0,
+                "factor" => 1
             ));
-            
+
             // echo $count." - ".$row[$j][0] .'<br>';
             $result = SuministrosADO::RegistrarSuministro($suministro);
-        //         $row[$j][0],
-        //         $row[$j][1],
-        //         $row[$j][2],
-        //         $row[$j][3],
-        //         $row[$j][4],
-        //         $row[$j][5],
-        //         $row[$j][6],
-        //         $row[$j][7],
-        //         $row[$j][8],
-        //         $row[$j][9],
-        //         $row[$j][10],
-        //         $row[$j][11],
-        //         $row[$j][12],
-        //         $row[$j][13],
-        //         $row[$j][14],
-        //         $row[$j][15],
-        //         $row[$j][16],
-        //         $row[$j][17],
-        //         $row[$j][18],
+            //         $row[$j][0],
+            //         $row[$j][1],
+            //         $row[$j][2],
+            //         $row[$j][3],
+            //         $row[$j][4],
+            //         $row[$j][5],
+            //         $row[$j][6],
+            //         $row[$j][7],
+            //         $row[$j][8],
+            //         $row[$j][9],
+            //         $row[$j][10],
+            //         $row[$j][11],
+            //         $row[$j][12],
+            //         $row[$j][13],
+            //         $row[$j][14],
+            //         $row[$j][15],
+            //         $row[$j][16],
+            //         $row[$j][17],
+            //         $row[$j][18],
             // ));
-           if($result == "registrado"){
-               echo 'bien<br>';
-           }else{
-               echo "<h1>'.$result.'</h1>";
-           }
+            if ($result == "registrado") {
+                // echo 'bien<br>';
+            } else {
+                echo "<h1>'.$result.'</h1>";
+            }
         }
-       
     }
-   
 }
 
 $html .= '</tbody>
