@@ -1,4 +1,4 @@
-function ModalCliente() {
+function ModalListaCliente() {
 
     let tbListaCliente = $("#tbListaCliente");
     let stateCliente = false;

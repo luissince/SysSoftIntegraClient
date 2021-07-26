@@ -20,7 +20,9 @@ if (!isset($_SESSION['IdEmpleado'])) {
         <main class="app-content">
 
             <!-- modal lista cliente -->
-            <?php include('./layout/puntoventa/modalCliente.php'); ?>
+            <?php include('./layout/puntoventa/modalListaCliente.php'); ?>
+            <!-- modal proceso venta -->
+            <?php include('./layout/puntoventa/modalProcesoVenta.php'); ?>
 
             <!-- <div class="app-title">
                 <h1><i class="fa fa-folder"></i> Nota de Crédito <small>Lista</small></h1>
@@ -281,7 +283,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <button id="btnCobrar" class="btn btn-success btn-block rounded">
+                                    <button id="btnOpenModalProcesoVenta" class="btn btn-success btn-block rounded">
                                         <div class="row justify-content-center">
                                             <div class="col-md-6 text-left">
                                                 <h5>COBRAR</h5>
@@ -315,16 +317,19 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 </div>
         </main>
         <?php include "./layout/footer.php"; ?>
-        <script src="js/puntoventa/modalCliente.js"></script>
+        <script src="js/puntoventa/modalListaCliente.js"></script>
+        <script src="js/puntoventa/modalProcesoVenta.js"></script>
         <script src="./js/notificaciones.js"></script>
         <script>
             let isCodBarras = true;
 
             let tools = new Tools();
-            let modalCliente = new ModalCliente();
+            let modalListaCliente = new ModalListaCliente();
+            let modalProcesoVenta = new ModalProcesoVenta();
 
             $(document).ready(function() {
-                modalCliente.init();
+                modalListaCliente.init();
+                modalProcesoVenta.init();
 
                 $("#txtBuscarProducto").focus();
 
