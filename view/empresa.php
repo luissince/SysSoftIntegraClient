@@ -200,14 +200,14 @@ if (!isset($_SESSION['IdEmpleado'])) {
             let lblNameCertificado = $("#lblNameCertificado");
             let fileCertificado = $("#fileCertificado");
             let txtClaveCertificado = $("#txtClaveCertificado");
-            $(document).ready(function() {              
+            $(document).ready(function() {
 
                 $("#fileImage").on('change', function(event) {
                     lblImagen.attr("src", URL.createObjectURL(event.target.files[0]));
                 });
 
                 $("#fileCertificado").on('change', function(event) {
-                    lblNameCertificado.val(event.target.files[0].name);
+                    lblNameCertificado.html(event.target.files[0].name);
                 });
 
                 $("#btnGuardar").keypress(function(event) {
@@ -280,7 +280,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             txtEmail.val(data.result.Email);
                             txtUsuarioSol.val(data.result.UsuarioSol);
                             txtClaveSol.val(data.result.ClaveSol);
-                            lblNameCertificado.val(data.result.CertificadoRuta);
+                            lblNameCertificado.html(data.result.CertificadoRuta);
                             txtClaveCertificado.val(data.result.CertificadoClave);
                             $("#divOverlayEmpresa").addClass("d-none");
                         } else {

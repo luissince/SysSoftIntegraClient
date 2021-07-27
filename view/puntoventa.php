@@ -17,270 +17,322 @@ if (!isset($_SESSION['IdEmpleado'])) {
         <!-- Sidebar menu-->
         <?php include "./layout/menu.php"; ?>
 
+<<<<<<< HEAD
         <main class="app-content">
 
             <!-- modal lista cliente -->
             <?php include('./layout/puntoventa/modalListaCliente.php'); ?>
             <!-- modal proceso venta -->
             <?php include('./layout/puntoventa/modalProcesoVenta.php'); ?>
+=======
+        <!-- modal lista cliente -->
+        <?php include('./layout/puntoventa/modalCliente.php'); ?>
+>>>>>>> 67e047d836756ff92e61eae4f0706533a2016803
 
+        <main class="app-content">
             <!-- <div class="app-title">
                 <h1><i class="fa fa-folder"></i> Nota de Crédito <small>Lista</small></h1>
             </div> -->
 
-            <div class="tile mb-4">
-
-                <!-- <div class="row">
-                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                            <div class="form-group">
-                                <h4> Punto de Venta</h4>
-                            </div>
-                        </div>
-                    </div> -->
+            <div class="tile">
 
                 <div class="row">
-                    <div class="col-xl-7 col-lg-7 col-md-7 col-sm-7 col-7">
-
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                         <div class="form-group d-flex">
-                            <div class="input-group">
-                                <div class="input-group-append">
-                                    <button class="btn btn-warning" type="button" id="btnCodigo" title="Codigo de Barras"><i class="fa fa-barcode"></i></button>
-                                </div>
-                                <div class="input-group-append">
-                                    <button class="btn btn-info" type="button" id="btnProductos" title="Nombre de producto"><i class="fa fa-search"></i></button>
-                                </div>
-                                <input type="search" class="form-control" placeholder="Código de barras" id="txtBuscarProducto">
-                                <div class="input-group-append">
-                                    <button class="btn btn-info" type="button" id="btnNuevo" title="Nuevo producto"><i class="fa fa-plus"></i></button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <div class="border text-center p-1" style="height: 24em;">
-
-                                        <button type="button" class="btn btn-outline-info m-1" title="Descripción del producto">
-                                            <img src="./images/noimage.jpg" class="img-fluid" width="120">
-                                            <h6>Descripcion...</h6>
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <span>S/10.00</span>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="float-right">
-                                                        <span>50 Unid</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </button>
-
-                                        <button type="button" class="btn btn-outline-info m-1" title="Descripción del producto">
-                                            <img src="./images/noimage.jpg" class="img-fluid" width="120">
-                                            <h6>Descripcion...</h6>
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <span>S/10.00</span>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="float-right">
-                                                        <span>50 Unid</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </button>
-
-                                        <button type="button" class="btn btn-outline-info m-1" title="Descripción del producto">
-                                            <img src="./images/noimage.jpg" class="img-fluid" width="120">
-                                            <h6>Descripcion...</h6>
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <span>S/10.00</span>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="float-right">
-                                                        <span>50 Unid</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </button>
-
-                                        <button type="button" class="btn btn-outline-info m-1" title="Descripción del producto">
-                                            <img src="./images/noimage.jpg" class="img-fluid" width="120">
-                                            <h6>Descripcion...</h6>
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <span>S/10.00</span>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="float-right">
-                                                        <span>50 Unid</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </button>
-
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group d-flex">
-                                    <div class="input-group">
-                                        <div class="input-group-append">
-                                            <span class="form-control">
-                                                <i class="fa fa-file  text-primary"></i>
-                                            </span>
-                                        </div>
-
-                                        <select id="comprobante" class="form-control" title="Tipo de documento">
-                                            <option>Sin documento</option>
-                                            <option>DNI</option>
-                                            <option>RUC</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group d-flex">
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" placeholder="00000000" id="txtNumDocumento" title="Número de documento">
-                                        <div class="input-group-append">
-                                            <button class="btn btn-info" type="button" id="btnOpenModalListaClientes" title="Cliente"><i class="fa fa-user-plus"></i></button>
-                                        </div>
-                                        <div class="input-group-append">
-                                            <button class="btn btn-success" type="button" id="btnReniec" title="Reniec"><i class="fa fa-user-circle"></i></button>
-                                        </div>
-                                        <div class="input-group-append">
-                                            <button class="btn btn-danger" type="button" id="btnSunat" title="Sunat"><i class="fa fa-users"></i></button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group d-flex">
-                                    <div class="input-group">
-                                        <div class="input-group-append">
-                                            <span class="form-control">
-                                                <i class="fa fa-user text-primary"></i>
-                                            </span>
-                                        </div>
-                                        <input type="text" class="form-control" placeholder="Cliente" id="txtNombreCliente" title="Nombre de cliente">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group d-flex">
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" placeholder="Dirección" id="txtDireccionCliente" title="Dirección de cliente">
-                                    </div>
-                                </div>
-                            </div>
+                            <h4 class="mr-3"> Punto de Venta</h4>
+                            <button type="button" class="btn btn-warning rounded"><i class="fa fa-plus"></i> Agregar Venta</button>
                         </div>
                     </div>
+                </div>
 
+                <div class="bs-component">
+                    <ul class="nav nav-tabs" id="ulNavTabs">
+                        <li class="nav-item" id="liVenta1"><a class="nav-link active" data-toggle="tab" href="#Venta1">Venta 1 <i class="fa fa-close" onclick="closeTab('Venta1')"></i></a></li>
+                    </ul>
+                    <div class="tab-content" id="divTabContent">
 
-                    <!-- columna 2 -->
+                        <div class="tab-pane fade active show pt-1" id="Venta1">
+                            <div class="row">
+                                <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 col-12">
+                                    <div class="card">
 
-                    <div class="col-xl-5 col-lg-5 col-md-5 col-sm-5 col-5">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-group d-flex">
-                                    <div class="input-group">
-                                        <div class="input-group-append">
-                                            <span class="form-control">
-                                                <i class="fa fa-ticket text-primary"></i>
-                                            </span>
-                                        </div>
-
-                                        <select id="comprobante" class="form-control" title="Comprobante de venta">
-                                            <option>Tiket</option>
-                                            <option>Boleta</option>
-                                            <option>Factura</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <div class="bg-dark text-light">
-                                        <div class="row justify-content-center p-2">
-                                            <div class="col-md-6 text-left">
-                                                Serie: <span>T001</span>
-                                            </div>
-                                            <div class="col-md-6 text-right">
-                                                N°: <span>1</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-md-12 mb-2">
-                                <div class="form-group">
-                                    <div class="border" style="height: 24em;">
-
-                                        <div class="border border-dark p-1" title="Descripción del producto">
-                                            <div class="row">
-                                                <div class="col-md-6 align-self-center">
-                                                    <div class="form-group mb-0">
-                                                        <div><span>Descripcion del producto</span></div>
-                                                        <div><span>S/10.00</span></div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-3 align-self-center">
-                                                    <div class="form-group mb-0">
-                                                        <input type="text" class="form-control p-0 text-center" value="1">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-3 align-self-center">
-                                                    <div class="form-group mb-0">
-                                                        <div class="d-flex float-right">
-                                                            <h6 class="pr-1 ">S/100.00</h6>
-                                                            <button class="btn btn-dark rounded">
-                                                                <i class="fa fa-trash text-primary"></i>
+                                        <div class="card-header">
+                                            <div class="row mb-2">
+                                                <div class="col-md-12">
+                                                    <div class="input-group">
+                                                        <div class="input-group-append">
+                                                            <button class="btn btn-secondary" type="button" title="Agregar nueva venta">
+                                                                <div class="row">
+                                                                    <div class="col-md-12">
+                                                                        <i class="fa fa-shopping-bag"></i>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-md-12">
+                                                                        Productos(F1)
+                                                                    </div>
+                                                                </div>
+                                                            </button>
+                                                        </div>
+                                                        <div class="input-group-append">
+                                                            <button class="btn btn-secondary" type="button" title="Limpiar Venta">
+                                                                <div class="row">
+                                                                    <div class="col-md-12">
+                                                                        <i class="fa fa-shopping-bag"></i>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-md-12">
+                                                                        Precios(F2)
+                                                                    </div>
+                                                                </div>
+                                                            </button>
+                                                        </div>
+                                                        <div class="input-group-append">
+                                                            <button class="btn btn-secondary" type="button" title="Movimiento de caja">
+                                                                <div class="row">
+                                                                    <div class="col-md-12">
+                                                                        <i class="fa fa-shopping-bag"></i>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-md-12">
+                                                                        Productos(F3)
+                                                                    </div>
+                                                                </div>
+                                                            </button>
+                                                        </div>
+                                                        <div class="input-group-append">
+                                                            <button class="btn btn-secondary" type="button" title="Movimiento de caja">
+                                                                <div class="row">
+                                                                    <div class="col-md-12">
+                                                                        <i class="fa fa-shopping-bag"></i>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-md-12">
+                                                                        Mov. Caja(F4)
+                                                                    </div>
+                                                                </div>
+                                                            </button>
+                                                        </div>
+                                                        <div class="input-group-append">
+                                                            <button class="btn btn-secondary" type="button" title="Movimiento de caja">
+                                                                <div class="row">
+                                                                    <div class="col-md-12">
+                                                                        <i class="fa fa-shopping-bag"></i>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-md-12">
+                                                                        Limpiar(F5)
+                                                                    </div>
+                                                                </div>
+                                                            </button>
+                                                        </div>
+                                                        <div class="input-group-append">
+                                                            <button class="btn btn-secondary" type="button" title="Movimiento de caja">
+                                                                <div class="row">
+                                                                    <div class="col-md-12">
+                                                                        <i class="fa fa-shopping-bag"></i>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-md-12">
+                                                                        Ventas(F6)
+                                                                    </div>
+                                                                </div>
+                                                            </button>
+                                                        </div>
+                                                        <div class="input-group-append">
+                                                            <button class="btn btn-secondary" type="button" title="Movimiento de caja">
+                                                                <div class="row">
+                                                                    <div class="col-md-12">
+                                                                        <i class="fa fa-shopping-bag"></i>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-md-12">
+                                                                        Cotización(F7)
+                                                                    </div>
+                                                                </div>
                                                             </button>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
 
-                                        <div class="border border-dark p-1" title="Descripción del producto">
                                             <div class="row">
-                                                <div class="col-md-6 align-self-center">
-                                                    <div class="form-group mb-0">
-                                                        <div><span>Descripcion del producto</span></div>
-                                                        <div><span>S/10.00</span></div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-3 align-self-center">
-                                                    <div class="form-group mb-0">
-                                                        <input type="text" class="form-control p-0 text-center" value="1">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-3 align-self-center">
-                                                    <div class="form-group mb-0">
-                                                        <div class="d-flex float-right">
-                                                            <h6 class="pr-1 ">S/100.00</h6>
-                                                            <button class="btn btn-dark rounded">
-                                                                <i class="fa fa-trash text-primary"></i>
-                                                            </button>
+                                                <div class="col-md-12">
+                                                    <div class="input-group">
+                                                        <div class="input-group-append">
+                                                            <span class="form-control" id="btnCodigo" title="Codigo de Barras"><i class="fa fa-barcode"></i></span>
                                                         </div>
+                                                        <input type="text" class="form-control" placeholder="Código de barras">
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
 
-
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="table-responsive">
+                                                        <table class="table table-hover table-bordered table-sm">
+                                                            <thead>
+                                                                <tr role="row">
+                                                                    <th width="5%">#</th>
+                                                                    <th width="10%">Quitar</th>
+                                                                    <th width="15%">Cantidad</th>
+                                                                    <th width="30%">Descripción</th>
+                                                                    <th width="15%">Impuesto</th>
+                                                                    <th width="15%">Precio</th>
+                                                                    <th width="15%">Descuento</th>
+                                                                    <th width="20%">Importe</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody id="tbLista">
+                                                                <tr role="row" class="odd">
+                                                                    <td class="text-center">1</td>
+                                                                    <td class="text-center"><button class="btn btn-danger rounded"><i class="fa fa-trash"></i></button></td>
+                                                                    <td><input type="text" class="form-control" placeholder="0" /></td>
+                                                                    <td>description del producto</td>
+                                                                    <td class="text-center">igv(18%)</td>
+                                                                    <td><input type="text" class="form-control" placeholder="0" /></td>
+                                                                    <td class="text-center">0</td>
+                                                                    <td class="text-center">100.00</td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                                <!-- columna 2 -->
+                                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+                                    <div class="card">
 
+                                        <div class="card-header p-0">
+                                            <button id="btnCobrar" class="btn btn-success btn-block">
+                                                <div class="row">
+                                                    <div class="col-md-6 col-sm-6 col-6 text-left">
+                                                        <h5>COBRAR</h5>
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6 col-6 text-right">
+                                                        <h5 id="lblTotal">S/ 10.00</h5>
+                                                    </div>
+                                                </div>
+                                            </button>
+                                        </div>
+
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-12 col-sm-12 col-12">
+
+                                                    <div class="form-group">
+                                                        <div class="input-group">
+                                                            <div class="input-group-append">
+                                                                <span class="form-control">
+                                                                    <i class="fa fa-ticket text-info"></i>
+                                                                </span>
+                                                            </div>
+                                                            <select id="comprobante" class="form-control" title="Comprobante de venta">
+                                                                <option>Tipo de comprobante</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <div class="row">
+                                                            <div class="col-md-6 text-left">
+                                                                <h6>Serie: <span>T001</span></h6>
+                                                            </div>
+                                                            <div class="col-md-6 text-right">
+                                                                <h6> N°: <span>1</span></h6>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="form-group d-flex">
+                                                        <div class="input-group">
+                                                            <div class="input-group-append">
+                                                                <span class="form-control">
+                                                                    <i class="fa fa-bars text-info"></i>
+                                                                </span>
+                                                            </div>
+                                                            <select id="comprobante" class="form-control" title="Comprobante de venta">
+                                                                <option>Tipo de documento</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="form-group d-flex">
+                                                        <div class="input-group">
+                                                            <div class="input-group-append">
+                                                                <span class="form-control">
+                                                                    <i class="fa fa-search text-info"></i>
+                                                                </span>
+                                                            </div>
+                                                            <input type="text" class="form-control" placeholder="00000000" title="Número de documento">
+                                                            <div class="input-group-append">
+                                                                <button class="btn btn-secondary" type="button" title="Cliente"><i class="fa fa-user-plus text-dark"></i></button>
+                                                            </div>
+                                                            <div class="input-group-append">
+                                                                <button class="btn btn-secondary" type="button" title="Reniec"><i class="fa fa-user-circle text-dark"></i></button>
+                                                            </div>
+                                                            <div class="input-group-append">
+                                                                <button class="btn btn-secondary" type="button" title="Sunat"><i class="fa fa-users text-dark"></i></button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="form-group d-flex">
+                                                        <div class="input-group">
+                                                            <div class="input-group-append">
+                                                                <span class="form-control">
+                                                                    <i class="fa fa-user text-info"></i>
+                                                                </span>
+                                                            </div>
+                                                            <input type="text" class="form-control" placeholder="Cliente" title="Número de documento">
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="form-group d-flex">
+                                                        <div class="input-group">
+                                                            <div class="input-group-append">
+                                                                <span class="form-control">
+                                                                    <i class="fa fa-phone text-info"></i>
+                                                                </span>
+                                                            </div>
+                                                            <input type="text" class="form-control" placeholder="N° de Celular" title="Número de documento">
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="form-group d-flex">
+                                                        <div class="input-group">
+                                                            <div class="input-group-append">
+                                                                <span class="form-control">
+                                                                    <i class="fa fa-envelope text-info"></i>
+                                                                </span>
+                                                            </div>
+                                                            <input type="text" class="form-control" placeholder="Correo Electrónico" title="Número de documento">
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="form-group d-flex">
+                                                        <div class="input-group">
+                                                            <div class="input-group-append">
+                                                                <span class="form-control">
+                                                                    <i class="fa fa-map-marker text-info"></i>
+                                                                </span>
+                                                            </div>
+                                                            <input type="text" class="form-control" placeholder="Dirección de Vivienda o Local" title="Número de documento">
+                                                        </div>
+                                                    </div>
+
+<<<<<<< HEAD
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <button id="btnOpenModalProcesoVenta" class="btn btn-success btn-block rounded">
@@ -290,31 +342,21 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                             </div>
                                             <div class="col-md-6 text-right">
                                                 <h5 id="lblTotal">S/ 10.00</h5>
+=======
+                                                </div>
+>>>>>>> 67e047d836756ff92e61eae4f0706533a2016803
                                             </div>
                                         </div>
-                                    </button>
-                                </div>
-                            </div>
 
-                            <div class="col-md-12">
-                                <div class="input-group">
-                                    <div class="input-group-append pr-2">
-                                        <button class="btn btn-info" type="button" id="btnAddVenta" title="Agregar nueva venta"><i class="fa fa-shopping-bag"></i> Nueva venta</button>
-                                    </div>
-                                    <div class="input-group-append pr-2">
-                                        <button class="btn btn-info" type="button" id="btnLimpiar" title="Limpiar Venta"><i class="fa fa-trash"></i> Limpiar</button>
-                                    </div>
-                                    <div class="input-group-append">
-                                        <button class="btn btn-info" type="button" id="btnMovCaja" title="Movimiento de caja"><i class="fa fa-money"></i> Movimiento de caja</button>
                                     </div>
                                 </div>
                             </div>
-
                         </div>
 
                     </div>
-
                 </div>
+
+            </div>
         </main>
         <?php include "./layout/footer.php"; ?>
         <script src="js/puntoventa/modalListaCliente.js"></script>
@@ -328,40 +370,39 @@ if (!isset($_SESSION['IdEmpleado'])) {
             let modalProcesoVenta = new ModalProcesoVenta();
 
             $(document).ready(function() {
+<<<<<<< HEAD
                 modalListaCliente.init();
                 modalProcesoVenta.init();
 
+=======
+                modalCliente.init();
+>>>>>>> 67e047d836756ff92e61eae4f0706533a2016803
                 $("#txtBuscarProducto").focus();
+            });
 
-                $("#btnCodigo").click(function(event) {
-                    $("#btnProductos").removeClass("btn-warning");
-                    $("#btnProductos").addClass("btn-info");
+            function closeTab(idTab) {
+                if ($("#ulNavTabs li").length > 1) {
+                    let isSelected = $($("#li" + idTab + " a")[0]).hasClass("active");
+                    $("#li" + idTab).remove();
+                    $("#" + idTab).remove();
+                    if (isSelected) {
+                        $("#ulNavTabs li").each(function() {
+                            $("#" + $(this)[0].id + " a").removeClass("active")
+                        });
 
-                    $("#btnCodigo").removeClass("btn-info");
-                    $("#btnCodigo").addClass("btn-warning");
+                        $("#divTabContent > div").each(function() {
+                            $("#" + $(this)[0].id + "").removeClass("active show");
+                        });
 
-                    $("#txtBuscarProducto").attr('placeholder', "Código de barras")
-                    $("#txtBuscarProducto").focus();
-                    let isCodBarras = true;
+                        $("#" + $("#ulNavTabs li")[0].id + " a").addClass("active");
+                        $("#" + $("#divTabContent > div")[0].id + "").addClass("active show");
+                    } else {
 
-                })
-
-                $("#btnProductos").click(function(event) {
-                    $("#btnProductos").removeClass("btn-info");
-                    $("#btnProductos").addClass("btn-warning");
-
-                    $("#btnCodigo").removeClass("btn-warning");
-                    $("#btnCodigo").addClass("btn-info");
-
-                    $("#txtBuscarProducto").attr('placeholder', "Buscar productos")
-                    $("#txtBuscarProducto").focus();
-                    isCodBarras = false;
-                })
-
-
-
-
-            })
+                    }
+                } else {
+                    // $("#ulNavTabs li a i")[0].remove();
+                }
+            }
         </script>
     </body>
 

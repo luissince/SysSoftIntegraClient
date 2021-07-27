@@ -498,8 +498,9 @@ class SuministrosADO
                     Detalle,
                     Cantidad,
                     Costo,
-                    Total)
-                    VALUES(?,GETDATE(),GETDATE(),?,?,?,?,?,?)");
+                    Total,
+                    IdAlmacen)
+                    VALUES(?,GETDATE(),GETDATE(),?,?,?,?,?,?,0)");
 
                     $suministroKardex->execute(array(
                         $idSuministro,
@@ -515,6 +516,53 @@ class SuministrosADO
                     return "registrado";
                 }
             }
+        } catch (Exception $ex) {
+            Database::getInstance()->getDb()->rollback();
+            return $ex->getMessage();
+        }
+    }
+
+    public static function RegistrarAlmacenCantidad($suministro, $idAlmacen)
+    {
+        try {
+            Database::getInstance()->getDb()->beginTransaction();
+
+            $cmdValidate = Database::getInstance()->getDb()->prepare("SELECT IdSuministro FROM SuministroTB WHERE Clave = ?");
+            $cmdValidate->bindParam(1, $suministro["Clave"], PDO::PARAM_STR);
+            $cmdValidate->execute();
+            if ($row = $cmdValidate->fetch()) {
+
+                    $suministro_almacen_insertar = Database::getInstance()->getDb()->prepare("INSERT INTO CantidadTB(IdAlmacen,IdSuministro,StockMinimo,StockMaximo,Cantidad) VALUES(?,?,?,?,?)");
+                    $suministro_almacen_insertar->execute(array($idAlmacen, $row["IdSuministro"], $suministro["StockMinimo"], $suministro["StockMaximo"], $suministro["Cantidad"]));
+
+                    $suministroKardex = Database::getInstance()->getDb()->prepare("INSERT INTO KardexSuministroTB
+                    (IdSuministro,
+                    Fecha,
+                    Hora,
+                    Tipo,
+                    Movimiento,
+                    Detalle,
+                    Cantidad,
+                    Costo,
+                    Total,
+                    IdAlmacen)
+                    VALUES(?,GETDATE(),GETDATE(),?,?,?,?,?,?,?)");
+
+                    $suministroKardex->execute(array(
+                        $row["IdSuministro"],
+                        1,
+                        2,
+                        "INVENTARIO INICIAL",
+                        $suministro["Cantidad"],
+                        $suministro["PrecioCompra"],
+                        $suministro["PrecioCompra"] * $suministro["Cantidad"],
+                        $idAlmacen
+                    ));
+                               
+            }
+
+            Database::getInstance()->getDb()->commit();
+            return "registrado";
         } catch (Exception $ex) {
             Database::getInstance()->getDb()->rollback();
             return $ex->getMessage();
@@ -634,6 +682,8 @@ class SuministrosADO
             return $ex->getMessage();
         }
     }
+
+
 
     public static function ObtenerDetalleId($opcion, $idMantenimiento, $nombre)
     {
