@@ -74,43 +74,47 @@ for ($i = 0; $i < count($array); $i++) {
             // </tr>';
             $suministro["Clave"]  =  $row[$j][1];
             $suministro["ClaveAlterna"] =  "" . $row[$j][2];
-            // $suministro["NombreMarca"] = trim(strtoupper($row[$j][3]));
-            // $suministro["NombreGenerico"] = "";
 
-            // $suministro["Categoria"] = 24;
-            // $suministro["Marca"] = 0;
-            // $suministro["Presentacion"] = 0;
-            // $suministro["UnidadCompra"] = 58;
-            // $suministro["UnidadVenta"] = 3;
+            $suministro["NombreMarca"] = trim(strtoupper($row[$j][3]));
+            $suministro["NombreGenerico"] = "";
 
-            // $suministro["Estado"] = 1;
+            $suministro["Categoria"] = 24;
+            $suministro["Marca"] = 0;
+            $suministro["Presentacion"] = 0;
+            $suministro["UnidadCompra"] = 58;
+            $suministro["UnidadVenta"] = 3;
+
+            $suministro["Estado"] = 1;
+
             $suministro["StockMinimo"] = is_numeric($row[$j][10]) ? round(($row[$j][10]), 2, PHP_ROUND_HALF_UP) : 0;
             $suministro["StockMaximo"] = is_numeric($row[$j][9]) ? round(($row[$j][9]), 2, PHP_ROUND_HALF_UP) : 0;
             $suministro["Cantidad"] = is_numeric($row[$j][8]) ? round(($row[$j][8]), 2, PHP_ROUND_HALF_UP) : 0;
 
-            // $suministro["Impuesto"] = 1;
-            // $suministro["TipoPrecio"] = 1;
+            $suministro["Impuesto"] = 1;
+            $suministro["TipoPrecio"] = 1;
+
             $suministro["PrecioCompra"] = is_numeric($row[$j][4]) ? round(($row[$j][4]), 2, PHP_ROUND_HALF_UP) : 0;
             $suministro["PrecioVentaGeneral"] = is_numeric($row[$j][5]) ? round(($row[$j][5]), 2, PHP_ROUND_HALF_UP) : 0;
-            // $suministro["Lote"] = 0;
-            // $suministro["Inventario"] = 1;
-            // $suministro["ValorInventario"] = 1;
 
-            // $suministro["ClaveUnica"] = "";
-            // $suministro["Imagen"] = null;
+            $suministro["Lote"] = 0;
+            $suministro["Inventario"] = 1;
+            $suministro["ValorInventario"] = 1;
 
-            // $suministro["ListaPrecios"] = array(array(
-            //     "nombre" => "Precio 2",
-            //     "valor" => is_numeric($row[$j][6]) ? round(($row[$j][6]), 2, PHP_ROUND_HALF_UP) : 0,
-            //     "factor" => 1
-            // ), array(
-            //     "nombre" => "Precio 3",
-            //     "valor" => is_numeric($row[$j][7]) ? round(($row[$j][7]), 2, PHP_ROUND_HALF_UP) : 0,
-            //     "factor" => 1
-            // ));
+            $suministro["ClaveUnica"] = "";
+            $suministro["Imagen"] = null;
+
+            $suministro["ListaPrecios"] = array(array(
+                "nombre" => "Precio 2",
+                "valor" => is_numeric($row[$j][6]) ? round(($row[$j][6]), 2, PHP_ROUND_HALF_UP) : 0,
+                "factor" => 1
+            ), array(
+                "nombre" => "Precio 3",
+                "valor" => is_numeric($row[$j][7]) ? round(($row[$j][7]), 2, PHP_ROUND_HALF_UP) : 0,
+                "factor" => 1
+            ));
 
             // echo $count." - ".$row[$j][0] .'<br>';
-            $result = SuministrosADO::RegistrarAlmacenCantidad($suministro,2);
+            $result = SuministrosADO::RegistrarSuministro($suministro);
             //         $row[$j][0],
             //         $row[$j][1],
             //         $row[$j][2],
