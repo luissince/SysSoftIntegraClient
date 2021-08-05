@@ -1,6 +1,8 @@
 <?php
 
-set_time_limit(300); //evita el error 20 segundos de peticion
+ini_set('max_execution_time', '300');
+ini_set("pcre.backtrack_limit", "10000000");
+ini_set('memory_limit', '-1');
 
 include_once('../model/SuministrosADO.php');
 require __DIR__ . "/lib/phpspreadsheet/vendor/autoload.php";
@@ -72,6 +74,7 @@ for ($i = 0; $i < count($array); $i++) {
             // </tr>';
             $suministro["Clave"]  =  $row[$j][1];
             $suministro["ClaveAlterna"] =  "" . $row[$j][2];
+
             $suministro["NombreMarca"] = trim(strtoupper($row[$j][3]));
             $suministro["NombreGenerico"] = "";
 
@@ -82,14 +85,17 @@ for ($i = 0; $i < count($array); $i++) {
             $suministro["UnidadVenta"] = 3;
 
             $suministro["Estado"] = 1;
+
             $suministro["StockMinimo"] = is_numeric($row[$j][10]) ? round(($row[$j][10]), 2, PHP_ROUND_HALF_UP) : 0;
             $suministro["StockMaximo"] = is_numeric($row[$j][9]) ? round(($row[$j][9]), 2, PHP_ROUND_HALF_UP) : 0;
             $suministro["Cantidad"] = is_numeric($row[$j][8]) ? round(($row[$j][8]), 2, PHP_ROUND_HALF_UP) : 0;
 
             $suministro["Impuesto"] = 1;
             $suministro["TipoPrecio"] = 1;
+
             $suministro["PrecioCompra"] = is_numeric($row[$j][4]) ? round(($row[$j][4]), 2, PHP_ROUND_HALF_UP) : 0;
             $suministro["PrecioVentaGeneral"] = is_numeric($row[$j][5]) ? round(($row[$j][5]), 2, PHP_ROUND_HALF_UP) : 0;
+
             $suministro["Lote"] = 0;
             $suministro["Inventario"] = 1;
             $suministro["ValorInventario"] = 1;

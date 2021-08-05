@@ -18,7 +18,15 @@ if (!isset($_SESSION['IdEmpleado'])) {
         <?php include "./layout/menu.php"; ?>
 
         <!-- modal lista cliente -->
-        <?php include('./layout/puntoventa/modalCliente.php'); ?>
+        <?php include('./layout/puntoventa/modalListaCliente.php'); ?>
+
+        <!-- modal proceso venta -->
+        <?php include('./layout/puntoventa/modalProcesoVenta.php'); ?>
+        <!-- modal productos -->
+        <?php include('./layout/puntoventa/modalProductos.php'); ?>
+        <!-- modal lista precio -->
+        <?php include('./layout/puntoventa/modalListaPrecios.php'); ?>
+     
 
         <main class="app-content">
             <!-- <div class="app-title">
@@ -43,6 +51,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     <div class="tab-content" id="divTabContent">
 
                         <div class="tab-pane fade active show pt-1" id="Venta1">
+
                             <div class="row">
                                 <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 col-12">
                                     <div class="card">
@@ -52,7 +61,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                                 <div class="col-md-12">
                                                     <div class="input-group">
                                                         <div class="input-group-append">
-                                                            <button class="btn btn-secondary" type="button" title="Agregar nueva venta">
+                                                            <button id="btnOpenModalProductos" class="btn btn-secondary" type="button" title="Lista de Productos">
                                                                 <div class="row">
                                                                     <div class="col-md-12">
                                                                         <i class="fa fa-shopping-bag"></i>
@@ -66,7 +75,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                                             </button>
                                                         </div>
                                                         <div class="input-group-append">
-                                                            <button class="btn btn-secondary" type="button" title="Limpiar Venta">
+                                                            <button id="btnOpenModalListaPrecios" class="btn btn-secondary" type="button" title="Lista de Precios">
                                                                 <div class="row">
                                                                     <div class="col-md-12">
                                                                         <i class="fa fa-shopping-bag"></i>
@@ -80,7 +89,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                                             </button>
                                                         </div>
                                                         <div class="input-group-append">
-                                                            <button class="btn btn-secondary" type="button" title="Movimiento de caja">
+                                                            <button class="btn btn-secondary" type="button" title="Cambiar cantidades">
                                                                 <div class="row">
                                                                     <div class="col-md-12">
                                                                         <i class="fa fa-shopping-bag"></i>
@@ -88,7 +97,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                                                 </div>
                                                                 <div class="row">
                                                                     <div class="col-md-12">
-                                                                        Productos(F3)
+                                                                        Cantidad(F3)
                                                                     </div>
                                                                 </div>
                                                             </button>
@@ -329,25 +338,40 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
                                     </div>
                                 </div>
+
                             </div>
                         </div>
-
                     </div>
                 </div>
-
             </div>
         </main>
         <?php include "./layout/footer.php"; ?>
-        <script src="js/puntoventa/modalCliente.js"></script>
+        <script src="js/puntoventa/modalListaCliente.js"></script>
+        <script src="js/puntoventa/modalProcesoVenta.js"></script>
+
+        <script src="js/puntoventa/modalProductos.js"></script>
+        <script src="js/puntoventa/modalListaPrecios.js"></script>
+
         <script src="./js/notificaciones.js"></script>
         <script>
             let isCodBarras = true;
 
             let tools = new Tools();
-            let modalCliente = new ModalCliente();
+            let modalListaCliente = new ModalListaCliente();
+            let modalProcesoVenta = new ModalProcesoVenta();
+            let modalProductos = new ModalProductos();
+            
+            let modalListaPrecios = new ModalListaPrecios();
 
             $(document).ready(function() {
-                modalCliente.init();
+
+                modalListaCliente.init();
+                modalProcesoVenta.init();
+
+                modalProductos.init();
+                modalListaPrecios.init();
+                // modalCliente.init();
+
                 $("#txtBuscarProducto").focus();
             });
 
