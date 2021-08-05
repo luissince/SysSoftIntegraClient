@@ -207,7 +207,10 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 });
 
                 $("#fileCertificado").on('change', function(event) {
-                    lblNameCertificado.html(event.target.files[0].name);
+                    if (event.target.files.length > 0) {
+                        lblNameCertificado.empty();
+                        lblNameCertificado.html(event.target.files[0].name);
+                    }
                 });
 
                 $("#btnGuardar").keypress(function(event) {
@@ -312,7 +315,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
                 formData.append("txtUsuarioSol", txtUsuarioSol.val());
                 formData.append("txtClaveSol", txtClaveSol.val());
-                formData.append("certificadoUrl", lblNameCertificado.val());
+                formData.append("certificadoUrl", lblNameCertificado.html());
                 formData.append("certificadoType", fileCertificado[0].files.length);
                 formData.append("certificado", fileCertificado[0].files[0]);
                 formData.append("txtClaveCertificado", txtClaveCertificado.val());
