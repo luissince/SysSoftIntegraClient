@@ -73,14 +73,14 @@
                                 <!-- <div class="input-group-append"> -->
                                     <button id="btnAdelantado" class="btn btn-secondary" type="button" title="Pago Adelantado">
                                         <!-- <div class="row"> -->
-                                            <!-- <div class="col-md-12"> -->
+                                            <div class="text-center">
                                                 <i class="fa fa-suitcase"></i>
-                                            <!-- </div> -->
+                                            </div>
                                         <!-- </div> -->
                                         <!-- <div class="row"> -->
-                                            <!-- <div class="col-md-12"> -->
+                                            <div class="text-center">
                                                 <label>Pago Adelantado</label>
-                                            <!-- </div> -->
+                                            </div>
                                         <!-- </div> -->
                                     </button>
                                 <!-- </div> -->
