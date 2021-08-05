@@ -61,7 +61,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                                 <div class="col-md-12">
                                                     <div class="input-group">
                                                         <div class="input-group-append">
-                                                            <button id="btnOpenModalProductos" class="btn btn-secondary" type="button" title="Lista de Productos">
+                                                            <button id="btnProductos" class="btn btn-secondary" type="button" title="Lista de Productos">
                                                                 <div class="row">
                                                                     <div class="col-md-12">
                                                                         <i class="fa fa-shopping-bag"></i>
@@ -345,6 +345,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 </div>
             </div>
         </main>
+
         <?php include "./layout/footer.php"; ?>
         <script src="js/puntoventa/modalListaCliente.js"></script>
         <script src="js/puntoventa/modalProcesoVenta.js"></script>
@@ -372,7 +373,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 modalListaPrecios.init();
                 // modalCliente.init();
 
-                $("#txtBuscarProducto").focus();
+                
             });
 
             function closeTab(idTab) {

@@ -1,18 +1,18 @@
 function ModalProductos() {
 
+
     this.init = function () {
 
         $('#modalProductos').on('shown.bs.modal', function () {
             $('#txtSearchProducto').trigger('focus')
         })
 
-        $("#btnOpenModalProductos").click(function () {
+        $("#btnProductos").click(function () {
             if(true){
                 $("#modalProductos").modal("show");
-                // loadInitClientes();
-                console.log('dentro al modal')
+                console.log('dentro al modal Productos')
             } else {
-                console.log('no dentro al modal');  
+                console.log('no dentro al modal Productos');  
             }
            
         });
@@ -30,7 +30,17 @@ function ModalProductos() {
 
     function clearModalProductos() {
         $("#modalProductos").modal("hide");
-        // tbListaCliente.empty();
+
+        // $("#tbListaProductos").empty();
+        // $("#tbListaAddPrecios").empty();
+
+        $("#navListaProductos").removeClass("active");
+        $("#navAgregarProducto").removeClass("active");
+        $("#navListaProductos").addClass("active");
+
+        $("#listProducts").removeClass("in active show");
+        $("#addProducto").removeClass("in active show");
+        $("#listProducts").addClass("in active show");
     }
 
 }
