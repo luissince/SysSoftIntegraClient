@@ -355,7 +355,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
         <script src="./js/notificaciones.js"></script>
         <script>
-            let isCodBarras = true;
 
             let tools = new Tools();
             let modalListaCliente = new ModalListaCliente();
