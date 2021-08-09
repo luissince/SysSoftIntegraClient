@@ -26,6 +26,12 @@ if (!isset($_SESSION['IdEmpleado'])) {
         <?php include('./layout/puntoventa/modalProductos.php'); ?>
         <!-- modal lista precio -->
         <?php include('./layout/puntoventa/modalListaPrecios.php'); ?>
+        <!-- modal cantidad -->
+        <?php include('./layout/puntoventa/modalCantidad.php'); ?>
+        <!-- modal precio -->
+        <?php include('./layout/puntoventa/modalPrecio.php'); ?>
+        <!-- modal movimiento caja -->
+        <?php include('./layout/puntoventa/modalMovimientoCaja.php'); ?>
      
 
         <main class="app-content">
@@ -75,7 +81,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                                             </button>
                                                         </div>
                                                         <div class="input-group-append">
-                                                            <button id="btnOpenModalListaPrecios" class="btn btn-secondary" type="button" title="Lista de Precios">
+                                                            <button id="btnListaPrecios" class="btn btn-secondary" type="button" title="Lista de Precios">
                                                                 <div class="row">
                                                                     <div class="col-md-12">
                                                                         <i class="fa fa-shopping-bag"></i>
@@ -89,7 +95,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                                             </button>
                                                         </div>
                                                         <div class="input-group-append">
-                                                            <button class="btn btn-secondary" type="button" title="Cambiar cantidades">
+                                                            <button id="btnCantidad" class="btn btn-secondary" type="button" title="Cambiar cantidades">
                                                                 <div class="row">
                                                                     <div class="col-md-12">
                                                                         <i class="fa fa-shopping-bag"></i>
@@ -103,7 +109,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                                             </button>
                                                         </div>
                                                         <div class="input-group-append">
-                                                            <button class="btn btn-secondary" type="button" title="Movimiento de caja">
+                                                            <button id="btnMovimientoCaja" class="btn btn-secondary" type="button" title="Movimiento de caja">
                                                                 <div class="row">
                                                                     <div class="col-md-12">
                                                                         <i class="fa fa-shopping-bag"></i>
@@ -352,6 +358,9 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
         <script src="js/puntoventa/modalProductos.js"></script>
         <script src="js/puntoventa/modalListaPrecios.js"></script>
+        <script src="js/puntoventa/modalCantidad.js"></script>
+        <script src="js/puntoventa/modalPrecio.js"></script>
+        <script src="js/puntoventa/modalMovimientoCaja.js"></script>
 
         <script src="./js/notificaciones.js"></script>
         <script>
@@ -360,6 +369,9 @@ if (!isset($_SESSION['IdEmpleado'])) {
             let modalListaCliente = new ModalListaCliente();
             let modalProcesoVenta = new ModalProcesoVenta();
             let modalProductos = new ModalProductos();
+            let modalCantidad = new ModalCantidad();
+            let modalPrecio = new ModalPrecio();
+            let modalMovimientoCaja = new ModalMovimientoCaja();
             
             let modalListaPrecios = new ModalListaPrecios();
 
@@ -367,12 +379,12 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
                 modalListaCliente.init();
                 modalProcesoVenta.init();
-
                 modalProductos.init();
+                modalCantidad.init();
+                modalPrecio.init();
+                modalMovimientoCaja.init();
                 modalListaPrecios.init();
-                // modalCliente.init();
 
-                
             });
 
             function closeTab(idTab) {

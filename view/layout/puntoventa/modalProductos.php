@@ -331,7 +331,7 @@
                                         </div>
                                         <div class="col-md-6 col-sm-12">
                                             <div class="form-group">
-                                                <label for="cbxPresentacion">Presentacion</label>: </label>
+                                                <label for="cbxPresentacion">Presentacion: </label>
                                                 <select id="cbxPresentacion" class="form-control">
                                                     <option value="">--selected--</option>
                                                     <option value="1">OPCIÓN 1</option>
