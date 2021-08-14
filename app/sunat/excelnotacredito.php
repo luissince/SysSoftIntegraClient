@@ -1,16 +1,15 @@
 <?php
-
-set_time_limit(300); //evita el error 20 segundos de peticion
-session_start();
+set_time_limit(300);
 
 require __DIR__ . "/lib/phpspreadsheet/vendor/autoload.php";
-include __DIR__ . "./../model/VentasADO.php";
+require __DIR__ . './../src/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
+use SysSoftIntegra\Model\VentasADO;
 
 $fechaInicio = $_GET["txtFechaInicial"];
 $fechaFinal = $_GET["txtFechaFinal"];
@@ -109,7 +108,7 @@ $documento->setActiveSheetIndex(0)
 
 $cel = 4;
 foreach ($ventas as $key => $value) {
- 
+
 
     if (intval($value["Estado"]) !== 2 && $value["Xmlsunat"] === '0') {
         $documento->getActiveSheet()->getStyle('A' . $cel . ':M' . $cel . '')->applyFromArray(array(

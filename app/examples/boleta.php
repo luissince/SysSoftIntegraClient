@@ -7,31 +7,18 @@ header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Ac
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
 header('Content-Type: application/json; charset=UTF-8');
 
-// use Greenter\Model\Client\Client;
-// use Greenter\Model\Company\Company;
-// use Greenter\Model\Company\Address;
-// use Greenter\Model\Sale\Invoice;
-// use Greenter\Model\Sale\SaleDetail;
-// use Greenter\Model\Sale\Legend;
-// use Greenter\Ws\Services\SunatEndpoints;
+use SysSoftIntegra\Src\SoapResult;
+use SysSoftIntegra\Src\Sunat;
+use SysSoftIntegra\Src\NumberLleters;
+use SysSoftIntegra\Model\VentasAdo;
 
-require __DIR__ . './../sunat/lib/robrichards/src/xmlseclibs.php';
-
-use RobRichards\XMLSecLibs\XMLSecurityDSig;
-use RobRichards\XMLSecLibs\XMLSecurityKey;
-
-// require __DIR__ . './../vendor/autoload.php';
-include __DIR__ . './../src/GenerateCoinToLetters.php';
-include_once __DIR__ . './../model/VentasADO.php';
-
-// $util = Util::getInstance();
-$gcl = new GenerateCoinToLetters();
+require __DIR__ . './../src/autoload.php';
 
 $idventa = $_GET['idventa'];
-$detalleventa = VentasADO::ListarDetalleVentPorId($idventa);
+$detalleventa = VentasAdo::ListarDetalleVentPorId($idventa);
+$gcl = new NumberLleters();
 
 if (!is_array($detalleventa)) {
-
     echo json_encode(array(
         "state" => false,
         "code" => "-1",
@@ -183,7 +170,7 @@ if (!is_array($detalleventa)) {
     $cbc = $xml->createElement('cbc:PaymentMeansID', "Contado");
     $cbc = $PaymentTerms->appendChild($cbc);
 
-    /// TOTALES 
+    // TOTALES 
     $cac_TaxTotal = $xml->createElement('cac:TaxTotal');
     $cac_TaxTotal = $Invoice->appendChild($cac_TaxTotal);
     $cbc = $xml->createElement('cbc:TaxAmount', number_format(round($detalleventa[0]['totalimpuesto'], 2, PHP_ROUND_HALF_UP), 2, '.', ''));
@@ -210,7 +197,6 @@ if (!is_array($detalleventa)) {
         $cbc = $xml->createElement('cbc:TaxTypeCode', 'VAT');
         $cbc = $cac_TaxScheme->appendChild($cbc);
     } else {
-
         $cac_TaxSubtotal = $xml->createElement('cac:TaxSubtotal');
         $cac_TaxSubtotal = $cac_TaxTotal->appendChild($cac_TaxSubtotal);
         $cbc = $xml->createElement('cbc:TaxableAmount', number_format(round($detalleventa[0]['opexonerada'], 2, PHP_ROUND_HALF_UP), 2, '.', ''));
@@ -266,7 +252,7 @@ if (!is_array($detalleventa)) {
         $cbc = $InvoiceLine->appendChild($cbc);
         $cbc = $xml->createElement('cbc:InvoicedQuantity', number_format(round($cantidad, 2, PHP_ROUND_HALF_UP), 2, '.', ''));
         $cbc = $InvoiceLine->appendChild($cbc);
-        $cbc->setAttribute('unitCode', "NIU");
+        $cbc->setAttribute('unitCode', $value["CodigoUnidad"]);
         $cbc = $xml->createElement('cbc:LineExtensionAmount', number_format(round($importeBrutoTotal, 2, PHP_ROUND_HALF_UP), 2, '.', ''));
         $cbc = $InvoiceLine->appendChild($cbc);
         $cbc->setAttribute('currencyID', $venta->TipoMoneda);
@@ -334,311 +320,52 @@ if (!is_array($detalleventa)) {
 
     //CREAR ARCHIVO
     $xml->formatOutput = true;
-    $strings_xml       = $xml->saveXML();
+    $xml->saveXML();
 
     $filename = $empresa->NumeroDocumento . '-' . $venta->TipoComprobante . '-' . $venta->Serie . '-' . $venta->Numeracion;
     $xml->save('../files/' . $filename . '.xml');
     chmod('../files/' . $filename . '.xml', 0777);
 
+    Sunat::signDocument($filename);
 
-    $doc = new DOMDocument();
-    $doc->load('./../files/' . $filename . '.xml');
+    Sunat::createZip("../files/" . $filename . ".zip", "../files/" . $filename . ".xml", "" . $filename . ".xml");
 
-    $objDSig = new XMLSecurityDSig();
-    $objDSig->setCanonicalMethod(XMLSecurityDSig::EXC_C14N);
-    $objDSig->addReference(
-        $doc,
-        XMLSecurityDSig::SHA1,
-        array('http://www.w3.org/2000/09/xmldsig#enveloped-signature'),
-        array('force_uri' => true)
-    );
+    $soapResult = new SoapResult('../resources/wsdl/billService.wsdl', $filename);
+    $soapResult->sendBill(Sunat::xmlSendBill($empresa->NumeroDocumento, $empresa->UsuarioSol, $empresa->ClaveSol, $filename . '.zip', base64_encode(file_get_contents('../files/' . $filename . '.zip'))));
 
-
-    $objKey = new XMLSecurityKey(XMLSecurityKey::RSA_SHA1, array('type' => 'private'));
-
-    $objKey->loadKey('./../resources/private_key.pem', true);
-    $objDSig->sign($objKey);
-    $objDSig->add509Cert(file_get_contents('./../resources/public_key.pem'), true, false, array('subjectName' => true));
-    $objDSig->appendSignature($doc->getElementsByTagName('ExtensionContent')->item(0));
-
-
-    $doc->save('../files/' . $filename . '.xml');
-    chmod('../files/' . $filename . '.xml', 0777);
-
-    ## Creación del archivo .ZIP
-    $zip = new ZipArchive();
-    $zip->open("../files/" . $filename . ".zip", ZipArchive::CREATE);
-    $zip->addFile("../files/" . $filename . ".xml", "" . $filename . ".xml");
-    $zip->close();
-
-
-    # Procedimiento para enviar comprobante a la SUNAT
-    class feedSoap extends SoapClient
-    {
-        public $XMLStr = "";
-        public function setXMLStr($value)
-        {
-            $this->XMLStr = $value;
+    if ($soapResult->isSuccess()) {
+        if ($soapResult->isAccepted()) {
+            VentasAdo::CambiarEstadoSunatVenta($idventa, $soapResult->getCode(), $soapResult->getDescription(), $soapResult->getHashCode(), Sunat::getXmlSign());
+            echo json_encode(array(
+                "state" => $soapResult->isSuccess(),
+                "accept" => $soapResult->isAccepted(),
+                "code" => $soapResult->getCode(),
+                "description" => $soapResult->getDescription()
+            ));
+        } else {
+            VentasAdo::CambiarEstadoSunatVentaUnico($idventa, $soapResult->getCode(), $soapResult->getDescription());
+            echo json_encode(array(
+                "state" => $soapResult->isSuccess(),
+                "accept" => $soapResult->isAccepted(),
+                "code" => $soapResult->getCode(),
+                "description" => $soapResult->getDescription()
+            ));
         }
-        public function getXMLStr()
-        {
-            return $this->XMLStr;
-        }
-        public function __doRequest($request, $location, $action, $version, $one_way = 0)
-        {
-            $request = $this->XMLStr;
-            $dom = new DOMDocument('1.0');
-            try {
-                $dom->loadXML($request);
-            } catch (DOMException $e) {
-                die($e->code);
-            }
-            $request = $dom->saveXML();
-            //Solicitud
-            return parent::__doRequest($request, $location, $action, $version, $one_way = 0);
-        }
-        public function SoapClientCall($SOAPXML)
-        {
-            return $this->setXMLStr($SOAPXML);
+    } else {
+        if ($soapResult->getCode() == "1033") {
+            VentasAdo::CambiarEstadoSunatVentaUnico($idventa, "0", $soapResult->getDescription());
+            echo json_encode(array(
+                "state" => false,
+                "code" => $soapResult->getCode(),
+                "description" => $soapResult->getDescription()
+            ));
+        } else {
+            VentasAdo::CambiarEstadoSunatVentaUnico($idventa, $soapResult->getCode(), $soapResult->getDescription());
+            echo json_encode(array(
+                "state" => false,
+                "code" => $soapResult->getCode(),
+                "description" => $soapResult->getDescription()
+            ));
         }
     }
-
-    function soapCall($url, $callFunction = "", $XMLString)
-    {
-        $client = new feedSoap($url, array('trace' => true));
-        $client->SoapClientCall($XMLString);
-        $client->__call("$callFunction", array(), array());
-        return $client->__getLastResponse();
-    }
-
-
-    //Estructura del XML para la conexión
-    $XMLString = '<?xml version="1.0" encoding="UTF-8"?>
-    <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://service.sunat.gob.pe" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
-    <soapenv:Header>
-        <wsse:Security>
-            <wsse:UsernameToken Id="ABC-123">
-                <wsse:Username>' . $empresa->NumeroDocumento . '' . $empresa->UsuarioSol . '</wsse:Username>
-                <wsse:Password>' . $empresa->ClaveSol . '</wsse:Password>
-            </wsse:UsernameToken>
-        </wsse:Security>
-    </soapenv:Header>
-    <soapenv:Body>
-        <ser:sendBill>
-            <fileName>' . $filename . '.zip</fileName>
-            <contentFile>' . base64_encode(file_get_contents('../files/' . $filename . '.zip')) . '</contentFile>
-        </ser:sendBill>
-    </soapenv:Body>
-    </soapenv:Envelope>';
-
-    //URL para enviar las solicitudes a SUNAT
-    //$wsdlURL = 'https://e-beta.sunat.gob.pe/ol-ti-itcpfegem-beta/billService?wsdl';   // pra pruebas beta
-    $wsdlURL = 'billService.wsdl'; // para produccion
-
-    //Realizamos la llamada a nuestra función
-    try {
-        $result = soapCall($wsdlURL, $callFunction = "sendBill", $XMLString);
-
-        //Descargamos el Archivo Response
-        $archivo = fopen('C' . $filename . '.xml', 'w+');
-        fputs($archivo, $result);
-        fclose($archivo);
-
-        //LEEMOS EL ARCHIVO XML*
-        $xml = simplexml_load_file('C' . $filename . '.xml');
-        foreach ($xml->xpath('//applicationResponse') as $response) {
-        }
-
-        //AQUI DESCARGAMOS EL ARCHIVO CDR(CONSTANCIA DE RECEPCIÓN)
-        $cdr = base64_decode($response);
-        $archivo = fopen('../files/R-' . $filename . '.zip', 'w+');
-        fputs($archivo, $cdr);
-        fclose($archivo);
-        chmod('../files/R-' . $filename . '.zip', 0777);
-
-        $zip = new ZipArchive();
-        $zip->open('../files/R-' . $filename . '.zip');
-        $zip->extractTo('../files/');
-        $zip->close();
-
-        $xml = file_get_contents('../files/R-' . $filename . '.xml');
-        $DOM = new DOMDocument('1.0', 'ISO-8859-1');
-        $DOM->preserveWhiteSpace = FALSE;
-        $DOM->loadXML($xml);
-
-        $DocXML = $DOM->getElementsByTagName('ResponseCode');
-        $description = "";
-        foreach ($DocXML as $Nodo) {
-            $code = $Nodo->nodeValue;
-        }
-
-        $DocXML = $DOM->getElementsByTagName('Description');
-        $description = "";
-        foreach ($DocXML as $Nodo) {
-            $description = $Nodo->nodeValue;
-        }
-
-        $DocXML = $DOM->getElementsByTagName('DigestValue');
-        $hashCode = "";
-        foreach ($DocXML as $Nodo) {
-            $hashCode = $Nodo->nodeValue;
-        }
-
-        unlink('C' . $filename . '.xml');
-        unlink('../files/' . $filename . '.zip');
-
-        echo json_encode(array(
-            "state" => true,
-            "code" => $code,
-            "description" => $description
-        ));
-    } catch (Exception $ex) {
-        echo json_encode(array(
-            "state" => false,
-            "code" => "0",
-            "description" => $ex->getMessage()
-        ));
-    }
-
-
-
-
-
-
-
-
-
-    // Cliente
-    // $client = new Client();
-    // $client->setTipoDoc($cliente->IdAuxiliar)
-    //     ->setNumDoc($cliente->NumeroDocumento)
-    //     ->setRznSocial($cliente->Informacion);
-
-    // // Empresa
-
-    // $company = new Company();
-    // $company->setRuc($empresa->NumeroDocumento)
-    //     ->setNombreComercial($empresa->NombreComercial)
-    //     ->setRazonSocial($empresa->RazonSocial)
-    //     ->setAddress((new Address())
-    //         ->setUbigueo($empresa->CodigoUbigeo)
-    //         ->setDistrito($empresa->Distrito)
-    //         ->setProvincia($empresa->Provincia)
-    //         ->setDepartamento($empresa->Departamento)
-    //         ->setUrbanizacion('')
-    //         ->setCodLocal('0000')
-    //         ->setDireccion($empresa->Domicilio))
-    //     ->setEmail($empresa->Telefono)
-    //     ->setTelephone($empresa->Email);
-
-    // // Venta
-    // $invoice = new Invoice();
-    // $invoice
-    //     ->setUblVersion('2.1')
-    //     ->setTipoOperacion('0101')
-    //     ->setTipoDoc($venta->TipoComprobante)
-    //     ->setSerie($venta->Serie)
-    //     ->setCorrelativo($venta->Numeracion)
-    //     ->setFechaEmision(new DateTime($venta->FechaVenta . "T" . $venta->HoraVenta))
-    //     ->setTipoMoneda($venta->TipoMoneda)
-    //     ->setCompany($company)
-    //     ->setClient($client)
-    //     ->setMtoOperExoneradas(round($detalleventa[0]['opexonerada'], 2, PHP_ROUND_HALF_UP))
-    //     ->setMtoOperGravadas(round($detalleventa[0]['opgravada'], 2, PHP_ROUND_HALF_UP)) //5.10
-    //     ->setMtoIGV(round($detalleventa[0]['totalimpuesto'], 2, PHP_ROUND_HALF_UP)) //0.92
-    //     ->setTotalImpuestos(round($detalleventa[0]['totalimpuesto'], 2, PHP_ROUND_HALF_UP)) //0.92
-    //     ->setValorVenta(round($detalleventa[0]['totalsinimpuesto'], 2, PHP_ROUND_HALF_UP)) //5.10
-    //     ->setSubTotal(round($detalleventa[0]['totalconimpuesto'], 2, PHP_ROUND_HALF_UP)) //6
-    //     ->setMtoImpVenta(round($detalleventa[0]['totalconimpuesto'], 2, PHP_ROUND_HALF_UP)) //6
-    // ;
-
-    // $detail = [];
-
-    // foreach ($detalle as $value) {
-    //     $cantidad = $value['Cantidad'];
-    //     $impuesto = $value['ValorImpuesto'];
-    //     $precioVenta = $value['PrecioVenta'];
-
-    //     $precioBruto = $precioVenta / (($impuesto / 100.00) + 1);
-    //     $impuestoGenerado = $precioBruto * ($impuesto / 100.00);
-    //     $impuestoTotal = $impuestoGenerado * $cantidad;
-    //     $importeBrutoTotal = $precioBruto * $cantidad;
-    //     $importeNeto = $precioBruto + $impuestoGenerado;
-    //     $importeNetoTotal = $importeBrutoTotal + $impuestoTotal;
-
-    //     $item1 = new SaleDetail();
-    //     $item1->setCodProducto($value['ClaveSat'])
-    //         ->setUnidad($value['CodigoUnidad'])
-    //         ->setCantidad(round($cantidad, 2, PHP_ROUND_HALF_UP))
-    //         ->setDescripcion($value['NombreMarca'])
-    //         ->setMtoBaseIgv($importeBrutoTotal) //18 50*2
-    //         ->setPorcentajeIgv(round($impuesto, 0, PHP_ROUND_HALF_UP))
-    //         ->setIgv($impuestoTotal)
-    //         ->setTipAfeIgv($value["Codigo"])
-    //         ->setTotalImpuestos($impuestoTotal)
-    //         ->setMtoValorVenta($importeBrutoTotal)
-    //         ->setMtoValorUnitario(round($precioBruto, 2, PHP_ROUND_HALF_UP))
-    //         ->setMtoPrecioUnitario($importeNeto);
-    //     array_push($detail, $item1);
-    // }
-
-    // $legend = new Legend();
-    // $legend->setCode('1000')
-    //     ->setValue($util->ConvertirNumerosLetras(round($detalleventa[0]['totalconimpuesto'], 2, PHP_ROUND_HALF_UP), $venta->NombreMoneda));
-
-    // $invoice->setDetails($detail)
-    //     ->setLegends([$legend]);
-
-    // // Envio a SUNAT.
-    // //FE_BETA
-    // //FE_PRODUCCION
-    // $point = SunatEndpoints::FE_PRODUCCION;
-    // $see = $util->getSee($point, $empresa->NumeroDocumento, $empresa->UsuarioSol, $empresa->ClaveSol);
-    // $res = $see->send($invoice);
-    // $util->writeXml($invoice, $see->getFactory()->getLastXml());
-    // $hash = $util->getHashCode($invoice);
-
-    // if ($res->isSuccess()) {
-    //     $cdr = $res->getCdrResponse();
-    //     $util->writeCdr($invoice, $res->getCdrZip());
-    //     // $util->showResponse($invoice, $cdr);
-    //     if ($cdr->isAccepted()) {
-    //         VentasADO::CambiarEstadoSunatVenta($idventa, $cdr->getCode(), $cdr->getDescription(), $hash, $see->getFactory()->getLastXml());
-    //         echo json_encode(array(
-    //             "state" => $res->isSuccess(),
-    //             "accept" => $cdr->isAccepted(),
-    //             "id" => $cdr->getId(),
-    //             "code" => $cdr->getCode(),
-    //             "description" => $cdr->getDescription()
-    //         ));
-    //     } else {
-    //         VentasADO::CambiarEstadoSunatVenta($idventa, $cdr->getCode(), $cdr->getDescription(), $hash, $see->getFactory()->getLastXml());
-    //         echo json_encode(array(
-    //             "state" => $res->isSuccess(),
-    //             "accept" => $cdr->isAccepted(),
-    //             "id" => $cdr->getId(),
-    //             "code" => $cdr->getCode(),
-    //             "description" => $cdr->getDescription()
-    //         ));
-    //     }
-    //     exit();
-    // } else {
-
-    //     if ($res->getError()->getCode() === "1033") {
-    //         VentasADO::CambiarEstadoSunatVentaUnico($idventa, "0", $res->getError()->getMessage(), $hash);
-    //         echo json_encode(array(
-    //             "state" => false,
-    //             "code" => $res->getError()->getCode(),
-    //             "description" => $res->getError()->getMessage()
-    //         ));
-    //     } else {
-    //         VentasADO::CambiarEstadoSunatVenta($idventa, $res->getError()->getCode(), $res->getError()->getMessage(), $hash, $see->getFactory()->getLastXml());
-    //         echo json_encode(array(
-    //             "state" => false,
-    //             "code" => $res->getError()->getCode(),
-    //             "description" => $res->getError()->getMessage()
-    //         ));
-    //     }
-    //     exit();
-    // }
 }

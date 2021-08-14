@@ -4,7 +4,9 @@ define('_MPDF_PATH', '/lib');
 require('./lib/mpdf/vendor/autoload.php');
 include('../src/GenerateCoinToLetters.php');
 require_once("./lib/phpqrcode/qrlib.php");
-require './../model/VentasADO.php';
+require __DIR__ . './../src/autoload.php';
+
+use SysSoftIntegra\Model\VentasADO;
 
 $title = "TOP DE VENTAS POR CLIENTE";
 $fechaIngreso = date("d-m-Y", strtotime($_GET["fechaInicial"])) . " al " . date("d-m-Y", strtotime($_GET["fechaFinal"]));
@@ -121,18 +123,18 @@ mpdf-->
         </tr>
     </thead>
     <tbody>';
-    ?>
-    <?php 
+?>
+    <?php
     $totalVentas = 0;
-    $totalMontos =0 ;
-    foreach($detalle as $value){
-        $totalVentas+= $value["NumeroVentas"];
-        $totalMontos +=$value["MontoComprado"];
-        $html .='<tr>
-        <td>'.$value["Id"].'</td>
-        <td>'.$value["NumeroDocumento"].'<br>'.$value["Informacion"].'</td>
-        <td>'.$value["NumeroVentas"].'</td>
-        <td>S/ '.number_format(round($value["MontoComprado"], 2, PHP_ROUND_HALF_UP), 2, '.', '').'</td>
+    $totalMontos = 0;
+    foreach ($detalle as $value) {
+        $totalVentas += $value["NumeroVentas"];
+        $totalMontos += $value["MontoComprado"];
+        $html .= '<tr>
+        <td>' . $value["Id"] . '</td>
+        <td>' . $value["NumeroDocumento"] . '<br>' . $value["Informacion"] . '</td>
+        <td>' . $value["NumeroVentas"] . '</td>
+        <td>S/ ' . number_format(round($value["MontoComprado"], 2, PHP_ROUND_HALF_UP), 2, '.', '') . '</td>
         </tr>';
     }
     ?>

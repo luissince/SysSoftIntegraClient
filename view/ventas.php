@@ -27,7 +27,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 <i class="fa fa-file-excel">
                                 </i> Generar Excel
                             </h4>
-                            <button type="button" class="close" id="btnClose">
+                            <button type="button" class="btn btn-danger" id="btnClose">
                                 <i class="fa fa-window-close"></i>
                             </button>
                         </div>
@@ -39,11 +39,11 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-danger" id="btnTodos">
+                            <button type="button" class="btn btn-success" id="btnTodos">
                                 <i class="fa fa-check"></i> Todos</button>
-                            <button type="button" class="btn btn-danger" id="btnFacturados">
+                            <button type="button" class="btn btn-success" id="btnFacturados">
                                 <i class="fa fa-check"></i> Facturados</button>
-                            <button type="button" class="btn btn-primary" id="btnCancelar">
+                            <button type="button" class="btn btn-danger" id="btnCancelar">
                                 <i class="fa fa-remove"></i> Cancelar</button>
                         </div>
                     </div>
@@ -271,7 +271,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 </div>
 
                 <div class="row">
-                    <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-12">
+                    <div class="col-xl-6 col-lg-8 col-md-12 col-sm-12 col-12">
                         <label>Buscar:</label>
                         <div class="form-group">
                             <div class="input-group">
@@ -283,7 +283,16 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         </div>
                     </div>
 
-                    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                    <div class="col-xl-3 col-lg-4 col-md-12 col-sm-12 col-12">
+                        <label>Estado:</label>
+                        <div class="form-group">
+                            <select id="cbEstado" class="form-control">
+                                <option value="0">TODOS</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-3 col-lg-6 col-md-12 col-sm-12 col-12">
                         <label>Paginación:</label>
                         <div class="form-group">
                             <button class="btn btn-primary" id="btnAnterior">
@@ -339,6 +348,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
             let filasPorPagina = 20;
             let tbody = $("#tbList");
             let arrayVentas = [];
+            let estadoVenta = $('#cbEstado').children('option').length > 0 && $("#cbEstado").val() != "" ? $("#cbEstado").val() : 0;
 
             let lblPaginaActual = $("#lblPaginaActual");
             let lblPaginaSiguiente = $("#lblPaginaSiguiente");
@@ -354,7 +364,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     var fechaFinal = $("#txtFechaFinal").val();
                     if (!state) {
                         paginacion = 1;
-                        fillVentasTable(3, "", fechaInicial, fechaFinal, '');
+                        fillVentasTable(3, "", fechaInicial, fechaFinal, estadoVenta, '');
                         opcion = 0;
                     }
                 });
@@ -364,7 +374,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     var fechaFinal = $("#txtFechaFinal").val();
                     if (!state) {
                         paginacion = 1;
-                        fillVentasTable(3, "", fechaInicial, fechaFinal, '');
+                        fillVentasTable(3, "", fechaInicial, fechaFinal, estadoVenta, '');
                         opcion = 0;
                     }
                 });
@@ -375,7 +385,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         if (value.trim().length != 0) {
                             if (!state) {
                                 paginacion = 1;
-                                fillVentasTable(2, value.trim(), "", "", '');
+                                fillVentasTable(2, value.trim(), "", "", estadoVenta, '');
                                 opcion = 1;
                             }
                         }
@@ -445,6 +455,20 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     }
                     event.preventDefault();
                 });
+
+                $("#cbEstado").change(function() {
+                    if ($('#cbEstado').children('option').length > 0 && $('#cbEstado').val() != "") {
+                        var fechaInicial = $("#txtFechaInicial").val();
+                        var fechaFinal = $("#txtFechaFinal").val();
+                        if (!state) {
+                            paginacion = 1;
+                            fillVentasTable(0, "", fechaInicial, fechaFinal, estadoVenta, '');
+                            opcion = 0;
+                        }
+                    }
+                });
+
+                loadEstadoVentas();
                 loadInitVentas();
             });
 
@@ -455,10 +479,10 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 let value = $("#txtSearch").val();
                 switch (opcion) {
                     case 0:
-                        fillVentasTable(3, "", fechaInicial, fechaFinal, '');
+                        fillVentasTable(3, "", fechaInicial, fechaFinal, estadoVenta, '');
                         break;
                     case 1:
-                        fillVentasTable(2, value.trim(), "", "", '');
+                        fillVentasTable(2, value.trim(), "", "", estadoVenta, '');
                         break;
                 }
             }
@@ -469,15 +493,15 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 if (tools.validateDate(fechaInicial) && tools.validateDate(fechaFinal)) {
                     if (!state) {
                         paginacion = 1;
-                        fillVentasTable(3, "", fechaInicial, fechaFinal, '');
+                        fillVentasTable(3, "", fechaInicial, fechaFinal, estadoVenta, '');
                         opcion = 0;
                     }
                 }
             }
 
-            function fillVentasTable(opcion, busqueda, fechaInicial, fechaFinal, empleado) {
+            function fillVentasTable(opcion, busqueda, fechaInicial, fechaFinal, estado, empleado) {
                 $.ajax({
-                    url: "../app/controller/ventas/ListarVentas.php",
+                    url: "../app/controller/VentaController.php",
                     method: "GET",
                     data: {
                         "type": "venta",
@@ -485,6 +509,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         "busqueda": busqueda,
                         "fechaInicial": fechaInicial,
                         "fechaFinal": fechaFinal,
+                        "estado": estado,
                         "empleado": empleado,
                         "posicionPagina": ((paginacion - 1) * filasPorPagina),
                         "filasPorPagina": filasPorPagina
@@ -509,11 +534,10 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 state = false;
                             } else {
                                 for (let venta of arrayVentas) {
-                                    let pdf = '<a class="btn btn-dafult"  onclick="openPdf(\'' + venta.IdVenta + '\')"><img src="./images/pdf.svg" width="26" /> </a>';
-                                    let ver = '<a class="btn btn-dafult" onclick="opeModalDetalleIngreso(\'' + venta.IdVenta + '\')"><img src="./images/file.svg" width="26" /></a>';
-                                    //  let credito = '<button class="btn btn-default btn-sm" onclick="generarNotaCredito(\'' + (venta.Serie + "-" + venta.Numeracion) + '\')"><img src="./image/notacredito.png" width="26" /></button>';
-                                    let resumen = '<a class="btn btn-dafult" onclick="resumenDiarioXml(\'' + venta.IdVenta + '\',\'' + venta.Serie + "-" + venta.Numeracion + '\',\'' + tools.getDateYYMMDD(venta.FechaVenta) + '\')"><img src="./images/reuse.svg" width="26" /></a>';
-                                    let comunicacion = '<a class="btn btn-dafult" onclick="comunicacionBajaXml(\'' + venta.IdVenta + '\',\'' + venta.Serie + "-" + venta.Numeracion + '\')"><img src="./images/reuse.svg" width="26" /></a>';
+                                    let pdf = '<button class="btn btn-secondary btn-sm"  onclick="openPdf(\'' + venta.IdVenta + '\')"><img src="./images/pdf.svg" width="26" /> </button>';
+                                    let ver = '<button class="btn btn-secondary btn-sm" onclick="opeModalDetalleIngreso(\'' + venta.IdVenta + '\')"><img src="./images/file.svg" width="26" /></button>';
+                                    let resumen = '<button class="btn btn-secondary btn-sm" onclick="resumenDiarioXml(\'' + venta.IdVenta + '\',\'' + venta.Serie + "-" + venta.Numeracion + '\',\'' + tools.getDateYYMMDD(venta.FechaVenta) + '\')"><img src="./images/reuse.svg" width="26" /></button>';
+                                    let comunicacion = '<button class="btn btn-secondary btn-sm" onclick="comunicacionBajaXml(\'' + venta.IdVenta + '\',\'' + venta.Serie + "-" + venta.Numeracion + '\')"><img src="./images/reuse.svg" width="26" /></button>';
                                     let anular = venta.Serie.toUpperCase().includes("B") ? resumen : comunicacion;
 
                                     let datetime = tools.getDateForma(venta.FechaVenta) + "<br>" + tools.getTimeForma24(venta.HoraVenta, true);
@@ -595,7 +619,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 let thTotal = $("#thTotal");
                 let tbIngresosDetalle = $("#tbIngresosDetalle");
                 $.ajax({
-                    url: "../app/controller/ventas/ListarVentas.php",
+                    url: "../app/controller/VentaController.php",
                     method: "GET",
                     data: {
                         "type": "allventa",
@@ -663,7 +687,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 tools.ModalAlertInfo("Ventas", "Firmando xml y enviando a la sunat.");
                             },
                             success: function(result) {
-                                console.log(result)
                                 let object = result;
                                 if (object.state === true) {
                                     if (object.accept === true) {
@@ -677,6 +700,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 }
                             },
                             error: function(error) {
+                                // console.log(error);
                                 tools.ModalAlertError("Ventas", "Error en el momento de firmar el xml: " + error.responseText);
                             }
                         });
@@ -697,6 +721,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 tools.ModalAlertInfo("Ventas", "Firmando xml y enviando a la sunat.");
                             },
                             success: function(result) {
+                                // console.log(result)
                                 let object = result;
                                 if (object.state === true) {
                                     if (object.accept === true) {
@@ -856,11 +881,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
             }
 
             function openPdf(idVenta) {
-                window.open("../app/sunat/pdfingresos.php?idVenta=" + idVenta, "_blank");
-            }
-
-            function generarNotaCredito(serieNumeracion) {
-                window.open("./notacreditoproceso.php?comprobante=" + serieNumeracion);
+                window.open("../app/sunat/pdfventas.php?idVenta=" + idVenta, "_blank");
             }
 
             function openExcel() {
@@ -899,6 +920,38 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
             function openModalClientes() {
                 $("#id-modal-clientes").modal("show");
+            }
+
+            function loadEstadoVentas() {
+                $.ajax({
+                    url: "../app/controller/DetalleController.php",
+                    method: "GET",
+                    data: {
+                        "type": "detailname",
+                        "value1": "2",
+                        "value2": "0009",
+                        "value3": "",
+                    },
+                    beforeSend: function() {
+                        $("#cbEstado").empty();
+                        $("#cbEstado").append('<option value="">Cargando...</option> ');
+                    },
+                    success: function(result) {
+                        $("#cbEstado").empty();
+                        if (result.estado == 1) {
+                            $("#cbEstado").append('<option value="0">TODOS</option> ');
+                            for (let value of result.data) {
+                                $("#cbEstado").append('<option value="' + value.IdDetalle + '">' + value.Nombre + ' </option>');
+                            }
+                        } else {
+                            $("#cbEstado").append('<option value="0">TODOS</option> ');
+                        }
+                    },
+                    error: function(error) {
+                        $("#cbEstado").empty();
+                        $("#cbEstado").append('<option value="0">TODOS</option> ');
+                    }
+                });
             }
         </script>
     </body>

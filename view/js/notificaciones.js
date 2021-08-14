@@ -5,13 +5,11 @@ $(document).ready(function () {
 });
 
 function loadNotificaciones() {
-
     $.ajax({
-        url: "../app/controller/ventas/ListarVentas.php",
+        url: "../app/controller/VentaController.php",
         method: "GET",
         data: {
             "type": "listarNotificaciones",
-
         },
         beforeSend: function () {
             $("#divNotificaciones").empty();
@@ -24,16 +22,18 @@ function loadNotificaciones() {
                     $("#lblNumeroNotificaciones").html(0)
                     $("#lblNotificaciones").html("No hay notificaciones para mostrar.");
                 } else {
-                    $("#lblNumeroNotificaciones").html(notificaciones.length)
-
+                    $("#lblNotificaciones").html("");
+                    $("#lblNumeroNotificaciones").html(notificaciones.length);
                     for (let noti of notificaciones) {
                         $("#divNotificaciones").append('' +
-                            ' <li><a class="app-notification__item" href="javascript:;"><span class="app-notification__icon"><span class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x text-primary"></i><i class="fa fa-warning fa-stack-1x fa-inverse"></i></span></span>' +
-                            ' <div>' +
-                            '     <p class="app-notification__message">' + noti.Cantidad + ' ' + noti.Nombre + '</p>' +
-                            '     <p class="app-notification__meta">' + noti.Estado + '</p>' +
-                            ' </div>' +
-                            '</a></li>');
+                            '<li>' +
+                            '   <a class="app-notification__item" href="mostrarnotificaciones.php"><span class="app-notification__icon"><span class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x text-primary"></i><i class="fa fa-warning fa-stack-1x fa-inverse"></i></span></span>' +
+                            '       <div>' +
+                            '           <p class="app-notification__message">' + noti.Cantidad + ' ' + noti.Nombre + '</p>' +
+                            '           <p class="app-notification__meta">' + noti.Estado + '</p>' +
+                            '       </div>' +
+                            '   </a>' +
+                            '</li>');
                     }
                 }
             } else {

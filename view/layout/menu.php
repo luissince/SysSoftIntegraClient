@@ -25,17 +25,18 @@
                         </ul>
                 </li>
 
-                <li class="treeview">
+                <!-- <li class="treeview">
                         <a class="app-menu__item" href="#" data-toggle="treeview">
                                 <i class="app-menu__icon fa fa-external-link-square"></i>
                                 <span class="app-menu__label">Gastos</span>
                                 <i class="treeview-indicator fa fa-angle-right"></i>
                         </a>
-                </li>
+                </li> -->
 
-                <li class="treeview"><a class="app-menu__item" href="#" data-toggle="treeview"><i class="app-menu__icon fa fa-users"></i><span class="app-menu__label">Contactos</span><i class="treeview-indicator fa fa-angle-right"></i></a>
+                <li class="treeview" id="treeview-contactos"><a class="app-menu__item" href="#" data-toggle="treeview"><i class="app-menu__icon fa fa-users"></i><span class="app-menu__label">Contactos</span><i class="treeview-indicator fa fa-angle-right"></i></a>
                         <ul class="treeview-menu">
-                                <li><a class="app-menu__item" href="#"><i class="app-menu__icon fa fa-minus"></i><span class="app-menu__label">Clientes</span></a></li>
+                                <li><a class="app-menu__item" id="tab-clientes" href="clientes.php"><i class="app-menu__icon fa fa-minus"></i><span class="app-menu__label">Clientes</span></a></li>
+                                <li><a class="app-menu__item" id="tab-proveedores" href="proveedores.php"><i class="app-menu__icon fa fa-minus"></i><span class="app-menu__label">Proveedores</span></a></li>
                         </ul>
                 </li>
 
@@ -49,7 +50,7 @@
                 </li>
 
 
-                <li>
+                <!-- <li>
                         <a class="app-menu__item" href="#">
                                 <i class="app-menu__icon fa fa-university"></i>
                                 <span class="app-menu__label">Bancos</span>
@@ -77,14 +78,14 @@
                                 <i class="app-menu__icon fa fa-bar-chart"></i>
                                 <span class="app-menu__label">Gráficos</span>
                         </a>
-                </li>
+                </li> -->
 
-                <li>
+                <!-- <li>
                         <a class="app-menu__item" id="tab-graficos" href="#">
                                 <i class="app-menu__icon fa fa-laptop"></i>
                                 <span class="app-menu__label">Tienda en Línea</span>
                         </a>
-                </li>
+                </li> -->
 
 
                 <li class="treeview" id="treeview-configuracion"><a class="app-menu__item" href="#" data-toggle="treeview"><i class="app-menu__icon fa fa-cog"></i><span class="app-menu__label">Configuración</span><i class="treeview-indicator fa fa-angle-right"></i></a>
@@ -105,6 +106,7 @@
                 "index", "ventas", "notacredito",
                 "productos", "inventario", "kardexproducto", "ajustes",
                 "registrarproducto", "actualizarproducto",
+                "clientes", "proveedores",
                 "empresa"
         ];
 
@@ -125,6 +127,13 @@
                                 document.getElementById("tab-ventas").setAttribute("class", "app-menu__item active");
                         } else if (id == "tab-notacredito") {
                                 document.getElementById("tab-notacredito").setAttribute("class", "app-menu__item active");
+                        }
+                } else if (id == "tab-clientes" || id == "tab-proveedores") {
+                        document.getElementById("treeview-contactos").setAttribute("class", "treeview is-expanded");
+                        if (id == "tab-clientes") {
+                                document.getElementById("tab-clientes").setAttribute("class", "app-menu__item active");
+                        } else if (id == "tab-proveedores") {
+                                document.getElementById("tab-proveedores").setAttribute("class", "app-menu__item active");
                         }
                 } else if (id == "tab-productos" || id == "tab-inventario" || id == "tab-kardexproducto" || id == "tab-ajustes" || id == "tab-registrarproducto" || id == "tab-actualizarproducto") {
                         document.getElementById("treeview-inventario").setAttribute("class", "treeview is-expanded");

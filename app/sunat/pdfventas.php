@@ -2,21 +2,22 @@
 
 define('_MPDF_PATH', '/lib');
 require('./lib/mpdf/vendor/autoload.php');
-include('../src/GenerateCoinToLetters.php');
 require_once("./lib/phpqrcode/qrlib.php");
-require './../model/VentasADO.php';
+require __DIR__ . './../src/autoload.php';
 
-$ventaDatos = VentasADO::ListVentaDetalle($_GET["idVenta"]);
+use SysSoftIntegra\Src\NumberLleters;
+use SysSoftIntegra\Model\VentasAdo;
+
+$ventaDatos = VentasAdo::ListVentaDetalle($_GET["idVenta"]);
 
 if (is_array($ventaDatos)) {
     $venta = $ventaDatos[0];
     $detalleVenta = $ventaDatos[1];
     $empresa = $ventaDatos[2];
 
-    //$logo = ($empresa->Image == "" ? './../../view/image/logo.png':"data:image/png;base64,".$empresa->Image);
-    $photo = $empresa->Image == "" ?  "<img src=\"./../../view/image/logo.png\"/>" : "<img src=\"data:image/jpg;base64, " . $empresa->Image . "\"/>";
+    $photo = $empresa->Image == "" ?  "<img src=\"./../../view/images/logo.png\"/>" : "<img src=\"data:image/jpg;base64, " . $empresa->Image . "\"/>";
 
-    $gcl = new GenerateCoinToLetters();
+    $gcl = new NumberLleters();
 
     $textoCodBar =
         '|' . $empresa->NumeroDocumento
@@ -209,7 +210,7 @@ if (is_array($ventaDatos)) {
                 </div>
                 <div class="caja-info-dos">
                     <p style="line-height: 35px; padding-top:10px;">R.U.C.: ' . $empresa->NumeroDocumento . '</p>
-                    <p style="line-height: 35px;">' . $venta->Comprobante . ' ELECTRÓNICO</p>
+                    <p style="line-height: 35px;">' . $venta->Comprobante . '</p>
                     <p style="line-height: 35px;">' . $venta->Serie . '-' . $venta->Numeracion . '</p>         
                 </div>
             </div>
@@ -350,7 +351,7 @@ if (is_array($ventaDatos)) {
                             <td width="45%" style="background: rgb(2,2,3); color: white; vertical-align:middle; ">
                                 <table style="border-collapse: collapse; width:100%; color: white;">
                                     <tr>
-                                        <td width="10%"><img width="20px" src="./../../view/image/icon.png"></td>
+                                        <td width="10%"><img width="20px" src="./../../view/images/icon.png"></td>
                                         <td width="99%" style="vertical-align: middle; text-align: center;">Generado por SysSoft Integra</td>
                                     </tr>
                                 </table>

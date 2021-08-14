@@ -77,7 +77,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 </div>
                                 <div class="col-md-12 text-center">
                                     <input type="file" id="fileImage" accept="image/png, image/jpeg, image/gif, image/svg" style="display: none" />
-                                    <label class="btn btn-warning" for="fileImage" id="txtFile"><i class="fa fa-photo"></i> Subir Imagen</label>
+                                    <label class="btn btn-warning rounded" for="fileImage" id="txtFile"><i class="fa fa-photo"></i> Subir Imagen</label>
                                 </div>
                             </div>
                         </div>
@@ -142,8 +142,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         <div class="col-md-6">
                             <label class="form-text"> Seleccionar Archivo:</label>
                             <div class="form-group d-flex">
+                                <input type="file" class="form-control d-none" id="fileCertificado">
                                 <div class="input-group">
-                                    <input type="file" class="form-control d-none" id="fileCertificado">
                                     <label class="form-control" for="fileCertificado" id="lblNameCertificado">Seleccionar archivo</label>
                                     <div class="input-group-append">
                                         <label for="fileCertificado" class="btn btn-info" type="button" id="btnReloadCliente">Subir</label>
@@ -155,7 +155,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         <div class="col-md-6">
                             <label class="form-text"> Contraseña de tu Certificado:</label>
                             <div class="form-group">
-                                <input id="txtClaveCertificado" class="form-control" type="password" placeholder="Contraseña de tu Certificado" />
+                                <input id="txtClaveCertificado" class="form-control rounded" type="password" placeholder="Contraseña de tu Certificado" />
                             </div>
                         </div>
 
@@ -169,7 +169,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         </div>
                         <div class="col-md-6">
                             <div class="form-group text-right">
-                                <button class="btn btn-success" type="button" id="btnGuardar"><i class="fa fa-save"></i>
+                                <button class="btn btn-success rounded" type="button" id="btnGuardar"><i class="fa fa-save"></i>
                                     Guardar</button>
                             </div>
                         </div>

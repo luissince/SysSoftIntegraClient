@@ -1,7 +1,8 @@
 <?php
 
+namespace SysSoftIntegra\Src;
 
-class GenerateCoinToLetters
+class NumberLleters
 {
 
 
@@ -136,14 +137,14 @@ class GenerateCoinToLetters
 
         if ($cientos > 0)
             if ($cientos > 1)
-                $letras = $this->Centenas($cientos) . " " .$strPlural;
+                $letras = $this->Centenas($cientos) . " " . $strPlural;
             else
                 $letras = $strSingular;
-            
-        
+
+
         if ($resto > 0)
             $letras .= "";
-        
+
 
         return $letras;
     }
@@ -177,7 +178,7 @@ class GenerateCoinToLetters
         if ($strMillones == "")
             return $strMiles;
 
-        return $strMillones . " ". $strMiles;
+        return $strMillones . " " . $strMiles;
 
         //return Seccion(num, divisor, "UN MILLON", "MILLONES") + " " + Miles(resto);
     }
@@ -204,13 +205,11 @@ class GenerateCoinToLetters
 
             if ($num == 0)
                 return "CERO CON " . $decimal . "/100 " . strtoupper($moneda);
-            
-            if ($num == 1)
-                return $this->Millones($num) . " CON " .$decimal . "/100 " . strtoupper($moneda);
-            else
-                return $this->Millones($num) . " CON " . $decimal ."/100 " . strtoupper($moneda);
-            
 
+            if ($num == 1)
+                return $this->Millones($num) . " CON " . $decimal . "/100 " . strtoupper($moneda);
+            else
+                return $this->Millones($num) . " CON " . $decimal . "/100 " . strtoupper($moneda);
         }
     }
 }

@@ -16,6 +16,39 @@ if (!isset($_SESSION['IdEmpleado'])) {
         <?php include "./layout/header.php"; ?>
         <!-- Sidebar menu-->
         <?php include "./layout/menu.php"; ?>
+        <!-- modal start -->
+        <div class="row">
+            <div class="modal fade" id="mdAlert" data-backdrop="static">
+                <div class="modal-dialog modal-sm">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">
+                                <i class="fa fa-file-excel">
+                                </i> Generar Excel
+                            </h4>
+                            <button type="button" class="btn btn-danger" id="btnClose">
+                                <i class="fa fa-window-close"></i>
+                            </button>
+
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <span>¿Generar el excel?</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-success" id="btnFacturados">
+                                <i class="fa fa-check"></i> Generar</button>
+                            <button type="button" class="btn btn-danger" id="btnCancelar">
+                                <i class="fa fa-remove"></i> Cancelar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- modal end -->
 
         <main class="app-content">
 
@@ -98,7 +131,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 </div>
 
                 <div class="row">
-                    <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-12">
+                    <div class="col-xl-6 col-lg-8 col-md-12 col-sm-12 col-12">
                         <label>Buscar:</label>
                         <div class="form-group">
                             <div class="input-group">
@@ -133,6 +166,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 <thead style="background-color: #0766cc;color: white;">
                                     <tr>
                                         <th style="width:5%;">#</th>
+                                        <th style="width:5%;">Pdf</th>
+                                        <th style="width:5%;">Detalle</th>
                                         <th style="width:10%;">Fecha</th>
                                         <th style="width:10%;">Comprobante</th>
                                         <th style="width:15%;">Cliente</th>
@@ -174,20 +209,24 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 $("#txtFechaInicial").on("change", function() {
                     var fechaInicial = $("#txtFechaInicial").val();
                     var fechaFinal = $("#txtFechaFinal").val();
-                    if (!state) {
-                        paginacion = 1;
-                        fillNotaCreditoTable(0, "", fechaInicial, fechaFinal);
-                        opcion = 0;
+                    if (tools.validateDate(fechaInicial) && tools.validateDate(fechaFinal)) {
+                        if (!state) {
+                            paginacion = 1;
+                            fillNotaCreditoTable(1, "", fechaInicial, fechaFinal);
+                            opcion = 1;
+                        }
                     }
                 });
 
                 $("#txtFechaFinal").on("change", function() {
                     var fechaInicial = $("#txtFechaInicial").val();
                     var fechaFinal = $("#txtFechaFinal").val();
-                    if (!state) {
-                        paginacion = 1;
-                        fillNotaCreditoTable(0, "", fechaInicial, fechaFinal);
-                        opcion = 0;
+                    if (tools.validateDate(fechaInicial) && tools.validateDate(fechaFinal)) {
+                        if (!state) {
+                            paginacion = 1;
+                            fillNotaCreditoTable(1, "", fechaInicial, fechaFinal);
+                            opcion = 1;
+                        }
                     }
                 });
 
@@ -197,8 +236,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         if (value.trim().length != 0) {
                             if (!state) {
                                 paginacion = 1;
-                                fillNotaCreditoTable(1, value.trim(), "", "");
-                                opcion = 1;
+                                fillNotaCreditoTable(2, value.trim(), "", "");
+                                opcion = 2;
                             }
                         }
                     }
@@ -254,29 +293,28 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 let value = $("#txtSearch").val();
                 switch (opcion) {
                     case 0:
-                        fillNotaCreditoTable(0, "", fechaInicial, fechaFinal);
+                        fillNotaCreditoTable(0, "", "", "");
                         break;
                     case 1:
-                        fillNotaCreditoTable(1, value.trim(), "", "");
+                        fillNotaCreditoTable(1, "", fechaInicial, fechaFinal);
+                        break;
+                    case 2:
+                        fillNotaCreditoTable(2, value.trim(), "", "");
                         break;
                 }
             }
 
             function loadInitNotaCredito() {
-                let fechaInicial = $("#txtFechaInicial").val();
-                let fechaFinal = $("#txtFechaFinal").val();
-                if (tools.validateDate(fechaInicial) && tools.validateDate(fechaFinal)) {
-                    if (!state) {
-                        paginacion = 1;
-                        fillNotaCreditoTable(0, "", fechaInicial, fechaFinal);
-                        opcion = 0;
-                    }
+                if (!state) {
+                    paginacion = 1;
+                    fillNotaCreditoTable(0, "", "", "");
+                    opcion = 0;
                 }
             }
 
             function fillNotaCreditoTable(opcion, search, fechaInicial, fechaFinal) {
                 $.ajax({
-                    url: "../app/controller/ventas/ListarVentas.php",
+                    url: "../app/controller/VentaController.php",
                     method: "GET",
                     data: {
                         "type": "listaNotaCredito",
@@ -289,7 +327,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     },
                     beforeSend: function() {
                         tbList.empty();
-                        tbList.append('<tr><td class="text-center" colspan="8"><img src="./images/loading.gif" id="imgLoad" width="34" height="34" /> <p>Cargando información...</p></td></tr>');
+                        tbList.append('<tr><td class="text-center" colspan="10"><img src="./images/loading.gif" id="imgLoad" width="34" height="34" /> <p>Cargando información...</p></td></tr>');
                         state = true;
                         totalPaginacion = 0;
                     },
@@ -297,22 +335,27 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         tbList.empty();
                         if (result.estado == 1) {
                             if (result.data.length == 0) {
-                                tbList.append('<tr><td class="text-center" colspan="8"><p>No hay datos para mostrar</p></td></tr>');
+                                tbList.append('<tr><td class="text-center" colspan="10"><p>No hay datos para mostrar</p></td></tr>');
                                 lblPaginaActual.html(0);
                                 lblPaginaSiguiente.html(0);
                                 state = false;
                             } else {
                                 for (let detalle of result.data) {
+                                    let pdf = '<button class="btn btn-secondary btn-sm"  onclick="openPdf(\'' + detalle.IdNotaCredito + '\')"><img src="./images/pdf.svg" width="26" /> </button>';
+                                    let ver = '<button class="btn btn-secondary btn-sm" onclick="opeModalDetalleIngreso(\'' + detalle.IdNotaCredito + '\')"><img src="./images/file.svg" width="26" /></button>';
+
                                     let estadosunat = detalle.Xmlsunat === "" ?
-                                        '<button class="btn btn-default" onclick="firmarXml(\'' + detalle.IdNotaCredito + '\')"><img src="./images/reuse.svg" width="26"/></button>' :
+                                        '<button class="btn btn-secondary btn-sm" onclick="firmarXml(\'' + detalle.IdNotaCredito + '\')"><img src="./images/reuse.svg" width="26"/></button>' :
                                         detalle.Xmlsunat === "0" ?
-                                        '<button class="btn btn-default"><img src="./images/accept.svg" width="26" /></button>' :
-                                        '<button class="btn btn-default" onclick="firmarXml(\'' + detalle.IdNotaCredito + '\')"><img src="./images/unable.svg" width="26" /></button>';
+                                        '<button class="btn btn-secondary btn-sm"><img src="./images/accept.svg" width="26" /></button>' :
+                                        '<button class="btn btn-secondary btn-sm" onclick="firmarXml(\'' + detalle.IdNotaCredito + '\')"><img src="./images/unable.svg" width="26" /></button>';
 
                                     let descripcion = '<p class="recortar-texto">' + (detalle.Xmldescripcion === "" ? "Por Generar Xml" : detalle.Xmldescripcion) + '</p>';
 
                                     tbList.append('<tr>' +
                                         '<td>' + detalle.Id + '</td>' +
+                                        '<td>' + pdf + '</td>' +
+                                        '<td>' + ver + '</td>' +
                                         '<td>' + tools.getDateForma(detalle.FechaNotaCredito) + '<br>' + tools.getTimeForma24(detalle.HoraNotaCredito) + '</td>' +
                                         '<td>' + detalle.SerieNotaCredito + '-' + detalle.NumeracionNotaCredito + '</td>' +
                                         '<td>' + detalle.NumeroDocumento + '<br>' + detalle.Informacion + '</td>' +
@@ -328,7 +371,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 state = false;
                             }
                         } else {
-                            tbList.append('<tr><td class="text-center" colspan="8"><p>' + result.message + '</p></td></tr>');
+                            tbList.append('<tr><td class="text-center" colspan="10"><p>' + result.message + '</p></td></tr>');
                             lblPaginaActual.html(0);
                             lblPaginaSiguiente.html(0);
                             state = false;
@@ -336,7 +379,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     },
                     error: function(error) {
                         tbList.empty();
-                        tbList.append('<tr><td class="text-center" colspan="8"><p>' + error.responseText + '</p></td></tr>');
+                        tbList.append('<tr><td class="text-center" colspan="10"><p>' + error.responseText + '</p></td></tr>');
                         lblPaginaActual.html(0);
                         lblPaginaSiguiente.html(0);
                         state = false;
@@ -400,7 +443,10 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 $("#btnClose").bind("click", function() {
                     $("#mdAlert").modal("hide");
                 });
+            }
 
+            function openPdf(idNotaCredito) {
+                window.open("../app/sunat/notacredito.php?idNotaCredito=" + idNotaCredito, "_blank");
             }
         </script>
     </body>

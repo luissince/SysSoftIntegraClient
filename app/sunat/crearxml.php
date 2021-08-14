@@ -1,5 +1,4 @@
 <?php
-session_start();
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
@@ -17,7 +16,7 @@ try {
 	$fcoddivisa = $_GET['monedaabreviatura'];
 
 	$serienumeracion = $serie . '-' . $numeracion;
-	
+
 	$detalleventa = VentasADO::ListarDetalleVentPorId($idventa);
 
 	$tipodocumentoemisor = $detalleventa[1]->IdAuxiliar;
@@ -463,7 +462,7 @@ try {
 
 	$xml->formatOutput = true;
 	$strings_xml = $xml->saveXML();
-	$xmlcreado = $numerodocumentoemisor . '-'.$tipodocumento.'-' . $serienumeracion . '.xml';
+	$xmlcreado = $numerodocumentoemisor . '-' . $tipodocumento . '-' . $serienumeracion . '.xml';
 
 	$xml->save('factura-sin-firmar/' . $xmlcreado);
 	chmod('factura-sin-firmar/' . $xmlcreado, 0777);
@@ -474,7 +473,6 @@ try {
 		"xml" => $xmlcreado,
 		"firmarxml" => "firmarxml.php"
 	));
-
 } catch (Exception $ex) {
 
 	print json_encode(array(
@@ -482,5 +480,4 @@ try {
 		"message" => "Error en crear xml",
 		"error" => $ex->getMessage()
 	));
-
 }

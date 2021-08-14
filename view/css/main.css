@@ -1977,7 +1977,7 @@ pre code {
     background-color: #FFF;
     background-clip: padding-box;
     border: 1px solid #999999;
-    border-radius: 0px;
+    border-radius: 2px;
     -webkit-transition: border-color 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
     transition: border-color 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
     -o-transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
@@ -2511,7 +2511,7 @@ textarea.form-control {
     padding: 0.375rem 0.75rem;
     font-size: 0.85rem;
     line-height: 1.5;
-    border-radius: 0px;
+    border-radius: 3px;
     -webkit-transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out, -webkit-box-shadow 0.3s cubic-bezier(0.35, 0, 0.25, 1), -webkit-transform 0.2s cubic-bezier(0.35, 0, 0.25, 1);
     transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out, -webkit-box-shadow 0.3s cubic-bezier(0.35, 0, 0.25, 1), -webkit-transform 0.2s cubic-bezier(0.35, 0, 0.25, 1);
     -o-transition: box-shadow 0.3s cubic-bezier(0.35, 0, 0.25, 1), transform 0.2s cubic-bezier(0.35, 0, 0.25, 1), background-color 0.3s ease-in-out, border-color 0.3s ease-in-out;
@@ -13385,7 +13385,7 @@ be a descendant of the grid when it is being dragged.
     border-bottom: 6px solid #be2626;
 }
 
-::-moz-selection {
+/* ::-moz-selection {
     color: #FFF;
     background-color: #fe104c;
 }
@@ -13393,7 +13393,7 @@ be a descendant of the grid when it is being dragged.
 ::selection {
     color: #FFF;
     background-color: #fe104c;
-}
+} */
 
 @media (min-width: 768px) {
     .app.sidenav-toggled .app-content {
@@ -13507,6 +13507,7 @@ be a descendant of the grid when it is being dragged.
 }
 
 .app-header__logo {
+    display: none;
     -webkit-box-flex: 1;
     -ms-flex: 1 0 auto;
     flex: 1 0 auto;
@@ -13518,6 +13519,7 @@ be a descendant of the grid when it is being dragged.
     font-weight: normal;
     line-height: 50px;
     border-right: 1px solid  rgba(0,0,0,.12);
+    background-color: #004e47;
 }
 
 @media (min-width: 768px) {
@@ -13574,6 +13576,7 @@ be a descendant of the grid when it is being dragged.
     -webkit-box-pack: end;
     -ms-flex-pack: end;
     justify-content: flex-end;
+    width: 100%;
 }
 
 @media (min-width: 768px) {
@@ -13581,7 +13584,10 @@ be a descendant of the grid when it is being dragged.
         -webkit-box-flex: 1;
         -ms-flex: 1 0 auto;
         flex: 1 0 auto;
+        width: auto;
+        background-color: transparent;
     }
+    
 }
 
 .app-nav__item {

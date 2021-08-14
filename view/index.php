@@ -338,7 +338,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 let totalCuentasPorPagar = $('#lblTotalCuentasPorPagar');
 
                 $.ajax({
-                    url: "../app/controller/ventas/CargarDashboard.php",
+                    url: "../app/controller/VentaController.php",
                     method: "GET",
                     data: {
                         type: "global",
@@ -417,7 +417,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
             function cargarProductosAgotados() {
                 $.ajax({
-                    url: "../app/controller/ventas/CargarDashboard.php",
+                    url: "../app/controller/VentaController.php",
                     method: "GET",
                     data: {
                         type: "productosAgotados",
@@ -438,7 +438,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
             function cargarProductosPorAgotarse() {
                 $.ajax({
-                    url: "../app/controller/ventas/CargarDashboard.php",
+                    url: "../app/controller/VentaController.php",
                     method: "GET",
                     data: {
                         type: "productosPorAgotarse",

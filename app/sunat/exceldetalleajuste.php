@@ -1,7 +1,6 @@
 <?php
 
 set_time_limit(300); //evita el error 20 segundos de peticion
-session_start();
 
 require __DIR__ . "/lib/phpspreadsheet/vendor/autoload.php";
 include __DIR__ . "./../model/MovimientoADO.php";

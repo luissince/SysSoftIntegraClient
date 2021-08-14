@@ -38,12 +38,11 @@ if (!is_array($result)) {
     $Invoice = $xml->createElement('CreditNote');
     $Invoice = $xml->appendChild($Invoice);
 
-    $Invoice->setAttribute('xmlns', 'urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2');
     $Invoice->setAttribute('xmlns:ext', 'urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2');
     $Invoice->setAttribute('xmlns:ds', 'http://www.w3.org/2000/09/xmldsig#');
     $Invoice->setAttribute('xmlns:cbc', 'urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2');
     $Invoice->setAttribute('xmlns:cac', 'urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2');
-
+    $Invoice->setAttribute('xmlns', 'urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2');
 
     $UBLExtension = $xml->createElement('ext:UBLExtensions');
     $UBLExtension = $Invoice->appendChild($UBLExtension);
@@ -331,7 +330,7 @@ if (!is_array($result)) {
     Sunat::createZip("../files/" . $filename . ".zip", "../files/" . $filename . ".xml", "" . $filename . ".xml");
 
 
-    $soapResult = new SoapResult('../resources/wsdl/billService.wsdl', $filename);
+    $soapResult = new SoapResult('billService.wsdl', $filename);
     $soapResult->sendBill(Sunat::xmlSendBill($empresa->NumeroDocumento, $empresa->UsuarioSol, $empresa->ClaveSol, $filename . '.zip', base64_encode(file_get_contents('../files/' . $filename . '.zip'))));
 
     if ($soapResult->isSuccess()) {
