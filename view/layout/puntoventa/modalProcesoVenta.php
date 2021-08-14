@@ -1,80 +1,157 @@
 <div class="row">
     <div class="modal fade" id="modalProcesoVenta" data-backdrop="static">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-md">
             <div class="modal-content">
+
                 <div class="modal-header">
                     <h4 class="modal-title">
-                        <i class="fa fa-shopping-bag"></i> Proceso Venta
+                        <i class="fa fa-shopping-bag"></i> Completar venta
                     </h4>
                     <button type="button" class="close" id="btnCloseModalProcesoVenta">
                         <i class="fa fa-close"></i>
                     </button>
                 </div>
-                <div class="modal-body">
 
+                <div class="modal-body">
                     <div class="row">
-                        <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-12">
-                            <div class="form-group d-flex">
-                                <div class="input-group">
-                                    <input type="search" class="form-control" placeholder="Buscar por apellidos, nombres o dni" aria-controls="sampleTable" id="txtSearchLista">
-                                    <div class="input-group-append">
-                                        <button class="btn btn-info" type="button" id="btnReloadCliente"><i class="fa fa-refresh"></i></button>
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <div class="text-center">
+                                <h3>Total a pagar: <span>S/ 10.00</span></h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 col-sm-3">
+                            <hr>
+                        </div>
+                        <div class="col-md-6 col-sm-6">
+                            <h6 class="text-center">Tipos de pagos</h6>
+                        </div>
+                        <div class="col-md-3 col-sm-3">
+                            <hr>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 col-sm-4">
+                            <div class="text-center">
+                                <button id="btnContado" class="btn btn-primary" type="button" title="Pago al contado">
+                                    <div class="text-center">
+                                        <i class="fa fa-money"></i>
+                                    </div>
+                                    <div class="text-center">
+                                        <label>Contado</label>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-sm-4">
+                            <div class="text-center">
+                                <button id="btnCredito" class="btn btn-secondary" type="button" title="Pago al credito">
+                                    <div class="text-center">
+                                        <i class="fa fa-shopping-bag"></i>
+                                    </div>
+                                    <div class="text-center">
+                                        <label>Credito</label>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-sm-4">
+                            <div class="text-center">
+                                <button id="btnAdelantado" class="btn btn-secondary" type="button" title="Pago adelantado">
+                                    <div class="text-center">
+                                        <i class="fa fa-suitcase"></i>
+                                    </div>
+                                    <div class="text-center">
+                                        <label>Adelanto</label>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="mt-3 mb-2"/>
+
+                    <div id="boxContado">
+                        <div class="row">
+                            <div class="col-md-12 col-sm-12">
+                                <div class="form-group">
+                                    <label for="txtEfectivo">Efectivo: </label>
+                                    <input id="txtEfectivo" type="text" class="form-control" placeholder="0.0">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 col-sm-12">
+                                <div class="form-group">
+                                    <label for="txtTarjeta">Tarjeta: </label>
+                                    <input id="txtTarjeta" type="text" class="form-control" placeholder="0.0">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 col-sm-12">
+                                <div class="form-group">
+                                    <div class="text-center">
+                                        <h6>Por pagar: <span id="lblVuelto" class="text-primary">S/ 00.00</span></h6>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
-                            <div class="form-group">
-                                <div class="text-right">
-                                    <button class="btn btn-info" id="btnAnteriorCliente">
-                                        <i class="fa fa-arrow-circle-left"></i>
-                                    </button>
-                                    <span class="m-2" id="lblPaginaActualCliente">0
-                                    </span>
-                                    <span class="m-2">
-                                        de
-                                    </span>
-                                    <span class="m-2" id="lblPaginaSiguienteCliente">0
-                                    </span>
-                                    <button class="btn btn-info" id="btnSiguienteCliente">
-                                        <i class="fa fa-arrow-circle-right"></i>
-                                    </button>
+                    </div>
+
+                    <div id="boxCredito" class="d-none">
+                        <div class="row">
+                            <div class="col-md-12 col-sm-12">
+                                <div class="form-group">
+                                    <label for="txtFechaVencimiento">Fecha de venciminto: </label>
+                                    <input id="txtFechaVencimiento" type="date" class="form-control" placeholder="0.0">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="boxAdelantado" class="d-none">
+                    <div class="row">
+                            <div class="col-md-12 col-sm-12">
+                                <div class="form-group">
+                                    <label><i class="fa fa-info text-info"></i> El proceso de pago adelantado consiste en registrar el monto/dinero sin modificar la cantidad de los productos agregados en el detalle de venta.</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 col-sm-12">
+                                <div class="form-group">
+                                    <label for="txtEfectivoAdelanto">Efectivo: </label>
+                                    <input id="txtEfectivoAdelanto" type="text" class="form-control" placeholder="0.0">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 col-sm-12">
+                                <div class="form-group">
+                                    <label for="txtTarjetaAdelanto">Tarjeta: </label>
+                                    <input id="txtTarjetaAdelanto" type="text" class="form-control" placeholder="0.0">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 col-sm-12">
+                                <div class="form-group">
+                                    <div class="text-center">
+                                        <h6>Por pagar: <span id="lblVueltoAdelanto" class="text-primary">S/ 00.00</span></h6>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <div class="row">
-                        <div class="col-md-12">
-                            <div class="table-responsive">
-                                <table class="table table-hover table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th class="sorting" style="width: 5%;">#</th>
-                                            <th class="sorting" style="width: 35%;">Cliente</th>
-                                            <th class="sorting" style="width: 15%;">Celular</th>
-                                            <th class="sorting" style="width: 15%;">Membresia</th>
-                                            <th class="sorting" style="width: 15%;">Deuda</th>
-                                            <th class="sorting_asc" style="width: 20%;">Descripción</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="tbListaCliente">
-                                        <!-- tbLista -->
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <label class="text-danger">Para seleccione un cliente hacer doble click en la lista.</label>
-                                </div>
-                                <div class="col-md-6 text-right">
-                                    <button type="button" class="btn btn-danger btn-group-sm" id="btnCancelModalProcesoVenta">
-                                        <i class="fa fa-remove"></i> Cancelar</button>
+                        <div class="col-md-12 col-sm-12">
+                            <div class="form-group">
+                                <div class="text-center">
+                                    <button id="btnCompletarVenta" class="btn btn-info" type="button" title="Procesar venta"><i class="fa fa-save"></i> Completar venta</button>
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </div>

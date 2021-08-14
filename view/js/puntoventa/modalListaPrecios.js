@@ -3,7 +3,7 @@ function ModalListaPrecios(){
     let tbListaPrecios = $("#tbListaPrecios");
 
     this.init = function(){
-        $("#btnOpenModalListaPrecios").click(function () {
+        $("#btnListaPrecios").click(function () {
             $("#modalListaPrecios").modal("show");            
         });
 
@@ -22,6 +22,6 @@ function ModalListaPrecios(){
 
     function clearModalListaPrecios() {
         $("#modalListaPrecios").modal("hide");
-        tbListaPrecios.empty();
+        // tbListaPrecios.empty();
     }
 }
