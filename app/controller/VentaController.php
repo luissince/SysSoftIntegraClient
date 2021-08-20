@@ -15,10 +15,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         $fechaInicial = $_GET['fechaInicial'];
         $fechaFinal = $_GET['fechaFinal'];
         $estado = $_GET['estado'];
-        $empleado = $_GET['empleado'];
         $posicionPagina = $_GET['posicionPagina'];
         $filasPorPagina = $_GET['filasPorPagina'];
-        $ventas = VentasAdo::ListVentas($opcion, $busqueda, $fechaInicial, $fechaFinal, 0, intval($estado), $empleado, $posicionPagina, $filasPorPagina, '');
+        $ventas = VentasAdo::ListVentas($opcion, $busqueda, $fechaInicial, $fechaFinal, 0, intval($estado), $posicionPagina, $filasPorPagina);
         if (is_array($ventas)) {
             print json_encode(array(
                 "estado" => 1,

@@ -110,7 +110,7 @@ if (isset($_SESSION['IdEmpleado'])) {
                     $("#txtClave").focus();
                 } else {
                     $.ajax({
-                        url: "../app/controller/login/Login.php",
+                        url: "../app/controller/EmpleadoController.php",
                         method: "GET",
                         data: {
                             "usuario": $("#txtUsuario").val().trim(),

@@ -231,7 +231,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
             let arrayProductos = [];
             let cbTipoMovimiento = $("#cbTipoMovimiento");
 
-            $(document).ready(function() {               
+            $(document).ready(function() {
 
                 $("#btnGuardar").on("click", function(event) {
                     validateIngreso();
@@ -240,8 +240,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 $("#btnGuardar").on("keyup", function(event) {
                     if (event.keyCode === 13) {
                         validateIngreso();
+                        event.preventDefault();
                     }
-                    event.preventDefault();
                 });
 
                 $("#btnProductos").on("click", function(event) {
@@ -288,8 +288,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     }
                 });
 
-
-                ///BCPLPEPL
                 if (cbTipoMovimiento.val() === "0" || cbTipoMovimiento.val() === undefined) {
                     tools.AlertWarning("Movimiento", "Seleccione un tipo de movimiento.");
                 } else if (arrayProductos.length === 0) {
@@ -408,7 +406,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
             function ListarProductos(tipo, value) {
                 $.ajax({
-                    url: "../app/controller/suministros/ListarSuministros.php",
+                    url: "../app/controller/SuministroController.php",
                     method: "GET",
                     data: {
                         "type": "modalproductos",
@@ -464,7 +462,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
             }
 
             function loadTipoMovimiento(ajuste) {
-                $.get("../app/controller/tipomovimiento/ListarTipoMovimientos.php", {
+                $.get("../app/controller/MovimientoController.php", {
+                    "type": "listipomovimiento",
                     "ajuste": ajuste,
                     "all": "false"
                 }, function(data, status) {
@@ -487,9 +486,10 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 $("#id-modal-productos").modal("hide");
                 if (!validateDuplicate(idSuministro)) {
                     $.ajax({
-                        url: "../app/controller/suministros/ObtenerSuministro.php",
+                        url: "../app/controller/SuministroController.php",
                         method: "GET",
                         data: {
+                            "type": "getsuministroformovimiento",
                             "idSuministro": idSuministro
                         },
                         beforeSend: function() {
@@ -526,9 +526,11 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
             function listarProductosNegativos() {
                 $.ajax({
-                    url: "../app/controller/suministros/ListarSuministroNegativos.php",
+                    url: "../app/controller/SuministroController.php",
                     method: "GET",
-                    data: {},
+                    data: {
+                        "type": "listallnegativo"
+                    },
                     beforeSend: function() {
                         tbList.empty();
                         arrayProductos = [];
@@ -560,9 +562,11 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
             function listarTodosLosProductos() {
                 $.ajax({
-                    url: "../app/controller/suministros/ListarTodosSuministros.php",
+                    url: "../app/controller/SuministroController.php",
                     method: "GET",
-                    data: {},
+                    data: {
+                        "type": "listallsuministro"
+                    },
                     beforeSend: function() {
                         tbList.empty();
                         arrayProductos = [];
@@ -596,11 +600,12 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 tools.ModalDialog("Movimiento", '¿Está seguro de continuar?', function(value) {
                     if (value == true) {
                         $.ajax({
-                            url: "../app/controller/tipomovimiento/RegistrarMovimiento.php",
+                            url: "../app/controller/MovimientoController.php",
                             method: "POST",
                             accepts: "application/json",
                             contentType: "application/json",
                             data: JSON.stringify({
+                                "type": "insertmovimiento",
                                 "fecha": tools.getCurrentDate(),
                                 "hora": tools.getCurrentTime(),
                                 "tipoAjuste": rbIncremento[0].checked,

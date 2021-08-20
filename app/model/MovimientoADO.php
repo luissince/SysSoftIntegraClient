@@ -1,9 +1,13 @@
 <?php
 
-/**
- * Representa el la estructura de las Clientes
- * almacenadas en la base de datos
- */
+namespace SysSoftIntegra\Model;
+
+use Database;
+use PDO;
+use PDOException;
+use Exception;
+use DateTime;
+
 require_once __DIR__ . './../database/DataBaseConexion.php';
 
 class MovimientoADO
@@ -97,8 +101,9 @@ class MovimientoADO
             Detalle,
             Cantidad,
             Costo,
-            Total)
-            VALUES(?,?,?,?,?,?,?,?,?)");
+            Total,
+            IdAlmacen)
+            VALUES(?,?,?,?,?,?,?,?,?,?)");
 
             foreach ($body["lista"] as $result) {
                 $movimientoDetalle->execute(array(
@@ -124,7 +129,8 @@ class MovimientoADO
                         $body["observacion"],
                         $result["Movimiento"],
                         $result["PrecioCompra"],
-                        $result["PrecioCompra"] * $result["Movimiento"]
+                        $result["PrecioCompra"] * $result["Movimiento"],
+                        0
                     ));
                 }
             }
@@ -146,7 +152,7 @@ class MovimientoADO
             $comandoMovimiento->bindParam(1, $idMovimiento, PDO::PARAM_STR);
             $comandoMovimiento->execute();
             $resultMovimiento = $comandoMovimiento->fetchObject();
-          
+
             $comandoMovimientoDetalle = Database::getInstance()->getDb()->prepare("{call Sp_Listar_Movimiento_Inventario_Detalle_By_Id(?)}");
             $comandoMovimientoDetalle->bindParam(1, $idMovimiento, PDO::PARAM_STR);
             $comandoMovimientoDetalle->execute();
@@ -213,8 +219,9 @@ class MovimientoADO
                     Detalle,
                     Cantidad, 
                     Costo, 
-                    Total) 
-                    VALUES(?,CAST(GETDATE() AS DATE),CAST(GETDATE() AS TIME),?,?,?,?,?,?)");
+                    Total,
+                    IdAlmacen) 
+                    VALUES(?,CAST(GETDATE() AS DATE),CAST(GETDATE() AS TIME),?,?,?,?,?,?,?)");
 
                     $cmdSuministro = Database::getInstance()->getDb()->prepare("UPDATE SuministroTB SET Cantidad = Cantidad + ? WHERE IdSuministro = ?");
                     foreach ($arrayDetalleMovimiento as $value) {
@@ -225,7 +232,8 @@ class MovimientoADO
                             "CANCELAR MOVIMIENTO",
                             $value["Cantidad"],
                             $value["Costo"],
-                            $value["Cantidad"] * $value["Costo"]
+                            $value["Cantidad"] * $value["Costo"],
+                            0
                         ));
                         $cmdSuministro->execute(array(
                             $value["Cantidad"],
@@ -261,8 +269,9 @@ class MovimientoADO
                         Detalle,
                         Cantidad, 
                         Costo, 
-                        Total) 
-                        VALUES(?,CAST(GETDATE() AS DATE),CAST(GETDATE() AS TIME),?,?,?,?,?,?)");
+                        Total,
+                        IdAlmacen) 
+                        VALUES(?,CAST(GETDATE() AS DATE),CAST(GETDATE() AS TIME),?,?,?,?,?,?,?)");
 
                     $cmdSuministro = Database::getInstance()->getDb()->prepare("UPDATE SuministroTB SET Cantidad = Cantidad - ? WHERE IdSuministro = ?");
                     foreach ($arrayDetalleMovimiento as $value) {
@@ -273,7 +282,8 @@ class MovimientoADO
                             "CANCELAR MOVIMIENTO",
                             $value["Cantidad"],
                             $value["Costo"],
-                            $value["Cantidad"] * $value["Costo"]
+                            $value["Cantidad"] * $value["Costo"],
+                            0
                         ));
                         $cmdSuministro->execute(array(
                             $value["Cantidad"],
@@ -293,7 +303,4 @@ class MovimientoADO
             return $e->getMessage();
         }
     }
-
-    
-
 }

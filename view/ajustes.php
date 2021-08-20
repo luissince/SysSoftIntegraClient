@@ -62,7 +62,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             <div class="row">
                                 <div class="col-md 12 col-sm-12 col-xs-12">
                                     <div class="form-group">
-                                        <button class="btn btn-default" id="btnCancelarMovimiento">
+                                        <button class="btn btn-secondary" id="btnCancelarMovimiento">
                                             <img src="./images/unable.svg" width="18" />
                                             Anular Ajuste
                                         </button>
@@ -316,7 +316,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
             }
 
             function loadComponents() {
-                $.get("../app/controller/tipomovimiento/ListarTipoMovimientos.php", {
+                $.get("../app/controller/MovimientoController.php", {
+                    "type": "listipomovimiento",
                     "ajuste": true,
                     "all": "true"
                 }, function(data, status) {
@@ -347,9 +348,10 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
             function fillInventarioTable(init, movimiento, fechaInicial, fechaFinal) {
                 $.ajax({
-                    url: "../app/controller/suministros/ListarMovimiento.php",
+                    url: "../app/controller/SuministroController.php",
                     method: "GET",
                     data: {
+                        "type": "listmovimiento",
                         "init": init,
                         "opcion": 1,
                         "movimiento": movimiento,
@@ -384,8 +386,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                         '<td>' + moviminento.Observacion + '</td>' +
                                         '<td>' + moviminento.Informacion + '</td>' +
                                         '<td>' + '<div class="' + estadoStyle + '">' + moviminento.Estado + '</div>' + '</td>' +
-                                        '<td><button class="btn btn-warning btn-sm" onclick="loadDetalleMovimiento(\'' + moviminento.IdMovimientoInventario + '\')"><img src="./image/search.png" width="18" /><span> Ver</span></button></td>' +
-                                        '<td><button class="btn btn-success btn-sm" onclick="generarExcel(\'' + moviminento.IdMovimientoInventario + '\')"><i class="fa fa-file-excel"></i><span> Excel</span></button></td>' +
+                                        '<td><button class="btn btn-warning btn-sm" onclick="loadDetalleMovimiento(\'' + moviminento.IdMovimientoInventario + '\')"><img src="./images/search.png" width="18" /><span> Ver</span></button></td>' +
+                                        '<td><button class="btn btn-success btn-sm" onclick="generarExcel(\'' + moviminento.IdMovimientoInventario + '\')"><i class="fa fa-file-excel-o"></i><span> Excel</span></button></td>' +
                                         '</tr>');
                                 }
                                 totalPaginacion = parseInt(Math.ceil((parseFloat(object.total) / filasPorPagina)));
@@ -414,9 +416,10 @@ if (!isset($_SESSION['IdEmpleado'])) {
             function loadDetalleMovimiento(idMovimiento) {
                 $("#id-modal-productos").modal("show");
                 $.ajax({
-                    url: "../app/controller/tipomovimiento/ListarMovimientoPorId.php",
+                    url: "../app/controller/MovimientoController.php",
                     method: "GET",
                     data: {
+                        "type": "listforidmovimiento",
                         "idMovimiento": idMovimiento
                     },
                     beforeSend: function() {
@@ -446,8 +449,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             $("#btnCancelarMovimiento").bind("keydown", function(event) {
                                 if (event.keyCode === 13) {
                                     cancelarMovimiento(idMovimiento);
+                                    event.preventDefault();
                                 }
-                                event.preventDefault();
                             });
 
                             for (let md of movimientoDetalle) {
@@ -473,12 +476,14 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 tools.ModalDialog("Ajuste", "¿Está seguro de anular el Ajuste?", function(value) {
                     if (value == true) {
                         $.ajax({
-                            url: "../app/controller/tipomovimiento/CancelarMovimiento.php",
+                            url: "../app/controller/MovimientoController.php",
                             method: "GET",
                             data: {
+                                "type": "cancelarmovimiento",
                                 "idMovimiento": idMovimiento
                             },
                             beforeSend: function() {
+                                $("#id-modal-productos").modal("hide");
                                 tools.ModalAlertInfo("Ajuste", "Se está procesando la información.");
                             },
                             success: function(result) {

@@ -257,7 +257,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
             function LoadDataEmpresa() {
                 $.ajax({
-                    url: "../app/controller/empresa/ListarEmpresa.php",
+                    url: "../app/controller/EmpresaController.php",
                     method: "GET",
                     data: {},
                     beforeSend: function() {
@@ -327,7 +327,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 tools.ModalDialog("Mi Empresa", "¿Está seguro de continuar?", function(value) {
                     if (value == true) {
                         $.ajax({
-                            url: "../app/controller/empresa/CrudEmpresa.php",
+                            url: "../app/controller/EmpresaController.php",
                             method: "POST",
                             data: formData,
                             contentType: false,

@@ -364,8 +364,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     var fechaFinal = $("#txtFechaFinal").val();
                     if (!state) {
                         paginacion = 1;
-                        fillVentasTable(3, "", fechaInicial, fechaFinal, estadoVenta, '');
-                        opcion = 0;
+                        fillVentasTable(1, "", fechaInicial, fechaFinal, estadoVenta);
+                        opcion = 3;
                     }
                 });
 
@@ -374,8 +374,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     var fechaFinal = $("#txtFechaFinal").val();
                     if (!state) {
                         paginacion = 1;
-                        fillVentasTable(3, "", fechaInicial, fechaFinal, estadoVenta, '');
-                        opcion = 0;
+                        fillVentasTable(1, "", fechaInicial, fechaFinal, estadoVenta);
+                        opcion = 1;
                     }
                 });
 
@@ -385,8 +385,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         if (value.trim().length != 0) {
                             if (!state) {
                                 paginacion = 1;
-                                fillVentasTable(2, value.trim(), "", "", estadoVenta, '');
-                                opcion = 1;
+                                fillVentasTable(2, value.trim(), "", "", estadoVenta);
+                                opcion = 2;
                             }
                         }
                     }
@@ -462,8 +462,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         var fechaFinal = $("#txtFechaFinal").val();
                         if (!state) {
                             paginacion = 1;
-                            fillVentasTable(0, "", fechaInicial, fechaFinal, estadoVenta, '');
-                            opcion = 0;
+                            fillVentasTable(1, "", fechaInicial, fechaFinal, estadoVenta);
+                            opcion = 1;
                         }
                     }
                 });
@@ -479,27 +479,26 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 let value = $("#txtSearch").val();
                 switch (opcion) {
                     case 0:
-                        fillVentasTable(3, "", fechaInicial, fechaFinal, estadoVenta, '');
+                        fillVentasTable(0, "", "", "", estadoVenta);
                         break;
                     case 1:
-                        fillVentasTable(2, value.trim(), "", "", estadoVenta, '');
+                        fillVentasTable(1, "", fechaInicial, fechaFinal, estadoVenta);
+                        break;
+                    case 2:
+                        fillVentasTable(2, value.trim(), "", "", estadoVenta);
                         break;
                 }
             }
 
             function loadInitVentas() {
-                let fechaInicial = $("#txtFechaInicial").val();
-                let fechaFinal = $("#txtFechaFinal").val();
-                if (tools.validateDate(fechaInicial) && tools.validateDate(fechaFinal)) {
-                    if (!state) {
-                        paginacion = 1;
-                        fillVentasTable(3, "", fechaInicial, fechaFinal, estadoVenta, '');
-                        opcion = 0;
-                    }
+                if (!state) {
+                    paginacion = 1;
+                    fillVentasTable(0, "", "", "", estadoVenta);
+                    opcion = 0;
                 }
             }
 
-            function fillVentasTable(opcion, busqueda, fechaInicial, fechaFinal, estado, empleado) {
+            function fillVentasTable(opcion, busqueda, fechaInicial, fechaFinal, estado) {
                 $.ajax({
                     url: "../app/controller/VentaController.php",
                     method: "GET",
@@ -510,7 +509,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         "fechaInicial": fechaInicial,
                         "fechaFinal": fechaFinal,
                         "estado": estado,
-                        "empleado": empleado,
                         "posicionPagina": ((paginacion - 1) * filasPorPagina),
                         "filasPorPagina": filasPorPagina
                     },

@@ -32,7 +32,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
         <?php include('./layout/puntoventa/modalPrecio.php'); ?>
         <!-- modal movimiento caja -->
         <?php include('./layout/puntoventa/modalMovimientoCaja.php'); ?>
-     
+
 
         <main class="app-content">
             <!-- <div class="app-title">
@@ -171,8 +171,10 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <div class="input-group">
-                                                        <div class="input-group-append">
-                                                            <span class="form-control" id="btnCodigo" title="Codigo de Barras"><i class="fa fa-barcode"></i></span>
+                                                        <div class="input-group-prepend">
+                                                            <span class="form-control" id="btnCodigo" title="Codigo de Barras">
+                                                                <i class="fa fa-barcode"></i>
+                                                            </span>
                                                         </div>
                                                         <input type="text" class="form-control" placeholder="Código de barras">
                                                     </div>
@@ -236,10 +238,9 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                         <div class="card-body">
                                             <div class="row">
                                                 <div class="col-md-12 col-sm-12 col-12">
-
                                                     <div class="form-group">
                                                         <div class="input-group">
-                                                            <div class="input-group-append">
+                                                            <div class="input-group-prepend">
                                                                 <span class="form-control">
                                                                     <i class="fa fa-ticket text-info"></i>
                                                                 </span>
@@ -249,7 +250,9 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                                             </select>
                                                         </div>
                                                     </div>
+                                                </div>
 
+                                                <div class="col-md-12 col-sm-12 col-12">
                                                     <div class="form-group">
                                                         <div class="row">
                                                             <div class="col-md-6 text-left">
@@ -260,10 +263,12 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                                             </div>
                                                         </div>
                                                     </div>
+                                                </div>
 
-                                                    <div class="form-group d-flex">
+                                                <div class="col-md-12 col-sm-12 col-12">
+                                                    <div class="form-group">
                                                         <div class="input-group">
-                                                            <div class="input-group-append">
+                                                            <div class="input-group-prepend">
                                                                 <span class="form-control">
                                                                     <i class="fa fa-bars text-info"></i>
                                                                 </span>
@@ -273,10 +278,12 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                                             </select>
                                                         </div>
                                                     </div>
+                                                </div>
 
-                                                    <div class="form-group d-flex">
+                                                <div class="col-md-12 col-sm-12 col-12">
+                                                    <div class="form-group">
                                                         <div class="input-group">
-                                                            <div class="input-group-append">
+                                                            <div class="input-group-prepend">
                                                                 <span class="form-control">
                                                                     <i class="fa fa-search text-info"></i>
                                                                 </span>
@@ -293,21 +300,26 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                                             </div>
                                                         </div>
                                                     </div>
+                                                </div>
 
-                                                    <div class="form-group d-flex">
+                                                <div class="col-md-12 col-sm-12 col-12">
+                                                    <div class="form-group">
                                                         <div class="input-group">
-                                                            <div class="input-group-append">
+                                                            <div class="input-group-prepend">
                                                                 <span class="form-control">
                                                                     <i class="fa fa-user text-info"></i>
                                                                 </span>
                                                             </div>
                                                             <input type="text" class="form-control" placeholder="Cliente" title="Número de documento">
+
                                                         </div>
                                                     </div>
+                                                </div>
 
-                                                    <div class="form-group d-flex">
+                                                <div class="col-md-12 col-sm-12 col-12">
+                                                    <div class="form-group">
                                                         <div class="input-group">
-                                                            <div class="input-group-append">
+                                                            <div class="input-group-prepend">
                                                                 <span class="form-control">
                                                                     <i class="fa fa-phone text-info"></i>
                                                                 </span>
@@ -315,10 +327,12 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                                             <input type="text" class="form-control" placeholder="N° de Celular" title="Número de documento">
                                                         </div>
                                                     </div>
+                                                </div>
 
-                                                    <div class="form-group d-flex">
+                                                <div class="col-md-12 col-sm-12 col-12">
+                                                    <div class="form-group">
                                                         <div class="input-group">
-                                                            <div class="input-group-append">
+                                                            <div class="input-group-prepend">
                                                                 <span class="form-control">
                                                                     <i class="fa fa-envelope text-info"></i>
                                                                 </span>
@@ -326,10 +340,12 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                                             <input type="text" class="form-control" placeholder="Correo Electrónico" title="Número de documento">
                                                         </div>
                                                     </div>
+                                                </div>
 
-                                                    <div class="form-group d-flex">
+                                                <div class="col-md-12 col-sm-12 col-12">
+                                                    <div class="form-group">
                                                         <div class="input-group">
-                                                            <div class="input-group-append">
+                                                            <div class="input-group-prepend">
                                                                 <span class="form-control">
                                                                     <i class="fa fa-map-marker text-info"></i>
                                                                 </span>
@@ -337,18 +353,19 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                                             <input type="text" class="form-control" placeholder="Dirección de Vivienda o Local" title="Número de documento">
                                                         </div>
                                                     </div>
-
                                                 </div>
+
                                             </div>
                                         </div>
-
                                     </div>
-                                </div>
 
+                                </div>
                             </div>
+
                         </div>
                     </div>
                 </div>
+            </div>
             </div>
         </main>
 
@@ -364,7 +381,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
         <script src="./js/notificaciones.js"></script>
         <script>
-
             let tools = new Tools();
             let modalListaCliente = new ModalListaCliente();
             let modalProcesoVenta = new ModalProcesoVenta();
@@ -372,7 +388,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
             let modalCantidad = new ModalCantidad();
             let modalPrecio = new ModalPrecio();
             let modalMovimientoCaja = new ModalMovimientoCaja();
-            
+
             let modalListaPrecios = new ModalListaPrecios();
 
             $(document).ready(function() {

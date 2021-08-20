@@ -208,7 +208,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
             function loadListaProductos(opcion, clave, nombre) {
                 $.ajax({
-                    url: "../app/controller/suministros/ListarSuministros.php",
+                    url: "../app/controller/SuministroController.php",
                     method: "GET",
                     data: {
                         "type": "listaproductos",
@@ -288,11 +288,14 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 tools.ModalDialog("Producto", '¿Está seguro de eliminar el Producto?', function(value) {
                     if (value == true) {
                         $.ajax({
-                            url: "../app/controller/suministros/EliminarSuministro.php",
+                            url: "../app/controller/SuministroController.php",
                             method: "POST",
-                            data: {
+                            accepts: "application/json",
+                            contentType: "application/json; charset=utf-8",
+                            data: JSON.stringify({
+                                "type": "removesuministro",
                                 "IdSuministro": IdSuministro
-                            },
+                            }),
                             beforeSend: function() {
                                 tools.ModalAlertInfo("Producto", "Se está procesando la petición.");
                             },

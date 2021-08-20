@@ -1,5 +1,11 @@
 <?php
 
+namespace SysSoftIntegra\Model;
+
+use Database;
+use PDO;
+use PDOException;
+use Exception;
 
 require_once __DIR__ . './../database/DataBaseConexion.php';
 
@@ -11,20 +17,21 @@ class SuministrosADO
     {
     }
 
-    public static function ListarInventario($producto, $tipoExistencia, $nameProduct, $opcion, $categoria, $marca, $posicionPaginacion, $filasPorPagina)
+    public static function ListarInventario($producto, $tipoExistencia, $nameProduct, $opcion, $categoria, $marca, $almacen, $posicionPaginacion, $filasPorPagina)
     {
         $array = array();
         try {
             // Preparar sentencia
-            $comando = Database::getInstance()->getDb()->prepare("{CALL Sp_Listar_Inventario_Suministros(?,?,?,?,?,?,?,?)}");
+            $comando = Database::getInstance()->getDb()->prepare("{CALL Sp_Listar_Inventario_Suministros(?,?,?,?,?,?,?,?,?)}");
             $comando->bindValue(1, $producto, PDO::PARAM_STR);
             $comando->bindValue(2, $tipoExistencia, PDO::PARAM_INT);
             $comando->bindValue(3, $nameProduct, PDO::PARAM_STR);
             $comando->bindValue(4, $opcion, PDO::PARAM_INT);
             $comando->bindValue(5, $categoria, PDO::PARAM_INT);
             $comando->bindValue(6, $marca, PDO::PARAM_INT);
-            $comando->bindValue(7, $posicionPaginacion, PDO::PARAM_INT);
-            $comando->bindValue(8, $filasPorPagina, PDO::PARAM_INT);
+            $comando->bindValue(7, $almacen, PDO::PARAM_INT);
+            $comando->bindValue(8, $posicionPaginacion, PDO::PARAM_INT);
+            $comando->bindValue(9, $filasPorPagina, PDO::PARAM_INT);
             // Ejecutar sentencia preparada
             $comando->execute();
 
@@ -53,13 +60,14 @@ class SuministrosADO
             }
 
 
-            $comando = Database::getInstance()->getDb()->prepare("{CALL Sp_Listar_Inventario_Suministros_Count(?,?,?,?,?,?)}");
+            $comando = Database::getInstance()->getDb()->prepare("{CALL Sp_Listar_Inventario_Suministros_Count(?,?,?,?,?,?,?)}");
             $comando->bindValue(1, $producto, PDO::PARAM_STR);
             $comando->bindValue(2, $tipoExistencia, PDO::PARAM_INT);
             $comando->bindValue(3, $nameProduct, PDO::PARAM_STR);
             $comando->bindValue(4, $opcion, PDO::PARAM_INT);
             $comando->bindValue(5, $categoria, PDO::PARAM_INT);
             $comando->bindValue(6, $marca, PDO::PARAM_INT);
+            $comando->bindValue(7, $almacen, PDO::PARAM_INT);
             // Ejecutar sentencia preparada
             $comando->execute();
             $totalResult = $comando->fetchColumn();
@@ -249,11 +257,19 @@ class SuministrosADO
 
     public static function ListarSuministroNegativos()
     {
-        $consulta = "SELECT IdSuministro,Clave,NombreMarca,StockMinimo,Cantidad,
+        $consulta = "SELECT 
+        IdSuministro,
+        Clave,
+        NombreMarca,
+        StockMinimo,
+        Cantidad,
 		dbo.Fc_Obtener_Nombre_Detalle(UnidadCompra,'0013') AS UnidadCompraNombre,
         dbo.Fc_Obtener_Nombre_Detalle(Marca,'0007') AS MarcaNombre,
-		PrecioCompra,Impuesto,PrecioVentaGeneral,
-		Inventario,ValorInventario 
+		PrecioCompra,
+        Impuesto,
+        PrecioVentaGeneral,
+		Inventario,
+        ValorInventario 
 		FROM SuministroTB WHERE Cantidad <=0 ORDER BY MarcaNombre";
         try {
             $comando = Database::getInstance()->getDb()->prepare($consulta);
@@ -285,7 +301,6 @@ class SuministrosADO
 
     public static function ObtenerSuministroById($idSuministro)
     {
-
         try {
             $array = array();
             // Preparar sentencia
@@ -532,10 +547,10 @@ class SuministrosADO
             $cmdValidate->execute();
             if ($row = $cmdValidate->fetch()) {
 
-                    $suministro_almacen_insertar = Database::getInstance()->getDb()->prepare("INSERT INTO CantidadTB(IdAlmacen,IdSuministro,StockMinimo,StockMaximo,Cantidad) VALUES(?,?,?,?,?)");
-                    $suministro_almacen_insertar->execute(array($idAlmacen, $row["IdSuministro"], $suministro["StockMinimo"], $suministro["StockMaximo"], $suministro["Cantidad"]));
+                $suministro_almacen_insertar = Database::getInstance()->getDb()->prepare("INSERT INTO CantidadTB(IdAlmacen,IdSuministro,StockMinimo,StockMaximo,Cantidad) VALUES(?,?,?,?,?)");
+                $suministro_almacen_insertar->execute(array($idAlmacen, $row["IdSuministro"], $suministro["StockMinimo"], $suministro["StockMaximo"], $suministro["Cantidad"]));
 
-                    $suministroKardex = Database::getInstance()->getDb()->prepare("INSERT INTO KardexSuministroTB
+                $suministroKardex = Database::getInstance()->getDb()->prepare("INSERT INTO KardexSuministroTB
                     (IdSuministro,
                     Fecha,
                     Hora,
@@ -548,17 +563,16 @@ class SuministrosADO
                     IdAlmacen)
                     VALUES(?,GETDATE(),GETDATE(),?,?,?,?,?,?,?)");
 
-                    $suministroKardex->execute(array(
-                        $row["IdSuministro"],
-                        1,
-                        2,
-                        "INVENTARIO INICIAL",
-                        $suministro["Cantidad"],
-                        $suministro["PrecioCompra"],
-                        $suministro["PrecioCompra"] * $suministro["Cantidad"],
-                        $idAlmacen
-                    ));
-                               
+                $suministroKardex->execute(array(
+                    $row["IdSuministro"],
+                    1,
+                    2,
+                    "INVENTARIO INICIAL",
+                    $suministro["Cantidad"],
+                    $suministro["PrecioCompra"],
+                    $suministro["PrecioCompra"] * $suministro["Cantidad"],
+                    $idAlmacen
+                ));
             }
 
             Database::getInstance()->getDb()->commit();
@@ -745,16 +759,15 @@ class SuministrosADO
         }
     }
 
-    public static function KardexSuministroById($opcion, $value, $fechaInicial, $fechaFinal)
+    public static function KardexSuministroById($opcion, $value, $idAlmacen)
     {
         try {
 
             $array = array();
-            $cmdKardex = Database::getInstance()->getDb()->prepare("{CALL Sp_Listar_Kardex_Suministro_By_Id(?,?,?,?)}");
+            $cmdKardex = Database::getInstance()->getDb()->prepare("{CALL Sp_Listar_Kardex_Suministro_By_Id(?,?,?)}");
             $cmdKardex->bindParam(1, $opcion, PDO::PARAM_INT);
             $cmdKardex->bindParam(2, $value, PDO::PARAM_STR);
-            $cmdKardex->bindParam(3, $fechaInicial, PDO::PARAM_STR);
-            $cmdKardex->bindParam(4, $fechaFinal, PDO::PARAM_STR);
+            $cmdKardex->bindParam(3, $idAlmacen, PDO::PARAM_STR);
             $cmdKardex->execute();
 
             $arrayKardex = array();

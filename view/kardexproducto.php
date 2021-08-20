@@ -123,7 +123,15 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             <input type="text" class="form-control" placeholder="Escribir para filtrar" id="txtSearch">
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
+                        <label>Almacen:</label>
+                        <div class="input-group">
+                            <select class="form-control" id="cbAlmacen">
+                                <option value="">Cargando información...</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
                         <label>Paginación:</label>
                         <div class="form-group">
                             <button class="btn btn-primary" id="btnAnterior">
@@ -223,9 +231,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
             let lblPaginaActual = $("#lblPaginaActual");
             let lblPaginaSiguiente = $("#lblPaginaSiguiente");
 
-            /**/
             let tbList = $("#tbList");
-
+            let cbAlmacen = $("#cbAlmacen");
 
             $(document).ready(function() {
 
@@ -234,14 +241,22 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     loadInitProductos();
                 });
 
-                $("#btnProductos").on("keyup", function(event) {
+                $("#btnProductos").keyup(function(event) {
                     if (event.keyCode === 13) {
                         $("#id-modal-productos").modal("show");
                         loadInitProductos();
+                        event.preventDefault();
                     }
-                    event.preventDefault();
                 });
 
+                $("#txtSearch").keydown(function(event) {
+                    if (event.keyCode === 13) {
+                        if (cbAlmacen.children('option').length > 0 && cbAlmacen.val() != "") {
+                            GetSuministroById($("#txtSearch").val());
+                            event.preventDefault();
+                        }
+                    }
+                });
 
                 $("#btnReload").click(function() {
                     clearElements();
@@ -253,7 +268,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     }
                     event.preventDefault();
                 });
-
+                loadAlmacen();
                 loadComponentsModal();
             });
 
@@ -361,7 +376,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
             function ListarProductos(tipo, value) {
                 $.ajax({
-                    url: "../app/controller/suministros/ListarSuministros.php",
+                    url: "../app/controller/SuministroController.php",
                     method: "GET",
                     data: {
                         "type": "modalproductos",
@@ -418,12 +433,17 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
             function onSelectProducto(idSuministro, nombreMarca) {
                 $("#id-modal-productos").modal("hide");
+                fillKardexTable(idSuministro, nombreMarca);
+            }
+
+            function fillKardexTable(idSuministro, nombreMarca) {
                 $.ajax({
-                    url: "../app/controller/suministros/ListarSuministros.php",
+                    url: "../app/controller/SuministroController.php",
                     method: "GET",
                     data: {
                         "type": "kardexlista",
-                        "idSuministro": idSuministro
+                        "idSuministro": idSuministro,
+                        "idAlmacen": cbAlmacen.val() == "" ? 0 : cbAlmacen.val()
                     },
                     beforeSend: function() {
                         $("#lblProducto").html(nombreMarca);
@@ -466,6 +486,42 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     error: function(error) {
                         tbList.empty();
                         tbList.append('<tr><td class="text-center" colspan="10"> <p>' + error.responseText + '</p></td></tr>');
+                    }
+                });
+            }
+
+            function loadAlmacen() {
+                $.ajax({
+                    url: "../app/controller/AlmacenController.php",
+                    method: "GET",
+                    data: {
+                        "type": "GetSearchComboBoxAlmacen"
+                    },
+                    beforeSend: function() {
+                        cbAlmacen.empty();
+                    },
+                    success: function(result) {
+                        for (let value of result.data) {
+                            cbAlmacen.append('<option value="' + value.IdAlmacen + '">' + value.Nombre + '</option> ');
+                        }
+                    },
+                    error: function(error) {
+
+                    }
+                });
+            }
+
+            function GetSuministroById(idSuministro) {
+                $.get("../app/controller/SuministroController.php", {
+                    "type": "getproducto",
+                    "idSuministro": idSuministro
+                }, function(result, status) {
+                    if (status == "success") {
+                        if (result.estado === 1) {
+                            if (result.suministro != null) {
+                                fillKardexTable(result.suministro.IdSuministro, result.suministro.NombreGenerico);
+                            }
+                        }
                     }
                 });
             }

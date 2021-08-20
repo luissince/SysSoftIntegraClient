@@ -960,11 +960,12 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 tools.ModalDialog("Producto", "¿Está seguro de continuar?", function(value) {
                     if (value == true) {
                         $.ajax({
-                            url: "../app/controller/suministros/ActualizarSuministro.php",
+                            url: "../app/controller/SuministroController.php",
                             type: 'POST',
                             accepts: "application/json",
                             contentType: "application/json; charset=utf-8",
                             data: JSON.stringify({
+                                "type": "updatesuministro",
                                 "IdSuministro": idSuministro,
                                 "Clave": $("#txtClave").val().trim(),
                                 "ClaveAlterna": $("#txtClaveAlterna").val().trim(),
@@ -1026,7 +1027,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
             function loadSuminstro(idSuministro) {
                 $.ajax({
-                    url: "../app/controller/suministros/ListarSuministros.php",
+                    url: "../app/controller/SuministroController.php",
                     method: 'GET',
                     data: {
                         type: "getproducto",
@@ -1141,7 +1142,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
             function loadImpuesto() {
                 tools.AlertInfo("Producto", "Cargando información..");
-                $.get("../app/controller/suministros/ListarImpuestos.php", {
+                $.get("../app/controller/SuministroController.php", {
                     type: "impuestos"
                 }, function(data, status) {
                     if (status === "success") {
@@ -1163,10 +1164,10 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
             function loadModalId(idMantenimiento, nombre) {
                 $("#tbLista").empty();
-                $.get("../app/controller/suministros/ListarImpuestos.php", {
-                    type: "detalles",
-                    mantenimiento: idMantenimiento,
-                    nombre: nombre
+                $.get("../app/controller/SuministroController.php", {
+                    "type": "detalles",
+                    "mantenimiento": idMantenimiento,
+                    "nombre": nombre
                 }, function(data, status) {
                     if (status === "success") {
                         for (let value of data.data) {

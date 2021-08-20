@@ -241,15 +241,17 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
             function fillInventarioTable(opcion, clave, nombre, existencia) {
                 $.ajax({
-                    url: "../app/controller/suministros/ListarInventario.php",
+                    url: "../app/controller/SuministroController.php",
                     method: "GET",
                     data: {
+                        "type": "listainventario",
                         "producto": clave,
                         "existencia": existencia,
                         "nombre": nombre,
                         "opcion": opcion,
                         "categoria": 0,
                         "marca": 0,
+                        "idAlmacen": 0,
                         "posicionPagina": ((paginacion - 1) * filasPorPagina),
                         "filasPorPagina": filasPorPagina
                     },

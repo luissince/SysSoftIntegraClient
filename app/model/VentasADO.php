@@ -18,20 +18,19 @@ class VentasAdo
     {
     }
 
-    public static function ListVentas($opcion, $value, $fechaInicial, $fechaFinal, $comprobante, $estado, $usuario, $posicionPagina, $filasPorPagina, $ruc)
+    public static function ListVentas($opcion, $value, $fechaInicial, $fechaFinal, $comprobante, $estado, $posicionPagina, $filasPorPagina)
     {
         $array = array();
         try {
-            $comandoVenta = Database::getInstance()->getDb()->prepare("{CALL Sp_Listar_Ventas(?,?,?,?,?,?,?,?,?)}");
+            $comandoVenta = Database::getInstance()->getDb()->prepare("{CALL Sp_Listar_Ventas_All(?,?,?,?,?,?,?,?)}");
             $comandoVenta->bindParam(1, $opcion, PDO::PARAM_INT);
             $comandoVenta->bindParam(2, $value, PDO::PARAM_STR);
             $comandoVenta->bindParam(3, $fechaInicial, PDO::PARAM_STR);
             $comandoVenta->bindParam(4, $fechaFinal, PDO::PARAM_STR);
             $comandoVenta->bindParam(5, $comprobante, PDO::PARAM_INT);
             $comandoVenta->bindParam(6, $estado, PDO::PARAM_INT);
-            $comandoVenta->bindParam(7, $usuario, PDO::PARAM_STR);
-            $comandoVenta->bindParam(8, $posicionPagina, PDO::PARAM_INT);
-            $comandoVenta->bindParam(9, $filasPorPagina, PDO::PARAM_INT);
+            $comandoVenta->bindParam(7, $posicionPagina, PDO::PARAM_INT);
+            $comandoVenta->bindParam(8, $filasPorPagina, PDO::PARAM_INT);
             $comandoVenta->execute();
             $arrayVenta = array();
             $count = 0;
@@ -65,14 +64,13 @@ class VentasAdo
                 ));
             }
 
-            $comandoTotal = Database::getInstance()->getDb()->prepare("{CALL Sp_Listar_Ventas_Count(?,?,?,?,?,?,?)}");
+            $comandoTotal = Database::getInstance()->getDb()->prepare("{CALL Sp_Listar_Ventas_All_Count(?,?,?,?,?,?)}");
             $comandoTotal->bindParam(1, $opcion, PDO::PARAM_INT);
             $comandoTotal->bindParam(2, $value, PDO::PARAM_STR);
             $comandoTotal->bindParam(3, $fechaInicial, PDO::PARAM_STR);
             $comandoTotal->bindParam(4, $fechaFinal, PDO::PARAM_STR);
             $comandoTotal->bindParam(5, $comprobante, PDO::PARAM_INT);
             $comandoTotal->bindParam(6, $estado, PDO::PARAM_INT);
-            $comandoTotal->bindParam(7, $usuario, PDO::PARAM_STR);
             $comandoTotal->execute();
             $resultTotal = $comandoTotal->fetchColumn();
 

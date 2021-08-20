@@ -952,11 +952,12 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 tools.ModalDialog("Producto", "¿Está seguro de continuar?", function(value) {
                     if (value == true) {
                         $.ajax({
-                            url: "../app/controller/suministros/RegistrarSuministro.php",
+                            url: "../app/controller/SuministroController.php",
                             type: 'POST',
                             accepts: "application/json",
                             contentType: "application/json; charset=utf-8",
                             data: JSON.stringify({
+                                "type": "insertsuministro",
                                 "Clave": $("#txtClave").val().trim(),
                                 "ClaveAlterna": $("#txtClaveAlterna").val().trim(),
                                 "NombreMarca": $("#txtDescripcion").val().trim(),
@@ -1013,7 +1014,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
             }
 
             function loadImpuesto() {
-                $.get("../app/controller/suministros/ListarImpuestos.php", {
+                $.get("../app/controller/SuministroController.php", {
                     type: "impuestos"
                 }, function(data, status) {
                     if (status === "success") {
@@ -1033,10 +1034,10 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
             function loadModalId(idMantenimiento, nombre) {
                 $("#tbLista").empty();
-                $.get("../app/controller/suministros/ListarImpuestos.php", {
-                    type: "detalles",
-                    mantenimiento: idMantenimiento,
-                    nombre: nombre
+                $.get("../app/controller/SuministroController.php", {
+                    "type": "detalles",
+                    "mantenimiento": idMantenimiento,
+                    "nombre": nombre
                 }, function(data, status) {
                     if (status === "success") {
                         for (let value of data.data) {

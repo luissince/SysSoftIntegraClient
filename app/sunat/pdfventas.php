@@ -253,9 +253,10 @@ if (is_array($ventaDatos)) {
                         <tr>
                             <td width="5%" style="border: none;color:white; background:rgb(2,2,3);font-size: 8pt;">Ítem</td>                    
                             <td width="11%" style="border: none;color:white; background:rgb(2,2,3);font-size: 8pt;">Cantidad</td>
-                            <td width="10%" style="border: none;color:white; background:rgb(2,2,3);font-size: 8pt;">Unidad</td>                    
-                            <td width="46%" style="border: none;color:white; background:rgb(2,2,3);font-size: 8pt;">Descripcion</td>
+                            <td width="12%" style="border: none;color:white; background:rgb(2,2,3);font-size: 8pt;">Unidad</td>                    
+                            <td width="44%" style="border: none;color:white; background:rgb(2,2,3);font-size: 8pt;">Descripcion</td>
                             <td width="11%" style="border: none;color:white; background:rgb(2,2,3);font-size: 8pt;">Prec. Unit.</td>
+                            <td width="11%" style="border: none;color:white; background:rgb(2,2,3);font-size: 8pt;">Descuento</td>
                             <td width="11%" style="border: none;color:white; background:rgb(2,2,3);font-size: 8pt;">Importe</td>
                         </tr>
                     </thead>
@@ -271,6 +272,7 @@ if (is_array($ventaDatos)) {
                         <td style="text-align: left;font-size: 7pt;">' . $value["UnidadCompra"] . '</td>
                         <td style="text-align: left;font-size: 7pt;">' . $value["NombreMarca"] . '</td>
                         <td style="text-align: right;font-size: 7pt;">' . number_format(round($value["PrecioVenta"], 2, PHP_ROUND_HALF_UP), 2, '.', '') . '</td>
+                        <td style="text-align: right;font-size: 7pt;">' . number_format(round($value["Descuento"], 2, PHP_ROUND_HALF_UP), 2, '.', '') . '</td>
                         <td style="text-align: right;font-size: 7pt;">' . number_format(round($value["PrecioVenta"] * $value["Cantidad"], 2, PHP_ROUND_HALF_UP), 2, '.', '') . '</td>
                         </tr>';
                     }
@@ -324,7 +326,7 @@ if (is_array($ventaDatos)) {
                             </tr>
                             <tr>
                                 <td class="totals" width="55%">SUB IMPORTE: </td>
-                                <td class="cost" width="45%">S/ ' . number_format(round(($venta->SubTotal - $venta->Descuento), 2, PHP_ROUND_HALF_UP), 2, '.', '') . '</td>
+                                <td class="cost" width="45%">S/ ' . number_format(round(($venta->SubImporte), 2, PHP_ROUND_HALF_UP), 2, '.', '') . '</td>
                             </tr>
                             <tr>
                                 <td class="totals" width="55%">IGV(18%). </td>
