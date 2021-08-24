@@ -26,55 +26,37 @@ if (!file_exists($fileDir)) {
     mkdir($fileDir, 0777, true);
 }
 
-$soapResult = new SoapResult('../../resources/wsdl/billConsultService.wsdl', $get["ruc"] . "-" . $get["tipo"] . "-" . $get["serie"] . "-" . $get["numero"]);
-$soapResult->sendGetStatusCdr(Sunat::xmlGetStatusCdr($get));
-echo json_encode(array(
-    "state" => $soapResult->isAccepted(),
-    "code" => $soapResult->getCode(),
-    "message" => $soapResult->getMessage(),
-    "description" => $soapResult->getDescription(),
-));
+$arguments = [
+    $get["ruc"],
+    $get["tipo"],
+    $get["serie"],
+    intval($get["numero"])
+];
 
-// $result = process($get);
+$soapResult = new SoapResult('../../resources/wsdl/billConsultService.wsdl', implode('-', $arguments));
+$soapResult->sendGetStatusValid(Sunat::xmlGetValidService($get));
 
-// if (isset($result)) {
-//     if ($result->isSuccess()) {
-//         if (!is_null($result->getCdrResponse())) {
-//             if (!is_null($filename)) {
-//                 $file = '/files/' . $filename;
-//             } else {
-//                 $file = "";
-//             }
-//             echo json_encode(array(
-//                 "state" => true,
-//                 "code" => 1,
-//                 "typecode" => $result->getCode(),
-//                 "message" => $result->getMessage(),
-//                 "comprobante" => $result->getCdrResponse()->getDescription(),
-//                 "descripcon" => $result->getCdrResponse()->getNotes(),
-//                 "file" => $file
-//             ));
-//         } else {
-//             echo json_encode(array(
-//                 "state" => true,
-//                 "code" => 2,
-//                 "typecode" => $result->getCode(),
-//                 "message" => $result->getMessage(),
-//             ));
-//         }
-//     } else {
-//         echo json_encode(array(
-//             "state" => true,
-//             "code" => 3,
-//             "typecode" => $result->getCode(),
-//             "message" => $result->getMessage(),
-//             "descripcon" => $result->getError()->getMessage()
-//         ));
-//     }
-// } else {
-//     echo json_encode(array(
-//         "state" => false,
-//         "code" => 0,
-//         "description" => "Error en la respuesta"
-//     ));
-// }
+if ($soapResult->isSuccess()) {
+    if ($soapResult->isAccepted()) {
+        echo json_encode(array(
+            "state" => $soapResult->isSuccess(),
+            "accepted" => $soapResult->isAccepted(),
+            "code" => $soapResult->getCode(),
+            "message" => $soapResult->getMessage()
+        ));
+    } else {
+        echo json_encode(array(
+            "state" => $soapResult->isSuccess(),
+            "accepted" => $soapResult->isAccepted(),
+            "code" => $soapResult->getCode(),
+            "message" => $soapResult->getMessage(),
+        ));
+    }
+} else {
+    echo json_encode(array(
+        "state" => $soapResult->isSuccess(),
+        "code" => $soapResult->getCode(),
+        "accepted" => $soapResult->isAccepted(),
+        "message" => $soapResult->getMessage()
+    ));
+}

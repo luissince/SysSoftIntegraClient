@@ -339,6 +339,55 @@ class SoapResult
         }
     }
 
+    public function sendGetStatusValid($xmlSend)
+    {
+        try {
+            $client = new SoapBuilder($this->wsdlURL, array('trace' => true));
+            $client->SoapClientCall($xmlSend);
+            $client->SoapCall("getStatus");
+            $result = $client->__getLastResponse();
+
+            $DOM = new DOMDocument('1.0', 'utf-8');
+            $DOM->preserveWhiteSpace = FALSE;
+
+            if ($DOM->loadXML($result)) {
+
+                $DocXML = $DOM->getElementsByTagName('statusCode');
+                $code = "";
+                foreach ($DocXML as $Nodo) {
+                    $code = $Nodo->nodeValue;
+                }
+
+                $DocXML = $DOM->getElementsByTagName('statusMessage');
+                $message = "";
+                foreach ($DocXML as $Nodo) {
+                    $message = $Nodo->nodeValue;
+                }
+
+                if ($code == "0001") {
+                    $this->setAccepted(true);
+                } else {
+                    $this->setAccepted(false);
+                }
+                $this->setCode($code);
+                $this->setMessage($message);
+                $this->setSuccess(true);
+            } else {
+                throw new Exception("No se pudo obtener el xml de respuesta.");
+            }
+        } catch (SoapFault $ex) {
+            $code = preg_replace('/[^0-9]/', '', $ex->faultcode);
+            $message = $ex->faultstring;
+            $this->setSuccess(false);
+            $this->setCode($code);
+            $this->setMessage($message);
+        } catch (Exception $ex) {
+            $this->setSuccess(false);
+            $this->setCode("-1");
+            $this->setMessage($ex->getMessage());
+        }
+    }
+
     public function isSuccess()
     {
         return $this->success;

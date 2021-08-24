@@ -114,11 +114,32 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         <div class="col-md-6">
                             <div class="form-group">
                                 <button class="btn btn-success" id="consultarEstado"> Consultar Estado </button>
-                                <button class="btn btn-primary" id="consultarCdr"> Consultar CDR </button>
+                                <!-- <button class="btn btn-primary" id="consultarCdr"> Consultar CDR </button> -->
                                 <button class="btn btn-danger" id="limpiarConsulta"> Limpiar </button>
                             </div>
                         </div>
                         <div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="card">
+                                <h4 class="card-header">Resultado</h4>
+                                <div class="card-body">
+                                    <div class="row" style="cursor:default;">
+                                        <div class="col-md-12">
+                                            <label>Codigo:</label>
+                                            <label class="badge badge-light" id="lblCodigo"></label>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <label>Respuesta:</label>
+                                            <label class="badge badge-light" id="lblRespuesta"></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -232,13 +253,23 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         cdr: cdr
                     },
                     beforeSend: function() {
-                        $("#ReduxComponent").empty();
+                        tools.ModalAlertInfo("Consultar Comprobante", "Procesando petición..");
                     },
                     success: function(result) {
-                        console.log(result);
+                        if (result.state === true) {
+                            if (result.accepted === true) {
+                                tools.ModalAlertSuccess("Consultar Comprobante", "Resultado: Código " + result.code + " " + result.message);
+                            } else {
+                                tools.ModalAlertWarning("Consultar Comprobante", "Resultado: Código " + result.code + " " + result.message);
+                            }
+                        } else {
+                            tools.ModalAlertWarning("Consultar Comprobante", "Resultado: Código " + result.code + " " + result.message);
+                        }
+                        $("#lblCodigo").html(result.code);
+                        $("#lblRespuesta").html(result.message);
                     },
                     error: function(error) {
-                        console.log(error)
+                        tools.ModalAlertError("Consultar Comprobante", "Error en el momento de obtener el xml: " + error.responseText);
                     }
                 });
             }
@@ -247,8 +278,9 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 $("#txtTipo").val('');
                 $('#txtSerie').val('');
                 $('#txtCorrelativo').val('');
-                $("#lblResponse").html('')
                 $("#txtTipo").focus();
+                $("#lblCodigo").html('');
+                $("#lblRespuesta").html('');
             }
         </script>
     </body>

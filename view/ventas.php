@@ -348,7 +348,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
             let filasPorPagina = 20;
             let tbody = $("#tbList");
             let arrayVentas = [];
-            let estadoVenta = $('#cbEstado').children('option').length > 0 && $("#cbEstado").val() != "" ? $("#cbEstado").val() : 0;
 
             let lblPaginaActual = $("#lblPaginaActual");
             let lblPaginaSiguiente = $("#lblPaginaSiguiente");
@@ -364,7 +363,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     var fechaFinal = $("#txtFechaFinal").val();
                     if (!state) {
                         paginacion = 1;
-                        fillVentasTable(1, "", fechaInicial, fechaFinal, estadoVenta);
+                        fillVentasTable(1, "", fechaInicial, fechaFinal, 0);
                         opcion = 1;
                     }
                 });
@@ -374,7 +373,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     var fechaFinal = $("#txtFechaFinal").val();
                     if (!state) {
                         paginacion = 1;
-                        fillVentasTable(1, "", fechaInicial, fechaFinal, estadoVenta);
+                        fillVentasTable(1, "", fechaInicial, fechaFinal, 0);
                         opcion = 1;
                     }
                 });
@@ -385,7 +384,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         if (value.trim().length != 0) {
                             if (!state) {
                                 paginacion = 1;
-                                fillVentasTable(2, value.trim(), "", "", estadoVenta);
+                                fillVentasTable(2, value.trim(), "", "", 0);
                                 opcion = 2;
                             }
                         }
@@ -457,14 +456,11 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 });
 
                 $("#cbEstado").change(function() {
-                    if ($('#cbEstado').children('option').length > 0 && $('#cbEstado').val() != "") {
-                        var fechaInicial = $("#txtFechaInicial").val();
-                        var fechaFinal = $("#txtFechaFinal").val();
-                        if (!state) {
-                            paginacion = 1;
-                            fillVentasTable(1, "", fechaInicial, fechaFinal, estadoVenta);
-                            opcion = 1;
-                        }
+                    let estadoVenta = $('#cbEstado').children('option').length > 0 && $("#cbEstado").val() != "" ? $("#cbEstado").val() : 0;
+                    if (!state) {
+                        paginacion = 1;
+                        fillVentasTable(3, "", "", "", estadoVenta);
+                        opcion = 3;
                     }
                 });
 
@@ -477,15 +473,19 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 let fechaInicial = $("#txtFechaInicial").val();
                 let fechaFinal = $("#txtFechaFinal").val();
                 let value = $("#txtSearch").val();
+                let estadoVenta = $('#cbEstado').children('option').length > 0 && $("#cbEstado").val() != "" ? $("#cbEstado").val() : 0;
                 switch (opcion) {
                     case 0:
-                        fillVentasTable(0, "", "", "", estadoVenta);
+                        fillVentasTable(0, "", "", "", 0);
                         break;
                     case 1:
-                        fillVentasTable(1, "", fechaInicial, fechaFinal, estadoVenta);
+                        fillVentasTable(1, "", fechaInicial, fechaFinal, 0);
                         break;
                     case 2:
-                        fillVentasTable(2, value.trim(), "", "", estadoVenta);
+                        fillVentasTable(2, value.trim(), "", "", 0);
+                        break;
+                    case 3:
+                        fillVentasTable(3, "", "", "", estadoVenta);
                         break;
                 }
             }
@@ -493,7 +493,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
             function loadInitVentas() {
                 if (!state) {
                     paginacion = 1;
-                    fillVentasTable(0, "", "", "", estadoVenta);
+                    fillVentasTable(0, "", "", "", 0);
                     opcion = 0;
                 }
             }
