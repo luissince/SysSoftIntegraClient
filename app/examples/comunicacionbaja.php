@@ -132,6 +132,13 @@ if (!is_array($detalleventa)) {
     $xml->formatOutput = true;
     $xml->saveXML();
 
+    $fileDir = __DIR__ . '/../files';
+
+    if (!file_exists($fileDir)) {
+        mkdir($fileDir, 0777, true);
+    }
+
+
     $filename = $empresa->NumeroDocumento . '-RA-' . $currentDate->format('Ymd') . '-' . $correlativo;
     $xml->save('../files/' . $filename . '.xml');
     chmod('../files/' . $filename . '.xml', 0777);

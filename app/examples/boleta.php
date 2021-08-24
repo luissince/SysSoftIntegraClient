@@ -322,6 +322,10 @@ if (!is_array($detalleventa)) {
     $xml->formatOutput = true;
     $xml->saveXML();
 
+    if (!file_exists($fileDir)) {
+        mkdir($fileDir, 0777, true);
+    }
+
     $filename = $empresa->NumeroDocumento . '-' . $venta->TipoComprobante . '-' . $venta->Serie . '-' . $venta->Numeracion;
     $xml->save('../files/' . $filename . '.xml');
     chmod('../files/' . $filename . '.xml', 0777);

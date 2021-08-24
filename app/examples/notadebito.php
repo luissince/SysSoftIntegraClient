@@ -321,6 +321,12 @@ if (!is_array($result)) {
     $xml->formatOutput = true;
     $xml->saveXML();
 
+    $fileDir = __DIR__ . '/../files';
+
+    if (!file_exists($fileDir)) {
+        mkdir($fileDir, 0777, true);
+    }
+
     $filename = $empresa->NumeroDocumento . '-' . $notacredito->TipoDocumentoNotaCredito . '-' . $notacredito->SerieNotaCredito . '-' . $notacredito->NumeracionNotaCredito;
     $xml->save('../files/' . $filename . '.xml');
     chmod('../files/' . $filename . '.xml', 0777);
@@ -328,7 +334,6 @@ if (!is_array($result)) {
     Sunat::signDocument($filename);
 
     Sunat::createZip("../files/" . $filename . ".zip", "../files/" . $filename . ".xml", "" . $filename . ".xml");
-
 
     $soapResult = new SoapResult('billService.wsdl', $filename);
     $soapResult->sendBill(Sunat::xmlSendBill($empresa->NumeroDocumento, $empresa->UsuarioSol, $empresa->ClaveSol, $filename . '.zip', base64_encode(file_get_contents('../files/' . $filename . '.zip'))));

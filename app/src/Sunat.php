@@ -134,4 +134,27 @@ class Sunat
         </soapenv:Body>
         </soapenv:Envelope>';
     }
+
+    public static function xmlGetStatusCdr($get)
+    {
+        return '<?xml version="1.0" encoding="UTF-8"?>
+        <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://service.sunat.gob.pe" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
+        <soapenv:Header>
+            <wsse:Security>
+                <wsse:UsernameToken Id="ABC-123">
+                    <wsse:Username>' . $get["rucSol"] . '' . $get["userSol"] . '</wsse:Username>
+                    <wsse:Password>' . $get["passSol"] . '</wsse:Password>
+                </wsse:UsernameToken>
+            </wsse:Security>
+        </soapenv:Header>
+        <soapenv:Body>
+            <ser:getStatusCdr>
+                <rucComprobante>' . $get["ruc"] . '</rucComprobante>
+                <tipoComprobante>' . $get["tipo"] . '</tipoComprobante>
+                <serieComprobante>' . $get["serie"] . '</serieComprobante>
+                <numeroComprobante>' . $get["numero"] . '</numeroComprobante>
+            </ser:getStatusCdr>
+        </soapenv:Body>
+        </soapenv:Envelope>';
+    }
 }

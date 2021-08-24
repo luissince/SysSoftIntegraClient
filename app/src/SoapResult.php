@@ -251,6 +251,62 @@ class SoapResult
         }
     }
 
+    public function sendGetStatusCdr($xmlSend)
+    {
+        try {
+            $client = new SoapBuilder($this->wsdlURL, array('trace' => true));
+            $client->SoapClientCall($xmlSend);
+            $client->SoapCall("getStatusCdr");
+            $result = $client->__getLastResponse();
+
+            $DOM = new DOMDocument('1.0', 'utf-8');
+            $DOM->preserveWhiteSpace = FALSE;
+            $DOM->loadXML($result);
+
+            $DocXML = $DOM->getElementsByTagName('content');
+            $content = "";
+            foreach ($DocXML as $Nodo) {
+                $content = $Nodo->nodeValue;
+            }
+            if ($content == "") {
+                throw new Exception("No se pudo obtener el contenido del nodo content.");
+            }
+
+            $cdr = base64_decode($content);
+            $archivo = fopen('../../files/R-' . $this->filename . '.zip', 'w+');
+            fputs($archivo, $cdr);
+            fclose($archivo);
+            chmod('../../files/R-' . $this->filename . '.zip', 0777);
+
+            $isExtract = Sunat::extractZip('../../files/R-' . $this->filename . '.zip', '../../files/');
+            if (!$isExtract) {
+                throw new Exception("No se pudo extraer el contenido del archivo zip.");
+            }
+
+            $DocXML = $DOM->getElementsByTagName('statusCode');
+            $code = "";
+            foreach ($DocXML as $Nodo) {
+                $code = $Nodo->nodeValue;
+            }
+
+            $DocXML = $DOM->getElementsByTagName('statusMessage');
+            $description = "";
+            foreach ($DocXML as $Nodo) {
+                $description = $Nodo->nodeValue;
+            }
+
+            $this->setCode($code);
+            $this->setDescription($description);
+            $this->setSuccess(true);
+        } catch (Exception $ex) {
+            // $code = preg_replace('/[^0-9]/', '', $ex->faultcode);
+            // $message = $ex->faultstring;
+            $this->setSuccess(false);
+            $this->setCode("-1");
+            $this->setDescription($ex);
+        }
+    }
+
     public function isSuccess()
     {
         return $this->success;

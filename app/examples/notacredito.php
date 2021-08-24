@@ -322,6 +322,13 @@ if (!is_array($result)) {
     $xml->formatOutput = true;
     $xml->saveXML();
 
+    $fileDir = __DIR__ . '/../files';
+
+    if (!file_exists($fileDir)) {
+        mkdir($fileDir, 0777, true);
+    }
+
+
     $filename = $empresa->NumeroDocumento . '-' . $notacredito->TipoDocumentoNotaCredito . '-' . $notacredito->SerieNotaCredito . '-' . $notacredito->NumeracionNotaCredito;
     $xml->save('../files/' . $filename . '.xml');
     chmod('../files/' . $filename . '.xml', 0777);

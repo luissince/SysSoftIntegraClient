@@ -272,7 +272,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             txtRazonSocial.val(data.result.RazonSocial);
                             txtNomComercial.val(data.result.NombreComercial);
                             if (data.result.Image == "") {
-                                lblImagen.attr("src", "./image/noimage.jpg");
+                                lblImagen.attr("src", "./images/noimage.jpg");
                             } else {
                                 lblImagen.attr("src", "data:image/png;base64," + data.result.Image);
                             }

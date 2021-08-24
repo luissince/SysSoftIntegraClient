@@ -365,7 +365,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     if (!state) {
                         paginacion = 1;
                         fillVentasTable(1, "", fechaInicial, fechaFinal, estadoVenta);
-                        opcion = 3;
+                        opcion = 1;
                     }
                 });
 

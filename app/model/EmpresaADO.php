@@ -58,7 +58,7 @@ class EmpresaADO
 
                 $ext = pathinfo($body['certificadoName'], PATHINFO_EXTENSION);
                 $file_path = $body['txtNumDocumento'] . "." . $ext;
-                $path = "../../resources/" . $file_path;
+                $path = "../resources/" . $file_path;
                 $move = move_uploaded_file($body['certificadoNameTmp'], $path);
                 if (!$move) {
                     throw new Exception('Problemas al subir el certificado.');
@@ -73,10 +73,10 @@ class EmpresaADO
                     $privateKeyPem = $certificados['pkey']; //Archivo privado
                     // file_put_contents('../../resources/cert.pem', $privateKeyPem . '' . $publicKeyPem);
                     // chmod("../../resources/cert.pem", 0777);
-                    file_put_contents('../../resources/private_key.pem', $privateKeyPem);
-                    file_put_contents('../../resources/public_key.pem', $publicKeyPem);
-                    chmod("../../resources/private_key.pem", 0777);
-                    chmod("../../resources/public_key.pem", 0777);
+                    file_put_contents('../resources/private_key.pem', $privateKeyPem);
+                    file_put_contents('../resources/public_key.pem', $publicKeyPem);
+                    chmod("../resources/private_key.pem", 0777);
+                    chmod("../resources/public_key.pem", 0777);
                 } else {
                     throw new Exception('Error en crear las llaves del certificado.');
                 }
@@ -149,7 +149,7 @@ class EmpresaADO
             Database::getInstance()->getDb()->commit();
             return "updated";
         } catch (Exception $ex) {
-            unlink('../../resources/' . $file_path);
+            unlink('../resources/' . $file_path);
             Database::getInstance()->getDb()->rollback();
             return $ex->getMessage();
         }

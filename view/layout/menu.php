@@ -22,6 +22,7 @@
                         <ul class="treeview-menu">
                                 <li><a class="app-menu__item" id="tab-ventas" href="ventas.php"><i class="app-menu__icon fa fa-minus"></i><span class="app-menu__label">Ventas</span></a></li>
                                 <li><a class="app-menu__item" id="tab-notacredito" href="notacredito.php"><i class="app-menu__icon fa fa-minus"></i><span class="app-menu__label">Nota de Crédito</span></a></li>
+                                <li><a class="app-menu__item" id="tab-consultarcomprobante" href="consultarcomprobante.php"><i class="app-menu__icon fa fa-minus"></i><span class="app-menu__label">Consultar Comprobante</span></a></li>
                         </ul>
                 </li>
 
@@ -103,7 +104,7 @@
 
         /// Elementos de li
         const tabs = [
-                "index", "ventas", "notacredito",
+                "index", "ventas", "notacredito", "consultarcomprobante",
                 "productos", "inventario", "kardexproducto", "ajustes",
                 "registrarproducto", "actualizarproducto",
                 "clientes", "proveedores",
@@ -121,12 +122,14 @@
 
         /// Funcion que asigna la clase active
         function setActive(id) {
-                if (id == "tab-ventas" || id == "tab-notacredito") {
+                if (id == "tab-ventas" || id == "tab-notacredito" || id == "tab-consultarcomprobante") {
                         document.getElementById("treeview-ingresos").setAttribute("class", "treeview is-expanded");
                         if (id == "tab-ventas") {
                                 document.getElementById("tab-ventas").setAttribute("class", "app-menu__item active");
                         } else if (id == "tab-notacredito") {
                                 document.getElementById("tab-notacredito").setAttribute("class", "app-menu__item active");
+                        } else if (id == "tab-consultarcomprobante") {
+                                document.getElementById("tab-consultarcomprobante").setAttribute("class", "app-menu__item active");
                         }
                 } else if (id == "tab-clientes" || id == "tab-proveedores") {
                         document.getElementById("treeview-contactos").setAttribute("class", "treeview is-expanded");
