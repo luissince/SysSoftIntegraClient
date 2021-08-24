@@ -29,9 +29,10 @@ if (!file_exists($fileDir)) {
 $soapResult = new SoapResult('../../resources/wsdl/billConsultService.wsdl', $get["ruc"] . "-" . $get["tipo"] . "-" . $get["serie"] . "-" . $get["numero"]);
 $soapResult->sendGetStatusCdr(Sunat::xmlGetStatusCdr($get));
 echo json_encode(array(
-    "state" => true,
+    "state" => $soapResult->isAccepted(),
     "code" => $soapResult->getCode(),
-    "descripcon" => $soapResult->getDescription()
+    "message" => $soapResult->getMessage(),
+    "description" => $soapResult->getDescription(),
 ));
 
 // $result = process($get);

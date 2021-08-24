@@ -24,6 +24,8 @@ class SoapResult
 
     private $ticket = "";
 
+    private $message = "";
+
     public function __construct($wsdlURL, $filename)
     {
         $this->wsdlURL = $wsdlURL;
@@ -261,49 +263,79 @@ class SoapResult
 
             $DOM = new DOMDocument('1.0', 'utf-8');
             $DOM->preserveWhiteSpace = FALSE;
-            $DOM->loadXML($result);
 
-            $DocXML = $DOM->getElementsByTagName('content');
-            $content = "";
-            foreach ($DocXML as $Nodo) {
-                $content = $Nodo->nodeValue;
+            if ($DOM->loadXML($result)) {
+                $DocXML = $DOM->getElementsByTagName('statusCode');
+                $code = "";
+                foreach ($DocXML as $Nodo) {
+                    $code = $Nodo->nodeValue;
+                }
+
+                $DocXML = $DOM->getElementsByTagName('statusMessage');
+                $message = "";
+                foreach ($DocXML as $Nodo) {
+                    $message = $Nodo->nodeValue;
+                }
+
+                $DocXML = $DOM->getElementsByTagName('content');
+                $content = "";
+                foreach ($DocXML as $Nodo) {
+                    $content = $Nodo->nodeValue;
+                }
+
+                if ($content != "") {
+                    $cdr = base64_decode($content);
+                    $archivo = fopen('../../files/R-' . $this->filename . '.zip', 'w+');
+                    fputs($archivo, $cdr);
+                    fclose($archivo);
+                    chmod('../../files/R-' . $this->filename . '.zip', 0777);
+
+                    $isExtract = Sunat::extractZip('../../files/R-' . $this->filename . '.zip', '../../files/');
+                    if (!$isExtract) {
+                        throw new Exception("No se pudo extraer el contenido del archivo zip.");
+                    }
+
+                    $xml = file_get_contents('../../files/R-' . $this->filename . '.xml');
+                    $DOM = new DOMDocument('1.0', 'utf-8');
+                    $DOM->preserveWhiteSpace = FALSE;
+                    $DOM->loadXML($xml);
+
+                    $DocXML = $DOM->getElementsByTagName('ResponseCode');
+                    $code = "";
+                    foreach ($DocXML as $Nodo) {
+                        $code = $Nodo->nodeValue;
+                    }
+
+                    $DocXML = $DOM->getElementsByTagName('Description');
+                    $description = "";
+                    foreach ($DocXML as $Nodo) {
+                        $description = $Nodo->nodeValue;
+                    }
+
+                    $this->setAccepted(true);
+                    $this->setCode($code);
+                    $this->setMessage($message);
+                    $this->setDescription($description);
+                    $this->setSuccess(true);
+                } else {
+                    $this->setAccepted(false);
+                    $this->setCode($code);
+                    $this->setMessage($message);
+                    $this->setSuccess(true);
+                }
+            } else {
+                throw new Exception("No se pudo obtener el xml de respuesta.");
             }
-            if ($content == "") {
-                throw new Exception("No se pudo obtener el contenido del nodo content.");
-            }
-
-            $cdr = base64_decode($content);
-            $archivo = fopen('../../files/R-' . $this->filename . '.zip', 'w+');
-            fputs($archivo, $cdr);
-            fclose($archivo);
-            chmod('../../files/R-' . $this->filename . '.zip', 0777);
-
-            $isExtract = Sunat::extractZip('../../files/R-' . $this->filename . '.zip', '../../files/');
-            if (!$isExtract) {
-                throw new Exception("No se pudo extraer el contenido del archivo zip.");
-            }
-
-            $DocXML = $DOM->getElementsByTagName('statusCode');
-            $code = "";
-            foreach ($DocXML as $Nodo) {
-                $code = $Nodo->nodeValue;
-            }
-
-            $DocXML = $DOM->getElementsByTagName('statusMessage');
-            $description = "";
-            foreach ($DocXML as $Nodo) {
-                $description = $Nodo->nodeValue;
-            }
-
+        } catch (SoapFault $ex) {
+            $code = preg_replace('/[^0-9]/', '', $ex->faultcode);
+            $message = $ex->faultstring;
+            $this->setSuccess(false);
             $this->setCode($code);
-            $this->setDescription($description);
-            $this->setSuccess(true);
+            $this->setMessage($message);
         } catch (Exception $ex) {
-            // $code = preg_replace('/[^0-9]/', '', $ex->faultcode);
-            // $message = $ex->faultstring;
             $this->setSuccess(false);
             $this->setCode("-1");
-            $this->setDescription($ex);
+            $this->setMessage($ex->getMessage());
         }
     }
 
@@ -365,5 +397,15 @@ class SoapResult
     public function setTicket($ticket)
     {
         $this->ticket = $ticket;
+    }
+
+    public function getMessage()
+    {
+        return $this->message;
+    }
+
+    public function setMessage($message)
+    {
+        $this->message = $message;
     }
 }

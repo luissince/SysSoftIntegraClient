@@ -322,6 +322,8 @@ if (!is_array($detalleventa)) {
     $xml->formatOutput = true;
     $xml->saveXML();
 
+    $fileDir = __DIR__ . '/../files';
+
     if (!file_exists($fileDir)) {
         mkdir($fileDir, 0777, true);
     }
