@@ -5,7 +5,7 @@ header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Ac
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
 header('Content-Type: application/json; charset=UTF-8');
 
-use SysSoftIntegra\Model\EmpleadoAdo;
+use SysSoftIntegra\Model\EmpleadoADO;
 
 require __DIR__ . './../src/autoload.php';
 
@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     $usuario = $_GET['usuario'];
     $clave = $_GET['clave'];
 
-    $result = EmpleadoAdo::Login($usuario, $clave);
+    $result = EmpleadoADO::Login($usuario, $clave);
 
     if (is_object($result)) {
         session_start();

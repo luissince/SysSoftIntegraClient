@@ -6,11 +6,11 @@ class Autoload_Static
     {
         return array(
             'SysSoftIntegra\\Model\\VentasADO' => __DIR__  . '/../model/VentasADO.php',
-            'SysSoftIntegra\\Model\\DetalleAdo' => __DIR__  . '/../model/DetalleAdo.php',
+            'SysSoftIntegra\\Model\\DetalleADO' => __DIR__  . '/../model/DetalleADO.php',
             'SysSoftIntegra\\Model\\SuministrosADO' => __DIR__  . '/../model/SuministrosADO.php',
-            'SysSoftIntegra\\Model\\AlmacenAdo' => __DIR__  . '/../model/AlmacenAdo.php',
+            'SysSoftIntegra\\Model\\AlmacenADO' => __DIR__  . '/../model/AlmacenADO.php',
             'SysSoftIntegra\\Model\\EmpresaADO' => __DIR__  . '/../model/EmpresaADO.php',
-            'SysSoftIntegra\\Model\\EmpleadoAdo' => __DIR__  . '/../model/EmpleadoAdo.php',
+            'SysSoftIntegra\\Model\\EmpleadoADO' => __DIR__  . '/../model/EmpleadoADO.php',
             'SysSoftIntegra\\Model\\MovimientoADO' => __DIR__  . '/../model/MovimientoADO.php',
             'SysSoftIntegra\\Src\\Sunat' => __DIR__  . '/Sunat.php',
             'SysSoftIntegra\\Src\\SoapResult' => __DIR__  . '/SoapResult.php',

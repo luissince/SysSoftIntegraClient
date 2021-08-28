@@ -4,13 +4,13 @@ header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Ac
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
 header('Content-Type: application/json; charset=UTF-8');
 
-use SysSoftIntegra\Model\DetalleAdo;
+use SysSoftIntegra\Model\DetalleADO;
 
 require __DIR__ . './../src/autoload.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     if ($_GET["type"] == "detailname") {
-        $result = DetalleAdo::GetDetailIdName(array($_GET["value1"], $_GET["value2"], $_GET["value3"]));
+        $result = DetalleADO::GetDetailIdName(array($_GET["value1"], $_GET["value2"], $_GET["value3"]));
         if (is_array($result)) {
             print json_encode(array(
                 "estado" => 1,

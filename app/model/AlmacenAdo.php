@@ -11,7 +11,7 @@ use DateTime;
 require_once __DIR__ . './../database/DataBaseConexion.php';
 
 
-class AlmacenAdo
+class AlmacenADO
 {
 
     function construct()
