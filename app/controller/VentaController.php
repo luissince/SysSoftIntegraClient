@@ -1,10 +1,11 @@
 <?php
+
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
 header('Content-Type: application/json; charset=UTF-8');
 
-use SysSoftIntegra\Model\VentasAdo;
+use SysSoftIntegra\Model\VentasADO;
 
 require __DIR__ . './../src/autoload.php';
 
@@ -17,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         $estado = $_GET['estado'];
         $posicionPagina = $_GET['posicionPagina'];
         $filasPorPagina = $_GET['filasPorPagina'];
-        $ventas = VentasAdo::ListVentas($opcion, $busqueda, $fechaInicial, $fechaFinal, intval($estado), $posicionPagina, $filasPorPagina);
+        $ventas = VentasADO::ListVentas($opcion, $busqueda, $fechaInicial, $fechaFinal, intval($estado), $posicionPagina, $filasPorPagina);
         if (is_array($ventas)) {
             print json_encode(array(
                 "estado" => 1,
@@ -33,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         }
         exit();
     } else if ($_GET["type"] == "allventa") {
-        $detallle = VentasAdo::ListVentaDetalle($_GET['idVenta']);
+        $detallle = VentasADO::ListVentaDetalle($_GET['idVenta']);
         if (is_array($detallle)) {
             print json_encode(array(
                 "estado" => 1,
@@ -47,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             ));
         }
     } else if ($_GET["type"] == "getventanotacredito") {
-        $result = VentasAdo::ListarComprobanteParaNotaCredito($_GET['comprobante']);
+        $result = VentasADO::ListarComprobanteParaNotaCredito($_GET['comprobante']);
         if (is_array($result)) {
             print json_encode(array(
                 "estado" => 1,
@@ -72,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         $fechaFinal = $_GET["fechaFinal"];
         $posicionPagina = $_GET["posicionPagina"];
         $filasPorPagina = $_GET["filasPorPagina"];
-        $notacredito = VentasAdo::ListaNotaCredito($opcion, $buscar, $fechaInicio, $fechaFinal, $posicionPagina, $filasPorPagina);
+        $notacredito = VentasADO::ListaNotaCredito($opcion, $buscar, $fechaInicio, $fechaFinal, $posicionPagina, $filasPorPagina);
         if (is_array($notacredito)) {
             print json_encode(array(
                 "estado" => 1,
@@ -86,7 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             ));
         }
     } else if ($_GET["type"] == "listarNotificaciones") {
-        $result = VentasAdo::ListarNotificaciones();
+        $result = VentasADO::ListarNotificaciones();
         if (is_array($result)) {
             print json_encode(array(
                 "estado" => 1,
@@ -99,7 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             ));
         }
     } else if ($_GET["type"] == "getproductosvendidos") {
-        $producto = VentasAdo::ResumenProductoVendidos($_GET["fechaInicio"], $_GET["fechaFinal"], intval($_GET["marca"]), intval($_GET["categoria"]));
+        $producto = VentasADO::ResumenProductoVendidos($_GET["fechaInicio"], $_GET["fechaFinal"], intval($_GET["marca"]), intval($_GET["categoria"]));
         if (is_array($producto)) {
             print json_encode(array(
                 "estado" => 1,
@@ -113,7 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         }
         exit();
     } else if ($_GET["type"] == "detalleid") {
-        $result = VentasAdo::GetDetalleId($_GET["idMantenimiento"]);
+        $result = VentasADO::GetDetalleId($_GET["idMantenimiento"]);
         if (is_array($result)) {
             print json_encode(array(
                 "estado" => 1,
@@ -128,7 +129,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     } else if ($_GET["type"] == "listarDetalleNotificaciones") {
         $posicionPagina = $_GET['posicionPagina'];
         $filasPorPagina = $_GET['filasPorPagina'];
-        $result = VentasAdo::ListarDetalleNotificaciones(intval($posicionPagina), intval($filasPorPagina));
+        $result = VentasADO::ListarDetalleNotificaciones(intval($posicionPagina), intval($filasPorPagina));
         if (is_array($result)) {
             print json_encode(array(
                 "estado" => 1,
@@ -142,9 +143,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             ));
         }
     } else if ($_GET["type"] == "global") {
-        $data = VentasAdo::LoadDashboard($_GET["fechaActual"]);
-        $productoAgotados = VentasAdo::LoadProductosAgotados(intval($_GET["posicionPaginaAgotados"]), intval($_GET["filasPorPaginaAgotados"]));
-        $productosPorAgotarse = VentasAdo::LoadProductosPorAgotarse(intval($_GET["posicionPaginaPorAgotarse"]), intval($_GET["filasPorPaginaPorAgotarse"]));
+        $data = VentasADO::LoadDashboard($_GET["fechaActual"]);
+        $productoAgotados = VentasADO::LoadProductosAgotados(intval($_GET["posicionPaginaAgotados"]), intval($_GET["filasPorPaginaAgotados"]));
+        $productosPorAgotarse = VentasADO::LoadProductosPorAgotarse(intval($_GET["posicionPaginaPorAgotarse"]), intval($_GET["filasPorPaginaPorAgotarse"]));
         if (is_array($data) && is_array($productoAgotados) && is_array($productosPorAgotarse)) {
             print json_encode(array(
                 "estado" => 1,
@@ -161,7 +162,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             ));
         }
     } else if ($_GET["type"] == "productosAgotados") {
-        $productoAgotados = VentasAdo::LoadProductosAgotados(intval($_GET["posicionPaginaAgotados"]), intval($_GET["filasPorPaginaAgotados"]));
+        $productoAgotados = VentasADO::LoadProductosAgotados(intval($_GET["posicionPaginaAgotados"]), intval($_GET["filasPorPaginaAgotados"]));
         if (is_array($productoAgotados)) {
             print json_encode(array(
                 "estado" => 1,
@@ -175,7 +176,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             ));
         }
     } else if ($_GET["type"] == "productosPorAgotarse") {
-        $productosPorAgotarse = VentasAdo::LoadProductosPorAgotarse(intval($_GET["posicionPaginaPorAgotarse"]), intval($_GET["filasPorPaginaPorAgotarse"]));
+        $productosPorAgotarse = VentasADO::LoadProductosPorAgotarse(intval($_GET["posicionPaginaPorAgotarse"]), intval($_GET["filasPorPaginaPorAgotarse"]));
         if (is_array($productosPorAgotarse)) {
             print json_encode(array(
                 "estado" => 1,
@@ -192,7 +193,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 } else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $body = json_decode(file_get_contents("php://input"), true);
     if ($body == "crudnotacredito") {
-        $result = VentasAdo::RegistrarNotaCredito($body);
+        $result = VentasADO::RegistrarNotaCredito($body);
         if ($result == "registrado") {
             print json_encode(array(
                 "estado" => 1,
