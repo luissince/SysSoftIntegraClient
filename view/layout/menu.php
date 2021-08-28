@@ -44,9 +44,9 @@
                 <li class="treeview" id="treeview-inventario"><a class="app-menu__item" href="#" data-toggle="treeview"><i class="app-menu__icon fa fa-cubes"></i><span class="app-menu__label">Inventario</span><i class="treeview-indicator fa fa-angle-right"></i></a>
                         <ul class="treeview-menu">
                                 <li><a class="app-menu__item" id="tab-productos" href="productos.php"><i class="app-menu__icon fa fa-minus"></i><span class="app-menu__label">Productos</span></a></li>
-                                <li><a class="app-menu__item" id="tab-inventario" href="inventario.php"><i class="app-menu__icon fa fa-minus"></i><span class="app-menu__label">Inventario</span></a></li>
+                                <!-- <li><a class="app-menu__item" id="tab-inventario" href="inventario.php"><i class="app-menu__icon fa fa-minus"></i><span class="app-menu__label">Inventario</span></a></li> -->
                                 <li><a class="app-menu__item" id="tab-kardexproducto" href="kardexproducto.php"><i class="app-menu__icon fa fa-minus"></i><span class="app-menu__label">Kardex</span></a></li>
-                                <li><a class="app-menu__item" id="tab-ajustes" href="ajustes.php"><i class="app-menu__icon fa fa-minus"></i><span class="app-menu__label">Ajuste de Inventario</span></a></li>
+                                <li><a class="app-menu__item" id="tab-ajustes" href="ajustes.php"><i class="app-menu__icon fa fa-minus"></i><span class="app-menu__label">Ajustes</span></a></li>
                         </ul>
                 </li>
 

@@ -15,7 +15,7 @@ if (is_array($ventaDatos)) {
     $detalleVenta = $ventaDatos[1];
     $empresa = $ventaDatos[2];
 
-    $photo = $empresa->Image == "" ?  "<img src=\"./../../view/images/logo.png\"/>" : "<img src=\"data:image/jpg;base64, " . $empresa->Image . "\"/>";
+    $photo = $empresa->Image == "" ?  "<img src=\"./../../view/images/logo.png\"/>" : "<img src=\"data:image/(png|jpg);base64, " . $empresa->Image . "\"/>";
 
     $gcl = new NumberLleters();
 

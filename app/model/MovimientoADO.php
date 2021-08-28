@@ -143,6 +143,80 @@ class MovimientoADO
         }
     }
 
+    public static function RestablecerInventario($body)
+    {
+        try {
+            Database::getInstance()->getDb()->beginTransaction();
+            $suministroUpdate = Database::getInstance()->getDb()->prepare("UPDATE SuministroTB SET Cantidad = ? WHERE IdSuministro = ?");
+
+            $suministroKardex = Database::getInstance()->getDb()->prepare("INSERT INTO KardexSuministroTB
+            (IdSuministro,
+            Fecha,
+            Hora,
+            Tipo,
+            Movimiento,
+            Detalle,
+            Cantidad,
+            Costo,
+            Total,
+            IdAlmacen)
+            VALUES(?,?,?,?,?,?,?,?,?,?)");
+
+            foreach ($body["lista"] as $result) {
+
+                $cmdKardex = Database::getInstance()->getDb()->prepare("{CALL Sp_Listar_Kardex_Suministro_By_Id(0,?,0)}");
+                // $cmdKardex->bindParam(1, 0, PDO::PARAM_INT);
+                $cmdKardex->bindParam(1, $result["IdSuministro"], PDO::PARAM_STR);
+                // $cmdKardex->bindParam(3, 0, PDO::PARAM_STR);
+                $cmdKardex->execute();
+
+                $cantidad = 0;
+                $count = 0;
+                while ($row = $cmdKardex->fetch()) {
+                    $count++;
+                    $cantidad = $cantidad + ($row["Tipo"] == 1 ? $row["Cantidad"] : -$row["Cantidad"]);
+                }
+
+                $valor = $cantidad * -1;
+                $suministroKardex->execute(array(
+                    $result["IdSuministro"],
+                    $body["fecha"],
+                    $body["hora"],
+                    $body["tipoAjuste"],
+                    $body["tipoMovimiento"],
+                    $body["observacion"],
+                    $valor,
+                    $result["PrecioCompra"],
+                    $result["PrecioCompra"] * $valor,
+                    0
+                ));
+
+                $suministroUpdate->bindParam(1, $result["Movimiento"], PDO::PARAM_STR);
+                $suministroUpdate->bindParam(2, $result["IdSuministro"], PDO::PARAM_STR);
+                $suministroUpdate->execute();
+
+                $suministroKardex->execute(array(
+                    $result["IdSuministro"],
+                    $body["fecha"],
+                    $body["hora"],
+                    $body["tipoAjuste"],
+                    $body["tipoMovimiento"],
+                    $body["observacion"],
+                    $result["Movimiento"],
+                    $result["PrecioCompra"],
+                    $result["PrecioCompra"] * $result["Movimiento"],
+                    0
+                ));
+            }
+
+            Database::getInstance()->getDb()->commit();
+            return "inserted";
+        } catch (PDOException $e) {
+            Database::getInstance()->getDb()->rollback();
+            return $e->getMessage();
+        }
+    }
+
     public static function ObtenerMovimientoInventarioById($idMovimiento)
     {
         try {

@@ -315,9 +315,9 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 <thead style="background-color: #0766cc;color: white;">
                                     <tr>
                                         <th style="width:5%;">#</th>
+                                        <th style="width:5%;">Anular</th>
                                         <th style="width:5%;">PDF</th>
                                         <th style="width:5%;">Detalle</th>
-                                        <th style="width:5%;">Anular</th>
                                         <th style="width:10%;">Fecha</th>
                                         <th style="width:15%;">Comprobante</th>
                                         <th style="width:15%;">Cliente</th>
@@ -534,8 +534,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 for (let venta of arrayVentas) {
                                     let pdf = '<button class="btn btn-secondary btn-sm"  onclick="openPdf(\'' + venta.IdVenta + '\')"><img src="./images/pdf.svg" width="26" /> </button>';
                                     let ver = '<button class="btn btn-secondary btn-sm" onclick="opeModalDetalleIngreso(\'' + venta.IdVenta + '\')"><img src="./images/file.svg" width="26" /></button>';
-                                    let resumen = '<button class="btn btn-secondary btn-sm" onclick="resumenDiarioXml(\'' + venta.IdVenta + '\',\'' + venta.Serie + "-" + venta.Numeracion + '\',\'' + tools.getDateYYMMDD(venta.FechaVenta) + '\')"><img src="./images/reuse.svg" width="26" /></button>';
-                                    let comunicacion = '<button class="btn btn-secondary btn-sm" onclick="comunicacionBajaXml(\'' + venta.IdVenta + '\',\'' + venta.Serie + "-" + venta.Numeracion + '\')"><img src="./images/reuse.svg" width="26" /></button>';
+                                    let resumen = '<button class="btn btn-secondary btn-sm" onclick="resumenDiarioXml(\'' + venta.IdVenta + '\',\'' + venta.Serie + "-" + venta.Numeracion + '\',\'' + tools.getDateYYMMDD(venta.FechaVenta) + '\')"><img src="./images/documentoanular.svg" width="26" /></button>';
+                                    let comunicacion = '<button class="btn btn-secondary btn-sm" onclick="comunicacionBajaXml(\'' + venta.IdVenta + '\',\'' + venta.Serie + "-" + venta.Numeracion + '\')"><img src="./images/documentoanular.svg" width="26" /></button>';
                                     let anular = venta.Serie.toUpperCase().includes("B") ? resumen : comunicacion;
 
                                     let datetime = tools.getDateForma(venta.FechaVenta) + "<br>" + tools.getTimeForma24(venta.HoraVenta, true);
@@ -543,15 +543,17 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                     let cliente = venta.DocumentoCliente + "<br>" + venta.Cliente;
                                     //'<button onclick="openModalClientes()" type="button" class="btn btn-primary btn-sm btn-flat">Editar</button>';
                                     let estado = "";
-                                    if (venta.Tipo == 1 && venta.Estado == 1 || venta.Tipo == 2 && venta.Estado == 1) {
-                                        estado = '<div class="badge badge-success">COBRADO</div>';
+
+                                    if (venta.Estado == 3) {
+                                        estado = '<div class="badge badge-danger">ANULADO</div>';
                                     } else if (venta.Tipo == 2 && venta.Estado == 2) {
                                         estado = '<div class="badge badge-warning">POR COBRAR</div>';
                                     } else if (venta.Tipo == 1 && venta.Estado == 4) {
                                         estado = '<div class="badge badge-primary">POR LLEVAR</div>';
                                     } else {
-                                        estado = '<div class="badge badge-danger">ANULADO</div>';
+                                        estado = '<div class="badge badge-success">COBRADO</div>';
                                     }
+
                                     // let estado = '<div class="' + (venta.Tipo == 2 && venta.Estado == 2 ? "label label-warning" :v venta.Estado == 3 ? "label label-danger" : "label label-success") + '">' + (venta.Estado == 2 ? "POR COBRAR/LLEVAR" : venta.Estado == 3 ? "ANULADO" : "COBRADO") + '</div>';
                                     let total = venta.Simbolo + " " + tools.formatMoney(venta.Total);
 
@@ -568,9 +570,9 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
                                     tbody.append('<tr>' +
                                         ' <td class="td-center">' + venta.id + '</td >' +
+                                        ' <td class="td-center">' + anular + '</td>' +
                                         ' <td class="td-center">' + pdf + '</td>' +
                                         ' <td class="td-center">' + ver + '</td>' +
-                                        ' <td class="td-center">' + anular + '</td>' +
                                         ' <td class="td-left">' + datetime + '</td>' +
                                         ' <td class="td-left">' + comprobante + '</td>' +
                                         ' <td>' + cliente + '</td>' +

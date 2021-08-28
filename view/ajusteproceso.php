@@ -19,7 +19,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
         <!-- modal productos -->
         <div class="row">
             <div class="modal fade" id="id-modal-productos" data-backdrop="static">
-                <div class="modal-dialog">
+                <div class="modal-dialog modal-lg">
                     <div class="modal-content">
 
                         <div class="modal-header">
@@ -43,7 +43,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 <div class="col-md-3 col-sm-12 col-xs-12">
                                     <label>Opción:</label>
                                     <div class="form-group">
-                                        <button class="btn btn-default" id="btnRecargarProductos">
+                                        <button class="btn btn-secondary" id="btnRecargarProductos">
                                             <img src="./images/reload.png" width="18" /> Recargar
                                         </button>
                                     </div>

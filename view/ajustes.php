@@ -105,10 +105,10 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 <div class="row">
                     <div class="col-md 12 col-sm-12 col-xs-12">
                         <div class="form-group">
-                            <button class="btn btn-success" id="btnMovimiento">
+                            <a href="ajusteproceso.php" class="btn btn-success">
                                 <i class="fa fa-plus"></i>
                                 Realizar Ajuste
-                            </button>
+                            </a>
                             <button class="btn btn-danger" id="btnReload">
                                 <i class="fa fa-refresh"></i>
                                 Recargar
@@ -213,17 +213,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
                 $("#txtFechaInicio").val(tools.getCurrentDate());
                 $("#txtFechaTermino").val(tools.getCurrentDate());
-
-                $("#btnMovimiento").click(function() {
-                    window.location.href = "ajusteproceso.php";
-                });
-
-                $("#btnMovimiento").keypress(function(event) {
-                    if (event.keyCode === 13) {
-                        window.location.href = "ajusteproceso.php";
-                    }
-                    event.preventDefault();
-                });
 
                 $("#btnReload").click(function() {
                     if (!state) {

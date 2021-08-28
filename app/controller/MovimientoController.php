@@ -74,6 +74,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             ));
         }
         exit();
-    } else if ($body["type"] == "") {
+    } else if ($body["type"] == "restarkardex") {
+        $result = MovimientoADO::RestablecerInventario($body);
+        if ($result === "inserted") {
+            print json_encode(array(
+                "estado" => 1,
+                "mensaje" => "Se restableció correctamente el kardex."
+            ));
+        } else {
+            print json_encode(array(
+                "estado" => 2,
+                "mensaje" => $result
+            ));
+        }
+        exit();
     }
 }

@@ -1390,7 +1390,6 @@ class VentasAdo
     public static function ListarNotificaciones()
     {
         try {
-
             $cmdNotificaciones = Database::getInstance()->getDb()->prepare("SELECT 
                 co.Serie,
                 td.Nombre,
