@@ -6,16 +6,16 @@ require_once("./lib/phpqrcode/qrlib.php");
 require __DIR__ . './../src/autoload.php';
 
 use SysSoftIntegra\Src\NumberLleters;
-use SysSoftIntegra\Model\VentasAdo;
+use SysSoftIntegra\Model\VentasADO;
 
-$notaCreditoDatos = VentasAdo::ListarDetalleNotaCredito($_GET["idNotaCredito"]);
+$notaCreditoDatos = VentasADO::ListarDetalleNotaCredito($_GET["idNotaCredito"]);
 
 if (is_array($notaCreditoDatos)) {
     $notacredito = $notaCreditoDatos[0];
     $detallenotacredito = $notaCreditoDatos[1];
     $empresa = $notaCreditoDatos[2];
 
-    $photo = $empresa->Image == "" ?  "<img src=\"./../../view/images/logo.png\"/>" : "<img src=\"data:image/jpg;base64, " . $empresa->Image . "\"/>";
+    $photo = $empresa->Image == "" ?  "<img src=\"./../../view/images/logo.png\"/>" : "<img src=\"data:image/(png|jpg);base64, " . $empresa->Image . "\"/>";
 
     $gcl = new NumberLleters();
 

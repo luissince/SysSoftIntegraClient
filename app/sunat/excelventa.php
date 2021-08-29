@@ -7,17 +7,17 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
-use SysSoftIntegra\Model\VentasAdo;
+use SysSoftIntegra\Model\VentasADO;
 
 require __DIR__ . "/lib/phpspreadsheet/vendor/autoload.php";
-require __DIR__ . '/../src/autoload.php';
+require __DIR__ . './../src/autoload.php';
 
 $fechaInicio = $_GET["txtFechaInicial"];
 $fechaFinal = $_GET["txtFechaFinal"];
 
 $fechaInicioFormato = date("d/m/Y", strtotime($fechaInicio));
 $fechaFinalFormato =  date("d/m/Y", strtotime($fechaFinal));
-$ventas = VentasAdo::GetReporteGeneralVentas($fechaInicio, $fechaFinal, intval($_GET["facturado"]));
+$ventas = VentasADO::GetReporteGeneralVentas($fechaInicio, $fechaFinal, intval($_GET["facturado"]));
 
 $documento = new Spreadsheet();
 $documento

@@ -2,15 +2,15 @@
 
 set_time_limit(300); //evita el error 20 segundos de peticion
 
-require __DIR__ . "/lib/phpspreadsheet/vendor/autoload.php";
-include __DIR__ . "./../model/MovimientoADO.php";
-
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
+use SysSoftIntegra\Model\MovimientoADO;
 
+require __DIR__ . "/lib/phpspreadsheet/vendor/autoload.php";
+require __DIR__ . './../src/autoload.php';
 
 $result = MovimientoADO::ObtenerMovimientoInventarioById($_GET["idMovimiento"]);
 if (!is_array($result)) {

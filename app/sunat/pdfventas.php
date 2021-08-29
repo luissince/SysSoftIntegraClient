@@ -6,9 +6,9 @@ require_once("./lib/phpqrcode/qrlib.php");
 require __DIR__ . './../src/autoload.php';
 
 use SysSoftIntegra\Src\NumberLleters;
-use SysSoftIntegra\Model\VentasAdo;
+use SysSoftIntegra\Model\VentasADO;
 
-$ventaDatos = VentasAdo::ListVentaDetalle($_GET["idVenta"]);
+$ventaDatos = VentasADO::ListVentaDetalle($_GET["idVenta"]);
 
 if (is_array($ventaDatos)) {
     $venta = $ventaDatos[0];

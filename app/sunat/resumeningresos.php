@@ -4,7 +4,9 @@ define('_MPDF_PATH', '/lib');
 require('./lib/mpdf/vendor/autoload.php');
 include('../src/GenerateCoinToLetters.php');
 require_once("./lib/phpqrcode/qrlib.php");
-require './../model/VentasADO.php';
+require __DIR__ . './../src/autoload.php';
+
+use SysSoftIntegra\Model\VentasADO;
 
 $title = "RESUMEN DE INGRESOS";
 $fechaIngreso = date("d-m-Y", strtotime($_GET["fechaInicial"])) . " al " . date("d-m-Y", strtotime($_GET["fechaFinal"]));
