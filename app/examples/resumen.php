@@ -10,12 +10,12 @@ header('Content-Type: application/json; charset=UTF-8');
 
 use SysSoftIntegra\Src\SoapResult;
 use SysSoftIntegra\Src\Sunat;
-use SysSoftIntegra\Model\VentasAdo;
+use SysSoftIntegra\Model\VentasADO;
 
 require __DIR__ . './../src/autoload.php';
 
 $idventa = $_GET['idventa'];
-$detalleventa = VentasAdo::ListarDetalleVentPorId($idventa);
+$detalleventa = VentasADO::ListarDetalleVentPorId($idventa);
 
 if (!is_array($detalleventa)) {
     echo json_encode(array(
@@ -208,7 +208,7 @@ if (!is_array($detalleventa)) {
         $soapResult->sendGetStatus(Sunat::xmlGetStatus($empresa->NumeroDocumento, $empresa->UsuarioSol, $empresa->ClaveSol, $soapResult->getTicket()));
         if ($soapResult->isSuccess()) {
             if ($soapResult->isAccepted()) {
-                VentasAdo::CambiarEstadoSunatResumen($idventa, $soapResult->getCode(),  $soapResult->getDescription(), $correlativo, $currentDate->format('Y-m-d'));
+                VentasADO::CambiarEstadoSunatResumen($idventa, $soapResult->getCode(),  $soapResult->getDescription(), $correlativo, $currentDate->format('Y-m-d'));
                 echo json_encode(array(
                     "state" => $soapResult->isSuccess(),
                     "accept" => $soapResult->isAccepted(),
@@ -216,7 +216,7 @@ if (!is_array($detalleventa)) {
                     "description" => $soapResult->getDescription()
                 ));
             } else {
-                VentasAdo::CambiarEstadoSunatResumen($idventa, $soapResult->getCode(),  $soapResult->getDescription(), $correlativo, $currentDate->format('Y-m-d'));
+                VentasADO::CambiarEstadoSunatResumen($idventa, $soapResult->getCode(),  $soapResult->getDescription(), $correlativo, $currentDate->format('Y-m-d'));
                 echo json_encode(array(
                     "state" => $soapResult->isSuccess(),
                     "accept" => $soapResult->isAccepted(),
@@ -225,7 +225,7 @@ if (!is_array($detalleventa)) {
                 ));
             }
         } else {
-            VentasAdo::CambiarEstadoSunatResumen($idventa, $soapResult->getCode(),  $soapResult->getDescription(), $correlativo, $currentDate->format('Y-m-d'));
+            VentasADO::CambiarEstadoSunatResumen($idventa, $soapResult->getCode(),  $soapResult->getDescription(), $correlativo, $currentDate->format('Y-m-d'));
             echo json_encode(array(
                 "state" => false,
                 "code" => $soapResult->getCode(),
@@ -233,7 +233,7 @@ if (!is_array($detalleventa)) {
             ));
         }
     } else {
-        VentasAdo::CambiarEstadoSunatResumen($idventa, $soapResult->getCode(),  $soapResult->getDescription(), $correlativo, $currentDate->format('Y-m-d'));
+        VentasADO::CambiarEstadoSunatResumen($idventa, $soapResult->getCode(),  $soapResult->getDescription(), $correlativo, $currentDate->format('Y-m-d'));
         echo json_encode(array(
             "state" => false,
             "code" => $soapResult->getCode(),

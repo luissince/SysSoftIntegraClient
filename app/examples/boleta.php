@@ -10,12 +10,12 @@ header('Content-Type: application/json; charset=UTF-8');
 use SysSoftIntegra\Src\SoapResult;
 use SysSoftIntegra\Src\Sunat;
 use SysSoftIntegra\Src\NumberLleters;
-use SysSoftIntegra\Model\VentasAdo;
+use SysSoftIntegra\Model\VentasADO;
 
 require __DIR__ . './../src/autoload.php';
 
 $idventa = $_GET['idventa'];
-$detalleventa = VentasAdo::ListarDetalleVentPorId($idventa);
+$detalleventa = VentasADO::ListarDetalleVentPorId($idventa);
 $gcl = new NumberLleters();
 
 if (!is_array($detalleventa)) {
@@ -341,7 +341,7 @@ if (!is_array($detalleventa)) {
 
     if ($soapResult->isSuccess()) {
         if ($soapResult->isAccepted()) {
-            VentasAdo::CambiarEstadoSunatVenta($idventa, $soapResult->getCode(), $soapResult->getDescription(), $soapResult->getHashCode(), Sunat::getXmlSign());
+            VentasADO::CambiarEstadoSunatVenta($idventa, $soapResult->getCode(), $soapResult->getDescription(), $soapResult->getHashCode(), Sunat::getXmlSign());
             echo json_encode(array(
                 "state" => $soapResult->isSuccess(),
                 "accept" => $soapResult->isAccepted(),
@@ -349,7 +349,7 @@ if (!is_array($detalleventa)) {
                 "description" => $soapResult->getDescription()
             ));
         } else {
-            VentasAdo::CambiarEstadoSunatVentaUnico($idventa, $soapResult->getCode(), $soapResult->getDescription());
+            VentasADO::CambiarEstadoSunatVentaUnico($idventa, $soapResult->getCode(), $soapResult->getDescription());
             echo json_encode(array(
                 "state" => $soapResult->isSuccess(),
                 "accept" => $soapResult->isAccepted(),
@@ -359,14 +359,14 @@ if (!is_array($detalleventa)) {
         }
     } else {
         if ($soapResult->getCode() == "1033") {
-            VentasAdo::CambiarEstadoSunatVentaUnico($idventa, "0", $soapResult->getDescription());
+            VentasADO::CambiarEstadoSunatVentaUnico($idventa, "0", $soapResult->getDescription());
             echo json_encode(array(
                 "state" => false,
                 "code" => $soapResult->getCode(),
                 "description" => $soapResult->getDescription()
             ));
         } else {
-            VentasAdo::CambiarEstadoSunatVentaUnico($idventa, $soapResult->getCode(), $soapResult->getDescription());
+            VentasADO::CambiarEstadoSunatVentaUnico($idventa, $soapResult->getCode(), $soapResult->getDescription());
             echo json_encode(array(
                 "state" => false,
                 "code" => $soapResult->getCode(),
