@@ -73,7 +73,7 @@ class VentasADO
             $resultTotal = $comandoTotal->fetchColumn();
 
             $comandoSuma = Database::getInstance()->getDb()->prepare("SELECT 
-            ISNULL(sum(dv.Cantidad*(dv.PrecioVenta-dv.Descuento)),0)
+            ISNULL(sum(dv.Cantidad*(dv.PrecioVenta-dv.Descuento)),0) AS Total
             FROM VentaTB as v 
             INNER JOIN DetalleVentaTB as dv on dv.IdVenta = v.IdVenta
             LEFT JOIN NotaCreditoTB as nc on nc.IdVenta = v.IdVenta
@@ -81,7 +81,10 @@ class VentasADO
             $comandoSuma->bindParam(1, $fechaInicial, PDO::PARAM_STR);
             $comandoSuma->bindParam(2, $fechaFinal, PDO::PARAM_STR);
             $comandoSuma->execute();
-            $resultSuma = $comandoSuma->fetchColumn();
+            $resultSuma = 0;
+            if ($row = $comandoSuma->fetch()) {
+                $resultSuma = floatval(round($row["Total"], 2, PHP_ROUND_HALF_UP));
+            }
 
             array_push($array, $arrayVenta, $resultTotal, $resultSuma);
             return $array;
