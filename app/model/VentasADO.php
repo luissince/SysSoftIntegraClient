@@ -950,6 +950,8 @@ class VentasADO
     {
         try {
             $array = array();
+
+            $arrayVentas = array();
             $comando = Database::getInstance()->getDb()->prepare("{CALL Sp_Generar_Excel_Ventas(?,?,?)}");
             $comando->bindParam(1, $fechaInicial, PDO::PARAM_STR);
             $comando->bindParam(2, $fechaFinal, PDO::PARAM_STR);
@@ -958,7 +960,7 @@ class VentasADO
             $count = 0;
             while ($row = $comando->fetch()) {
                 $count++;
-                array_push($array, array(
+                array_push($arrayVentas, array(
                     "Id" => $count,
                     "IdVenta" => $row["IdVenta"],
                     "Nombre" => $row["Nombre"],
@@ -976,6 +978,21 @@ class VentasADO
                     "Xmldescripcion" => $row["Xmldescripcion"]
                 ));
             }
+
+            $cmdEmpresa = Database::getInstance()->getDb()->prepare("SELECT TOP 1 
+            d.IdAuxiliar
+            ,e.NumeroDocumento,
+            e.RazonSocial,
+            e.Telefono,
+            e.Email,
+            e.UsuarioSol,
+            e.ClaveSol 
+            FROM EmpresaTB AS e 
+            INNER JOIN DetalleTB AS d ON e.TipoDocumento = d.IdDetalle AND d.IdMantenimiento = '0003'");
+            $cmdEmpresa->execute();
+            $resultEmpresa = $cmdEmpresa->fetchObject();
+
+            array_push($array, $arrayVentas,  $resultEmpresa);
             return $array;
         } catch (Exception $ex) {
             return $ex->getMessage();
@@ -1393,24 +1410,59 @@ class VentasADO
     public static function ListarNotificaciones()
     {
         try {
+            $array = array();
+
             $cmdNotificaciones = Database::getInstance()->getDb()->prepare("SELECT 
-                co.Serie,
-                td.Nombre,
-				case v.Estado 
-				when 3 then 'Dar de Baja'
-				ELSE 'Por Declarar' end as Estado,
-                count(co.Serie) AS Cantidad
-                FROM ComprobanteTB AS co
-                INNER JOIN TipoDocumentoTB AS td ON td.IdTipoDocumento = co.IdTipoDocumento
-                LEFT JOIN VentaTB AS v ON v.Serie = co.Serie AND v.Numeracion = co.Numeracion
-                LEFT JOIN NotaCreditoTB AS nc ON nc.Serie = co.Serie AND nc.Numeracion = co.Numeracion
-                WHERE
-                td.Facturacion = 1 AND v.IdVenta IS NOT NULL AND ISNULL(v.Xmlsunat,'') <> '0' AND ISNULL(v.Xmlsunat,'') <> '1032'	
-                OR 
-                td.Facturacion = 1 AND nc.IdNotaCredito IS NOT NULL AND ISNULL(nc.Xmlsunat,'') <> '0' AND ISNULL(nc.Xmlsunat,'') <> '1032' 
-                GROUP BY co.Serie,td.Nombre,v.Estado");
+            v.Serie,
+            td.Nombre,
+            case v.Estado 
+            when 3 
+            then 'Dar de Baja'
+            else 'Por Declarar' end as Estado,
+            count(v.Serie) AS Cantidad
+            FROM VentaTB AS v 
+            INNER JOIN TipoDocumentoTB AS td ON td.IdTipoDocumento = v.Comprobante
+            LEFT JOIN NotaCreditoTB AS n ON n.IdVenta = v.IdVenta
+            WHERE
+            td.Facturacion = 1 AND v.IdVenta IS NOT NULL AND ISNULL(v.Xmlsunat,'') <> '0' AND ISNULL(v.Xmlsunat,'') <> '1032'
+            OR
+            td.Facturacion = 1 AND v.IdVenta IS NOT NULL AND ISNULL(v.Xmlsunat,'') = '0' AND v.Estado = 3 
+            AND n.IdNotaCredito is null
+            GROUP BY v.Serie,td.Nombre,v.Estado");
             $cmdNotificaciones->execute();
-            return $cmdNotificaciones->fetchAll(PDO::FETCH_OBJ);
+            while ($row = $cmdNotificaciones->fetch()) {
+                array_push($array, array(
+                    "Nombre" => $row["Nombre"],
+                    "Estado" => $row["Estado"],
+                    "Cantidad" => $row["Cantidad"]
+                ));
+            }
+
+            $cmdNotificaciones = Database::getInstance()->getDb()->prepare("SELECT 
+            nc.Serie,
+            td.Nombre,
+            case nc.Estado 
+            when 3
+            then 'Dar de Baja'
+            else 'Por Declarar' end as Estado,
+            count(nc.Serie) AS Cantidad
+            FROM NotaCreditoTB AS nc
+            INNER JOIN TipoDocumentoTB AS td ON td.IdTipoDocumento = nc.Comprobante
+            INNER JOIN VentaTB AS v ON v.IdVenta = nc.IdVenta
+            INNER JOIN TipoDocumentoTB AS tv ON tv.IdTipoDocumento = v.Comprobante
+            WHERE
+            tv.Facturacion = 1 AND nc.IdNotaCredito IS NOT NULL AND ISNULL(nc.Xmlsunat,'') <> '0' AND ISNULL(nc.Xmlsunat,'') <> '1032'
+            GROUP BY nc.Serie,td.Nombre,nc.Estado");
+            $cmdNotificaciones->execute();
+            while ($row =  $cmdNotificaciones->fetch()) {
+                array_push($array, array(
+                    "Nombre" => $row["Nombre"],
+                    "Estado" => $row["Estado"],
+                    "Cantidad" => $row["Cantidad"]
+                ));
+            }
+
+            return $array;
         } catch (Exception $ex) {
             return $ex->getMessage();
         }
@@ -1422,22 +1474,39 @@ class VentasADO
             $array = array();
 
             $cmdNotificaciones = Database::getInstance()->getDb()->prepare("SELECT 
-            isnull(v.FechaVenta,nc.FechaRegistro) as Fecha,
-            co.Serie,
-            co.Numeracion,
+            v.FechaVenta as Fecha,
+			v.HoraVenta as Hora,
+            v.Serie,
+            v.Numeracion,
             td.Nombre,
             case v.Estado 
             when 3 then 'Dar de Baja'
             ELSE 'Por Declarar' end as Estado            
-            FROM ComprobanteTB AS co
-            INNER JOIN TipoDocumentoTB AS td ON td.IdTipoDocumento = co.IdTipoDocumento
-            LEFT JOIN VentaTB AS v ON v.Serie = co.Serie AND v.Numeracion = co.Numeracion
-            LEFT JOIN NotaCreditoTB AS nc ON nc.Serie = co.Serie AND nc.Numeracion = co.Numeracion
+            FROM VentaTB AS v 
+			INNER JOIN TipoDocumentoTB AS td ON td.IdTipoDocumento = v.Comprobante
+			LEFT JOIN NotaCreditoTB AS n ON n.IdVenta = v.IdVenta
             WHERE
-            td.Facturacion = 1 AND v.IdVenta IS NOT NULL AND ISNULL(v.Xmlsunat,'') <> '0' AND ISNULL(v.Xmlsunat,'') <> '1032'			
-            OR 
-            td.Facturacion = 1 AND nc.IdNotaCredito IS NOT NULL AND ISNULL(nc.Xmlsunat,'') <> '0' AND ISNULL(nc.Xmlsunat,'') <> '1032' 
-            order by td.Nombre asc,co.Serie desc,cast(co.Numeracion as int) desc
+			td.Facturacion = 1 AND v.IdVenta IS NOT NULL AND ISNULL(v.Xmlsunat,'') <> '0' AND ISNULL(v.Xmlsunat,'') <> '1032'
+			OR
+			td.Facturacion = 1 AND v.IdVenta IS NOT NULL AND ISNULL(v.Xmlsunat,'') = '0' AND v.Estado = 3 
+			AND n.IdNotaCredito is null	
+			union
+			select
+			nc.FechaRegistro as Fecha,
+			nc.HoraRegistro as Hora,
+            nc.Serie,
+            nc.Numeracion,
+            td.Nombre,
+            case nc.Estado 
+            when 3 then 'Dar de Baja'
+            ELSE 'Por Declarar' end as Estado
+			FROM NotaCreditoTB AS nc
+			INNER JOIN TipoDocumentoTB AS td ON td.IdTipoDocumento = nc.Comprobante
+			INNER JOIN VentaTB AS v ON v.IdVenta = nc.IdVenta
+			INNER JOIN TipoDocumentoTB AS tv ON tv.IdTipoDocumento = v.Comprobante
+			WHERE
+			tv.Facturacion = 1 AND nc.IdNotaCredito IS NOT NULL AND ISNULL(nc.Xmlsunat,'') <> '0' AND ISNULL(nc.Xmlsunat,'') <> '1032'
+            order by Fecha desc,Hora desc
             offset ? rows fetch next ? rows only");
             $cmdNotificaciones->bindParam(1, $posicionPagina, PDO::PARAM_INT);
             $cmdNotificaciones->bindParam(2, $filasPorPagina, PDO::PARAM_INT);
@@ -1446,17 +1515,29 @@ class VentasADO
 
 
             $cmdNotificaciones = Database::getInstance()->getDb()->prepare("SELECT 
-            COUNT(*)           
-            FROM ComprobanteTB AS co
-            INNER JOIN TipoDocumentoTB AS td ON td.IdTipoDocumento = co.IdTipoDocumento
-            LEFT JOIN VentaTB AS v ON v.Serie = co.Serie AND v.Numeracion = co.Numeracion
-            LEFT JOIN NotaCreditoTB AS nc ON nc.Serie = co.Serie AND nc.Numeracion = co.Numeracion
+            count(v.IdVenta) as Total              
+            FROM VentaTB AS v 
+			INNER JOIN TipoDocumentoTB AS td ON td.IdTipoDocumento = v.Comprobante
+			LEFT JOIN NotaCreditoTB AS n ON n.IdVenta = v.IdVenta
             WHERE
-            td.Facturacion = 1 AND v.IdVenta IS NOT NULL AND ISNULL(v.Xmlsunat,'') <> '0' AND ISNULL(v.Xmlsunat,'') <> '1032'			
-            OR 
-            td.Facturacion = 1 AND nc.IdNotaCredito IS NOT NULL AND ISNULL(nc.Xmlsunat,'') <> '0' AND ISNULL(nc.Xmlsunat,'') <> '1032' ");
+			td.Facturacion = 1 AND v.IdVenta IS NOT NULL AND ISNULL(v.Xmlsunat,'') <> '0' AND ISNULL(v.Xmlsunat,'') <> '1032'
+			OR
+			td.Facturacion = 1 AND v.IdVenta IS NOT NULL AND ISNULL(v.Xmlsunat,'') = '0' AND v.Estado = 3 
+			AND n.IdNotaCredito is null	
+			union
+			SELECT
+			count(nc.IdNotaCredito) as Total
+			FROM NotaCreditoTB AS nc
+			INNER JOIN TipoDocumentoTB AS td ON td.IdTipoDocumento = nc.Comprobante
+			INNER JOIN VentaTB AS v ON v.IdVenta = nc.IdVenta
+			INNER JOIN TipoDocumentoTB AS tv ON tv.IdTipoDocumento = v.Comprobante
+			WHERE
+			tv.Facturacion = 1 AND nc.IdNotaCredito IS NOT NULL AND ISNULL(nc.Xmlsunat,'') <> '0' AND ISNULL(nc.Xmlsunat,'') <> '1032'");
             $cmdNotificaciones->execute();
-            $resultTotal = $cmdNotificaciones->fetchColumn();
+            $resultTotal = 0;
+            while ($row = $cmdNotificaciones->fetch()) {
+                $resultTotal +=  $row["Total"];
+            }
 
             array_push($array, $resultLista, $resultTotal);
             return $array;

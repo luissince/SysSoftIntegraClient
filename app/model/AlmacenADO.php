@@ -22,7 +22,6 @@ class AlmacenADO
     {
         try {
             $array = array();
-            array_push($array, array('IdAlmacen' => 0, "Nombre" => "TIENDA PRINCIPAL"));
 
             $cmdDetalle = Database::getInstance()->getDb()->prepare("SELECT IdAlmacen,Nombre FROM AlmacenTB");
             $cmdDetalle->execute();

@@ -17,7 +17,9 @@ $fechaFinal = $_GET["txtFechaFinal"];
 
 $fechaInicioFormato = date("d/m/Y", strtotime($fechaInicio));
 $fechaFinalFormato =  date("d/m/Y", strtotime($fechaFinal));
-$ventas = VentasADO::GetReporteGeneralVentas($fechaInicio, $fechaFinal, intval($_GET["facturado"]));
+$result = VentasADO::GetReporteGeneralVentas($fechaInicio, $fechaFinal, intval($_GET["facturado"]));
+
+$ventas = $result[0];
 
 $documento = new Spreadsheet();
 $documento
@@ -122,7 +124,7 @@ foreach ($ventas as $key => $value) {
         )
     ));
 
-    if ($value["Estado"] === "C") {
+    if ($value["Xmlsunat"] !== "1032") {
         $documento->getActiveSheet()->getStyle('A' . $cel . ':M' . $cel . '')->applyFromArray(array(
             'font'  => array(
                 'bold'  =>  false,

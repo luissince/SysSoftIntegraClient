@@ -252,19 +252,27 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             <input class="form-control" type="date" id="txtFechaFinal" />
                         </div>
                     </div>
-                    <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+                    <div class="col-xl-2 col-lg-3 col-md-12 col-sm-12 col-12">
                         <label>Procesar:</label>
                         <div class="form-group">
                             <button class="btn btn-primary" id="btnEnvioMasivo">
-                                <i class="fa fa-arrow-circle-up"></i> Envío masivo a sunat
+                                <i class="fa fa-arrow-circle-up"></i> Envío masivo
                             </button>
                         </div>
                     </div>
-                    <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+                    <div class="col-xl-2 col-lg-3 col-md-12 col-sm-12 col-12">
                         <label>Generar Excel:</label>
                         <div class="form-group">
                             <button class="btn btn-success" id="btnExcel">
-                                <i class="fa fa-file-excel-o"></i> Excel por Fecha
+                                <i class="fa fa-file-excel-o"></i> Generar Excel
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-xl-2 col-lg-3 col-md-12 col-sm-12 col-12">
+                        <label>Generar Excel:</label>
+                        <div class="form-group">
+                            <button class="btn btn-secondary" id="btnTxt">
+                                <i class="fa fa-file-text"></i> Generar Txt
                             </button>
                         </div>
                     </div>
@@ -431,6 +439,16 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     event.preventDefault();
                 });
 
+                $("#btnTxt").click(function() {
+                    openText();
+                });
+
+                $("#btnTxt").keypress(function(event) {
+                    if (event.keyCode === 13) {
+                        openText();
+                        event.preventDefault();
+                    }
+                });
 
                 $("#btnEnvioMasivo").click(function() {
                     onEventEnvioMasivo();
@@ -915,7 +933,14 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 $("#btnClose").bind("click", function() {
                     $("#mdAlert").modal("hide");
                 });
+            }
 
+            function openText() {
+                let fechaInicial = $("#txtFechaInicial").val();
+                let fechaFinal = $("#txtFechaFinal").val();
+                if (fechaInicial !== "" && fechaInicial !== undefined && fechaFinal !== "" && fechaFinal !== undefined) {
+                    window.open("../app/sunat/txtventas.php?txtFechaInicial=" + fechaInicial + "&txtFechaFinal=" + fechaFinal + "&facturado=1", "_blank");
+                }
             }
 
             function openModalClientes() {
