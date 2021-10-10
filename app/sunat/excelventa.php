@@ -33,7 +33,7 @@ $documento
 
 $documento->getActiveSheet()->setTitle("Venta general");
 
-$documento->getActiveSheet()->getStyle('A1:J1')->applyFromArray(array(
+$documento->getActiveSheet()->getStyle('A1:N1')->applyFromArray(array(
     'borders' => array(
         'outline' => array(
             'borderStyle' => Border::BORDER_THIN,
@@ -53,11 +53,11 @@ $documento->getActiveSheet()->getStyle('A1:J1')->applyFromArray(array(
     )
 ));
 
-$documento->setActiveSheetIndex(0)->mergeCells('A1:M1');
+$documento->setActiveSheetIndex(0)->mergeCells('A1:N1');
 $documento->setActiveSheetIndex(0)
     ->setCellValue("A1", "REPORTE GENERAL DE VENTAS DE " .  $fechaInicioFormato . ' al ' . $fechaFinalFormato);
 
-$documento->getActiveSheet()->getStyle('K2:M2')->applyFromArray(array(
+$documento->getActiveSheet()->getStyle('K2:N2')->applyFromArray(array(
     'borders' => array(
         'outline' => array(
             'borderStyle' => Border::BORDER_THIN,
@@ -81,7 +81,7 @@ $documento->setActiveSheetIndex(0)
     ->setCellValue("L2", $fechaInicioFormato)
     ->setCellValue("M2", $fechaFinalFormato);
 
-$documento->getActiveSheet()->getStyle('A3:M3')->applyFromArray(array(
+$documento->getActiveSheet()->getStyle('A3:N3')->applyFromArray(array(
     'fill' => array(
         'type' => Fill::FILL_SOLID,
         'color' => array('rgb' => 'E5E4E2')
@@ -107,11 +107,12 @@ $documento->setActiveSheetIndex(0)
     ->setCellValue("J3", "BASE")
     ->setCellValue("K3", "IGV")
     ->setCellValue("L3", "TOTAL")
-    ->setCellValue("M3", "OBSERVACIÓN");
+    ->setCellValue("M3", "ANULADO")
+    ->setCellValue("N3", "MENSAJE SUNAT");
 
 $cel = 4;
 foreach ($ventas as $key => $value) {
-    $documento->getActiveSheet()->getStyle('A' . $cel . ':M' . $cel . '')->applyFromArray(array(
+    $documento->getActiveSheet()->getStyle('A' . $cel . ':N' . $cel . '')->applyFromArray(array(
         'fill' => array(
             'type' => Fill::FILL_SOLID,
             'color' => array('rgb' => 'E5E4E2')
@@ -125,7 +126,7 @@ foreach ($ventas as $key => $value) {
     ));
 
     if ($value["Xmlsunat"] !== "1032") {
-        $documento->getActiveSheet()->getStyle('A' . $cel . ':M' . $cel . '')->applyFromArray(array(
+        $documento->getActiveSheet()->getStyle('A' . $cel . ':N' . $cel . '')->applyFromArray(array(
             'font'  => array(
                 'bold'  =>  false,
                 'color' => array('rgb' => '000000')
@@ -137,10 +138,11 @@ foreach ($ventas as $key => $value) {
         $documento->getActiveSheet()->getStyle("J" . $cel)->getNumberFormat()->setFormatCode('0.00');
         $documento->getActiveSheet()->getStyle("K" . $cel)->getNumberFormat()->setFormatCode('0.00');
         $documento->getActiveSheet()->getStyle("L" . $cel)->getNumberFormat()->setFormatCode('0.00');
+        $documento->getActiveSheet()->getStyle("M" . $cel)->getNumberFormat()->setFormatCode('0.00');
 
         $documento->setActiveSheetIndex(0)
             ->setCellValue("A" . $cel,  strval($value["Id"]))
-            ->setCellValue("B" . $cel, strval($value["FechaVenta"]))
+            ->setCellValue("B" . $cel, strval(date("d/m/Y", strtotime($value["FechaVenta"]))))
             ->setCellValue("C" . $cel, strval($value["TipoDocumento"]))
             ->setCellValue("D" . $cel, strval($value["NumeroDocumento"]))
             ->setCellValue("E" . $cel, strval($value["Informacion"]))
@@ -151,9 +153,10 @@ foreach ($ventas as $key => $value) {
             ->setCellValue("J" . $cel, strval(round($value["Base"], 2, PHP_ROUND_HALF_UP)))
             ->setCellValue("K" . $cel, strval(round($value["Igv"], 2, PHP_ROUND_HALF_UP)))
             ->setCellValue("L" . $cel, strval(round($value["Base"] + $value["Igv"], 2, PHP_ROUND_HALF_UP)))
-            ->setCellValue("M" . $cel, strval($value["Xmldescripcion"]));
+            ->setCellValue("M" . $cel, strval(round(0, 2, PHP_ROUND_HALF_UP)))
+            ->setCellValue("N" . $cel, strval($value["Xmldescripcion"]));
     } else {
-        $documento->getActiveSheet()->getStyle('A' . $cel . ':M' . $cel . '')->applyFromArray(array(
+        $documento->getActiveSheet()->getStyle('A' . $cel . ':N' . $cel . '')->applyFromArray(array(
             'font'  => array(
                 'bold'  =>  false,
                 'color' => array('rgb' => 'd10505')
@@ -166,6 +169,7 @@ foreach ($ventas as $key => $value) {
         $documento->getActiveSheet()->getStyle("J" . $cel)->getNumberFormat()->setFormatCode('0.00');
         $documento->getActiveSheet()->getStyle("K" . $cel)->getNumberFormat()->setFormatCode('0.00');
         $documento->getActiveSheet()->getStyle("L" . $cel)->getNumberFormat()->setFormatCode('0.00');
+        $documento->getActiveSheet()->getStyle("M" . $cel)->getNumberFormat()->setFormatCode('0.00');
 
         $documento->setActiveSheetIndex(0)
             ->setCellValue("A" . $cel,  strval($value["Id"]))
@@ -179,8 +183,9 @@ foreach ($ventas as $key => $value) {
             ->setCellValue("I" . $cel, strval($value["Estado"]))
             ->setCellValue("J" . $cel, strval(round($value["Base"], 2, PHP_ROUND_HALF_UP)))
             ->setCellValue("K" . $cel, strval(round($value["Igv"], 2, PHP_ROUND_HALF_UP)))
-            ->setCellValue("L" . $cel, strval(round($value["Base"] + $value["Igv"], 2, PHP_ROUND_HALF_UP)))
-            ->setCellValue("M" . $cel, strval($value["Xmldescripcion"]));
+            ->setCellValue("L" . $cel, strval(round(0, 2, PHP_ROUND_HALF_UP)))
+            ->setCellValue("M" . $cel, strval(round($value["Base"] + $value["Igv"], 2, PHP_ROUND_HALF_UP)))
+            ->setCellValue("N" . $cel, strval($value["Xmldescripcion"]));
     }
     $cel++;
 }
@@ -198,7 +203,8 @@ $documento->getActiveSheet()->getColumnDimension('I')->setWidth(15);
 $documento->getActiveSheet()->getColumnDimension('J')->setWidth(15);
 $documento->getActiveSheet()->getColumnDimension('K')->setWidth(15);
 $documento->getActiveSheet()->getColumnDimension('L')->setWidth(15);
-$documento->getActiveSheet()->getColumnDimension('M')->setWidth(35);
+$documento->getActiveSheet()->getColumnDimension('M')->setWidth(15);
+$documento->getActiveSheet()->getColumnDimension('N')->setWidth(40);
 
 $nombreDelDocumento =  "Ventas del " . $fechaInicio . ' al ' . $fechaFinal . ".xlsx";
 // Redirect output to a client’s web browser (Xlsx)

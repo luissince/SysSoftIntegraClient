@@ -27,31 +27,35 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 </i> Detalle del Ajuste
                             </h4>
                             <button type="button" class="close" id="btnCloseModal">
-                                <i class="fa fa-window-close"></i>
+                                <i class="fa fa-close"></i>
                             </button>
 
                         </div>
-                        <div class="modal-body padding-horizontal">
+                        <div class="modal-body">
                             <div class="row">
                                 <div class="col-md 12 col-sm-12 col-xs-12">
                                     <div class="table-responsive">
-                                        <table class="table table-striped">
+                                        <table class="table">
                                             <thead>
                                                 <tr>
-                                                    <th style="width: 10%;">Tipo de Ajustes:</th>
-                                                    <th style="width: 40%;" id="lblTipoMovimiento">--</th>
-                                                    <th style="width: 10%;">Codigo Verificación:</th>
-                                                    <th style="width: 40%;" id="lblCodigoVerificacion">--</th>
+                                                    <th class="text-left border-0 p-1">Tipo de Ajustes:</th>
+                                                    <th class="text-left border-0 p-1" id="lblTipoMovimiento">--</th>
                                                 </tr>
                                                 <tr>
-                                                    <th style="width: 10%;">Fecha y Hora:</th>
-                                                    <th style="width: 40%;" id="lblFechaHora">--</th>
-                                                    <th style="width: 10%;">Estado:</th>
-                                                    <th style="width: 40%;"><span id="lblEstadoMovimiento">--</span></th>
+                                                    <th class="text-left border-0 p-1">Codigo Verificación:</th>
+                                                    <th class="text-left border-0 p-1" id="lblCodigoVerificacion">--</th>
                                                 </tr>
                                                 <tr>
-                                                    <th style="width: 10%;">Observación:</th>
-                                                    <th style="width: 90%;" colspan="3" id="lblObservacion">--</th>
+                                                    <th class="text-left border-0 p-1">Fecha y Hora:</th>
+                                                    <th class="text-left border-0 p-1" id="lblFechaHora">--</th>
+                                                </tr>
+                                                <tr>
+                                                    <th class="text-left border-0 p-1">Estado:</th>
+                                                    <th class="text-left border-0 p-1"><span id="lblEstadoMovimiento">--</span></th>
+                                                </tr>
+                                                <tr>
+                                                    <th class="text-left border-0 p-1">Observación:</th>
+                                                    <th class="text-left border-0 p-1" id="lblObservacion">--</th>
                                                 </tr>
                                             </thead>
 
@@ -160,8 +164,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 <div class="row">
                     <div class="col-md-12 col-sm-12 col-xs-12">
                         <div class="table-responsive">
-                            <table class="table table-striped" style="border-width: 1px;border-style: dashed;border-color: #007bff;">
-                                <thead style="background-color: #0766cc;color: white;">
+                            <table class="table table-striped">
+                                <thead class="table-header-background">
                                     <tr>
                                         <th scope="col" class="th-porcent-5">N°</th>
                                         <th scope="col" class="th-porcent-15">Tipo Ajuste</th>

@@ -16,7 +16,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
         <?php include "./layout/header.php"; ?>
         <!-- Sidebar menu-->
         <?php include "./layout/menu.php"; ?>
-        <!-- modal start -->
+        <!-- modal generar excel -->
         <div class="row">
             <div class="modal fade" id="mdAlert" data-backdrop="static">
                 <div class="modal-dialog modal-sm">
@@ -26,8 +26,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 <i class="fa fa-file-excel">
                                 </i> Generar Excel
                             </h4>
-                            <button type="button" class="btn btn-danger" id="btnClose">
-                                <i class="fa fa-window-close"></i>
+                            <button type="button" class="close" id="btnClose">
+                                <i class="fa fa-close"></i>
                             </button>
 
                         </div>
@@ -48,7 +48,81 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 </div>
             </div>
         </div>
-        <!-- modal end -->
+        <!-- modal generar excel -->
+        <!-- Modal del detalle de ingreso -->
+        <div class="row">
+            <div class="modal fade" id="id-modal-productos" data-backdrop="static">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+
+                        <div class="modal-header">
+                            <h4 class="modal-title"><i class="fa fa-indent">
+                                </i> Detalle de la nota de crédito</h4>
+                            <button type="button" class="close" id="btnCloseModal">
+                                <i class="fa fa-close"></i>
+                            </button>
+                        </div>
+
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                    <div class="table-responsive">
+                                        <table class="table border-0">
+                                            <thead>
+                                                <tr>
+                                                    <th class="text-left border-0 p-1">Comprobante</th>
+                                                    <th class="text-left border-0 p-1" id="thComprobante">--</th>
+                                                </tr>
+                                                <tr>
+                                                    <th class="text-left border-0 p-1">Cliente</th>
+                                                    <th class="text-left border-0 p-1" id="thCliente">--</th>
+                                                </tr>
+                                                <tr>
+                                                    <th class="text-left border-0 p-1">Fecha y Hora:</th>
+                                                    <th class="text-left border-0 p-1" id="thFechaHora">--</th>
+                                                </tr>
+                                                <tr>
+                                                    <th class="text-left border-0 p-1">Estado:</th>
+                                                    <th id="thEstado">--</th>
+                                                </tr>
+                                                <tr>
+                                                    <th class="text-left border-0 p-1">Total:</th>
+                                                    <th class="text-left border-0 p-1" id="thTotal">0.00</th>
+                                                </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped" style="border-width: 1px;border-style: dashed;border-color: #007bff;">
+                                            <thead style="background-color: #0766cc;color: white;">
+                                                <tr>
+                                                    <th style="width:5%;">N°</th>
+                                                    <th style="width:30%;">Descripción</th>
+                                                    <th style="width:15%;">Cantidad</th>
+                                                    <th style="width:15%;">Impuesto</th>
+                                                    <th style="width:15%;">Precio</th>
+                                                    <th style="width:15%;">Descuento</th>
+                                                    <th style="width:15%;">Importe</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="tbIngresosDetalle">
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--   Modal del detalle de ingreso -->
 
         <main class="app-content">
 
@@ -57,7 +131,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
             </div>
 
             <div class="tile mb-4">
-
                 <div class="row">
                     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                         <div class="form-group">
@@ -112,22 +185,22 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             <input class="form-control" type="date" id="txtFechaFinal" />
                         </div>
                     </div>
-                    <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
-                        <label>Procesar:</label>
-                        <div class="form-group">
-                            <button class="btn btn-primary" id="btnEnvioMasivo">
-                                <i class="fa fa-arrow-circle-up"></i> Envío masivo a sunat
-                            </button>
-                        </div>
-                    </div>
-                    <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+                    <!-- <div class="col-xl-2 col-lg-3 col-md-12 col-sm-12 col-12">
                         <label>Generar Excel:</label>
                         <div class="form-group">
                             <button class="btn btn-success" id="btnExcel">
                                 <i class="fa fa-file-excel"></i> Excel por Fecha
                             </button>
                         </div>
-                    </div>
+                    </div> -->
+                    <!-- <div class="col-xl-2 col-lg-3 col-md-12 col-sm-12 col-12">
+                        <label>Generar Txt:</label>
+                        <div class="form-group">
+                            <button class="btn btn-secondary" id="btnTxt">
+                                <i class="fa fa-file-text"></i> Generar Txt
+                            </button>
+                        </div>
+                    </div> -->
                 </div>
 
                 <div class="row">
@@ -143,17 +216,30 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         </div>
                     </div>
 
-                    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
-                        <label>Paginación:</label>
+                    <!-- <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+                        <label>Procesar:</label>
                         <div class="form-group">
-                            <button class="btn btn-primary" id="btnAnterior">
-                                <i class="fa fa-arrow-circle-left"></i>
+                            <button class="btn btn-primary" id="btnEnvioMasivo">
+                                <i class="fa fa-arrow-circle-up"></i> Envío masivo
                             </button>
-                            <span class="m-2" id="lblPaginaActual">0</span>
-                            <span class="m-2">de</span>
-                            <span class="m-2" id="lblPaginaSiguiente">0</span>
-                            <button class="btn btn-primary" id="btnSiguiente">
-                                <i class="fa fa-arrow-circle-right"></i>
+                        </div>
+                    </div> -->
+
+                    <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+                        <label>Paginación:</label>
+                        <div class="form-group" id="ulPagination">
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-double-left"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-left"></i>
+                            </button>
+                            <span class="btn btn-outline-secondary disabled" id="lblPaginacion">0 - 0</span>
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-right"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-double-right"></i>
                             </button>
                         </div>
                     </div>
@@ -162,8 +248,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 <div class="row">
                     <div class="col-md-12 col-sm-12 col-xs-12">
                         <div class="table-responsive">
-                            <table class="table table-striped table-hover" style="border-width: 1px;border-style: dashed;border-color: #007bff;">
-                                <thead style="background-color: #0766cc;color: white;">
+                            <table class="table table-striped table-hover">
+                                <thead class="table-header-background">
                                     <tr>
                                         <th style="width:5%;">#</th>
                                         <th style="width:5%;">Pdf</th>
@@ -174,7 +260,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                         <th style="width:15%;">Detalle</th>
                                         <th style="width:10%;">Total</th>
                                         <th style="width:10%;">Estado SUNAT</th>
-                                        <th style="width:20%;">Observación SUNAT</th>
+                                        <th style="width:20%;">Observación <br> SUNAT</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tbList">
@@ -195,11 +281,10 @@ if (!isset($_SESSION['IdEmpleado'])) {
             let paginacion = 0;
             let opcion = 0;
             let totalPaginacion = 0;
-            let filasPorPagina = 20;
+            let filasPorPagina = 10;
             let tbList = $("#tbList");
 
-            let lblPaginaActual = $("#lblPaginaActual");
-            let lblPaginaSiguiente = $("#lblPaginaSiguiente");
+            let ulPagination = $("#ulPagination");
 
             $(document).ready(function() {
 
@@ -243,23 +328,23 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     }
                 });
 
-                $("#btnAnterior").click(function() {
-                    if (!state) {
-                        if (paginacion > 1) {
-                            paginacion--;
-                            onEventPaginacion();
-                        }
-                    }
-                });
+                // $("#btnAnterior").click(function() {
+                //     if (!state) {
+                //         if (paginacion > 1) {
+                //             paginacion--;
+                //             onEventPaginacion();
+                //         }
+                //     }
+                // });
 
-                $("#btnSiguiente").click(function() {
-                    if (!state) {
-                        if (paginacion < totalPaginacion) {
-                            paginacion++;
-                            onEventPaginacion();
-                        }
-                    }
-                });
+                // $("#btnSiguiente").click(function() {
+                //     if (!state) {
+                //         if (paginacion < totalPaginacion) {
+                //             paginacion++;
+                //             onEventPaginacion();
+                //         }
+                //     }
+                // });
 
                 $("#btnReload").click(function() {
                     loadInitNotaCredito();
@@ -273,16 +358,27 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 });
 
 
-                $("#btnExcel").click(function() {
-                    openExcel();
-                });
+                // $("#btnExcel").click(function() {
+                //     openExcel();
+                // });
 
-                $("#btnExcel").keypress(function(event) {
-                    if (event.keyCode === 13) {
-                        openExcel();
-                    }
-                    event.preventDefault();
-                });
+                // $("#btnExcel").keypress(function(event) {
+                //     if (event.keyCode === 13) {
+                //         openExcel();
+                //     }
+                //     event.preventDefault();
+                // });
+
+                // $("#btnTxt").click(function() {
+                //     openText();
+                // });
+
+                // $("#btnTxt").keypress(function(event) {
+                //     if (event.keyCode === 13) {
+                //         openText();
+                //         event.preventDefault();
+                //     }
+                // });
 
                 loadInitNotaCredito();
             });
@@ -313,10 +409,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
             }
 
             function fillNotaCreditoTable(opcion, search, fechaInicial, fechaFinal) {
-                $.ajax({
-                    url: "../app/controller/VentaController.php",
-                    method: "GET",
-                    data: {
+                tools.promiseFetchGet(
+                    "../app/controller/VentaController.php", {
                         "type": "listaNotaCredito",
                         "opcion": opcion,
                         "search": search,
@@ -325,65 +419,121 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         "posicionPagina": ((paginacion - 1) * filasPorPagina),
                         "filasPorPagina": filasPorPagina
                     },
-                    beforeSend: function() {
+                    function() {
                         tbList.empty();
                         tbList.append('<tr><td class="text-center" colspan="10"><img src="./images/loading.gif" id="imgLoad" width="34" height="34" /> <p>Cargando información...</p></td></tr>');
                         state = true;
                         totalPaginacion = 0;
-                    },
-                    success: function(result) {
-                        tbList.empty();
-                        if (result.estado == 1) {
-                            if (result.data.length == 0) {
-                                tbList.append('<tr><td class="text-center" colspan="10"><p>No hay datos para mostrar</p></td></tr>');
-                                lblPaginaActual.html(0);
-                                lblPaginaSiguiente.html(0);
-                                state = false;
-                            } else {
-                                for (let detalle of result.data) {
-                                    let pdf = '<button class="btn btn-secondary btn-sm"  onclick="openPdf(\'' + detalle.IdNotaCredito + '\')"><img src="./images/pdf.svg" width="26" /> </button>';
-                                    let ver = '<button class="btn btn-secondary btn-sm" onclick="opeModalDetalleIngreso(\'' + detalle.IdNotaCredito + '\')"><img src="./images/file.svg" width="26" /></button>';
-
-                                    let estadosunat = detalle.Xmlsunat === "" ?
-                                        '<button class="btn btn-secondary btn-sm" onclick="firmarXml(\'' + detalle.IdNotaCredito + '\')"><img src="./images/reuse.svg" width="26"/></button>' :
-                                        detalle.Xmlsunat === "0" ?
-                                        '<button class="btn btn-secondary btn-sm"><img src="./images/accept.svg" width="26" /></button>' :
-                                        '<button class="btn btn-secondary btn-sm" onclick="firmarXml(\'' + detalle.IdNotaCredito + '\')"><img src="./images/unable.svg" width="26" /></button>';
-
-                                    let descripcion = '<p class="recortar-texto">' + (detalle.Xmldescripcion === "" ? "Por Generar Xml" : detalle.Xmldescripcion) + '</p>';
-
-                                    tbList.append('<tr>' +
-                                        '<td>' + detalle.Id + '</td>' +
-                                        '<td>' + pdf + '</td>' +
-                                        '<td>' + ver + '</td>' +
-                                        '<td>' + tools.getDateForma(detalle.FechaNotaCredito) + '<br>' + tools.getTimeForma24(detalle.HoraNotaCredito) + '</td>' +
-                                        '<td>' + detalle.SerieNotaCredito + '-' + detalle.NumeracionNotaCredito + '</td>' +
-                                        '<td>' + detalle.NumeroDocumento + '<br>' + detalle.Informacion + '</td>' +
-                                        '<td>Comprobante Editado' + '<br>' + detalle.Serie + '-' + detalle.Numeracion + '</td>' +
-                                        '<td>' + detalle.Simbolo + " " + tools.formatMoney(detalle.Total) + '</td>' +
-                                        '<td>' + estadosunat + '</td>' +
-                                        '<td>' + descripcion + '</td>' +
-                                        '</tr>');
-                                }
-                                totalPaginacion = parseInt(Math.ceil((parseFloat(result.total) / filasPorPagina)));
-                                lblPaginaActual.html(paginacion);
-                                lblPaginaSiguiente.html(totalPaginacion);
-                                state = false;
-                            }
+                    }).then(result => {
+                    tbList.empty();
+                    if (result.estado == 1) {
+                        if (result.data.length == 0) {
+                            tbList.append('<tr><td class="text-center" colspan="10"><p>No hay datos para mostrar</p></td></tr>');
+                            ulPagination.html(`
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-double-left"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-left"></i>
+                            </button>
+                            <span class="btn btn-outline-secondary disabled" id="lblPaginacion">0 - 0</span>
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-right"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-double-right"></i>
+                            </button>`);
+                            state = false;
                         } else {
-                            tbList.append('<tr><td class="text-center" colspan="10"><p>' + result.message + '</p></td></tr>');
-                            lblPaginaActual.html(0);
-                            lblPaginaSiguiente.html(0);
+                            for (let detalle of result.data) {
+                                let pdf = '<button class="btn btn-secondary btn-sm"  onclick="openPdf(\'' + detalle.IdNotaCredito + '\')"><img src="./images/pdf.svg" width="26" /> </button>';
+                                let ver = '<button class="btn btn-secondary btn-sm" onclick="opeModalDetalleIngreso(\'' + detalle.IdVenta + '\')"><img src="./images/file.svg" width="26" /></button>';
+
+                                let estadosunat = detalle.Xmlsunat === "" ?
+                                    '<button class="btn btn-secondary btn-sm" onclick="firmarXml(\'' + detalle.IdNotaCredito + '\')"><img src="./images/reuse.svg" width="26"/></button>' :
+                                    detalle.Xmlsunat === "0" ?
+                                    '<button class="btn btn-secondary btn-sm"><img src="./images/accept.svg" width="26" /></button>' :
+                                    '<button class="btn btn-secondary btn-sm" onclick="firmarXml(\'' + detalle.IdNotaCredito + '\')"><img src="./images/unable.svg" width="26" /></button>';
+
+                                let descripcion = '<p class="recortar-texto">' + (detalle.Xmldescripcion === "" ? "Por Generar Xml" : detalle.Xmldescripcion) + '</p>';
+
+                                tbList.append('<tr>' +
+                                    '<td class="text-center">' + detalle.Id + '</td>' +
+                                    '<td class="text-center">' + pdf + '</td>' +
+                                    '<td class="text-center">' + ver + '</td>' +
+                                    '<td class="text-left">' + tools.getDateForma(detalle.FechaNotaCredito) + '<br>' + tools.getTimeForma24(detalle.HoraNotaCredito) + '</td>' +
+                                    '<td class="text-left">' + detalle.SerieNotaCredito + '-' + detalle.NumeracionNotaCredito + '</td>' +
+                                    '<td class="text-left">' + detalle.NumeroDocumento + '<br>' + detalle.Informacion + '</td>' +
+                                    '<td class="text-left">Comprobante Editado' + '<br>' + detalle.Serie + '-' + detalle.Numeracion + '</td>' +
+                                    '<td class="text-right">' + detalle.Simbolo + " " + tools.formatMoney(detalle.Total) + '</td>' +
+                                    '<td class="text-center">' + estadosunat + '</td>' +
+                                    '<td class="text-left">' + descripcion + '</td>' +
+                                    '</tr>');
+                            }
+                            totalPaginacion = parseInt(Math.ceil((parseFloat(result.total) / filasPorPagina)));
+                            let i = 1;
+                            let range = [];
+                            while (i <= totalPaginacion) {
+                                range.push(i);
+                                i++;
+                            }
+
+                            let min = Math.min.apply(null, range);
+                            let max = Math.max.apply(null, range);
+
+                            let paginacionHtml = `
+                            <button class="btn btn-outline-secondary" onclick="onEventPaginacionInicio(${min})">
+                                <i class="fa fa-angle-double-left"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary" onclick="onEventAnteriorPaginacion()">
+                                <i class="fa fa-angle-left"></i>
+                            </button>
+                            <span class="btn btn-outline-secondary disabled" id="lblPaginacion">${paginacion} - ${totalPaginacion}</span>
+                            <button class="btn btn-outline-secondary" onclick="onEventSiguientePaginacion()">
+                                <i class="fa fa-angle-right"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary" onclick="onEventPaginacionFinal(${max})">
+                                <i class="fa fa-angle-double-right"></i>
+                            </button>`;
+                            ulPagination.html(paginacionHtml);
                             state = false;
                         }
-                    },
-                    error: function(error) {
-                        tbList.empty();
-                        tbList.append('<tr><td class="text-center" colspan="10"><p>' + error.responseText + '</p></td></tr>');
-                        lblPaginaActual.html(0);
-                        lblPaginaSiguiente.html(0);
+                    } else {
+                        tbList.append('<tr><td class="text-center" colspan="10"><p>' + result.message + '</p></td></tr>');
+                        ulPagination.html(`
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-double-left"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-left"></i>
+                            </button>
+                            <span class="btn btn-outline-secondary disabled" id="lblPaginacion">0 - 0</span>
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-right"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-double-right"></i>
+                            </button>`);
                         state = false;
                     }
+                }).catch(error => {
+                    tbList.empty();
+                    tbList.append('<tr><td class="text-center" colspan="10"><p>' + error.responseText + '</p></td></tr>');
+                    ulPagination.html(`
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-double-left"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-left"></i>
+                            </button>
+                            <span class="btn btn-outline-secondary disabled" id="lblPaginacion">0 - 0</span>
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-right"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-double-right"></i>
+                            </button>`);
+                    state = false;
                 });
             }
 
@@ -421,32 +571,153 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 });
             }
 
-            function openExcel() {
-                $("#mdAlert").modal("show");
+            function opeModalDetalleIngreso(idVenta) {
+                $("#id-modal-productos").modal("show");
+                $("#btnCloseModal").unbind();
+                $("#btnCloseModal").bind("click", function(event) {
+                    $("#id-modal-productos").modal("hide");
+                });
 
-                $("#btnFacturados").unbind();
-                $("#btnFacturados").bind("click", function() {
-                    let fechaInicial = $("#txtFechaInicial").val();
-                    let fechaFinal = $("#txtFechaFinal").val();
-                    if (fechaInicial !== "" && fechaInicial !== undefined && fechaFinal !== "" && fechaFinal !== undefined) {
-                        window.open("../app/sunat/excelnotacredito.php?txtFechaInicial=" + fechaInicial + "&txtFechaFinal=" + fechaFinal + "&facturado=1", "_blank");
-                        $("#mdAlert").modal("hide");
+                $("#btnCloseModal").bind("keypress", function(event) {
+                    if (event.keyCode === 13) {
+                        $("#id-modal-productos").modal("hide");
+                        event.preventDefault();
                     }
                 });
 
-                $("#btnCancelar").unbind();
-                $("#btnCancelar").bind("click", function() {
-                    $("#mdAlert").modal("hide");
-                });
-
-                $("#btnClose").unbind();
-                $("#btnClose").bind("click", function() {
-                    $("#mdAlert").modal("hide");
+                let thComprobante = $("#thComprobante");
+                let thCliente = $("#thCliente");
+                let thFechaHora = $("#thFechaHora");
+                let thEstado = $("#thEstado");
+                let thTotal = $("#thTotal");
+                let tbIngresosDetalle = $("#tbIngresosDetalle");
+                $.ajax({
+                    url: "../app/controller/VentaController.php",
+                    method: "GET",
+                    data: {
+                        "type": "allventa",
+                        idVenta: idVenta
+                    },
+                    beforeSend: function() {
+                        tbIngresosDetalle.empty();
+                        tbIngresosDetalle.append('<tr><td class="text-center" colspan="6"><img src="./images/loading.gif" id="imgLoad" width="34" height="34" /> <p>Cargando información...</p></td></tr>');
+                    },
+                    success: function(result) {
+                        let object = result;
+                        if (object.estado == 1) {
+                            tbIngresosDetalle.empty();
+                            let venta = object.venta;
+                            thComprobante.html(venta.Serie + "-" + venta.Numeracion);
+                            thCliente.html(venta.NumeroDocumento + " - " + venta.Informacion);
+                            thFechaHora.html(tools.getDateForma(venta.FechaVenta) + " - " + tools.getTimeForma24(venta.HoraVenta));
+                            thEstado.html(venta.Estado == 3 ? "ANULADO" : venta.Estado == 2 ? "POR COBRAR" : "COBRADO");
+                            thEstado.removeClass();
+                            thEstado.addClass(venta.Estado == 3 ? "text-left text-danger border-0 p-1" : "text-left text-success border-0 p-1");
+                            let detalleventa = object.ventadetalle;
+                            let total = 0;
+                            for (let venta of detalleventa) {
+                                let num = venta.id;
+                                let descripcion = venta.Clave + "<br>" + venta.NombreMarca;
+                                let cantidad = venta.Cantidad;
+                                let impuesto = venta.NombreImpuesto;
+                                let precio = venta.PrecioVenta;
+                                let descuento = venta.Descuento;
+                                let importe = cantidad * precio;
+                                tbIngresosDetalle.append('<tr>' +
+                                    '<td>' + num + '</td>' +
+                                    '<td class="td-left">' + descripcion + '</td>' +
+                                    '<td>' + tools.formatMoney(cantidad) + "<br>" + venta.UnidadCompra + '</td>' +
+                                    '<td>' + impuesto + '</td>' +
+                                    '<td>' + tools.formatMoney(precio) + '</td>' +
+                                    '<td>' + tools.formatMoney(descuento) + '</td>' +
+                                    '<td>' + tools.formatMoney(importe) + '</td>' +
+                                    '</tr>');
+                                total += parseFloat(importe);
+                            }
+                            thTotal.html(venta.Simbolo + " " + tools.formatMoney(total));
+                        } else {
+                            tbIngresosDetalle.empty();
+                            tbIngresosDetalle.append('<tr><td class="text-center" colspan="6"><p>' + object.message + '</p></td></tr>');
+                        }
+                    },
+                    error: function(error) {
+                        tbIngresosDetalle.empty();
+                        tbIngresosDetalle.append('<tr><td class="text-center" colspan="6"><p>' + error.responseText + '</p></td></tr>');
+                    }
                 });
             }
 
+
+            // function openExcel() {
+            //     $("#mdAlert").modal("show");
+
+            //     $("#btnFacturados").unbind();
+            //     $("#btnFacturados").bind("click", function() {
+            //         let fechaInicial = $("#txtFechaInicial").val();
+            //         let fechaFinal = $("#txtFechaFinal").val();
+            //         if (fechaInicial !== "" && fechaInicial !== undefined && fechaFinal !== "" && fechaFinal !== undefined) {
+            //             window.open("../app/sunat/excelnotacredito.php?txtFechaInicial=" + fechaInicial + "&txtFechaFinal=" + fechaFinal + "&facturado=1", "_blank");
+            //             $("#mdAlert").modal("hide");
+            //         }
+            //     });
+
+            //     $("#btnCancelar").unbind();
+            //     $("#btnCancelar").bind("click", function() {
+            //         $("#mdAlert").modal("hide");
+            //     });
+
+            //     $("#btnClose").unbind();
+            //     $("#btnClose").bind("click", function() {
+            //         $("#mdAlert").modal("hide");
+            //     });
+            // }
+
+            // function openText() {
+            //     let fechaInicial = $("#txtFechaInicial").val();
+            //     let fechaFinal = $("#txtFechaFinal").val();
+            //     if (fechaInicial !== "" && fechaInicial !== undefined && fechaFinal !== "" && fechaFinal !== undefined) {
+            //         window.open("../app/sunat/txtnotacredito.php?txtFechaInicial=" + fechaInicial + "&txtFechaFinal=" + fechaFinal + "&facturado=1", "_blank");
+            //     }
+            // }
+
             function openPdf(idNotaCredito) {
-                window.open("../app/sunat/notacredito.php?idNotaCredito=" + idNotaCredito, "_blank");
+                window.open("../app/sunat/pdfnotacredito.php?idNotaCredito=" + idNotaCredito, "_blank");
+            }
+
+            function onEventPaginacionInicio(value) {
+                if (!state) {
+                    if (value !== paginacion) {
+                        paginacion = value;
+                        onEventPaginacion();
+                    }
+                }
+            }
+
+            function onEventPaginacionFinal(value) {
+                if (!state) {
+                    if (value !== paginacion) {
+                        paginacion = value;
+                        onEventPaginacion();
+                    }
+                }
+            }
+
+            function onEventAnteriorPaginacion() {
+                if (!state) {
+                    if (paginacion > 1) {
+                        paginacion--;
+                        onEventPaginacion();
+                    }
+                }
+            }
+
+            function onEventSiguientePaginacion() {
+                if (!state) {
+                    if (paginacion < totalPaginacion) {
+                        paginacion++;
+                        onEventPaginacion();
+                    }
+                }
             }
         </script>
     </body>

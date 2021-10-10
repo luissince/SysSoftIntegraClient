@@ -17,7 +17,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
         <!-- Sidebar menu-->
         <?php include "./layout/menu.php"; ?>
 
-        <!-- modal start -->
+        <!-- modal generar excel -->
         <div class="row">
             <div class="modal fade" id="mdAlert" data-backdrop="static">
                 <div class="modal-dialog modal-sm">
@@ -27,8 +27,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 <i class="fa fa-file-excel">
                                 </i> Generar Excel
                             </h4>
-                            <button type="button" class="btn btn-danger" id="btnClose">
-                                <i class="fa fa-window-close"></i>
+                            <button type="button" class="close" id="btnClose">
+                                <i class="fa fa-close"></i>
                             </button>
                         </div>
                         <div class="modal-body">
@@ -50,7 +50,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 </div>
             </div>
         </div>
-        <!-- modal end -->
+        <!-- modal generar excel -->
 
         <!-- Modal del detalle de ingreso -->
         <div class="row">
@@ -60,9 +60,9 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
                         <div class="modal-header">
                             <h4 class="modal-title"><i class="fa fa-indent">
-                                </i> Detalle de la venta seleccionada</h4>
+                                </i> Detalle de la venta</h4>
                             <button type="button" class="close" id="btnCloseModal">
-                                <i class="fa fa-window-close"></i>
+                                <i class="fa fa-close"></i>
                             </button>
                         </div>
 
@@ -70,23 +70,27 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             <div class="row">
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                                     <div class="table-responsive">
-                                        <table class="table">
+                                        <table class="table border-0">
                                             <thead>
                                                 <tr>
-                                                    <th>Comprobante:</th>
-                                                    <th id="thComprobante" colspan="5">--</th>
+                                                    <th class="text-left border-0 p-1">Comprobante</th>
+                                                    <th class="text-left border-0 p-1" id="thComprobante">--</th>
                                                 </tr>
                                                 <tr>
-                                                    <th>Cliente:</th>
-                                                    <th id="thCliente" colspan="5">--</th>
+                                                    <th class="text-left border-0 p-1">Cliente</th>
+                                                    <th class="text-left border-0 p-1" id="thCliente">--</th>
                                                 </tr>
                                                 <tr>
-                                                    <th>Fecha y Hora:</th>
-                                                    <th id="thFechaHora">--</th>
-                                                    <th>Estado:</th>
+                                                    <th class="text-left border-0 p-1">Fecha y Hora:</th>
+                                                    <th class="text-left border-0 p-1" id="thFechaHora">--</th>
+                                                </tr>
+                                                <tr>
+                                                    <th class="text-left border-0 p-1">Estado:</th>
                                                     <th id="thEstado">--</th>
-                                                    <th>Total:</th>
-                                                    <th id="thTotal">--</th>
+                                                </tr>
+                                                <tr>
+                                                    <th class="text-left border-0 p-1">Total:</th>
+                                                    <th class="text-left border-0 p-1" id="thTotal">0.00</th>
                                                 </tr>
                                             </thead>
                                         </table>
@@ -123,75 +127,22 @@ if (!isset($_SESSION['IdEmpleado'])) {
         </div>
         <!--   Modal del detalle de ingreso -->
 
-        <!-- Modal del detalle de ingreso -->
-        <div class="row">
-            <div class="modal fade" id="id-modal-clientes" data-backdrop="static">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-
-                        <div class="modal-header">
-                            <h4 class="modal-title">
-                                <i class="fa fa-users">
-                                </i> Clientes
-                            </h4>
-                            <button type="button" class="close" id="btnCloseModal">
-                                <i class="fa fa-window-close"></i>
-                            </button>
-
-                        </div>
-                        <div class="modal-body padding-horizontal">
-
-                            <div class="row">
-                                <div class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12">
-                                    <label>Buscar:</label>
-                                    <div class="form-group">
-                                        <input type="text" class="form-control" placeholder="Buscar clientes..." id="txtBuscarClientes">
-                                    </div>
-                                </div>
-                                <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
-                                    <label>Opción:</label>
-                                    <div class="form-group">
-                                        <button class="btn btn-default" id="btnRecargarProductos">
-                                            <img src="./images/reload.png" width="18"> Recargar
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-12 col-sm-12 col-xs-12">
-                                    <div class="table-responsive">
-                                        <table class="table table-striped" style="border-width: 1px;border-style: dashed;border-color: #007bff;">
-                                            <thead style="background-color: #0766cc;color: white;">
-                                                <tr>
-                                                    <th style="width:5%;">N°</th>
-                                                    <th style="width:30%;">Cliente</th>
-                                                    <th style="width:15%;">Teléfono/Celular</th>
-                                                    <th style="width:15%;">Cambiar</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="tbClientes">
-
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!--   Modal del cliente -->
-
         <main class="app-content">
 
             <div class="app-title">
-                <h1><i class="fa fa-folder"></i> Ventas <small>Lista</small></h1>
+                <h1><i class="fa fa-folder"></i> Comprobantes <small>Lista</small></h1>
             </div>
 
             <div class="tile mb-4">
+
+                <div class="overlay p-5" id="divOverlayVentas">
+                    <div class="m-loader mr-4">
+                        <svg class="m-circular" viewBox="25 25 50 50">
+                            <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="4" stroke-miterlimit="10"></circle>
+                        </svg>
+                    </div>
+                    <h4 class="l-text text-center text-white p-10" id="lblTextOverlayVentas">Cargando información...</h4>
+                </div>
 
                 <div class="row">
                     <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
@@ -199,11 +150,11 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             <h4> Resumen de documentos emitidos</h4>
                         </div>
                     </div>
-                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                    <!-- <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
                         <div class="form-group text-primary">
                             <h4 id="lblTotalVenta">Total de venta por Fecha:&nbsp; S/ 0.00</h4>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
 
                 <div class="row">
@@ -252,30 +203,38 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             <input class="form-control" type="date" id="txtFechaFinal" />
                         </div>
                     </div>
-                    <div class="col-xl-2 col-lg-3 col-md-12 col-sm-12 col-12">
-                        <label>Procesar:</label>
+                    <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+                        <label>Comprobantes:</label>
                         <div class="form-group">
-                            <button class="btn btn-primary" id="btnEnvioMasivo">
-                                <i class="fa fa-arrow-circle-up"></i> Envío masivo
-                            </button>
+                            <select id="cbComprobante" class="form-control">
+                                <option value="0">TODOS</option>
+                            </select>
                         </div>
                     </div>
-                    <div class="col-xl-2 col-lg-3 col-md-12 col-sm-12 col-12">
+                    <div class="col-xl-3 col-lg-4 col-md-12 col-sm-12 col-12">
+                        <label>Estado:</label>
+                        <div class="form-group">
+                            <select id="cbEstado" class="form-control">
+                                <option value="0">TODOS</option>
+                            </select>
+                        </div>
+                    </div>
+                    <!-- <div class="col-xl-2 col-lg-3 col-md-12 col-sm-12 col-12">
                         <label>Generar Excel:</label>
                         <div class="form-group">
                             <button class="btn btn-success" id="btnExcel">
                                 <i class="fa fa-file-excel-o"></i> Generar Excel
                             </button>
                         </div>
-                    </div>
-                    <div class="col-xl-2 col-lg-3 col-md-12 col-sm-12 col-12">
-                        <label>Generar Excel:</label>
+                    </div> -->
+                    <!-- <div class="col-xl-2 col-lg-3 col-md-12 col-sm-12 col-12">
+                        <label>Generar Txt:</label>
                         <div class="form-group">
                             <button class="btn btn-secondary" id="btnTxt">
                                 <i class="fa fa-file-text"></i> Generar Txt
                             </button>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
 
                 <div class="row">
@@ -291,26 +250,30 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         </div>
                     </div>
 
-                    <div class="col-xl-3 col-lg-4 col-md-12 col-sm-12 col-12">
-                        <label>Estado:</label>
+                    <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+                        <label>Procesar:</label>
                         <div class="form-group">
-                            <select id="cbEstado" class="form-control">
-                                <option value="0">TODOS</option>
-                            </select>
+                            <button class="btn btn-primary" id="btnEnvioMasivo">
+                                <i class="fa fa-arrow-circle-up"></i> Envío masivo
+                            </button>
                         </div>
                     </div>
 
                     <div class="col-xl-3 col-lg-6 col-md-12 col-sm-12 col-12">
                         <label>Paginación:</label>
-                        <div class="form-group">
-                            <button class="btn btn-primary" id="btnAnterior">
-                                <i class="fa fa-arrow-circle-left"></i>
+                        <div class="form-group" id="ulPagination">
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-double-left"></i>
                             </button>
-                            <span class="m-2" id="lblPaginaActual">0</span>
-                            <span class="m-2">de</span>
-                            <span class="m-2" id="lblPaginaSiguiente">0</span>
-                            <button type="button" class="btn btn-primary" id="btnSiguiente">
-                                <i class="fa fa-arrow-circle-right"></i>
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-left"></i>
+                            </button>
+                            <span class="btn btn-outline-secondary disabled" id="lblPaginacion">0 - 0</span>
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-right"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-double-right"></i>
                             </button>
                         </div>
                     </div>
@@ -319,8 +282,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 <div class="row">
                     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                         <div class="table-responsive">
-                            <table class="table table-hover table-striped" style="border-width: 1px;border-style: dashed;border-color: #007bff;">
-                                <thead style="background-color: #0766cc;color: white;">
+                            <table class="table table-hover table-striped">
+                                <thead class="table-header-background">
                                     <tr>
                                         <th style="width:5%;">#</th>
                                         <th style="width:5%;">Anular</th>
@@ -331,8 +294,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                         <th style="width:15%;">Cliente</th>
                                         <th style="width:10%;">Estado</th>
                                         <th style="width:10%;">Total</th>
-                                        <th style="width:10%;">Estado SUNAT</th>
-                                        <th style="width:25%;">Observación SUNAT</th>
+                                        <th style="width:10%;">Estado <br>SUNAT</th>
+                                        <th style="width:25%;">Observación <br> SUNAT</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tbList">
@@ -353,13 +316,13 @@ if (!isset($_SESSION['IdEmpleado'])) {
             let paginacion = 0;
             let opcion = 0;
             let totalPaginacion = 0;
-            let filasPorPagina = 20;
+            let filasPorPagina = 10;
             let tbody = $("#tbList");
             let arrayVentas = [];
 
-            let lblPaginaActual = $("#lblPaginaActual");
-            let lblPaginaSiguiente = $("#lblPaginaSiguiente");
-            let lblTotalVenta = $("#lblTotalVenta");
+
+            let ulPagination = $("#ulPagination");
+            // let lblTotalVenta = $("#lblTotalVenta");
 
             $(document).ready(function() {
 
@@ -367,21 +330,49 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 $("#txtFechaFinal").val(tools.getCurrentDate());
 
                 $("#txtFechaInicial").on("change", function() {
-                    var fechaInicial = $("#txtFechaInicial").val();
-                    var fechaFinal = $("#txtFechaFinal").val();
+                    let fechaInicial = $("#txtFechaInicial").val();
+                    let fechaFinal = $("#txtFechaFinal").val();
+                    let comprobante = $("#cbComprobante").val();
+                    let estadoVenta = $("#cbEstado").val();
                     if (!state) {
                         paginacion = 1;
-                        fillVentasTable(1, "", fechaInicial, fechaFinal, 0);
+                        fillVentasTable(1, "", fechaInicial, fechaFinal, comprobante, estadoVenta);
                         opcion = 1;
                     }
                 });
 
                 $("#txtFechaFinal").on("change", function() {
-                    var fechaInicial = $("#txtFechaInicial").val();
-                    var fechaFinal = $("#txtFechaFinal").val();
+                    let fechaInicial = $("#txtFechaInicial").val();
+                    let fechaFinal = $("#txtFechaFinal").val();
+                    let comprobante = $("#cbComprobante").val();
+                    let estadoVenta = $("#cbEstado").val();
                     if (!state) {
                         paginacion = 1;
-                        fillVentasTable(1, "", fechaInicial, fechaFinal, 0);
+                        fillVentasTable(1, "", fechaInicial, fechaFinal, comprobante, estadoVenta);
+                        opcion = 1;
+                    }
+                });
+
+                $("#cbComprobante").change(function(event) {
+                    let fechaInicial = $("#txtFechaInicial").val();
+                    let fechaFinal = $("#txtFechaFinal").val();
+                    let comprobante = $("#cbComprobante").val();
+                    let estadoVenta = $("#cbEstado").val();
+                    if (!state) {
+                        paginacion = 1;
+                        fillVentasTable(1, "", fechaInicial, fechaFinal, comprobante, estadoVenta);
+                        opcion = 1;
+                    }
+                });
+
+                $("#cbEstado").change(function() {
+                    let fechaInicial = $("#txtFechaInicial").val();
+                    let fechaFinal = $("#txtFechaFinal").val();
+                    let comprobante = $("#cbComprobante").val();
+                    let estadoVenta = $("#cbEstado").val();
+                    if (!state) {
+                        paginacion = 1;
+                        fillVentasTable(1, "", fechaInicial, fechaFinal, comprobante, estadoVenta);
                         opcion = 1;
                     }
                 });
@@ -392,27 +383,9 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         if (value.trim().length != 0) {
                             if (!state) {
                                 paginacion = 1;
-                                fillVentasTable(2, value.trim(), "", "", 0);
+                                fillVentasTable(2, value.trim(), "", "", 0, 0);
                                 opcion = 2;
                             }
-                        }
-                    }
-                });
-
-                $("#btnAnterior").click(function() {
-                    if (!state) {
-                        if (paginacion > 1) {
-                            paginacion--;
-                            onEventPaginacion();
-                        }
-                    }
-                });
-
-                $("#btnSiguiente").click(function() {
-                    if (!state) {
-                        if (paginacion < totalPaginacion) {
-                            paginacion++;
-                            onEventPaginacion();
                         }
                     }
                 });
@@ -428,27 +401,27 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     event.preventDefault();
                 });
 
-                $("#btnExcel").click(function() {
-                    openExcel();
-                });
+                // $("#btnExcel").click(function() {
+                //     openExcel();
+                // });
 
-                $("#btnExcel").keypress(function(event) {
-                    if (event.keyCode === 13) {
-                        openExcel();
-                    }
-                    event.preventDefault();
-                });
+                // $("#btnExcel").keypress(function(event) {
+                //     if (event.keyCode === 13) {
+                //         openExcel();
+                //     }
+                //     event.preventDefault();
+                // });
 
-                $("#btnTxt").click(function() {
-                    openText();
-                });
+                // $("#btnTxt").click(function() {
+                //     openText();
+                // });
 
-                $("#btnTxt").keypress(function(event) {
-                    if (event.keyCode === 13) {
-                        openText();
-                        event.preventDefault();
-                    }
-                });
+                // $("#btnTxt").keypress(function(event) {
+                //     if (event.keyCode === 13) {
+                //         openText();
+                //         event.preventDefault();
+                //     }
+                // });
 
                 $("#btnEnvioMasivo").click(function() {
                     onEventEnvioMasivo();
@@ -461,49 +434,74 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     }
                 });
 
-                $("#btnCloseModal").click(function(event) {
-                    $("#id-modal-productos").modal("hide");
-                });
-
-                $("#btnCloseModal").keypress(function(event) {
-                    if (event.keyCode === 13) {
-                        $("#id-modal-productos").modal("hide");
-
-                    }
-                    event.preventDefault();
-                });
-
-                $("#cbEstado").change(function() {
-                    let estadoVenta = $('#cbEstado').children('option').length > 0 && $("#cbEstado").val() != "" ? $("#cbEstado").val() : 0;
-                    if (!state) {
-                        paginacion = 1;
-                        fillVentasTable(3, "", "", "", estadoVenta);
-                        opcion = 3;
-                    }
-                });
-
                 loadEstadoVentas();
-                loadInitVentas();
             });
 
+            async function loadEstadoVentas() {
+                try {
+                    $("#cbEstado").empty();
+                    $("#cbComprobante").empty();
+
+                    let promiseFetchComprobante = tools.promiseFetchGet(
+                        "../app/controller/TipoDocumentoController.php", {
+                            "type": "getdocumentocomboboxventas"
+                        }
+                    );
+
+                    let promiseFetchEstado = tools.promiseFetchGet(
+                        "../app/controller/DetalleController.php", {
+                            "type": "detailname",
+                            "value1": "2",
+                            "value2": "0009",
+                            "value3": "",
+                        }
+                    );
+
+                    let promise = await Promise.all([promiseFetchComprobante, promiseFetchEstado]);
+                    let result = await promise;
+
+                    let comprobante = result[0];
+                    if (comprobante.estado === 1) {
+                        $("#cbComprobante").append('<option value="0">TODOS</option>');
+                        for (let value of comprobante.data) {
+                            $("#cbComprobante").append('<option value="' + value.IdTipoDocumento + '">' + value.Nombre + ' </option>');
+                        }
+                    } else {
+                        $("#cbComprobante").append('<option value="0">TODOS</option>');
+                    }
+
+                    let estado = result[1];
+                    if (estado.estado === 1) {
+                        $("#cbEstado").append('<option value="0">TODOS</option>');
+                        for (let value of estado.data) {
+                            $("#cbEstado").append('<option value="' + value.IdDetalle + '">' + value.Nombre + ' </option>');
+                        }
+                    } else {
+                        $("#cbEstado").append('<option value="0">TODOS</option>');
+                    }
+
+                    $("#divOverlayVentas").addClass("d-none");
+                    loadInitVentas();
+                } catch (error) {
+                    $("#lblTextOverlayVentas").html(error.message);
+                }
+            }
 
             function onEventPaginacion() {
                 let fechaInicial = $("#txtFechaInicial").val();
                 let fechaFinal = $("#txtFechaFinal").val();
                 let value = $("#txtSearch").val();
+                let comprobante = $('#cbComprobante').children('option').length > 0 && $("#cbComprobante").val() != "" ? $("#cbComprobante").val() : 0;
                 let estadoVenta = $('#cbEstado').children('option').length > 0 && $("#cbEstado").val() != "" ? $("#cbEstado").val() : 0;
                 switch (opcion) {
                     case 0:
-                        fillVentasTable(0, "", "", "", 0);
+                        fillVentasTable(0, "", "", "", 0, 0);
                         break;
                     case 1:
-                        fillVentasTable(1, "", fechaInicial, fechaFinal, 0);
+                        fillVentasTable(1, "", fechaInicial, fechaFinal, comprobante, estadoVenta);
                         break;
                     case 2:
-                        fillVentasTable(2, value.trim(), "", "", 0);
-                        break;
-                    case 3:
-                        fillVentasTable(3, "", "", "", estadoVenta);
+                        fillVentasTable(2, value.trim(), "", "", 0, 0);
                         break;
                 }
             }
@@ -511,124 +509,220 @@ if (!isset($_SESSION['IdEmpleado'])) {
             function loadInitVentas() {
                 if (!state) {
                     paginacion = 1;
-                    fillVentasTable(0, "", "", "", 0);
+                    fillVentasTable(0, "", "", "", 0, 0);
                     opcion = 0;
                 }
             }
 
-            function fillVentasTable(opcion, busqueda, fechaInicial, fechaFinal, estado) {
-                $.ajax({
-                    url: "../app/controller/VentaController.php",
-                    method: "GET",
-                    data: {
+            function fillVentasTable(opcion, busqueda, fechaInicial, fechaFinal, comprobante, estado) {
+                tools.promiseFetchGet(
+                    "../app/controller/VentaController.php", {
                         "type": "venta",
                         "opcion": opcion,
                         "busqueda": busqueda,
                         "fechaInicial": fechaInicial,
                         "fechaFinal": fechaFinal,
+                        "comprobante": comprobante,
                         "estado": estado,
                         "posicionPagina": ((paginacion - 1) * filasPorPagina),
                         "filasPorPagina": filasPorPagina
                     },
-                    beforeSend: function() {
+                    function() {
                         tbody.empty();
                         tbody.append('<tr><td class="text-center" colspan="11"><img src="./images/loading.gif" id="imgLoad" width="34" height="34" /> <p>Cargando información...</p></td></tr>');
                         state = true;
                         totalPaginacion = 0;
                         arrayVentas = [];
-                    },
-                    success: function(result) {
-                        let object = result;
-                        if (object.estado === 1) {
-                            arrayVentas = object.data;
-                            tbody.empty();
-                            if (arrayVentas.length == 0) {
-                                tbody.append('<tr><td class="text-center" colspan="11"><p>No hay datos para mostrar.</p></td></tr>');
-                                lblPaginaActual.html(0);
-                                lblPaginaSiguiente.html(0);
-                                lblTotalVenta.html("Total de venta por Fecha:&nbsp; S/ " + tools.formatMoney(parseFloat(object.suma)));
-                                state = false;
-                            } else {
-                                for (let venta of arrayVentas) {
-                                    let pdf = '<button class="btn btn-secondary btn-sm"  onclick="openPdf(\'' + venta.IdVenta + '\')"><img src="./images/pdf.svg" width="26" /> </button>';
-                                    let ver = '<button class="btn btn-secondary btn-sm" onclick="opeModalDetalleIngreso(\'' + venta.IdVenta + '\')"><img src="./images/file.svg" width="26" /></button>';
-                                    let resumen = '<button class="btn btn-secondary btn-sm" onclick="resumenDiarioXml(\'' + venta.IdVenta + '\',\'' + venta.Serie + "-" + venta.Numeracion + '\',\'' + tools.getDateYYMMDD(venta.FechaVenta) + '\')"><img src="./images/documentoanular.svg" width="26" /></button>';
-                                    let comunicacion = '<button class="btn btn-secondary btn-sm" onclick="comunicacionBajaXml(\'' + venta.IdVenta + '\',\'' + venta.Serie + "-" + venta.Numeracion + '\')"><img src="./images/documentoanular.svg" width="26" /></button>';
-                                    let anular = venta.Serie.toUpperCase().includes("B") ? resumen : comunicacion;
+                    }
+                ).then(result => {
+                    let object = result;
+                    if (object.estado === 1) {
+                        arrayVentas = object.data;
+                        tbody.empty();
+                        if (arrayVentas.length == 0) {
+                            tbody.append('<tr><td class="text-center" colspan="11"><p>No hay datos para mostrar.</p></td></tr>');
+                            ulPagination.html(`
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-double-left"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-left"></i>
+                            </button>
+                            <span class="btn btn-outline-secondary disabled" id="lblPaginacion">0 - 0</span>
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-right"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-double-right"></i>
+                            </button>`);
+                            // lblTotalVenta.html("Total de venta por Fecha:&nbsp; S/ " + tools.formatMoney(parseFloat(object.suma)));
+                            state = false;
+                        } else {
+                            for (let venta of arrayVentas) {
+                                let pdf = '<button class="btn btn-secondary btn-sm"  onclick="openPdf(\'' + venta.IdVenta + '\')"><img src="./images/pdf.svg" width="26" /> </button>';
+                                let ver = '<button class="btn btn-secondary btn-sm" onclick="opeModalDetalleIngreso(\'' + venta.IdVenta + '\')"><img src="./images/file.svg" width="26" /></button>';
+                                let resumen = '<button class="btn btn-secondary btn-sm" onclick="resumenDiarioXml(\'' + venta.IdVenta + '\',\'' + venta.Serie + "-" + venta.Numeracion + '\',\'' + tools.getDateYYMMDD(venta.FechaVenta) + '\')"><img src="./images/documentoanular.svg" width="26" /></button>';
+                                let comunicacion = '<button class="btn btn-secondary btn-sm" onclick="comunicacionBajaXml(\'' + venta.IdVenta + '\',\'' + venta.Serie + "-" + venta.Numeracion + '\')"><img src="./images/documentoanular.svg" width="26" /></button>';
+                                let anular = venta.Serie.toUpperCase().includes("B") ? resumen : comunicacion;
 
-                                    let datetime = tools.getDateForma(venta.FechaVenta) + "<br>" + tools.getTimeForma24(venta.HoraVenta, true);
-                                    let comprobante = venta.Comprobante + " <br/>" + (venta.Serie + "-" + venta.Numeracion) + (venta.IdNotaCredito == 1 ? " <span class='text-danger'>" + "Modificado(" + venta.SerieNotaCredito + "-" + venta.NumeracionNotaCredito + ")</span>" : "");
-                                    let cliente = venta.DocumentoCliente + "<br>" + venta.Cliente;
-                                    //'<button onclick="openModalClientes()" type="button" class="btn btn-primary btn-sm btn-flat">Editar</button>';
-                                    let estado = "";
+                                let datetime = tools.getDateForma(venta.FechaVenta) + "<br>" + tools.getTimeForma24(venta.HoraVenta, true);
+                                let comprobante = venta.Comprobante + " <br/>" + (venta.Serie + "-" + venta.Numeracion) + (venta.IdNotaCredito == 1 ? " <span class='text-danger'>" + "Modificado(" + venta.SerieNotaCredito + "-" + venta.NumeracionNotaCredito + ")</span>" : "");
+                                let cliente = venta.DocumentoCliente + "<br>" + venta.Cliente;
+                                let estado = "";
 
-                                    if (venta.Estado == 3) {
-                                        estado = '<div class="badge badge-danger">ANULADO</div>';
-                                    } else if (venta.Tipo == 2 && venta.Estado == 2) {
-                                        estado = '<div class="badge badge-warning">POR COBRAR</div>';
-                                    } else if (venta.Tipo == 1 && venta.Estado == 4) {
-                                        estado = '<div class="badge badge-primary">POR LLEVAR</div>';
-                                    } else {
-                                        estado = '<div class="badge badge-success">COBRADO</div>';
-                                    }
-
-                                    // let estado = '<div class="' + (venta.Tipo == 2 && venta.Estado == 2 ? "label label-warning" :v venta.Estado == 3 ? "label label-danger" : "label label-success") + '">' + (venta.Estado == 2 ? "POR COBRAR/LLEVAR" : venta.Estado == 3 ? "ANULADO" : "COBRADO") + '</div>';
-                                    let total = venta.Simbolo + " " + tools.formatMoney(venta.Total);
-
-                                    let estadosunat = venta.Estado == 3 ?
-                                        ('<button class="btn btn-secondary btn-sm" onclick="firmarXml(\'' + venta.IdVenta + '\')"><img src="./images/error.svg" width="26" /></button>') :
-                                        (venta.Xmlsunat === "" ?
-                                            '<button class="btn btn-secondary btn-sm" onclick="firmarXml(\'' + venta.IdVenta + '\')"><img src="./images/reuse.svg" width="26"/></button>' :
-                                            venta.Xmlsunat === "0" ?
-                                            '<button class="btn btn-secondary btn-sm"><img src="./images/accept.svg" width="26" /></button>' :
-                                            '<button class="btn btn-secondary btn-sm" onclick="firmarXml(\'' + venta.IdVenta + '\')"><img src="./images/unable.svg" width="26" /></button>'
-                                        );
-
-                                    let descripcion = '<p class="recortar-texto">' + (venta.Xmldescripcion === "" ? "Por Generar Xml" : venta.Xmldescripcion) + '</p>';
-
-                                    tbody.append('<tr>' +
-                                        ' <td class="td-center">' + venta.id + '</td >' +
-                                        ' <td class="td-center">' + anular + '</td>' +
-                                        ' <td class="td-center">' + pdf + '</td>' +
-                                        ' <td class="td-center">' + ver + '</td>' +
-                                        ' <td class="td-left">' + datetime + '</td>' +
-                                        ' <td class="td-left">' + comprobante + '</td>' +
-                                        ' <td>' + cliente + '</td>' +
-                                        ' <td>' + estado + '</td>' +
-                                        ' <td class="td-right">' + total + '</td>' +
-                                        ' <td class="td-center">' + estadosunat + '</td>' +
-                                        ' <td class="td-left">' + descripcion + '</td>' +
-                                        '</tr >');
+                                if (venta.Estado == 3) {
+                                    estado = '<div class="badge badge-danger">ANULADO</div>';
+                                } else if (venta.Tipo == 2 && venta.Estado == 2) {
+                                    estado = '<div class="badge badge-warning">POR COBRAR</div>';
+                                } else if (venta.Tipo == 1 && venta.Estado == 4) {
+                                    estado = '<div class="badge badge-primary">POR LLEVAR</div>';
+                                } else {
+                                    estado = '<div class="badge badge-success">COBRADO</div>';
                                 }
 
-                                totalPaginacion = parseInt(Math.ceil((parseFloat(object.total) / filasPorPagina)));
-                                lblPaginaActual.html(paginacion);
-                                lblPaginaSiguiente.html(totalPaginacion);
-                                lblTotalVenta.html("Total de venta por Fecha:&nbsp; S/ " + tools.formatMoney(parseFloat(object.suma)));
-                                state = false;
+                                let total = venta.Simbolo + " " + tools.formatMoney(venta.Total);
+
+                                let estadosunat = venta.Estado == 3 ?
+                                    ('<button class="btn btn-secondary btn-sm" onclick="firmarXml(\'' + venta.IdVenta + '\')"><img src="./images/error.svg" width="26" /></button>') :
+                                    (venta.Xmlsunat === "" ?
+                                        '<button class="btn btn-secondary btn-sm" onclick="firmarXml(\'' + venta.IdVenta + '\')"><img src="./images/reuse.svg" width="26"/></button>' :
+                                        venta.Xmlsunat === "0" ?
+                                        '<button class="btn btn-secondary btn-sm"><img src="./images/accept.svg" width="26" /></button>' :
+                                        '<button class="btn btn-secondary btn-sm" onclick="firmarXml(\'' + venta.IdVenta + '\')"><img src="./images/unable.svg" width="26" /></button>'
+                                    );
+
+                                let descripcion = '<p class="recortar-texto">' + (venta.Xmldescripcion === "" ? "Por Generar Xml" : venta.Xmldescripcion) + '</p>';
+
+                                tbody.append('<tr>' +
+                                    ' <td class="text-center">' + venta.id + '</td >' +
+                                    ' <td class="text-center">' + anular + '</td>' +
+                                    ' <td class="text-center">' + pdf + '</td>' +
+                                    ' <td class="text-centerr">' + ver + '</td>' +
+                                    ' <td class="text-left">' + datetime + '</td>' +
+                                    ' <td class="text-left">' + comprobante + '</td>' +
+                                    ' <td class="text-left">' + cliente + '</td>' +
+                                    ' <td class="text-center">' + estado + '</td>' +
+                                    ' <td class="text-right">' + total + '</td>' +
+                                    ' <td class="text-center">' + estadosunat + '</td>' +
+                                    ' <td class="text-left">' + descripcion + '</td>' +
+                                    '</tr >');
                             }
-                        } else {
-                            tbody.empty();
-                            lblPaginaActual.html(0);
-                            lblPaginaSiguiente.html(0);
-                            tbody.append('<tr><td class="text-center" colspan="11"><p>' + object.message + '</p></td></tr>');
-                            lblTotalVenta.html("S/ " + tools.formatMoney(parseFloat(0)));
+
+                            totalPaginacion = parseInt(Math.ceil((parseFloat(object.total) / filasPorPagina)));
+
+                            let i = 1;
+                            let range = [];
+                            while (i <= totalPaginacion) {
+                                range.push(i);
+                                i++;
+                            }
+
+                            let min = Math.min.apply(null, range);
+                            let max = Math.max.apply(null, range);
+
+                            // lblTotalVenta.html("Total de venta por Fecha:&nbsp; S/ " + tools.formatMoney(parseFloat(object.suma)));
+
+                            let paginacionHtml = `
+                            <button class="btn btn-outline-secondary" onclick="onEventPaginacionInicio(${min})">
+                                <i class="fa fa-angle-double-left"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary" onclick="onEventAnteriorPaginacion()">
+                                <i class="fa fa-angle-left"></i>
+                            </button>
+                            <span class="btn btn-outline-secondary disabled" id="lblPaginacion">${paginacion} - ${totalPaginacion}</span>
+                            <button class="btn btn-outline-secondary" onclick="onEventSiguientePaginacion()">
+                                <i class="fa fa-angle-right"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary" onclick="onEventPaginacionFinal(${max})">
+                                <i class="fa fa-angle-double-right"></i>
+                            </button>`;
+                            // range.forEach(e => {
+                            //     if (e === min || e === max) {
+                            //         if (e === min) {
+                            //             paginacionHtml += `                                         
+                            //                 <li class="page-item">
+                            //                     <button class="page-link" onclick="onEventAnteriorPaginacion()"><i class="fa fa-angle-double-left "></i></button>
+                            //                 </li> 
+                            //                 <li class="page-item ${e == paginacion?"active":""}">
+                            //                         <button class="page-link" onclick="onEventPaginacionInicio(${e})">${e}</button>
+                            //                 </li>
+                            //                 `;
+                            //         } else {
+                            //             paginacionHtml += `                                            
+                            //                 <li class="page-item ${e == paginacion?"active":""} ">
+                            //                         <button class="page-link" onclick="onEventPaginacionFinal(${e})">${e}</button>
+                            //                 </li>      
+                            //                 <li class="page-item">
+                            //                     <button class="page-link" onclick="onEventSiguientePaginacion()"><i class="fa fa-angle-double-right "></i></button>
+                            //                 </li>                                  
+                            //                 `;
+                            //         }
+                            //     } else {
+                            //         paginacionHtml += `
+                            //                 <li class="page-item ${e == paginacion?"active":""}">
+                            //                     <button class="page-link">${e}</button>
+                            //                 </li>`;
+                            //     }
+                            // });
+
+                            ulPagination.html(paginacionHtml);
                             state = false;
                         }
-                    },
-                    error: function(error) {
+                    } else {
                         tbody.empty();
-                        lblPaginaActual.html(0);
-                        lblPaginaSiguiente.html(0);
-                        tbody.append('<tr><td class="text-center" colspan="11"><p>' + error.responseText + '</p></td></tr>');
-                        lblTotalVenta.html("S/ " + tools.formatMoney(parseFloat(0)));
+                        ulPagination.html(`
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-double-left"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-left"></i>
+                            </button>
+                            <span class="btn btn-outline-secondary disabled" id="lblPaginacion">0 - 0</span>
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-right"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-double-right"></i>
+                            </button>`);
+                        tbody.append('<tr><td class="text-center" colspan="11"><p>' + object.message + '</p></td></tr>');
+                        // lblTotalVenta.html("S/ " + tools.formatMoney(parseFloat(0)));
                         state = false;
                     }
+                }).catch(error => {
+                    tbody.empty();
+                    ulPagination.html(`
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-double-left"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-left"></i>
+                            </button>
+                            <span class="btn btn-outline-secondary disabled" id="lblPaginacion">0 - 0</span>
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-right"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-double-right"></i>
+                            </button>`);
+                    tbody.append('<tr><td class="text-center" colspan="11"><p>' + error.responseText + '</p></td></tr>');
+                    // lblTotalVenta.html("S/ " + tools.formatMoney(parseFloat(0)));
+                    state = false;
                 });
             }
 
             function opeModalDetalleIngreso(idVenta) {
                 $("#id-modal-productos").modal("show");
+                $("#btnCloseModal").unbind();
+                $("#btnCloseModal").bind("click", function(event) {
+                    $("#id-modal-productos").modal("hide");
+                });
+
+                $("#btnCloseModal").bind("keypress", function(event) {
+                    if (event.keyCode === 13) {
+                        $("#id-modal-productos").modal("hide");
+                        event.preventDefault();
+                    }
+                });
 
                 let thComprobante = $("#thComprobante");
                 let thCliente = $("#thCliente");
@@ -657,7 +751,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             thFechaHora.html(tools.getDateForma(venta.FechaVenta) + " - " + tools.getTimeForma24(venta.HoraVenta));
                             thEstado.html(venta.Estado == 3 ? "ANULADO" : venta.Estado == 2 ? "POR COBRAR" : "COBRADO");
                             thEstado.removeClass();
-                            thEstado.addClass(venta.Estado == 3 ? "text-danger" : "text-success");
+                            thEstado.addClass(venta.Estado == 3 ? "text-left text-danger border-0 p-1" : "text-left text-success border-0 p-1");
                             let detalleventa = object.ventadetalle;
                             let total = 0;
                             for (let venta of detalleventa) {
@@ -759,7 +853,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     }
                 });
             }
-
 
             function comunicacionBajaXml(idventa, comprobante) {
                 tools.ModalDialog("Emitir comunicación de baja", "¿Se anulará el documento " + comprobante + "?", function(value) {
@@ -902,82 +995,82 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 window.open("../app/sunat/pdfventas.php?idVenta=" + idVenta, "_blank");
             }
 
-            function openExcel() {
-                $("#mdAlert").modal("show");
-                $("#btnTodos").unbind();
-                $("#btnTodos").bind("click", function() {
-                    let fechaInicial = $("#txtFechaInicial").val();
-                    let fechaFinal = $("#txtFechaFinal").val();
-                    if (fechaInicial !== "" && fechaInicial !== undefined && fechaFinal !== "" && fechaFinal !== undefined) {
-                        window.open("../app/sunat/excelventa.php?txtFechaInicial=" + fechaInicial + "&txtFechaFinal=" + fechaFinal + "&facturado=0", "_blank");
-                        $("#mdAlert").modal("hide");
+            function onEventPaginacionInicio(value) {
+                if (!state) {
+                    if (value !== paginacion) {
+                        paginacion = value;
+                        onEventPaginacion();
                     }
-                });
-
-                $("#btnFacturados").unbind();
-                $("#btnFacturados").bind("click", function() {
-                    let fechaInicial = $("#txtFechaInicial").val();
-                    let fechaFinal = $("#txtFechaFinal").val();
-                    if (fechaInicial !== "" && fechaInicial !== undefined && fechaFinal !== "" && fechaFinal !== undefined) {
-                        window.open("../app/sunat/excelventa.php?txtFechaInicial=" + fechaInicial + "&txtFechaFinal=" + fechaFinal + "&facturado=1", "_blank");
-                        $("#mdAlert").modal("hide");
-                    }
-                });
-
-                $("#btnCancelar").unbind();
-                $("#btnCancelar").bind("click", function() {
-                    $("#mdAlert").modal("hide");
-                });
-
-                $("#btnClose").unbind();
-                $("#btnClose").bind("click", function() {
-                    $("#mdAlert").modal("hide");
-                });
-            }
-
-            function openText() {
-                let fechaInicial = $("#txtFechaInicial").val();
-                let fechaFinal = $("#txtFechaFinal").val();
-                if (fechaInicial !== "" && fechaInicial !== undefined && fechaFinal !== "" && fechaFinal !== undefined) {
-                    window.open("../app/sunat/txtventas.php?txtFechaInicial=" + fechaInicial + "&txtFechaFinal=" + fechaFinal + "&facturado=1", "_blank");
                 }
             }
 
-            function openModalClientes() {
-                $("#id-modal-clientes").modal("show");
+            function onEventPaginacionFinal(value) {
+                if (!state) {
+                    if (value !== paginacion) {
+                        paginacion = value;
+                        onEventPaginacion();
+                    }
+                }
             }
 
-            function loadEstadoVentas() {
-                $.ajax({
-                    url: "../app/controller/DetalleController.php",
-                    method: "GET",
-                    data: {
-                        "type": "detailname",
-                        "value1": "2",
-                        "value2": "0009",
-                        "value3": "",
-                    },
-                    beforeSend: function() {
-                        $("#cbEstado").empty();
-                        $("#cbEstado").append('<option value="">Cargando...</option> ');
-                    },
-                    success: function(result) {
-                        $("#cbEstado").empty();
-                        if (result.estado == 1) {
-                            $("#cbEstado").append('<option value="0">TODOS</option> ');
-                            for (let value of result.data) {
-                                $("#cbEstado").append('<option value="' + value.IdDetalle + '">' + value.Nombre + ' </option>');
-                            }
-                        } else {
-                            $("#cbEstado").append('<option value="0">TODOS</option> ');
-                        }
-                    },
-                    error: function(error) {
-                        $("#cbEstado").empty();
-                        $("#cbEstado").append('<option value="0">TODOS</option> ');
+            function onEventAnteriorPaginacion() {
+                if (!state) {
+                    if (paginacion > 1) {
+                        paginacion--;
+                        onEventPaginacion();
                     }
-                });
+                }
             }
+
+            function onEventSiguientePaginacion() {
+                if (!state) {
+                    if (paginacion < totalPaginacion) {
+                        paginacion++;
+                        onEventPaginacion();
+                    }
+                }
+            }
+
+            // function openExcel() {
+            //     $("#mdAlert").modal("show");
+            //     $("#btnTodos").unbind();
+            //     $("#btnTodos").bind("click", function() {
+            //         let fechaInicial = $("#txtFechaInicial").val();
+            //         let fechaFinal = $("#txtFechaFinal").val();
+            //         if (fechaInicial !== "" && fechaInicial !== undefined && fechaFinal !== "" && fechaFinal !== undefined) {
+            //             window.open("../app/sunat/excelventa.php?txtFechaInicial=" + fechaInicial + "&txtFechaFinal=" + fechaFinal + "&facturado=0", "_blank");
+            //             $("#mdAlert").modal("hide");
+            //         }
+            //     });
+
+            //     $("#btnFacturados").unbind();
+            //     $("#btnFacturados").bind("click", function() {
+            //         let fechaInicial = $("#txtFechaInicial").val();
+            //         let fechaFinal = $("#txtFechaFinal").val();
+            //         if (fechaInicial !== "" && fechaInicial !== undefined && fechaFinal !== "" && fechaFinal !== undefined) {
+            //             window.open("../app/sunat/excelventa.php?txtFechaInicial=" + fechaInicial + "&txtFechaFinal=" + fechaFinal + "&facturado=1", "_blank");
+            //             $("#mdAlert").modal("hide");
+            //         }
+            //     });
+
+            //     $("#btnCancelar").unbind();
+            //     $("#btnCancelar").bind("click", function() {
+            //         $("#mdAlert").modal("hide");
+            //     });
+
+            //     $("#btnClose").unbind();
+            //     $("#btnClose").bind("click", function() {
+            //         $("#mdAlert").modal("hide");
+            //     });
+            // }
+
+            // function openText() {
+            //     let fechaInicial = $("#txtFechaInicial").val();
+            //     let fechaFinal = $("#txtFechaFinal").val();
+            //     if (fechaInicial !== "" && fechaInicial !== undefined && fechaFinal !== "" && fechaFinal !== undefined) {
+            //         window.open("../app/sunat/txtventas.php?txtFechaInicial=" + fechaInicial + "&txtFechaFinal=" + fechaFinal + "&facturado=1", "_blank");
+            //     }
+            // }
         </script>
     </body>
 

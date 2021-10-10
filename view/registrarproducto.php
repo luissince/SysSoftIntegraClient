@@ -399,14 +399,14 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                             <input type="text" class="form-control" placeholder="Descripción alterna " id="txtDescripcionAlterna" />
                                         </div>
                                     </div>
-                                    <div class="col-md-6 col-sm-12 col-xs-12">
+                                    <div class="col-md-3 col-sm-12 col-xs-12">
                                         <label>Estado </label>
                                         <div class="row">
                                             <div class="col-md-6 col-sm-12 col-xs-12">
                                                 <div class="form-group">
                                                     <input type="radio" id="rbActivo" name="tbEstado" checked />
                                                     <label for="rbActivo">
-                                                        &nbsp; Activo
+                                                        Activo
                                                     </label>
                                                 </div>
                                             </div>
@@ -414,7 +414,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                                 <div class="form-group">
                                                     <input type="radio" id="tbDesactivo" name="tbEstado" />
                                                     <label for="tbDesactivo" class="radio-custom-label">
-                                                        &nbsp; Inactivo
+                                                        Inactivo
                                                     </label>
                                                 </div>
                                             </div>
@@ -451,6 +451,38 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                         <div class="form-group">
                                             <input type="checkbox" id="cbLote">
                                             <label for="cbLote">&nbsp;Lote(Indica si manejara un control de lotes y caducidades para este artículo)</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                        <label>Usar en </label>
+                                        <div class="row">
+                                            <div class="col-md-2 col-sm-12 col-xs-12">
+                                                <div class="form-group">
+                                                    <input type="radio" id="rbTodoModulos" name="tbPara" checked />
+                                                    <label for="rbTodoModulos">
+                                                        Todos los módulos
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2 col-sm-12 col-xs-12">
+                                                <div class="form-group">
+                                                    <input type="radio" id="rbModuloVentas" name="tbPara" />
+                                                    <label for="rbModuloVentas" class="radio-custom-label">
+                                                        Solo ventas
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2 col-sm-12 col-xs-12">
+                                                <div class="form-group">
+                                                    <input type="radio" id="rbModuloProduccion" name="tbPara" />
+                                                    <label for="rbModuloProduccion" class="radio-custom-label">
+                                                        Solo producción
+                                                    </label>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -958,6 +990,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             contentType: "application/json; charset=utf-8",
                             data: JSON.stringify({
                                 "type": "insertsuministro",
+                                "Origen": $("#rbTodoModulos").is(":checked") ? 1 : $("#rbModuloVentas").is(":checked") ? 2 : 3,
                                 "Clave": $("#txtClave").val().trim(),
                                 "ClaveAlterna": $("#txtClaveAlterna").val().trim(),
                                 "NombreMarca": $("#txtDescripcion").val().trim(),

@@ -28,7 +28,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 </i> Lista de Productos
                             </h4>
                             <button type="button" class="close" id="btnCloseModal">
-                                <i class="fa fa-window-close"></i>
+                                <i class="fa fa-close"></i>
                             </button>
                         </div>
 
@@ -53,8 +53,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             <div class="row">
                                 <div class="col-md-12 col-sm-12 col-xs-12">
                                     <div class="table-responsive">
-                                        <table class="table table-striped table-hover" style="border-width: 1px;border-style: dashed;border-color: #007bff;">
-                                            <thead style="background-color: #0766cc;color: white;">
+                                        <table class="table table-striped table-hover">
+                                            <thead class="table-header-background">
                                                 <tr>
                                                     <th>N°</th>
                                                     <th>Clave/Nombre</th>
@@ -184,8 +184,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 <div class="row ">
                     <div class="col-md-12 col-sm-12 col-xs-12">
                         <div class="table-responsive">
-                            <table class="table table-striped" style="border-width: 1px;border-style: dashed;border-color: #007bff;">
-                                <thead style="background-color: #0766cc;color: white;">
+                            <table class="table table-striped">
+                                <thead class="table-header-background">
                                     <tr>
                                         <th>Acción</th>
                                         <th>Clave/Nombre</th>
@@ -412,6 +412,9 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         "type": "modalproductos",
                         "tipo": tipo,
                         "value": value,
+                        "libre": 1,
+                        "venta": 1,
+                        "insumo": 1,
                         "posicionPagina": ((paginacion - 1) * filasPorPagina),
                         "filasPorPagina": filasPorPagina
                     },

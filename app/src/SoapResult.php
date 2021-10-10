@@ -152,12 +152,16 @@ class SoapResult
 
             $this->setTicket($ticket);
             $this->setSuccess(true);
-        } catch (Exception $ex) {
+        } catch (SoapFault $ex) {
             $code = preg_replace('/[^0-9]/', '', $ex->faultcode);
             $message = $ex->faultstring;
             $this->setSuccess(false);
             $this->setCode($code);
             $this->setDescription($message);
+        } catch (Exception $ex) {
+            $this->setSuccess(false);
+            $this->setCode('-1');
+            $this->setDescription($ex->getMessage());
         }
     }
 

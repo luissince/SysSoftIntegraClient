@@ -18,18 +18,19 @@ class VentasADO
     {
     }
 
-    public static function ListVentas($opcion, $value, $fechaInicial, $fechaFinal, $estado, $posicionPagina, $filasPorPagina)
+    public static function ListVentas($opcion, $value, $fechaInicial, $fechaFinal, $comprobante, $estado, $posicionPagina, $filasPorPagina)
     {
         $array = array();
         try {
-            $comandoVenta = Database::getInstance()->getDb()->prepare("{CALL Sp_Listar_Ventas_All(?,?,?,?,?,?,?)}");
+            $comandoVenta = Database::getInstance()->getDb()->prepare("{CALL Sp_Listar_Ventas_All(?,?,?,?,?,?,?,?)}");
             $comandoVenta->bindParam(1, $opcion, PDO::PARAM_INT);
             $comandoVenta->bindParam(2, $value, PDO::PARAM_STR);
             $comandoVenta->bindParam(3, $fechaInicial, PDO::PARAM_STR);
             $comandoVenta->bindParam(4, $fechaFinal, PDO::PARAM_STR);
-            $comandoVenta->bindParam(5, $estado, PDO::PARAM_INT);
-            $comandoVenta->bindParam(6, $posicionPagina, PDO::PARAM_INT);
-            $comandoVenta->bindParam(7, $filasPorPagina, PDO::PARAM_INT);
+            $comandoVenta->bindParam(5, $comprobante, PDO::PARAM_INT);
+            $comandoVenta->bindParam(6, $estado, PDO::PARAM_INT);
+            $comandoVenta->bindParam(7, $posicionPagina, PDO::PARAM_INT);
+            $comandoVenta->bindParam(8, $filasPorPagina, PDO::PARAM_INT);
             $comandoVenta->execute();
             $arrayVenta = array();
             $count = 0;
@@ -63,12 +64,13 @@ class VentasADO
                 ));
             }
 
-            $comandoTotal = Database::getInstance()->getDb()->prepare("{CALL Sp_Listar_Ventas_All_Count(?,?,?,?,?)}");
+            $comandoTotal = Database::getInstance()->getDb()->prepare("{CALL Sp_Listar_Ventas_All_Count(?,?,?,?,?,?)}");
             $comandoTotal->bindParam(1, $opcion, PDO::PARAM_INT);
             $comandoTotal->bindParam(2, $value, PDO::PARAM_STR);
             $comandoTotal->bindParam(3, $fechaInicial, PDO::PARAM_STR);
             $comandoTotal->bindParam(4, $fechaFinal, PDO::PARAM_STR);
-            $comandoTotal->bindParam(5, $estado, PDO::PARAM_INT);
+            $comandoTotal->bindParam(5, $comprobante, PDO::PARAM_INT);
+            $comandoTotal->bindParam(6, $estado, PDO::PARAM_INT);
             $comandoTotal->execute();
             $resultTotal = $comandoTotal->fetchColumn();
 
@@ -77,9 +79,15 @@ class VentasADO
             FROM VentaTB as v 
             INNER JOIN DetalleVentaTB as dv on dv.IdVenta = v.IdVenta
             LEFT JOIN NotaCreditoTB as nc on nc.IdVenta = v.IdVenta
-            WHERE CAST(v.FechaVenta AS DATE) BETWEEN ? AND ? AND v.Tipo = 1 AND v.Estado <> 3 and nc.IdNotaCredito is null");
+            WHERE 
+            CAST(v.FechaVenta AS DATE) BETWEEN ? AND ? AND v.Tipo = 1 AND v.Estado = 1 and nc.IdNotaCredito is null
+            OR
+            CAST(v.FechaVenta AS DATE) BETWEEN ? AND ? AND v.Tipo = 1 AND v.Estado = 4 and nc.IdNotaCredito is null
+            ");
             $comandoSuma->bindParam(1, $fechaInicial, PDO::PARAM_STR);
             $comandoSuma->bindParam(2, $fechaFinal, PDO::PARAM_STR);
+            $comandoSuma->bindParam(3, $fechaInicial, PDO::PARAM_STR);
+            $comandoSuma->bindParam(4, $fechaFinal, PDO::PARAM_STR);
             $comandoSuma->execute();
             $resultSuma = 0;
             if ($row = $comandoSuma->fetch()) {
@@ -88,6 +96,90 @@ class VentasADO
 
             array_push($array, $arrayVenta, $resultTotal, $resultSuma);
             return $array;
+        } catch (Exception $ex) {
+            return $ex->getMessage();
+        }
+    }
+
+    public static function ListComprobantes($fechaInicial, $fechaFinal)
+    {
+        try {
+            $cmdEmpresa = Database::getInstance()->getDb()->prepare("SELECT TOP 1 
+            e.NumeroDocumento,
+            e.UsuarioSol,
+            e.ClaveSol 
+            FROM EmpresaTB AS e");
+            $cmdEmpresa->execute();
+            $resultEmpresa = $cmdEmpresa->fetchObject();
+
+            $comandoVenta = Database::getInstance()->getDb()->prepare("SELECT 
+            v.FechaVenta as Fecha,
+			v.HoraVenta as Hora,
+            v.Serie,
+            v.Numeracion,
+            td.Nombre,
+			td.CodigoAlterno,
+			sum(dv.Cantidad*(dv.PrecioVenta-dv.Descuento)) as Total         
+            FROM VentaTB AS v 
+			INNER JOIN TipoDocumentoTB AS td ON td.IdTipoDocumento = v.Comprobante
+			LEFT JOIN NotaCreditoTB AS n ON n.IdVenta = v.IdVenta
+			INNER JOIN DetalleVentaTB as dv on dv.IdVenta = v.IdVenta
+            WHERE
+			td.Facturacion = 1 and v.FechaVenta between ?  and ?
+			group by 
+			v.FechaVenta,
+			v.HoraVenta,
+            v.Serie,
+            v.Numeracion,
+            td.Nombre,
+			td.CodigoAlterno
+			union
+			select
+			nc.FechaRegistro as Fecha,
+			nc.HoraRegistro as Hora,
+            nc.Serie,
+            nc.Numeracion,
+            td.Nombre,
+			td.CodigoAlterno,
+			sum(ncd.Cantidad*ncd.Precio-ncd.Descuento) as Total
+			FROM NotaCreditoTB AS nc
+			INNER JOIN TipoDocumentoTB AS td ON td.IdTipoDocumento = nc.Comprobante
+			INNER JOIN VentaTB AS v ON v.IdVenta = nc.IdVenta
+			INNER JOIN TipoDocumentoTB AS tv ON tv.IdTipoDocumento = v.Comprobante
+			inner join NotaCreditoDetalleTB as ncd on ncd.IdNotaCredito = nc.IdNotaCredito
+			WHERE
+			tv.Facturacion = 1 and nc.FechaRegistro between ?  and ? 
+			group by 
+			nc.FechaRegistro,
+			nc.HoraRegistro,
+            nc.Serie,
+            nc.Numeracion,
+            td.Nombre,
+			td.CodigoAlterno
+
+            order by Fecha desc,Hora desc");
+            $comandoVenta->bindParam(1, $fechaInicial, PDO::PARAM_STR);
+            $comandoVenta->bindParam(2, $fechaFinal, PDO::PARAM_STR);
+
+            $comandoVenta->bindParam(3, $fechaInicial, PDO::PARAM_STR);
+            $comandoVenta->bindParam(4, $fechaFinal, PDO::PARAM_STR);
+            $comandoVenta->execute();
+            $arrayVenta = array();
+
+            while ($row = $comandoVenta->fetch()) {
+                array_push($arrayVenta, array(
+                    "Fecha" => $row["Fecha"],
+                    "Hora" => $row["Hora"],
+                    "Serie" => $row["Serie"],
+                    "Numeracion" => $row["Numeracion"],
+                    "Nombre" => $row["Nombre"],
+                    "TipoComprobante" => $row["CodigoAlterno"],
+                    "Total" => floatval($row["Total"]),
+                    "Empresa" => $resultEmpresa
+                ));
+            }
+
+            return $arrayVenta;
         } catch (Exception $ex) {
             return $ex->getMessage();
         }
@@ -1003,6 +1095,8 @@ class VentasADO
     {
         try {
             $array = array();
+
+            $arrayVentas = array();
             $comando = Database::getInstance()->getDb()->prepare("{CALL Sp_Generar_Excel_NotaCredito(?,?)}");
             $comando->bindParam(1, $fechaInicial, PDO::PARAM_STR);
             $comando->bindParam(2, $fechaFinal, PDO::PARAM_STR);
@@ -1010,7 +1104,7 @@ class VentasADO
             $count = 0;
             while ($row = $comando->fetch()) {
                 $count++;
-                array_push($array, array(
+                array_push($arrayVentas, array(
                     "Id" => $count,
                     "IdNotaCredito" => $row["IdNotaCredito"],
                     "TipoComprobante" => $row["TipoComprobante"],
@@ -1030,6 +1124,22 @@ class VentasADO
                     "Xmldescripcion" => $row["Xmldescripcion"]
                 ));
             }
+
+            $cmdEmpresa = Database::getInstance()->getDb()->prepare("SELECT TOP 1 
+            d.IdAuxiliar
+            ,e.NumeroDocumento,
+            e.RazonSocial,
+            e.Telefono,
+            e.Email,
+            e.UsuarioSol,
+            e.ClaveSol 
+            FROM EmpresaTB AS e 
+            INNER JOIN DetalleTB AS d ON e.TipoDocumento = d.IdDetalle AND d.IdMantenimiento = '0003'");
+            $cmdEmpresa->execute();
+            $resultEmpresa = $cmdEmpresa->fetchObject();
+
+
+            array_push($array, $arrayVentas,  $resultEmpresa);
             return $array;
         } catch (Exception $ex) {
             return $ex->getMessage();

@@ -18,42 +18,44 @@ if (!isset($_SESSION['IdEmpleado'])) {
         <?php include "./layout/menu.php"; ?>
         <!-- modal start -->
         <div class="row">
-            <div class="modal fade" id="idOpciones" data-backdrop="static">
+            <div class="modal fade" id="idOpciones" tabindex="-1" role="dialog" data-backdrop="static">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h4 class="modal-title">
+                            <h4 class="modal-title" id="idModalTitle">
                                 <i class="fa fa-plus">
                                 </i> Agregar unidad de medida
                             </h4>
                             <button id="btnCloseModal" type="button" class="close">
-                                <i class="fa fa-window-close"></i>
+                                <i class="fa fa-close"></i>
                             </button>
 
                         </div>
                         <div class="modal-body">
                             <div class="row">
-                                <div class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12">
+                                <div class="col-md-12 col-sm-12 col-12">
                                     <div class="form-group">
-                                        <input type="text" class="form-control" placeholder="Buscar..." id="txtBuscar" />
-                                    </div>
-                                </div>
-                                <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
-                                    <div class="form-group">
-                                        <button class="btn btn-default" id="btnRecargarProductos">
-                                            <img src="./images/plus.png" width="20" />
-                                        </button>
-                                        <button class="btn btn-default" id="btnRecargarProductos">
-                                            <img src="./images/edit.png" width="20" />
-                                        </button>
+                                        <div class="input-group">
+                                            <input type="search" class="form-control" placeholder="Buscar..." id="txtBuscar" autocomplete="off" />
+                                            <div class="input-group-append">
+                                                <button class="btn btn-secondary" id="btnRecargarProductos">
+                                                    <img src="./images/plus.png" width="18" />
+                                                </button>
+                                            </div>
+                                            <div class="input-group-append">
+                                                <button class="btn btn-secondary" id="btnRecargarProductos">
+                                                    <img src="./images/edit.png" width="18" />
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="row" style="overflow:auto; height:320px">
+                            <div class="row" style="overflow:auto; height:320px" id="divTable">
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                                    <table class="table table-striped table-hover">
-                                        <tbody id="tbLista">
+                                    <table class="table table-hover table-bordered">
+                                        <tbody id="tbLista" tabindex="0">
                                         </tbody>
                                     </table>
                                 </div>
@@ -61,7 +63,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         </div>
                         <div class="modal-footer">
                             <label class="text-center">Seleccione un elemento de la lista con doble click</span>
-
                         </div>
                     </div>
                 </div>
@@ -76,6 +77,16 @@ if (!isset($_SESSION['IdEmpleado'])) {
             </div>
 
             <div class="tile mb-4">
+
+                <div class="overlay p-5" id="divOverlayProducto">
+                    <div class="m-loader mr-4">
+                        <svg class="m-circular" viewBox="25 25 50 50">
+                            <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="4" stroke-miterlimit="10"></circle>
+                        </svg>
+                    </div>
+                    <h4 class="l-text text-center p-10" id="lblTextOverlayProducto">Cargando información...</h4>
+                </div>
+
 
                 <div class="row">
                     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
@@ -404,11 +415,11 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                     <div class="col-md-6 col-sm-12 col-xs-12">
                                         <label>Estado </label>
                                         <div class="row">
-                                            <div class="col-md-6 col-sm-12 col-xs-12">
+                                            <div class="col-md-3 col-sm-12 col-xs-12">
                                                 <div class="form-group">
-                                                    <input type="radio" id="rbActivo" name="tbEstado" checked />&nbsp;
+                                                    <input type="radio" id="rbActivo" name="tbEstado" checked />
                                                     <label for="rbActivo">
-                                                        &nbsp;Activo
+                                                        Activo
                                                     </label>
                                                 </div>
                                             </div>
@@ -416,7 +427,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                                 <div class="form-group">
                                                     <input type="radio" id="tbDesactivo" name="tbEstado" />
                                                     <label for="tbDesactivo" class="radio-custom-label">
-                                                        &nbsp;Inactivo
+                                                        Inactivo
                                                     </label>
                                                 </div>
                                             </div>
@@ -456,6 +467,38 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                         </div>
                                     </div>
                                 </div>
+
+                                <div class="row">
+                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                        <label>Usar en </label>
+                                        <div class="row">
+                                            <div class="col-md-2 col-sm-12 col-xs-12">
+                                                <div class="form-group">
+                                                    <input type="radio" id="rbTodoModulos" name="tbPara" checked />
+                                                    <label for="rbTodoModulos">
+                                                        Todos los módulos
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2 col-sm-12 col-xs-12">
+                                                <div class="form-group">
+                                                    <input type="radio" id="rbModuloVentas" name="tbPara" />
+                                                    <label for="rbModuloVentas" class="radio-custom-label">
+                                                        Solo ventas
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2 col-sm-12 col-xs-12">
+                                                <div class="form-group">
+                                                    <input type="radio" id="rbModuloProduccion" name="tbPara" />
+                                                    <label for="rbModuloProduccion" class="radio-custom-label">
+                                                        Solo producción
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <!--  -->
                             </div>
                         </div>
@@ -479,12 +522,14 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
             let imageByte = null;
 
+            let index = -1;
+
             $(document).ready(function() {
 
                 $(document).keydown(function(event) {
                     if (event.keyCode === 27) {
                         $("#idOpciones").modal("hide");
-                        $("#txtClave").focus();
+                        event.preventDefault();
                     }
                 });
 
@@ -501,8 +546,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     if (event.keyCode === 13) {
                         $("#lblImagen").attr("src", "./images/noimage.jpg");
                         $("#fileImage").val(null);
+                        event.preventDefault();
                     }
-                    event.preventDefault();
                 });
 
                 // $("#txtClave").keypress(function(event) {
@@ -654,7 +699,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         '   <td><input type="number" class="form-control"  value="0.00"></td>' +
                         '   <td><input type="number" class="form-control"  value="0"></td>' +
                         '   <td class="td-center">' +
-                        '    <button class="btn btn-outline-secondary" onclick="removePrecio(\'' + $("#tbPrecios tr").length + '\')"><img src="./images/remove.png" width="18" /></button>' +
+                        '    <button class="btn btn-secondary" onclick="removePrecio(\'' + $("#tbPrecios tr").length + '\')"><img src="./images/remove.png" width="18" /></button>' +
                         '   </td>' +
                         ' </tr>');
                 });
@@ -669,84 +714,52 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             '    <button class="btn btn-outline-secondary" onclick="removePrecio(\'' + $("#tbPrecios tr").length + '\')"><img src="./images/remove.png" width="18" /></button>' +
                             '   </td>' +
                             ' </tr>');
+                        event.preventDefault();
                     }
-                    event.preventDefault();
                 });
 
                 $("#txtUnidadMedida").keyup(function(event) {
                     if (event.keyCode == 32) {
-                        $("#idOpciones").modal("show");
-                        $("#txtBuscar").val("");
-                        $("#txtBuscar").focus();
-                        mantenimiento = "0013";
-                        loadModalId(mantenimiento, "");
+                        openModalDetalle("0013", " Agregar unidad de medida");
+                        event.preventDefault();
                     }
-                    event.preventDefault();
                 });
 
                 $("#txtUnidadMedida").dblclick(function(event) {
-                    $("#idOpciones").modal("show");
-                    $("#txtBuscar").val("");
-                    $("#txtBuscar").focus();
-                    mantenimiento = "0013";
-                    loadModalId(mantenimiento, "");
+                    openModalDetalle("0013", " Agregar unidad de medida");
                 });
 
                 $("#txtCategoria").keyup(function(event) {
                     if (event.keyCode == 32) {
-                        $("#idOpciones").modal("show");
-                        $("#txtBuscar").val("");
-                        $("#txtBuscar").focus();
-                        mantenimiento = "0006";
-                        loadModalId(mantenimiento, "");
+                        openModalDetalle("0006", "Agregar categoría");
+                        event.preventDefault();
                     }
-                    event.preventDefault();
                 });
 
                 $("#txtCategoria").dblclick(function(event) {
-                    $("#idOpciones").modal("show");
-                    $("#txtBuscar").val("");
-                    $("#txtBuscar").focus();
-                    mantenimiento = "0006";
-                    loadModalId(mantenimiento, "");
+                    openModalDetalle("0006", "Agregar categoría");
                 });
 
                 $("#txtMarca").keyup(function(event) {
                     if (event.keyCode == 32) {
-                        $("#idOpciones").modal("show");
-                        $("#txtBuscar").val("");
-                        $("#txtBuscar").focus();
-                        mantenimiento = "0007";
-                        loadModalId(mantenimiento, "");
+                        openModalDetalle("0007", "Agregar marca");
+                        event.preventDefault();
                     }
-                    event.preventDefault();
                 });
 
                 $("#txtMarca").dblclick(function(event) {
-                    $("#idOpciones").modal("show");
-                    $("#txtBuscar").val("");
-                    $("#txtBuscar").focus();
-                    mantenimiento = "0007";
-                    loadModalId(mantenimiento, "");
+                    openModalDetalle("0007", "Agregar marca'");
                 });
 
                 $("#txtPresentacion").keyup(function(event) {
                     if (event.keyCode == 32) {
-                        $("#idOpciones").modal("show");
-                        $("#txtBuscar").val("");
-                        $("#txtBuscar").focus();
-                        mantenimiento = "0008";
-                        loadModalId(mantenimiento, "");
+                        openModalDetalle("0008", "Agregar presentación");
+                        event.preventDefault();
                     }
-                    event.preventDefault();
                 });
 
                 $("#txtPresentacion").dblclick(function(event) {
-                    $("#idOpciones").modal("show");
-                    $("#txtBuscar").val("");
-                    $("#txtBuscar").focus();
-                    mantenimiento = "0008";
-                    loadModalId(mantenimiento, "");
+                    openModalDetalle("0008", "Agregar presentación");
                 });
 
                 /* registrar formularios */
@@ -754,72 +767,84 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 $("#txtClave").keypress(function(event) {
                     if (event.keyCode === 13) {
                         registrarProducto();
+                        event.preventDefault();
                     }
                 });
 
                 $("#txtDescripcion").keypress(function(event) {
                     if (event.keyCode === 13) {
                         registrarProducto();
+                        event.preventDefault();
                     }
                 });
 
                 $("#txtUnidadMedida").keypress(function(event) {
                     if (event.keyCode === 13) {
                         registrarProducto();
+                        event.preventDefault();
                     }
                 });
 
                 $("#txtCategoria").keypress(function(event) {
                     if (event.keyCode === 13) {
                         registrarProducto();
+                        event.preventDefault();
                     }
                 });
 
                 $("#txtCosto").keypress(function(event) {
                     if (event.keyCode === 13) {
                         registrarProducto();
+                        event.preventDefault();
                     }
                 });
 
                 $("#txtStockMinimo").keypress(function(event) {
                     if (event.keyCode === 13) {
                         registrarProducto();
+                        event.preventDefault();
                     }
                 });
 
                 $("#txtStockMaximo").keypress(function(event) {
                     if (event.keyCode === 13) {
                         registrarProducto();
+                        event.preventDefault();
                     }
                 });
 
                 $("#txtPrecioGeneral").keypress(function(event) {
                     if (event.keyCode === 13) {
                         registrarProducto();
+                        event.preventDefault();
                     }
                 });
 
                 $("#txtPrecio2").keypress(function(event) {
                     if (event.keyCode === 13) {
                         registrarProducto();
+                        event.preventDefault();
                     }
                 });
 
                 $("#txtPrecio3").keypress(function(event) {
                     if (event.keyCode === 13) {
                         registrarProducto();
+                        event.preventDefault();
                     }
                 });
 
                 $("#txtPrecioGeneralPersonalizado").keypress(function(event) {
                     if (event.keyCode === 13) {
                         registrarProducto();
+                        event.preventDefault();
                     }
                 });
 
                 $("#txtDescripcionAlterna").keypress(function(event) {
                     if (event.keyCode === 13) {
                         registrarProducto();
+                        event.preventDefault();
                     }
                 });
 
@@ -832,12 +857,14 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 $("#txtPresentacion").keypress(function(event) {
                     if (event.keyCode === 13) {
                         registrarProducto();
+                        event.preventDefault();
                     }
                 });
 
                 $("#txtClaveUnica").keypress(function(event) {
                     if (event.keyCode === 13) {
                         registrarProducto();
+                        event.preventDefault();
                     }
                 });
 
@@ -848,45 +875,311 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 $("#btnRegistrar").keypress(function(event) {
                     if (event.keyCode === 13) {
                         registrarProducto();
+                        event.preventDefault();
                     }
-                    event.preventDefault();
+
                 });
 
                 $("#btnCancelar").click(function(event) {
                     location.href = "productos.php";
-
                 });
 
                 $("#btnCancelar").keypress(function(event) {
                     if (event.keyCode === 13) {
                         location.href = "productos.php";
-
+                        event.preventDefault();
                     }
-                    event.preventDefault();
                 });
                 /* registrar formularios */
 
                 modalDetalle();
-                loadImpuesto();
+                loadInit();
             });
 
+            async function loadInit() {
+                try {
+                    $("#cbImpuesto").empty();
+                    let promiseFetchImpuesto = new Promise(function(resolve, reject) {
+                        $.ajax({
+                            url: "../app/controller/SuministroController.php",
+                            method: "GET",
+                            data: {
+                                "type": "impuestos"
+                            },
+                            success: function(result) {
+                                resolve(result);
+                            },
+                            error: function(error) {
+                                reject(error);
+                            }
+                        });
+                    });
+
+                    let promiseFetchProducto = new Promise(function(resolve, reject) {
+                        $.ajax({
+                            url: "../app/controller/SuministroController.php",
+                            method: 'GET',
+                            data: {
+                                "type": "getproducto",
+                                "idSuministro": idSuministro
+                            },
+                            success: function(result) {
+                                resolve(result);
+                            },
+                            error: function(error) {
+                                reject(error);
+                            }
+                        });
+                    });
+
+                    let promise = await Promise.all([promiseFetchImpuesto, promiseFetchProducto]);
+                    let result = await promise;
+
+                    let impuestos = result[0];
+
+                    if (impuestos.estado === 1) {
+                        $("#cbImpuesto").append('<option value="">--TODOS--</option>');
+                        for (let impuesto of impuestos.data) {
+                            $("#cbImpuesto").append('<option value="' + impuesto.IdImpuesto + '">' + impuesto.Nombre + '</option>');
+                        }
+                    }
+
+                    let producto = result[1];
+                    if (producto.estado == 1) {
+                        let suministro = producto.suministro;
+                        $("#txtClave").val(suministro.Clave);
+                        $("#txtClaveAlterna").val(suministro.ClaveAlterna);
+                        $("#txtDescripcion").val(suministro.NombreMarca);
+
+                        if (suministro.NuevaImagen == "") {
+                            $("#lblImagen").attr("src", "./images/noimage.jpg");
+                            imageByte = null;
+                        } else {
+                            $("#lblImagen").attr("src", "data:image/png;base64," + suministro.NuevaImagen);
+                            imageByte = suministro.NuevaImagen;
+                        }
+
+                        idUnidadMedida = suministro.UnidadCompra;
+                        $("#txtUnidadMedida").val(suministro.UnidadCompraNombre);
+
+                        idCategoria = suministro.Categoria;
+                        $("#txtCategoria").val(suministro.CategoriaNombre);
+
+                        if (suministro.UnidadVenta == 3) {
+                            $("#rbGranel").prop("checked", true);
+                        } else if (suministro.UnidadVenta == 2) {
+                            $("#rbMoneda").prop("checked", true);
+                        } else {
+                            $("#rbUnidad").prop("checked", true);
+                        }
+
+                        $("#txtCosto").val(suministro.PrecioCompra);
+                        $("#txtStockMinimo").val(suministro.StockMinimo);
+                        $("#txtStockMaximo").val(suministro.StockMaximo);
+
+                        if (suministro.ValorInventario == 3) {
+                            $("#rbGranelSalida").prop("checked", true);
+                        } else if (suministro.ValorInventario == 2) {
+                            $("#rbMonedaSalida").prop("checked", true);
+                        } else {
+                            $("#rbUnidadSalida").prop("checked", true);
+                        }
+
+                        $("#cbImpuesto").val(suministro.Impuesto);
+
+                        if (suministro.TipoPrecio == 1) {
+                            $("#rbPrecioNormal").prop("checked", true);
+                            $("#txtPrecioGeneral").val(suministro.PrecioVentaGeneral);
+                            if (producto.precios.length != 0) {
+                                let precio2 = producto.precios[0].Valor != null || producto.precios[0].Valor != undefined ? producto.precios[0].Valor : 0;
+                                let precio3 = producto.precios[1].Valor != null || producto.precios[1].Valor != undefined ? producto.precios[1].Valor : 0;
+                                $("#txtPrecio2").val(precio2);
+                                $("#txtPrecio3").val(precio3);
+                                $("#divPrecioPersonalizado").css("display", "none");
+                                $("#divPrecioNormal").css("display", "block");
+                            }
+                        } else {
+                            $("#rbPrecioPersonalizado").prop("checked", true);
+                            $("#txtPrecioGeneralPersonalizado").val(suministro.PrecioVentaGeneral);
+                            $("#divPrecioNormal").css("display", "none");
+                            $("#divPrecioPersonalizado").css("display", "block");
+                            tbPrecios.empty();
+                            for (let precio of producto.precios) {
+                                tbPrecios.append('<tr id="' + $("#tbPrecios tr").length + '">' +
+                                    '   <td><input type="text" class="form-control" value="' + precio.Nombre + '"></td>' +
+                                    '   <td><input type="number" class="form-control" value="' + precio.Valor + '"></td>' +
+                                    '   <td><input type="number" class="form-control" value="' + precio.Factor + '"></td>' +
+                                    '   <td class="td-center">' +
+                                    '    <button class="btn btn-default" onclick="removePrecio(\'' + $("#tbPrecios tr").length + '\')"><img src="./image/remove.png" width="18" /></button>' +
+                                    '   </td>' +
+                                    ' </tr>');
+                            }
+                        }
+
+                        $("#txtDescripcionAlterna").val(suministro.NombreGenerico);
+                        if (suministro.Estado == 1) {
+                            $("#rbActivo").prop("checked", true);
+                        } else {
+                            $("#tbDesactivo").prop("checked", true);
+                        }
+
+                        idMarca = suministro.Marca;
+                        $("#txtMarca").val(suministro.MarcaNombre);
+                        idPresentacion = suministro.Presentacion;
+                        $("#txtPresentacion").val(suministro.PresentacionNombre);
+                        $("#txtClaveUnica").val(suministro.ClaveSat);
+                        $("#cbLote").prop("checked", suministro.Lote == 0 ? false : true);
+                        $("#cbCosto").prop("checked", suministro.Inventario == 0 ? false : true);
+                        if ($("#cbCosto").is(":checked")) {
+                            $("#divCosto").removeClass("disabled");
+                        } else {
+                            $("#divCosto").addClass("disabled");
+                        }
+
+                        if (suministro.Origen == "1") {
+                            $("#rbTodoModulos").prop("checked", true);
+                        } else if (suministro.Origen == "2") {
+                            $("#rbModuloVentas").prop("checked", true);
+                        } else {
+                            $("#rbModuloProduccion").prop("checked", true);
+                        }
+
+                        $("#divOverlayProducto").addClass("d-none");
+                    } else {
+                        $("#lblTextOverlayProducto").html(producto.message);
+                    }
+                } catch (error) {
+                    $("#lblTextOverlayProducto").html("Se producto un problema en:" + error.message);
+                }
+            }
+
+            function openModalDetalle(id, title) {
+                $("#idOpciones").modal("show");
+                $("#idModalTitle").html('<i class="fa fa-plus"> </i> ' + title);
+                $("#txtBuscar").val("");
+                mantenimiento = id;
+                loadModalId(mantenimiento, "");
+            }
+
+            function loadModalId(idMantenimiento, nombre) {
+                $("#tbLista").empty();
+                $.get("../app/controller/SuministroController.php", {
+                    "type": "detalles",
+                    "mantenimiento": idMantenimiento,
+                    "nombre": nombre
+                }, function(data, status) {
+                    if (status === "success") {
+                        for (let value of data.data) {
+                            $("#tbLista").append('<tr id="' + value.IdDetalle + '" name="' + value.Nombre + '" ondblclick="selectModal(\'' + idMantenimiento + '\',\'' + value.IdDetalle + '\',\'' + value.Nombre + '\')">' +
+                                '    <td tabindex="-1">' + value.Nombre + '</td>' +
+                                '</tr>');
+                        }
+                    }
+                });
+            }
 
             function modalDetalle() {
-                $("#txtBuscar").keydown(function(event) {
+                $("#txtBuscar").keyup(function(event) {
                     if (event.keyCode !== 9 && event.keyCode !== 18) {
                         if ($("#txtBuscar").val().trim() != "") {
+                            index = -1;
                             loadModalId(mantenimiento, $("#txtBuscar").val().trim());
                         }
                     }
                 });
 
+                $("#txtBuscar").keydown(function(event) {
+                    if (event.which == 13) {
+                        let rows = document.getElementById("tbLista").rows;
+                        if (rows.length > 0) {
+                            if (index !== -1) {
+                                rows[index].classList.toggle("selected-table");
+                            }
+                            index = 0;
+                            let parent = rows[index];
+                            index = parent.rowIndex;
+                            parent.classList.toggle("selected-table");
+                            document.getElementById('tbLista').focus();
+                            $('#divTable').animate({
+                                scrollTop: 0
+                            }, 'slow');
+                        }
+                        event.preventDefault();
+                    }
+                });
+
                 $("#btnCloseModal").click(function(event) {
                     $("#idOpciones").modal("hide");
+                    $("#tbLista").empty();
+                    index = -1;
                 });
 
                 $("#btnCloseModal").keypress(function(event) {
                     if (event.keyCode === 13) {
                         $("#idOpciones").modal("hide");
+                        $("#tbLista").empty();
+                        index = -1;
+                    }
+                });
+
+                $('#idOpciones').on('shown.bs.modal', function() {
+                    $('#txtBuscar').trigger('focus')
+                    // document.getElementById('tbLista').scrollIntoView(false);
+                });
+
+                $("#tbLista").keydown(function(event) {
+                    if (event.which == 13) {
+                        var rows = document.getElementById("tbLista").rows;
+                        if (rows.length > 0) {
+                            let parent = rows[index];
+                            selectModal(mantenimiento, parent.getAttribute("id"), parent.getAttribute("name"));
+                        }
+                        event.preventDefault();
+                    }
+
+                    if (event.keyCode === 38) {
+                        var rows = document.getElementById("tbLista").rows;
+                        if (index !== 0) {
+                            if (index !== -1) {
+                                rows[index].classList.toggle("selected-table");
+                            }
+                            if (index > 0) {
+                                index--;
+                                let parent = rows[index];
+                                index = parent.rowIndex;
+                                parent.classList.toggle("selected-table");
+                            }
+                        }
+                    } else if (event.keyCode === 40) {
+                        var rows = document.getElementById("tbLista").rows;
+                        if (index !== rows.length - 1) {
+                            if (index !== -1) {
+                                rows[index].classList.toggle("selected-table");
+                            }
+                            if (index < rows.length - 1) {
+                                index++;
+                                let parent = rows[index];
+                                index = parent.rowIndex;
+                                parent.classList.toggle("selected-table");
+                            }
+                        }
+                    }
+                });
+
+                $("#tbLista").mousedown(function() {
+                    let table = document.getElementById("tbLista");
+                    let rows = table.rows;
+                    if (rows.length > 0) {
+                        for (let i = 0; i < rows.length; i++) {
+                            rows[i].onclick = function() {
+                                if (index !== -1) {
+                                    rows[index].classList.toggle("selected-table");
+                                }
+                                index = this.rowIndex;
+                                this.classList.toggle("selected-table");
+                                table.focus();
+                            };
+                        }
                     }
                 });
             }
@@ -967,6 +1260,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             data: JSON.stringify({
                                 "type": "updatesuministro",
                                 "IdSuministro": idSuministro,
+                                "Origen": $("#rbTodoModulos").is(":checked") ? 1 : $("#rbModuloVentas").is(":checked") ? 2 : 3,
                                 "Clave": $("#txtClave").val().trim(),
                                 "ClaveAlterna": $("#txtClaveAlterna").val().trim(),
                                 "NombreMarca": $("#txtDescripcion").val().trim(),
@@ -1025,178 +1319,32 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 $("#" + idSuministro).remove();
             }
 
-            function loadSuminstro(idSuministro) {
-                $.ajax({
-                    url: "../app/controller/SuministroController.php",
-                    method: 'GET',
-                    data: {
-                        type: "getproducto",
-                        "idSuministro": idSuministro
-                    },
-                    beforeSend: function() {
-
-                    },
-                    success: function(result) {
-                        if (result.estado == 1) {
-                            let suministro = result.suministro;
-                            $("#txtClave").val(suministro.Clave);
-                            $("#txtClaveAlterna").val(suministro.ClaveAlterna);
-                            $("#txtDescripcion").val(suministro.NombreMarca);
-
-                            if (suministro.NuevaImagen == "") {
-                                $("#lblImagen").attr("src", "./images/noimage.jpg");
-                                imageByte = null;
-                            } else {
-                                $("#lblImagen").attr("src", "data:image/png;base64," + suministro.NuevaImagen);
-                                imageByte = suministro.NuevaImagen;
-                            }
-
-                            idUnidadMedida = suministro.UnidadCompra;
-                            $("#txtUnidadMedida").val(suministro.UnidadCompraNombre);
-
-                            idCategoria = suministro.Categoria;
-                            $("#txtCategoria").val(suministro.CategoriaNombre);
-
-                            if (suministro.UnidadVenta == 3) {
-                                $("#rbGranel").prop("checked", true);
-                            } else if (suministro.UnidadVenta == 2) {
-                                $("#rbMoneda").prop("checked", true);
-                            } else {
-                                $("#rbUnidad").prop("checked", true);
-                            }
-
-                            $("#txtCosto").val(suministro.PrecioCompra);
-                            $("#txtStockMinimo").val(suministro.StockMinimo);
-                            $("#txtStockMaximo").val(suministro.StockMaximo);
-
-                            if (suministro.ValorInventario == 3) {
-                                $("#rbGranelSalida").prop("checked", true);
-                            } else if (suministro.ValorInventario == 2) {
-                                $("#rbMonedaSalida").prop("checked", true);
-                            } else {
-                                $("#rbUnidadSalida").prop("checked", true);
-                            }
-
-                            $("#cbImpuesto").val(suministro.Impuesto);
-
-                            if (suministro.TipoPrecio == 1) {
-                                $("#rbPrecioNormal").prop("checked", true);
-                                $("#txtPrecioGeneral").val(suministro.PrecioVentaGeneral);
-                                if (result.precios.length != 0) {
-                                    let precio2 = result.precios[0].Valor != null || result.precios[0].Valor != undefined ? result.precios[0].Valor : 0;
-                                    let precio3 = result.precios[1].Valor != null || result.precios[1].Valor != undefined ? result.precios[1].Valor : 0;
-                                    $("#txtPrecio2").val(precio2);
-                                    $("#txtPrecio3").val(precio3);
-                                    $("#divPrecioPersonalizado").css("display", "none");
-                                    $("#divPrecioNormal").css("display", "block");
-                                }
-                            } else {
-                                $("#rbPrecioPersonalizado").prop("checked", true);
-                                $("#txtPrecioGeneralPersonalizado").val(suministro.PrecioVentaGeneral);
-                                $("#divPrecioNormal").css("display", "none");
-                                $("#divPrecioPersonalizado").css("display", "block");
-                                tbPrecios.empty();
-                                for (let precio of result.precios) {
-                                    tbPrecios.append('<tr id="' + $("#tbPrecios tr").length + '">' +
-                                        '   <td><input type="text" class="form-control" value="' + precio.Nombre + '"></td>' +
-                                        '   <td><input type="number" class="form-control" value="' + precio.Valor + '"></td>' +
-                                        '   <td><input type="number" class="form-control" value="' + precio.Factor + '"></td>' +
-                                        '   <td class="td-center">' +
-                                        '    <button class="btn btn-default" onclick="removePrecio(\'' + $("#tbPrecios tr").length + '\')"><img src="./image/remove.png" width="18" /></button>' +
-                                        '   </td>' +
-                                        ' </tr>');
-                                }
-                            }
-
-                            $("#txtDescripcionAlterna").val(suministro.NombreGenerico);
-                            if (suministro.Estado == 1) {
-                                $("#rbActivo").prop("checked", true);
-                            } else {
-                                $("#tbDesactivo").prop("checked", true);
-                            }
-
-                            idMarca = suministro.Marca;
-                            $("#txtMarca").val(suministro.MarcaNombre);
-                            idPresentacion = suministro.Presentacion;
-                            $("#txtPresentacion").val(suministro.PresentacionNombre);
-                            $("#txtClaveUnica").val(suministro.ClaveSat);
-                            $("#cbLote").prop("checked", suministro.Lote == 0 ? false : true);
-                            $("#cbCosto").prop("checked", suministro.Inventario == 0 ? false : true);
-                            if ($("#cbCosto").is(":checked")) {
-                                $("#divCosto").removeClass("disabled");
-                            } else {
-                                $("#divCosto").addClass("disabled");
-                            }
-
-                            tools.AlertSuccess("Producto", "Se cargo correctamento los datos.");
-                        } else {
-                            tools.AlertWarning("Producto", result.message);
-                        }
-
-                    },
-                    error: function(error) {
-                        tools.AlertError("Producto", "Se producto un problema en:" + error.responseText);
-                    }
-                });
-            }
-
-            function loadImpuesto() {
-                tools.AlertInfo("Producto", "Cargando información..");
-                $.get("../app/controller/SuministroController.php", {
-                    type: "impuestos"
-                }, function(data, status) {
-                    if (status === "success") {
-                        let result = data;
-                        if (result.estado === 1) {
-                            $("#cbImpuesto").empty();
-                            $("#cbImpuesto").append('<option value="">--TODOS--</option>');
-                            for (let impuesto of result.data) {
-                                $("#cbImpuesto").append('<option value="' + impuesto.IdImpuesto + '">' + impuesto.Nombre + '</option>');
-                            }
-                            loadSuminstro(idSuministro);
-                        } else {
-                            $("#cbImpuesto").empty();
-                            tools.AlertWarning("Producto", result.mensaje);
-                        }
-                    }
-                });
-            }
-
-            function loadModalId(idMantenimiento, nombre) {
-                $("#tbLista").empty();
-                $.get("../app/controller/SuministroController.php", {
-                    "type": "detalles",
-                    "mantenimiento": idMantenimiento,
-                    "nombre": nombre
-                }, function(data, status) {
-                    if (status === "success") {
-                        for (let value of data.data) {
-                            $("#tbLista").append('<tr ondblclick="selectModal(\'' + idMantenimiento + '\',\'' + value.IdDetalle + '\',\'' + value.Nombre + '\')">' +
-                                '    <td>' + value.Nombre + '</td>' +
-                                '</tr>');
-                        }
-                    }
-                });
-            }
-
             function selectModal(idMantenimiento, IdDetalle, Nombre) {
                 if (idMantenimiento == "0013") {
                     $("#idOpciones").modal("hide");
+                    $("#tbLista").empty();
+                    index = -1;
                     idUnidadMedida = IdDetalle;
                     $("#txtUnidadMedida").val(Nombre);
                     $("#txtUnidadMedida").focus();
                 } else if (idMantenimiento == "0006") {
                     $("#idOpciones").modal("hide");
+                    $("#tbLista").empty();
+                    index = -1;
                     idCategoria = IdDetalle;
                     $("#txtCategoria").val(Nombre);
                     $("#txtCategoria").focus();
                 } else if (idMantenimiento == "0007") {
                     $("#idOpciones").modal("hide");
+                    $("#tbLista").empty();
+                    index = -1;
                     idMarca = IdDetalle;
                     $("#txtMarca").val(Nombre);
                     $("#txtMarca").focus();
                 } else if (idMantenimiento == "0008") {
                     $("#idOpciones").modal("hide");
+                    $("#tbLista").empty();
+                    index = -1;
                     idPresentacion = IdDetalle;
                     $("#txtPresentacion").val(Nombre);
                     $("#txtPresentacion").focus();

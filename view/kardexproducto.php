@@ -20,7 +20,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
         <!-- modal productos -->
         <div class="row">
             <div class="modal fade" id="id-modal-productos" data-backdrop="static">
-                <div class="modal-dialog">
+                <div class="modal-dialog modal-lg">
                     <div class="modal-content">
 
                         <div class="modal-header">
@@ -29,24 +29,23 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 </i> Lista de Productos
                             </h4>
                             <button type="button" class="close" id="btnCloseModal">
-                                <i class="fa fa-window-close"></i>
+                                <i class="fa fa-close"></i>
                             </button>
                         </div>
 
                         <div class="modal-body">
                             <div class="row">
-                                <div class="col-md-9 col-sm-12 col-xs-12">
+                                <div class="col-md-12 col-sm-12 col-xs-12">
                                     <label>Buscar:</label>
                                     <div class="form-group">
-                                        <input type="text" class="form-control" placeholder="Buscar producto..." id="txtBuscarProducto" />
-                                    </div>
-                                </div>
-                                <div class="col-md-3 col-sm-12 col-xs-12">
-                                    <label>Opción:</label>
-                                    <div class="form-group">
-                                        <button class="btn btn-default" id="btnRecargarProductos">
-                                            <img src="./images/reload.png" width="18" /> Recargar
-                                        </button>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" placeholder="Buscar producto..." id="txtBuscarProducto" />
+                                            <div class="input-group-append">
+                                                <button class="btn btn-secondary" id="btnRecargarProductos">
+                                                    <img src="./images/reload.png" width="18" /> Recargar
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -54,8 +53,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             <div class="row">
                                 <div class="col-md-12 col-sm-12 col-xs-12">
                                     <div class="table-responsive">
-                                        <table class="table table-striped table-hover" style="border-width: 1px;border-style: dashed;border-color: #007bff;">
-                                            <thead style="background-color: #0766cc;color: white;">
+                                        <table class="table table-striped table-hover">
+                                            <thead class="table-header-background">
                                                 <tr>
                                                     <th>N°</th>
                                                     <th>Clave/Nombre</th>
@@ -119,23 +118,27 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
                 <div class="row">
                     <div class="col-md-6">
-                        <label>Buscar por clave o clave alterna:</label>
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <button type="button" class="btn btn-success" id="btnProductos"><i class="fa fa-search"></i> Buscar</button>
+                        <div class="form-group">
+                            <label>Buscar por clave o clave alterna:</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <button type="button" class="btn btn-success" id="btnProductos"><i class="fa fa-search"></i> Buscar</button>
+                                </div>
+                                <input type="text" class="form-control" placeholder="Escribir para filtrar" id="txtSearch">
                             </div>
-                            <input type="text" class="form-control" placeholder="Escribir para filtrar" id="txtSearch">
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <label>Almacen:</label>
-                        <div class="input-group">
-                            <select class="form-control" id="cbAlmacen">
-                                <option value="">Cargando información...</option>
-                            </select>
+                        <div class="form-group">
+                            <label>Almacen:</label>
+                            <div class="input-group">
+                                <select class="form-control" id="cbAlmacen">
+                                    <option value="">Cargando información...</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <!-- <div class="col-md-3">
                         <label>Paginación:</label>
                         <div class="form-group">
                             <button class="btn btn-primary" id="btnAnterior">
@@ -148,7 +151,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 <i class="fa fa-arrow-circle-right"></i>
                             </button>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
 
                 <div class="row">
@@ -184,8 +187,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 <div class="row">
                     <div class="col-md-12 col-sm-12 col-xs-12">
                         <div class="table-responsive">
-                            <table class="table table-striped table-hover" style="border-width: 1px;border-style: dashed;border-color: #007bff;">
-                                <thead style="background-color: #0766cc;color: white;">
+                            <table class="table table-striped table-hover">
+                                <thead class="table-header-background">
                                     <tr>
                                         <th style="width: 5%;" rowspan="2">N°</th>
                                         <th style="width: 10%;" rowspan="2">Fecha</th>
@@ -386,6 +389,9 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         "type": "modalproductos",
                         "tipo": tipo,
                         "value": value,
+                        "libre": 1,
+                        "venta": 1,
+                        "insumo": 1,
                         "posicionPagina": ((paginacion - 1) * filasPorPagina),
                         "filasPorPagina": filasPorPagina
                     },
@@ -393,6 +399,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         tbProductos.empty();
                         tbProductos.append('<tr><td class="text-center" colspan="6"><img src="./images/loading.gif" id="imgLoad" width="34" height="34" /> <p>Cargando información...</p></td></tr>');
                         state = true;
+                        totalPaginacionProductos = 0;
                     },
                     success: function(result) {
                         let object = result;

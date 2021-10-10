@@ -15,10 +15,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         $busqueda = $_GET['busqueda'];
         $fechaInicial = $_GET['fechaInicial'];
         $fechaFinal = $_GET['fechaFinal'];
+        $comprobante = $_GET['comprobante'];
         $estado = $_GET['estado'];
         $posicionPagina = $_GET['posicionPagina'];
         $filasPorPagina = $_GET['filasPorPagina'];
-        $ventas = VentasADO::ListVentas($opcion, $busqueda, $fechaInicial, $fechaFinal, intval($estado), $posicionPagina, $filasPorPagina);
+        $ventas = VentasADO::ListVentas($opcion, $busqueda, $fechaInicial, $fechaFinal, intval($comprobante), intval($estado), $posicionPagina, $filasPorPagina);
         if (is_array($ventas)) {
             print json_encode(array(
                 "estado" => 1,
@@ -47,6 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
                 "message" => $detallle
             ));
         }
+        exit();
     } else if ($_GET["type"] == "getventanotacredito") {
         $result = VentasADO::ListarComprobanteParaNotaCredito($_GET['comprobante']);
         if (is_array($result)) {
@@ -66,6 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
                 "message" => $result
             ));
         }
+        exit();
     } else if ($_GET["type"] == "listaNotaCredito") {
         $opcion = $_GET["opcion"];
         $buscar = $_GET["search"];
@@ -86,6 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
                 "message" => $notacredito
             ));
         }
+        exit();
     } else if ($_GET["type"] == "listarNotificaciones") {
         $result = VentasADO::ListarNotificaciones();
         if (is_array($result)) {
@@ -99,6 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
                 "message" => $result
             ));
         }
+        exit();
     } else if ($_GET["type"] == "getproductosvendidos") {
         $producto = VentasADO::ResumenProductoVendidos($_GET["fechaInicio"], $_GET["fechaFinal"], intval($_GET["marca"]), intval($_GET["categoria"]));
         if (is_array($producto)) {
@@ -126,6 +131,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
                 "message" => $result
             ));
         }
+        exit();
     } else if ($_GET["type"] == "listarDetalleNotificaciones") {
         $posicionPagina = $_GET['posicionPagina'];
         $filasPorPagina = $_GET['filasPorPagina'];
@@ -142,6 +148,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
                 "message" => $result
             ));
         }
+        exit();
     } else if ($_GET["type"] == "global") {
         $data = VentasADO::LoadDashboard($_GET["fechaActual"]);
         $productoAgotados = VentasADO::LoadProductosAgotados(intval($_GET["posicionPaginaAgotados"]), intval($_GET["filasPorPaginaAgotados"]));
@@ -161,6 +168,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
                 "message" => $data,
             ));
         }
+        exit();
     } else if ($_GET["type"] == "productosAgotados") {
         $productoAgotados = VentasADO::LoadProductosAgotados(intval($_GET["posicionPaginaAgotados"]), intval($_GET["filasPorPaginaAgotados"]));
         if (is_array($productoAgotados)) {
@@ -175,6 +183,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
                 "message" => $productoAgotados,
             ));
         }
+        exit();
     } else if ($_GET["type"] == "productosPorAgotarse") {
         $productosPorAgotarse = VentasADO::LoadProductosPorAgotarse(intval($_GET["posicionPaginaPorAgotarse"]), intval($_GET["filasPorPaginaPorAgotarse"]));
         if (is_array($productosPorAgotarse)) {
@@ -189,6 +198,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
                 "message" => $productoAgotados,
             ));
         }
+        exit();
     }
 } else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $body = json_decode(file_get_contents("php://input"), true);
@@ -205,5 +215,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
                 "message" => $result
             ));
         }
+        exit();
     }
 }

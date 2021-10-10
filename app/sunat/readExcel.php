@@ -13,7 +13,7 @@
 // $spreadsheet = new Spreadsheet();
 
 // $inputFileType = 'Xlsx';
-// $inputFileName = './ventamayo.xlsx';
+// $inputFileName = './requel.xlsx';
 
 // /**  Create a new Reader of the type defined in $inputFileType  **/
 // $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader($inputFileType);
@@ -59,7 +59,7 @@
 // for ($i = 0; $i < count($array); $i++) {
 //     $row = $array[$i];
 //     for ($j = 0; $j < count($row); $j++) {
-//         $montotatal += floatval($row[$j][11]);
+//         $montotatal += floatval($row[$j][7]);
 //         if ($row[$j][1] == "FACTURA") {
 //             $tipoComprobante = "01";
 //         } else if ($row[$j][1] == "BOLETA") {
@@ -74,7 +74,7 @@
 //             $row[$j][2],
 //             $row[$j][3],
 //             substr($row[$j][0], 0, 10),
-//             floatval($row[$j][11])
+//             floatval($row[$j][7])
 //         ));
 
 //         $html .= '<tr>
@@ -83,10 +83,10 @@
 //             <td>' . $row[$j][2] . '</td>
 //             <td>' . $row[$j][3] . '</td>
 //             <td>' . substr($row[$j][0], 0, 10) . '</td>
-//             <td>' . floatval($row[$j][11]) . '</td>
+//             <td>' . floatval($row[$j][7]) . '</td>
 //             </tr>';
 
-//         $textsunat .= "20548033030" . "|" . trim($tipoComprobante) . "|" . trim($row[$j][2]) . "|" . trim($row[$j][3]) . "|" . trim(substr($row[$j][0], 0, 10)) . "|" . number_format(floatval($row[$j][11]), 2, '.', '') . "\n";
+//         $textsunat .= "20548033030" . "|" . trim($tipoComprobante) . "|" . trim($row[$j][2]) . "|" . trim($row[$j][3]) . "|" . trim(substr($row[$j][0], 0, 10)) . "|" . number_format(floatval($row[$j][7]), 2, '.', '') . "\n";
 //     }
 // }
 

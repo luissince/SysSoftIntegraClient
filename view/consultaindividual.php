@@ -20,7 +20,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
         <main class="app-content">
 
             <div class="app-title">
-                <h1><i class="fa fa-folder"></i> Consultar Comprobante <small>Consulta</small></h1>
+                <h1><i class="fa fa-folder"></i> Consultar Estado <small>Consulta</small></h1>
             </div>
 
             <div class="tile">
@@ -31,7 +31,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="4" stroke-miterlimit="10"></circle>
                         </svg>
                     </div>
-                    <h4 class="l-text" id="lblTextOverlayInformacion">Cargando información...</h4>
+                    <h4 class="l-text text-white" id="lblTextOverlayInformacion">Cargando información...</h4>
                 </div>
 
                 <div class="tile-body">

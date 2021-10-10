@@ -46,8 +46,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         <div class="col-lg-3 col-6">
                             <div class="card mb-3 text-white bg-primary">
                                 <div class="card-body">
-                                    <h3 id="lblTotalVentas">S/ 0.00</h3>
-
+                                    <h3 id="lblTotalVentas" class="text-white">S/ 0.00</h3>
                                     <p>VENTAS DEL DÍA</p>
                                 </div>
                             </div>
@@ -56,8 +55,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         <div class="col-lg-3 col-6">
                             <div class="card mb-3 text-white bg-danger">
                                 <div class="card-body">
-                                    <h3 id="lblTotalCompras">S/ 0.00</h3>
-
+                                    <h3 id="lblTotalCompras" class="text-white">S/ 0.00</h3>
                                     <p>COMPRAS DEL DÍA</p>
                                 </div>
                             </div>
@@ -66,8 +64,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         <div class="col-lg-3 col-6">
                             <div class="card mb-3 text-white bg-warning">
                                 <div class="card-body">
-                                    <h3 id="lblTotalCuentasPorCobrar">0</h3>
-
+                                    <h3 id="lblTotalCuentasPorCobrar" class="text-white">0</h3>
                                     <p>CUENTAS POR COBRAR</p>
                                 </div>
                             </div>
@@ -76,8 +73,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         <div class="col-lg-3 col-6">
                             <div class="card mb-3 text-white bg-success">
                                 <div class="card-body">
-                                    <h3 id="lblTotalCuentasPorPagar">0</h3>
-
+                                    <h3 id="lblTotalCuentasPorPagar" class="text-white">0</h3>
                                     <p>CUENTAS POR PAGAR</p>
                                 </div>
                             </div>
@@ -90,37 +86,37 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     <div class="row">
 
                         <div class="col-lg-3 col-6">
-                            <div class="card mb-3 text-white bg-dark">
+                            <div class="card mb-3 text-white bg-white">
                                 <div class="card-body">
                                     <h4 class="text-danger">Negativos</h4>
-                                    <h4 id="lblProductosNegativos">0</h4>
+                                    <h4 id="lblProductosNegativos" class="text-dark">0</h4>
                                 </div>
                             </div>
                         </div>
 
                         <div class="col-lg-3 col-6">
-                            <div class="card mb-3 text-white bg-dark">
+                            <div class="card mb-3 text-white bg-white">
                                 <div class="card-body">
                                     <h4 class="text-warning">Intermedios</h4>
-                                    <h4 id="lblProductosInternmedios">0</h4>
+                                    <h4 id="lblProductosInternmedios" class="text-dark">0</h4>
                                 </div>
                             </div>
                         </div>
 
                         <div class="col-lg-3 col-6">
-                            <div class="card mb-3 text-white bg-dark">
+                            <div class="card mb-3 text-white bg-white">
                                 <div class="card-body">
                                     <h4 class="text-success">Necesarios</h4>
-                                    <h4 id="lblProductosNecesarios">0</h4>
+                                    <h4 id="lblProductosNecesarios" class="text-dark">0</h4>
                                 </div>
                             </div>
                         </div>
 
                         <div class="col-lg-3 col-6">
-                            <div class="card mb-3 text-white bg-dark">
+                            <div class="card mb-3 text-white bg-white">
                                 <div class="card-body">
                                     <h4 class="text-primary">Excedentes</h4>
-                                    <h4 id="lblProductosExcedentes">0</h4>
+                                    <h4 id="lblProductosExcedentes" class="text-dark">0</h4>
                                 </div>
                             </div>
                         </div>
@@ -468,7 +464,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     for (let data of productosAgotados) {
                         productoAgotado.append('<div class="widget-small danger"><i class="icon fa fa-exclamation  fa-2x"></i>' +
                             '<div class="info">' +
-                            '<h6>' + data.NombreProducto.substr(0, 35) + '</h6>' +
+                            '<h6 class="text-white">' + data.NombreProducto.substr(0, 35) + '</h6>' +
                             ' <p><b>' + tools.formatMoney(data.Cantidad, 2) + '</b></p>' +
                             ' </div>' +
                             '</div>');

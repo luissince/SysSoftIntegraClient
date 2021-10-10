@@ -16,7 +16,8 @@ $fechaFinal = $_GET["txtFechaFinal"];
 
 $fechaInicioFormato = date("d/m/Y", strtotime($fechaInicio));
 $fechaFinalFormato =  date("d/m/Y", strtotime($fechaFinal));
-$ventas = VentasADO::GetReporteGenelNotaCredito($fechaInicio, $fechaFinal, intval($_GET["facturado"]));
+$result = VentasADO::GetReporteGenelNotaCredito($fechaInicio, $fechaFinal, intval($_GET["facturado"]));
+$ventas = $result[0];
 
 $documento = new Spreadsheet();
 $documento
@@ -30,7 +31,7 @@ $documento
 
 $documento->getActiveSheet()->setTitle("Notas de Crédito general");
 
-$documento->getActiveSheet()->getStyle('A1:J1')->applyFromArray(array(
+$documento->getActiveSheet()->getStyle('A1:M1')->applyFromArray(array(
     'borders' => array(
         'outline' => array(
             'borderStyle' => Border::BORDER_THIN,
@@ -110,7 +111,7 @@ $cel = 4;
 foreach ($ventas as $key => $value) {
 
 
-    if (intval($value["Estado"]) !== 2 && $value["Xmlsunat"] === '0') {
+    if ($value["Xmlsunat"] === '0') {
         $documento->getActiveSheet()->getStyle('A' . $cel . ':M' . $cel . '')->applyFromArray(array(
             'font'  => array(
                 'bold'  =>  false,
@@ -127,7 +128,7 @@ foreach ($ventas as $key => $value) {
 
         $documento->setActiveSheetIndex(0)
             ->setCellValue("A" . $cel,  strval($value["Id"]))
-            ->setCellValue("B" . $cel, strval($value["FechaRegistro"]))
+            ->setCellValue("B" . $cel, strval(date("d/m/Y", strtotime($value["FechaRegistro"]))))
             ->setCellValue("C" . $cel, strval($value["TipoDocumento"]))
             ->setCellValue("D" . $cel, strval($value["NumeroDocumento"]))
             ->setCellValue("E" . $cel, strval($value["Informacion"]))
@@ -187,7 +188,7 @@ $documento->getActiveSheet()->getColumnDimension('I')->setWidth(15);
 $documento->getActiveSheet()->getColumnDimension('J')->setWidth(15);
 $documento->getActiveSheet()->getColumnDimension('K')->setWidth(15);
 $documento->getActiveSheet()->getColumnDimension('L')->setWidth(15);
-$documento->getActiveSheet()->getColumnDimension('M')->setWidth(35);
+$documento->getActiveSheet()->getColumnDimension('M')->setWidth(45);
 
 $nombreDelDocumento =  "Notas de Crédito del " . $fechaInicio . ' al ' . $fechaFinal . ".xlsx";
 // Redirect output to a client’s web browser (Xlsx)

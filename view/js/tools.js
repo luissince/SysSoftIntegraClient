@@ -1,15 +1,15 @@
 function Tools() {
-    this.validateDate = function(date) {
+    this.validateDate = function (date) {
         var regex = new RegExp("([0-9]{4}[-](0[1-9]|1[0-2])[-]([0-2]{1}[0-9]{1}|3[0-1]{1})|([0-2]{1}[0-9]{1}|3[0-1]{1})[-](0[1-9]|1[0-2])[-][0-9]{4})");
         return regex.test(date);
     }
 
-    this.getDateYYMMDD = function(value) {
+    this.getDateYYMMDD = function (value) {
         var parts = value.split("-");
         return parts[0] + parts[1] + parts[2];
     }
 
-    this.formatMoney = function(amount, decimalCount = 2, decimal = ".", thousands = "") {
+    this.formatMoney = function (amount, decimalCount = 2, decimal = ".", thousands = "") {
         try {
             decimalCount = Math.abs(decimalCount);
             decimalCount = isNaN(decimalCount) ? 2 : decimalCount;
@@ -26,7 +26,7 @@ function Tools() {
         }
     };
 
-    this.getDateForma = function(value) {
+    this.getDateForma = function (value) {
         var parts = value.split("-");
         let today = new Date(parts[0], parts[1] - 1, parts[2]);
         return (
@@ -40,7 +40,7 @@ function Tools() {
         );
     };
 
-    this.getTimeForma = function(value, option) {
+    this.getTimeForma = function (value, option) {
         let ar = value.split(":");
         let hr = ar[0];
         let min = parseInt(ar[1]);
@@ -60,7 +60,7 @@ function Tools() {
         return option ? (hr > 9 ? hr : "0" + hr) + ":" + min + ":" + sec + " " + ampm : hr + ":" + min + ":" + sec;
     };
 
-    this.getTimeForma24 = function(value) {
+    this.getTimeForma24 = function (value) {
         var hourEnd = value.indexOf(":");
         var H = +value.substr(0, hourEnd);
         var h = H % 12 || 12;
@@ -69,36 +69,36 @@ function Tools() {
     };
 
 
-    this.getCurrentDate = function() {
+    this.getCurrentDate = function () {
         let today = new Date();
         let formatted_date = today.getFullYear() + "-" + ((today.getMonth() + 1) > 9 ? (today.getMonth() + 1) : '0' + (
             today.getMonth() + 1)) + "-" + (today.getDate() > 9 ? today.getDate() : '0' + today.getDate());
         return formatted_date;
     };
 
-    this.getCurrentTime = function() {
+    this.getCurrentTime = function () {
         let today = new Date();
         let formatted_time = (today.getHours() > 9 ? today.getHours() : '0' + today.getHours()) + ":" + (today.getMinutes() > 9 ? today.getMinutes() : '0' + today.getMinutes()) + ":" + (today.getSeconds() > 9 ? today.getSeconds() : '0' + today.getSeconds());
         return formatted_time;
     }
 
-    this.getCurrentMonth = function() {
+    this.getCurrentMonth = function () {
         let today = new Date();
         return (today.getMonth() + 1);
     }
 
-    this.getCurrentYear = function() {
+    this.getCurrentYear = function () {
         let today = new Date();
         return today.getFullYear();
     }
 
-    this.diasEnUnMes = function(mes, year) {
+    this.diasEnUnMes = function (mes, year) {
         mes = mes.toUpperCase();
         var meses = ["ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO", "JULIO", "AGOSTO", "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "DICIEMBRE"];
         return new Date(year, meses.indexOf(mes) + 1, 0).getDate();
     }
 
-    this.nombreMes = function(mes) {
+    this.nombreMes = function (mes) {
         let array = [
             "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
             "Julio", "Agosto", "Setiembre", "Octubre", "Noviembre", "Diciembre"
@@ -106,7 +106,7 @@ function Tools() {
         return array[mes - 1];
     }
 
-    this.isNumeric = function(value) {
+    this.isNumeric = function (value) {
         if (value.trim().length === 0 || value === 'undefined')
             return false;
 
@@ -117,7 +117,7 @@ function Tools() {
         }
     };
 
-    this.ModalDialog = function(title, mensaje, callback) {
+    this.ModalDialog = function (title, mensaje, callback) {
         swal({
             title: title,
             text: mensaje,
@@ -138,21 +138,21 @@ function Tools() {
         });
     }
 
-    this.ModalAlertSuccess = function(title, message) {
+    this.ModalAlertSuccess = function (title, message) {
         swal({ title: title, text: message, type: "success", showConfirmButton: true, allowOutsideClick: false });
     }
-    this.ModalAlertWarning = function(title, message) {
+    this.ModalAlertWarning = function (title, message) {
         swal({ title: title, text: message, type: "warning", showConfirmButton: true, allowOutsideClick: false });
     }
-    this.ModalAlertError = function(title, message) {
+    this.ModalAlertError = function (title, message) {
         swal({ title: title, text: message, type: "error", showConfirmButton: true, allowOutsideClick: false });
     }
-    this.ModalAlertInfo = function(title, message) {
+    this.ModalAlertInfo = function (title, message) {
         swal({ title: title, text: message, type: "info", showConfirmButton: false, allowOutsideClick: false, allowEscapeKey: false, });
     }
 
 
-    this.AlertSuccess = function(title = "", message, position = "top", align = "right") {
+    this.AlertSuccess = function (title = "", message, position = "top", align = "right") {
         $.notify({
             title: title,
             message: message
@@ -166,7 +166,7 @@ function Tools() {
         });
     }
 
-    this.AlertWarning = function(title = "", message, position = "top", align = "right") {
+    this.AlertWarning = function (title = "", message, position = "top", align = "right") {
         $.notify({
             title: title,
             message: message
@@ -180,7 +180,7 @@ function Tools() {
         });
     }
 
-    this.AlertError = function(title = "", message, position = "top", align = "right") {
+    this.AlertError = function (title = "", message, position = "top", align = "right") {
         $.notify({
             title: title,
             message: message
@@ -194,7 +194,7 @@ function Tools() {
         });
     }
 
-    this.AlertInfo = function(title = "", message, position = "top", align = "right") {
+    this.AlertInfo = function (title = "", message, position = "top", align = "right") {
         $.notify({
             title: title,
             message: message
@@ -205,6 +205,47 @@ function Tools() {
                 align: align
             },
             z_index: 2000,
+        });
+    }
+
+    this.calculateTax = function (porcentaje, valor) {
+        let igv = porcentaje / 100.00;
+        return (valor * igv);
+    }
+
+    this.promiseFetchGet = function (url, data, beforeSend = function () { }) {
+        return new Promise(function (resolve, reject) {
+            $.ajax({
+                url: url,
+                method: "GET",
+                data: data,
+                beforeSend: beforeSend,
+                success: function (result) {
+                    resolve(result);
+                },
+                error: function (error) {
+                    reject(error);
+                }
+            });
+        });
+    }
+
+    this.promiseFetchPost = function (url, data, beforeSend = function () { }) {
+        return new Promise(function (resolve, reject) {
+            $.ajax({
+                url: url,
+                method: "POST",
+                accepts: "application/json",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(data),
+                beforeSend: beforeSend,
+                success: function (result) {
+                    resolve(result);
+                },
+                error: function (error) {
+                    reject(error);
+                }
+            });
         });
     }
 

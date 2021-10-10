@@ -15,7 +15,7 @@ if (is_array($ventaDatos)) {
     $detalleVenta = $ventaDatos[1];
     $empresa = $ventaDatos[2];
 
-    $photo = $empresa->Image == "" ?  "<img src=\"./../../view/images/logo.png\"/>" : "<img src=\"data:image/(png|jpg);base64, " . $empresa->Image . "\"/>";
+    $photo = $empresa->Image == "" ?  "<img src=\"./../../view/images/logo.png\"/>" : "<img src=\"data:image/(png|jpg|gif);base64, " . $empresa->Image . "\"/>";
 
     $gcl = new NumberLleters();
 
@@ -363,8 +363,7 @@ if (is_array($ventaDatos)) {
                     </table>
                 </div>
             </div>
-            <footer>     
-            </footer>
+      
         </body>
         </html>';
 
@@ -393,5 +392,5 @@ if (is_array($ventaDatos)) {
                     // Output a PDF file directly to the browser
                     $mpdf->Output("SysSoft Integra.pdf", 'I');
                 } else {
-                    echo "Error la verga";
+                    echo "Error en cargar los datos.";
                 }

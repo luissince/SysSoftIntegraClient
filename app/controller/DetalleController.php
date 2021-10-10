@@ -22,6 +22,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
                 "message" => $result,
             ));
         }
+    } else if ($_GET["type"] == "detailid") {
+        $result = DetalleADO::GetDetailId($_GET["value"]);
+        if (is_array($result)) {
+            print json_encode(array(
+                "estado" => 1,
+                "data" => $result,
+            ));
+        } else {
+            print json_encode(array(
+                "estado" => 0,
+                "message" => $result,
+            ));
+        }
     }
 } else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }

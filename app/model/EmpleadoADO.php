@@ -31,4 +31,21 @@ class EmpleadoADO
             return $ex->getMessage();
         }
     }
+
+
+    public static function GetClientePredetermined()
+    {
+        try {
+            $comando = Database::getInstance()->getDb()->prepare("SELECT ci.IdCliente,ci.TipoDocumento,ci.Informacion, ci.NumeroDocumento, ci.Celular,ci.Email,ci.Direccion FROM ClienteTB AS ci WHERE Predeterminado = 1");
+            $comando->execute();
+            $resultCliente = $comando->fetchObject();
+            if ($resultCliente) {
+                return $resultCliente;
+            } else {
+                return false;
+            }
+        } catch (Exception $ex) {
+            return $ex->getMessage();
+        }
+    }
 }

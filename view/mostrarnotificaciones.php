@@ -34,7 +34,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                     </tbody>
                                 </table>
                             </div>
-                            <div class="text-right"><span class="text-muted mr-2" id="lblPaginacion">Mostrando 0 - 0 de 0</span>
+                            <div class="text-right">
+                                <span class="text-muted mr-2" id="lblPaginacion">Mostrando 0 - 0 de 0</span>
                                 <div class="btn-group">
                                     <button id="btnAnterior" class="btn btn-primary btn-sm" type="button"><i class="fa fa-chevron-left"></i></button>
                                     <button id="btnSiguiente" class="btn btn-primary btn-sm" type="button"><i class="fa fa-chevron-right"></i></button>
@@ -133,14 +134,18 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     },
                     success: function(result) {
                         if (result.estado == 1) {
-                            for (let value of result.data) {
-                                $("#divLineaTiempo").append('<tr>' +
-                                    '<td class="mail-subject"><h5 class="text-primary p-0">' + value.Nombre + ' ' + value.Serie + '-' + value.Numeracion + '</h5><h6>' + value.Estado + '</h6></td>' +
-                                    '<td><h6>' + tools.getDateForma(value.Fecha) + '</h6></td>' +
-                                    '</tr>');
+                            if (result.data.length == 0) {
+                                $("#lblPaginacion").html("Mostrando 0 - 0 de 0");
+                            } else {
+                                for (let value of result.data) {
+                                    $("#divLineaTiempo").append('<tr>' +
+                                        '<td class="mail-subject"><h5 class="text-primary p-0">' + value.Nombre + ' ' + value.Serie + '-' + value.Numeracion + '</h5><h6>' + value.Estado + '</h6></td>' +
+                                        '<td><h6>' + tools.getDateForma(value.Fecha) + '</h6></td>' +
+                                        '</tr>');
+                                }
+                                totalPaginacion = parseInt(Math.ceil((parseFloat(result.total) / filasPorPagina)));
+                                $("#lblPaginacion").html("Mostrando " + paginacion + " - " + totalPaginacion + " de " + filasPorPagina);
                             }
-                            totalPaginacion = parseInt(Math.ceil((parseFloat(result.total) / filasPorPagina)));
-                            $("#lblPaginacion").html("Mostrando " + paginacion + " - " + totalPaginacion + " de " + filasPorPagina);
                         } else {
                             $("#lblPaginacion").html("Mostrando 0 - 0 de 0");
                             $("#divLineaTiempo").append('<tr>' +

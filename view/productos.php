@@ -23,7 +23,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 <h1><i class="fa fa-folder"></i> Productos <small>Lista</small></h1>
             </div>
 
-            <div class="tile mb-4">
+            <div class="tile">
 
                 <div class="row">
                     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
@@ -73,7 +73,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                         <div class="table-responsive">
                             <table class="table table-striped" style="border-width: 1px;border-style: dashed;border-color: #007bff;">
-                                <thead style="background-color: #0766cc;color: white;">
+                                <thead class="table-header-background">
                                     <tr>
                                         <th style="width:5%">N°</th>
                                         <th style="width:20%">Descripción</th>
@@ -254,7 +254,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                         '<td class="text-right">' + cantidad + '</td>' +
                                         '<td class="text-center"><figure><img style="width:70px;height:70px;object-fit:cover;" src="' + image + '" alt="Producto"/></figure></td>' +
                                         '<td class="text-center">' +
-                                        '<button type="button" class="btn btn-warning" onclick="editProducto(\'' + suministro.IdSuministro + '\')"><i class="fa fa-edit"></i></button>' +
+                                        '<a href="actualizarproducto.php?idSuministro=' + suministro.IdSuministro + '" class="btn btn-warning"><i class="fa fa-edit"></i></a>' +
                                         '</td>' +
                                         '<td>' +
                                         '<button type="button" class="btn btn-danger" onclick="removeProducto(\'' + suministro.IdSuministro + '\')"><i class="fa fa-trash"></i></button>' +
@@ -319,10 +319,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         });
                     }
                 });
-            }
-
-            function editProducto(idSuministro) {
-                location.href = "actualizarproducto.php?idSuministro=" + idSuministro;
             }
         </script>
     </body>

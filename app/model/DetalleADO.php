@@ -31,4 +31,16 @@ class DetalleADO
             return $ex->getMessage();
         }
     }
+
+    public static function GetDetailId($value)
+    {
+        try {
+            $comando = Database::getInstance()->getDb()->prepare("{CALL Sp_Get_Detalle_Id(?)}");
+            $comando->bindParam(1, $value, PDO::PARAM_STR);
+            $comando->execute();
+            return $comando->fetchAll(PDO::FETCH_OBJ);
+        } catch (Exception $ex) {
+            return $ex->getMessage();
+        }
+    }
 }

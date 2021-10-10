@@ -160,7 +160,7 @@ class SuministrosADO
                     "Operacion" => $row["Operacion"],
                     "Impuesto" => $row["Impuesto"],
                     "ImpuestoNombre" => $row["ImpuestoNombre"],
-                    "Valor" => $row["Valor"],
+                    "Valor" => floatval($row["Valor"]),
                     "Lote" => floatval($row["Lote"]),
                     "ValorInventario" => $row["ValorInventario"],
                 ));
@@ -170,7 +170,6 @@ class SuministrosADO
             $cmdTotal = Database::getInstance()->getDb()->prepare("{CALL Sp_Listar_Suministros_Lista_View_Count(?,?)}");
             $cmdTotal->bindValue(1, $tipo, PDO::PARAM_INT);
             $cmdTotal->bindValue(2, $value, PDO::PARAM_STR);
-            // Ejecutar sentencia preparada
             $cmdTotal->execute();
             $resultTotal = $cmdTotal->fetchColumn();
             array_push($array, $arraySuministro, $resultTotal);
@@ -437,7 +436,7 @@ class SuministrosADO
                     NuevaImagen)
                     VALUES(
                         ?,--ID SUMINISTROS
-                        1,--ORIGREN
+                        ?,--ORIGREN
                         UPPER(?),--CLAVE
                         UPPER(?),--CLAVE ALTERNA
                         UPPER(?),--NOMBRE MARCA
@@ -464,32 +463,33 @@ class SuministrosADO
                         )");
 
                     $cmdSuministro->bindParam(1, $idSuministro, PDO::PARAM_STR);
-                    $cmdSuministro->bindParam(2, $suministro["Clave"], PDO::PARAM_STR);
-                    $cmdSuministro->bindParam(3, $suministro["ClaveAlterna"], PDO::PARAM_STR);
-                    $cmdSuministro->bindParam(4, $suministro["NombreMarca"], PDO::PARAM_STR);
-                    $cmdSuministro->bindParam(5, $suministro["NombreGenerico"], PDO::PARAM_STR);
+                    $cmdSuministro->bindParam(2, $suministro["Origen"], PDO::PARAM_STR);
+                    $cmdSuministro->bindParam(3, $suministro["Clave"], PDO::PARAM_STR);
+                    $cmdSuministro->bindParam(4, $suministro["ClaveAlterna"], PDO::PARAM_STR);
+                    $cmdSuministro->bindParam(5, $suministro["NombreMarca"], PDO::PARAM_STR);
+                    $cmdSuministro->bindParam(6, $suministro["NombreGenerico"], PDO::PARAM_STR);
 
-                    $cmdSuministro->bindParam(6, $suministro["Categoria"], PDO::PARAM_STR);
-                    $cmdSuministro->bindParam(7, $suministro["Marca"], PDO::PARAM_STR);
-                    $cmdSuministro->bindParam(8, $suministro["Presentacion"], PDO::PARAM_STR);
-                    $cmdSuministro->bindParam(9, $suministro["UnidadCompra"], PDO::PARAM_INT);
-                    $cmdSuministro->bindParam(10, $suministro["UnidadVenta"], PDO::PARAM_INT);
+                    $cmdSuministro->bindParam(7, $suministro["Categoria"], PDO::PARAM_STR);
+                    $cmdSuministro->bindParam(8, $suministro["Marca"], PDO::PARAM_STR);
+                    $cmdSuministro->bindParam(9, $suministro["Presentacion"], PDO::PARAM_STR);
+                    $cmdSuministro->bindParam(10, $suministro["UnidadCompra"], PDO::PARAM_INT);
+                    $cmdSuministro->bindParam(11, $suministro["UnidadVenta"], PDO::PARAM_INT);
 
-                    $cmdSuministro->bindParam(11, $suministro["Estado"], PDO::PARAM_INT);
-                    $cmdSuministro->bindParam(12, $suministro["StockMinimo"], PDO::PARAM_STR);
-                    $cmdSuministro->bindParam(13, $suministro["StockMaximo"], PDO::PARAM_STR);
-                    $cmdSuministro->bindParam(14, $suministro["Cantidad"], PDO::PARAM_STR);
+                    $cmdSuministro->bindParam(12, $suministro["Estado"], PDO::PARAM_INT);
+                    $cmdSuministro->bindParam(13, $suministro["StockMinimo"], PDO::PARAM_STR);
+                    $cmdSuministro->bindParam(14, $suministro["StockMaximo"], PDO::PARAM_STR);
+                    $cmdSuministro->bindParam(15, $suministro["Cantidad"], PDO::PARAM_STR);
 
-                    $cmdSuministro->bindParam(15, $suministro["Impuesto"], PDO::PARAM_INT);
-                    $cmdSuministro->bindParam(16, $suministro["TipoPrecio"], PDO::PARAM_BOOL);
-                    $cmdSuministro->bindParam(17, $suministro["PrecioCompra"], PDO::PARAM_STR);
-                    $cmdSuministro->bindParam(18, $suministro["PrecioVentaGeneral"], PDO::PARAM_STR);
-                    $cmdSuministro->bindParam(19, $suministro["Lote"], PDO::PARAM_BOOL);
-                    $cmdSuministro->bindParam(20, $suministro["Inventario"], PDO::PARAM_BOOL);
-                    $cmdSuministro->bindParam(21, $suministro["ValorInventario"], PDO::PARAM_INT);
+                    $cmdSuministro->bindParam(16, $suministro["Impuesto"], PDO::PARAM_INT);
+                    $cmdSuministro->bindParam(17, $suministro["TipoPrecio"], PDO::PARAM_BOOL);
+                    $cmdSuministro->bindParam(18, $suministro["PrecioCompra"], PDO::PARAM_STR);
+                    $cmdSuministro->bindParam(19, $suministro["PrecioVentaGeneral"], PDO::PARAM_STR);
+                    $cmdSuministro->bindParam(20, $suministro["Lote"], PDO::PARAM_BOOL);
+                    $cmdSuministro->bindParam(21, $suministro["Inventario"], PDO::PARAM_BOOL);
+                    $cmdSuministro->bindParam(22, $suministro["ValorInventario"], PDO::PARAM_INT);
 
-                    $cmdSuministro->bindParam(22, $suministro["ClaveUnica"], PDO::PARAM_STR);
-                    $cmdSuministro->bindParam(23, $image, PDO::PARAM_LOB, 0, PDO::SQLSRV_ENCODING_BINARY);
+                    $cmdSuministro->bindParam(23, $suministro["ClaveUnica"], PDO::PARAM_STR);
+                    $cmdSuministro->bindParam(24, $image, PDO::PARAM_LOB, 0, PDO::SQLSRV_ENCODING_BINARY);
                     $cmdSuministro->execute();
 
                     $cmdPrecios = Database::getInstance()->getDb()->prepare("INSERT INTO PreciosTB(IdArticulo, IdSuministro, Nombre, Valor, Factor, Estado) VALUES(?,?,?,?,?,?)");
@@ -504,28 +504,28 @@ class SuministrosADO
                         ));
                     }
 
-                    $suministroKardex = Database::getInstance()->getDb()->prepare("INSERT INTO KardexSuministroTB
-                    (IdSuministro,
-                    Fecha,
-                    Hora,
-                    Tipo,
-                    Movimiento,
-                    Detalle,
-                    Cantidad,
-                    Costo,
-                    Total,
-                    IdAlmacen)
-                    VALUES(?,GETDATE(),GETDATE(),?,?,?,?,?,?,0)");
+                    // $suministroKardex = Database::getInstance()->getDb()->prepare("INSERT INTO KardexSuministroTB
+                    // (IdSuministro,
+                    // Fecha,
+                    // Hora,
+                    // Tipo,
+                    // Movimiento,
+                    // Detalle,
+                    // Cantidad,
+                    // Costo,
+                    // Total,
+                    // IdAlmacen)
+                    // VALUES(?,GETDATE(),GETDATE(),?,?,?,?,?,?,0)");
 
-                    $suministroKardex->execute(array(
-                        $idSuministro,
-                        1,
-                        2,
-                        "INVENTARIO INICIAL",
-                        $suministro["Cantidad"],
-                        $suministro["PrecioCompra"],
-                        $suministro["PrecioCompra"] * $suministro["Cantidad"],
-                    ));
+                    // $suministroKardex->execute(array(
+                    //     $idSuministro,
+                    //     1,
+                    //     2,
+                    //     "INVENTARIO INICIAL",
+                    //     $suministro["Cantidad"],
+                    //     $suministro["PrecioCompra"],
+                    //     $suministro["PrecioCompra"] * $suministro["Cantidad"],
+                    // ));
 
                     Database::getInstance()->getDb()->commit();
                     return "registrado";
@@ -613,6 +613,7 @@ class SuministrosADO
                         $image = $suministro['Imagen'] == null ? null : base64_decode($suministro['Imagen']);
 
                         $cmdSuministro = Database::getInstance()->getDb()->prepare("UPDATE SuministroTB SET
+                        Origen = ?,
                         Clave = UPPER(?),
                         ClaveAlterna = UPPER(?),
                         NombreMarca = UPPER(?),
@@ -640,32 +641,33 @@ class SuministrosADO
                         NuevaImagen = ?
                         WHERE IdSuministro = ?");
 
-                        $cmdSuministro->bindParam(1, $suministro["Clave"], PDO::PARAM_STR);
-                        $cmdSuministro->bindParam(2, $suministro["ClaveAlterna"], PDO::PARAM_STR);
-                        $cmdSuministro->bindParam(3, $suministro["NombreMarca"], PDO::PARAM_STR);
-                        $cmdSuministro->bindParam(4, $suministro["NombreGenerico"], PDO::PARAM_STR);
+                        $cmdSuministro->bindParam(1, $suministro["Origen"], PDO::PARAM_STR);
+                        $cmdSuministro->bindParam(2, $suministro["Clave"], PDO::PARAM_STR);
+                        $cmdSuministro->bindParam(3, $suministro["ClaveAlterna"], PDO::PARAM_STR);
+                        $cmdSuministro->bindParam(4, $suministro["NombreMarca"], PDO::PARAM_STR);
+                        $cmdSuministro->bindParam(5, $suministro["NombreGenerico"], PDO::PARAM_STR);
 
-                        $cmdSuministro->bindParam(5, $suministro["Categoria"], PDO::PARAM_STR);
-                        $cmdSuministro->bindParam(6, $suministro["Marca"], PDO::PARAM_STR);
-                        $cmdSuministro->bindParam(7, $suministro["Presentacion"], PDO::PARAM_STR);
-                        $cmdSuministro->bindParam(8, $suministro["UnidadCompra"], PDO::PARAM_INT);
-                        $cmdSuministro->bindParam(9, $suministro["UnidadVenta"], PDO::PARAM_INT);
+                        $cmdSuministro->bindParam(6, $suministro["Categoria"], PDO::PARAM_STR);
+                        $cmdSuministro->bindParam(7, $suministro["Marca"], PDO::PARAM_STR);
+                        $cmdSuministro->bindParam(8, $suministro["Presentacion"], PDO::PARAM_STR);
+                        $cmdSuministro->bindParam(9, $suministro["UnidadCompra"], PDO::PARAM_INT);
+                        $cmdSuministro->bindParam(10, $suministro["UnidadVenta"], PDO::PARAM_INT);
 
-                        $cmdSuministro->bindParam(10, $suministro["Estado"], PDO::PARAM_INT);
-                        $cmdSuministro->bindParam(11, $suministro["StockMinimo"], PDO::PARAM_STR);
-                        $cmdSuministro->bindParam(12, $suministro["StockMaximo"], PDO::PARAM_STR);
+                        $cmdSuministro->bindParam(11, $suministro["Estado"], PDO::PARAM_INT);
+                        $cmdSuministro->bindParam(12, $suministro["StockMinimo"], PDO::PARAM_STR);
+                        $cmdSuministro->bindParam(13, $suministro["StockMaximo"], PDO::PARAM_STR);
 
-                        $cmdSuministro->bindParam(13, $suministro["Impuesto"], PDO::PARAM_INT);
-                        $cmdSuministro->bindParam(14, $suministro["TipoPrecio"], PDO::PARAM_BOOL);
-                        $cmdSuministro->bindParam(15, $suministro["PrecioCompra"], PDO::PARAM_STR);
-                        $cmdSuministro->bindParam(16, $suministro["PrecioVentaGeneral"], PDO::PARAM_STR);
-                        $cmdSuministro->bindParam(17, $suministro["Lote"], PDO::PARAM_BOOL);
-                        $cmdSuministro->bindParam(18, $suministro["Inventario"], PDO::PARAM_BOOL);
-                        $cmdSuministro->bindParam(19, $suministro["ValorInventario"], PDO::PARAM_INT);
+                        $cmdSuministro->bindParam(14, $suministro["Impuesto"], PDO::PARAM_INT);
+                        $cmdSuministro->bindParam(15, $suministro["TipoPrecio"], PDO::PARAM_BOOL);
+                        $cmdSuministro->bindParam(16, $suministro["PrecioCompra"], PDO::PARAM_STR);
+                        $cmdSuministro->bindParam(17, $suministro["PrecioVentaGeneral"], PDO::PARAM_STR);
+                        $cmdSuministro->bindParam(18, $suministro["Lote"], PDO::PARAM_BOOL);
+                        $cmdSuministro->bindParam(19, $suministro["Inventario"], PDO::PARAM_BOOL);
+                        $cmdSuministro->bindParam(20, $suministro["ValorInventario"], PDO::PARAM_INT);
 
-                        $cmdSuministro->bindParam(20, $suministro["ClaveUnica"], PDO::PARAM_STR);
-                        $cmdSuministro->bindParam(21, $image, PDO::PARAM_LOB, 0, PDO::SQLSRV_ENCODING_BINARY);
-                        $cmdSuministro->bindParam(22, $suministro["IdSuministro"], PDO::PARAM_STR);
+                        $cmdSuministro->bindParam(21, $suministro["ClaveUnica"], PDO::PARAM_STR);
+                        $cmdSuministro->bindParam(22, $image, PDO::PARAM_LOB, 0, PDO::SQLSRV_ENCODING_BINARY);
+                        $cmdSuministro->bindParam(23, $suministro["IdSuministro"], PDO::PARAM_STR);
                         $cmdSuministro->execute();
 
                         $preciosBorrar = Database::getInstance()->getDb()->prepare("DELETE FROM PreciosTB WHERE IdSuministro = ?");

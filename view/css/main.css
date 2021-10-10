@@ -29,8 +29,8 @@
  */
 
  :root {
-    --principal: #007bff;
-    --blue: #007bff;
+    --principal: #0072eb;
+    --blue: #045ebf;
     --indigo: #6610f2;
     --purple: #6f42c1;
     --pink: #e83e8c;
@@ -41,7 +41,8 @@
     --teal: #20c997;
     --cyan: #17a2b8;
     --white: #FFF;
-    --gray: #6c757d;
+    --gray-light: #bac2c9;
+    --gray: #999999;
     --gray-dark: #343a40;
     --primary: #fe104c;
     --secondary: #6c757d;
@@ -84,7 +85,7 @@ body {
     font-weight: normal;
     font-style: normal;
     line-height: 1.5;
-    color: #020203;
+    color: var(--dark);
     text-align: left;
     background-color: #E5E5E5;
 }
@@ -101,7 +102,7 @@ hr {
 }
 
 h1, h2, h3, h4, h5, h6 {
-    margin-top: 0.5rem;
+    margin-top: 0.0rem;
     margin-bottom: 0.5rem;
 }
 
@@ -233,6 +234,12 @@ img {
     width: 50px;
 }
 
+.user-image{
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+}
+
 svg {
     overflow: hidden;
     vertical-align: middle;
@@ -240,6 +247,14 @@ svg {
 
 table {
     border-collapse: collapse;
+}
+
+.selected-table{
+    background-color: #ffc8e7;
+}
+
+table tbody:focus {
+    outline: 1px solid var(--principal); 
 }
 
 caption {
@@ -259,13 +274,16 @@ label {
     margin-bottom: 0.5rem;
 }
 
-button {
+button { 
     border-radius: 0;
 }
 
 button:focus {
-    outline: 1px dotted;
-    outline: 5px auto -webkit-focus-ring-color;
+    border: 1px solid var(--principal);
+    border: 5px auto -webkit-focus-ring-color;
+    outline: none;
+    /* outline: 1px dotted;
+    outline: 5px auto -webkit-focus-ring-color; */
 }
 
 input, button, select, optgroup, textarea {
@@ -385,6 +403,7 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
     font-weight: normal;
     font-style: normal;
     line-height: 1.2;
+    color:var(--dark);
 }
 
 h1, .h1 {
@@ -452,7 +471,7 @@ hr {
 }
 
 small, .small {
-    font-size: 90%;
+    font-size: 0.813rem;
     font-weight: 400;
 }
 
@@ -1679,24 +1698,30 @@ pre code {
 .table {
     width: 100%;
     margin-bottom: 1rem;
-    color: #020203;
+    color: var(--dark);
     cursor: pointer;
+    border-width: 1px;
+    border-style: dashed;
+    border-color: var(--blue);
 }
 
 .table th, .table td {
-    padding: 0.75rem;
+    padding: 0.50rem;
     vertical-align: middle;
-    border-top: 1px solid #dee2e6;
+    /* border-top: 1px solid #dee2e6; */
 }
 
 .table td {
-    font-size: 0.835rem;
+    font-size: 0.80rem;
+    font-family: "Roboto";    
 }
 
 .table thead th {
-    font-family: Roboto Bold;
-    vertical-align: bottom;
-    border-bottom: 2px solid #dee2e6;
+    font-family: "Roboto Bold";
+    font-weight: normal;
+    vertical-align: middle;
+    text-align: center;
+    /* border-bottom: 2px solid #dee2e6; */
 }
 
 .table tbody+tbody {
@@ -1716,7 +1741,7 @@ pre code {
 }
 
 .table-bordered thead th, .table-bordered thead td {
-    border-bottom-width: 2px;
+    border-bottom-width: 0px;
 }
 
 .table-borderless th, .table-borderless td, .table-borderless thead th, .table-borderless tbody+tbody {
@@ -1965,6 +1990,11 @@ pre code {
     border: 0;
 }
 
+.table-header-background{
+    background-color: #82bbf7;
+    color: #034180;
+}
+
 .form-control {
     display: block;
     width: 100%;
@@ -1973,7 +2003,7 @@ pre code {
     font-size: 0.8335rem;
     font-weight: 400;
     line-height: 1.5;
-    color: #020203;
+    color: var(--dark);
     background-color: #FFF;
     background-clip: padding-box;
     border: 1px solid #999999;
@@ -1999,9 +2029,9 @@ pre code {
 }
 
 .form-control:focus {
-    color: #020203;
+    color: var(--dark);
     background-color: #FFF;
-    border-color: #007bff;
+    border-color: var(--blue);
     outline: 0;
     -webkit-box-shadow: none;
     box-shadow: none;
@@ -2511,7 +2541,7 @@ textarea.form-control {
     padding: 0.375rem 0.75rem;
     font-size: 0.85rem;
     line-height: 1.5;
-    border-radius: 3px;
+    border-radius: 2px;
     -webkit-transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out, -webkit-box-shadow 0.3s cubic-bezier(0.35, 0, 0.25, 1), -webkit-transform 0.2s cubic-bezier(0.35, 0, 0.25, 1);
     transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out, -webkit-box-shadow 0.3s cubic-bezier(0.35, 0, 0.25, 1), -webkit-transform 0.2s cubic-bezier(0.35, 0, 0.25, 1);
     -o-transition: box-shadow 0.3s cubic-bezier(0.35, 0, 0.25, 1), transform 0.2s cubic-bezier(0.35, 0, 0.25, 1), background-color 0.3s ease-in-out, border-color 0.3s ease-in-out;
@@ -2550,7 +2580,7 @@ a.btn.disabled, fieldset:disabled a.btn {
 .btn-primary {
     color: #FFF;
     background-color: var(--principal);
-    border-color: var(--principal);
+    border-color: #005fc4;
 }
 
 .btn-primary:hover {
@@ -2582,13 +2612,13 @@ a.btn.disabled, fieldset:disabled a.btn {
 }
 
 .btn-secondary {
-    color: #020203;
+    color: var(--dark);
     background-color: #cccccc;
-    border-color: #cccccc;
+    border-color: #b6b4b4;
 }
 
 .btn-secondary:hover {
-    color: #020203;
+    color: var(--dark);
     background-color: rgba(153, 153, 153,0.5);
     border-color: rgba(153, 153, 153,0.5);
 }
@@ -2599,13 +2629,13 @@ a.btn.disabled, fieldset:disabled a.btn {
 }
 
 .btn-secondary.disabled, .btn-secondary:disabled {
-    color: #020203;
+    color: var(--dark);
     background-color: #999999;
     border-color: #999999;
 }
 
 .btn-secondary:not(:disabled):not(.disabled):active, .btn-secondary:not(:disabled):not(.disabled).active, .show>.btn-secondary.dropdown-toggle {
-    color: #020203;
+    color: var(--dark);
     background-color: #999999;
     border-color: #999999;
 }
@@ -2618,7 +2648,7 @@ a.btn.disabled, fieldset:disabled a.btn {
 .btn-success {
     color: #FFF;
     background-color: #28a745;
-    border-color: #28a745;
+    border-color: #137a2b;
 }
 
 .btn-success:hover {
@@ -2653,7 +2683,7 @@ a.btn.disabled, fieldset:disabled a.btn {
 .btn-info {
     color: #FFF;
     background-color: #17a2b8;
-    border-color: #17a2b8;
+    border-color: #0a8497;
 }
 
 .btn-info:hover {
@@ -2687,7 +2717,7 @@ a.btn.disabled, fieldset:disabled a.btn {
 .btn-warning {
     color: #212529;
     background-color: #ffc107;
-    border-color: #ffc107;
+    border-color: #cf9b00;
 }
 
 .btn-warning:hover {
@@ -2721,7 +2751,7 @@ a.btn.disabled, fieldset:disabled a.btn {
 .btn-danger {
     color: #FFF;
     background-color: #dc3545;
-    border-color: #dc3545;
+    border-color: #c41a2b;
 }
 
 .btn-danger:hover {
@@ -2832,7 +2862,7 @@ a.btn.disabled, fieldset:disabled a.btn {
 }
 
 .btn-outline-primary:focus, .btn-outline-primary.focus {
-    -webkit-box-shadow: 0 0 0 0 rgba(0, 150, 136, 0.5);
+    -webkit-box-shadow: 0 0 0 0 rgba(15, 17, 17, 0.5);
     box-shadow: 0 0 0 0 rgba(0, 150, 136, 0.5);
 }
 
@@ -2853,19 +2883,19 @@ a.btn.disabled, fieldset:disabled a.btn {
 }
 
 .btn-outline-secondary {
-    color: #020203;
-    border-color: #cccccc;
+    color: var(--dark);
+    border-color: var(--gray);
 }
 
 .btn-outline-secondary:hover {
     color: #FFF;
-    background-color: #b6b4b4;
-    border-color: #b6b4b4;
+    background-color: var(--gray);
+    border-color: var(--gray);
 }
 
 .btn-outline-secondary:focus, .btn-outline-secondary.focus {
-    -webkit-box-shadow: 0 0 0 0 rgba(108, 117, 125, 0.5);
-    box-shadow: 0 0 0 0 rgba(108, 117, 125, 0.5);
+    -webkit-box-shadow: 0 0 0 0 var(--gray);
+    box-shadow: 0 0 0 0 var(--gray);
 }
 
 .btn-outline-secondary.disabled, .btn-outline-secondary:disabled {
@@ -3196,11 +3226,12 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
     z-index: 1000;
     display: none;
     float: left;
+    width: 280px;
     min-width: 10rem;
     padding: 0 0;
     margin: 0 0 0;
     font-size: 0.875rem;
-    color: #212529;
+    color: var(--dark);
     text-align: left;
     list-style: none;
     background-color: #FFF;
@@ -3393,7 +3424,7 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
 .dropdown-item.active, .dropdown-item:active {
     color: #FFF;
     text-decoration: none;
-    background-color: #007bff;
+    background-color: var(--blue);
 }
 
 .dropdown-item.disabled, .dropdown-item:disabled {
@@ -5009,17 +5040,17 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
     padding: 0.5rem 0.75rem;
     margin-left: -1px;
     line-height: 1.25;
-    color: #009688;
+    color: var(--dark);
     background-color: #FFF;
-    border: 1px solid #dee2e6;
+    border: 1px solid var(--gray);
 }
 
 .page-link:hover {
     z-index: 2;
-    color: #004a43;
+    color: var(--dark);
     text-decoration: none;
     background-color: #e9ecef;
-    border-color: #dee2e6;
+    border-color:  var(--gray);
 }
 
 .page-link:focus {
@@ -5031,28 +5062,28 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
 
 .page-item:first-child .page-link {
     margin-left: 0;
-    border-top-left-radius: 0.25rem;
-    border-bottom-left-radius: 0.25rem;
+    border-top-left-radius: 2px;
+    border-bottom-left-radius: 2px;
 }
 
 .page-item:last-child .page-link {
-    border-top-right-radius: 0.25rem;
-    border-bottom-right-radius: 0.25rem;
+    border-top-right-radius: 2px;
+    border-bottom-right-radius: 2px;
 }
 
 .page-item.active .page-link {
     z-index: 1;
     color: #FFF;
-    background-color: #009688;
-    border-color: #009688;
+    background-color: var(--principal);
+    border-color: var(--gray);
 }
 
 .page-item.disabled .page-link {
-    color: #6c757d;
+    color: var(--dark);
     pointer-events: none;
     cursor: auto;
     background-color: #FFF;
-    border-color: #dee2e6;
+    border-color: var(--gray);
 }
 
 .pagination-lg .page-link {
@@ -5847,16 +5878,16 @@ a.badge-dark:focus, a.badge-dark.focus {
     line-height: 1;
     color: #000;
     text-shadow: 0 1px 0 #FFF;
-    opacity: .5;
+    opacity: var(--dark);
 }
 
 .close:hover {
-    color: #000;
+     color: var(--danger); 
     text-decoration: none;
 }
 
 .close:not(:disabled):not(.disabled):hover, .close:not(:disabled):not(.disabled):focus {
-    opacity: .75;
+    color: var(--danger); 
 }
 
 button.close {
@@ -5874,7 +5905,7 @@ a.close.disabled {
 
 .disabled{
     pointer-events: none;
-    opacity: 0.4;
+    opacity: 0.5;
 }
 
 .toast {
@@ -6756,7 +6787,7 @@ a.close.disabled {
 }
 
 .bg-primary {
-    background-color: #007bff !important;
+    background-color: var(--blue) !important;
 }
 
 a.bg-primary:hover, a.bg-primary:focus, button.bg-primary:hover, button.bg-primary:focus {
@@ -6812,7 +6843,7 @@ a.bg-light:hover, a.bg-light:focus, button.bg-light:hover, button.bg-light:focus
 }
 
 .bg-dark {
-    background-color: #020203 !important;
+    background-color: var(--dark) !important;
 }
 
 a.bg-dark:hover, a.bg-dark:focus, button.bg-dark:hover, button.bg-dark:focus {
@@ -9842,7 +9873,7 @@ a.bg-dark:hover, a.bg-dark:focus, button.bg-dark:hover, button.bg-dark:focus {
 }
 
 .text-primary {
-    color: #007bff !important;
+    color: var(--blue) !important;
 }
 
 a.text-primary:hover, a.text-primary:focus {
@@ -9874,7 +9905,7 @@ a.text-info:hover, a.text-info:focus {
 }
 
 .text-warning {
-    color: #ffc107 !important;
+    color: #ea920d !important;
 }
 
 a.text-warning:hover, a.text-warning:focus {
@@ -9898,7 +9929,7 @@ a.text-light:hover, a.text-light:focus {
 }
 
 .text-dark {
-    color: #020203 !important;
+    color: var(--dark) !important;
 }
 
 a.text-dark:hover, a.text-dark:focus {
@@ -9910,7 +9941,7 @@ a.text-dark:hover, a.text-dark:focus {
 }
 
 .text-muted, .app-notification__meta {
-    color: #6c757d !important;
+    color: var(--gray-dark) !important;
 }
 
 .text-black-50 {
@@ -11751,8 +11782,6 @@ body.stop-scrolling {
     cursor: default;
     display: block;
     padding: 6px;
-}
-{
     pointer-events: none;
     -webkit-user-select: none;
     -moz-user-select: none;
@@ -13489,7 +13518,7 @@ be a descendant of the grid when it is being dragged.
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
-    background-color: #007bff;
+    background-color: var(--principal);
     z-index: 1030;
     padding-right: 15px;
 }
@@ -13519,7 +13548,7 @@ be a descendant of the grid when it is being dragged.
     font-weight: normal;
     line-height: 50px;
     border-right: 1px solid  rgba(0,0,0,.12);
-    background-color: #004e47;
+    background-color: #045ebf;
 }
 
 @media (min-width: 768px) {
@@ -13527,9 +13556,11 @@ be a descendant of the grid when it is being dragged.
         -webkit-box-flex: 0;
         -ms-flex: 0 0 auto;
         flex: 0 0 auto;
-        display: block;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         width: 230px;
-        background-color: #007bff;
+        background-color: #045ebf;
         font-size: 22px;
     }
 }
@@ -13540,10 +13571,12 @@ be a descendant of the grid when it is being dragged.
 }
 
 .app-sidebar__toggle {
+    display:flex;
+    align-items: center;
+    justify-content: center;
     padding: 0 15px;
     font-family: fontAwesome;
-    color: #fff;
-    line-height: 2.4;
+    color: #fff;    
     -webkit-transition: background-color 0.3s ease;
     -o-transition: background-color 0.3s ease;
     transition: background-color 0.3s ease;
@@ -13591,7 +13624,9 @@ be a descendant of the grid when it is being dragged.
 }
 
 .app-nav__item {
-    display: block;
+    display: flex;
+    align-items: center;
+    height: 100%;
     padding: 10px 5px;
     line-height: 30px;
     color: #fff;
@@ -13603,6 +13638,16 @@ be a descendant of the grid when it is being dragged.
 .app-nav__item:hover, .app-nav__item:focus {
     background: rgba(0, 0, 0, 0.1);
     color: #f6f6f6;
+}
+
+.icon-absolute {
+    position: absolute;
+    top: 9px;
+    right: 7px;
+    text-align: center;
+    font-size: 11px;
+    padding: 2px 3px;
+    line-height: .9;
 }
 
 @media (min-width: 768px) {
@@ -13751,7 +13796,7 @@ be a descendant of the grid when it is being dragged.
     width: 230px;
     overflow: auto;
     z-index: 10;
-    background-color: #020203;
+    background-color: var(--dark);
     -webkit-box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2);
     box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2);
     -webkit-transition: left 0.3s ease, width 0.3s ease;
@@ -13838,12 +13883,12 @@ be a descendant of the grid when it is being dragged.
     -webkit-transition: border-left-color 0.3s ease, background-color 0.3s ease;
     -o-transition: border-left-color 0.3s ease, background-color 0.3s ease;
     transition: border-left-color 0.3s ease, background-color 0.3s ease;
-    color: var(--white);
+    color: var(--gray);
 }
 
 .app-menu__item.active, .app-menu__item:hover, .app-menu__item:focus {
-    background: var(--principal);
-    border-left-color: #fe104c;
+    background: #045ebf;
+    /* border-left-color: #fe104c; */
     text-decoration: none;
     color: #fff;
 }
@@ -14000,8 +14045,9 @@ be a descendant of the grid when it is being dragged.
 
 .dropdown-menu {
     border-radius: 0;
-    -webkit-box-shadow: 0 8px 17px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-    box-shadow: 0 8px 17px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    border:1px solid var(--gray-light)
+    /* -webkit-box-shadow: 0 8px 17px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    box-shadow: 0 8px 17px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); */
 }
 
 .dropdown-menu.dropdown-menu-right {
@@ -14014,10 +14060,50 @@ be a descendant of the grid when it is being dragged.
     vertical-align: middle;
 }
 
+.dropdown-menu .user-header{
+    height: 175px;
+    padding: 10px;
+    text-align: center;
+    background-color: var(--principal);
+}
+
+.dropdown-menu .user-header .img-circle{
+    z-index: 5;
+    height: 90px;
+    width: 90px;
+    border: 3px solid;
+    border-color: transparent;
+    border-color: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    vertical-align: middle;
+}
+
+.dropdown-menu .user-header > p{
+    display:flex;
+    flex-direction: column;
+    z-index: 5;
+    color: #fff;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 15px;
+    margin-top: 10px;
+}
+
+.dropdown-menu .user-footer{
+    display: flex;
+    justify-content:space-between;
+    background-color: #f9f9f9;
+    padding: 10px;
+}
+
 .btn {
     cursor: pointer;
 }
 
+.btn.btn-flat{
+    border-radius: 0;
+    border:1px solid #969494;
+    padding: 0.375rem 0.69rem !important;
+}
 
 .btn:not([disabled]):not(.disabled):not(.btn-link):hover, .btn:not([disabled]):not(.disabled):not(.btn-link):focus {
     text-decoration: none;
@@ -14486,6 +14572,7 @@ be a descendant of the grid when it is being dragged.
 .m-loader {
     position: relative;
     width: 40px;
+    min-width: 40px;
 }
 
 .m-loader:before {

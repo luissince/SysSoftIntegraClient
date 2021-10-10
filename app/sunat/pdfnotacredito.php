@@ -15,7 +15,7 @@ if (is_array($notaCreditoDatos)) {
     $detallenotacredito = $notaCreditoDatos[1];
     $empresa = $notaCreditoDatos[2];
 
-    $photo = $empresa->Image == "" ?  "<img src=\"./../../view/images/logo.png\"/>" : "<img src=\"data:image/(png|jpg);base64, " . $empresa->Image . "\"/>";
+    $photo = $empresa->Image == "" ?  "<img src=\"./../../view/images/logo.png\"/>" : "<img src=\"data:image/(png|jpg|gif);base64, " . $empresa->Image . "\"/>";
 
     $gcl = new NumberLleters();
 
@@ -241,7 +241,13 @@ if (is_array($notaCreditoDatos)) {
                         <td style="background: rgb(2,2,3);border: 1px solid black;padding:6px;" width="15%"><p>Email:</p></td>
                         <td style="color: black;border: 1px solid black;padding:6px;"><p></p>' . $notacredito->Email . '</td>
                         <td style="border: 1px solid black; color: black; text-align:center;padding:6px;"><p>' . $notacredito->Moneda . ' - ' . $notacredito->Abreviado . '</p></td>
-                    </tr>            
+                    </tr>     
+                    <tr>
+                        <td style="background: rgb(2,2,3);border: 1px solid black;padding:6px;"><p>Doc. Referencia:</p></td>
+                        <td style="color: black;border: 1px solid black;padding:6px;;"><p>' . $notacredito->SerieVenta . '-' . $notacredito->NumeracionVenta . '</p></td>
+                        <td style="background: rgb(2,2,3);border: 1px solid black;padding:6px;" width="15%"><p>Motivo Anulación:</p></td>
+                        <td style="color: black;border: 1px solid black;padding:6px;" colspan="2"><p>' . $notacredito->MotivoAnulacion . '</p></td>
+                    </tr>       
                 </table>
             </div>
             <!--#####################Fin de la caja de informacion del cliente###################################-->
@@ -281,7 +287,7 @@ if (is_array($notaCreditoDatos)) {
                 <div style="font-style: italic;font-weight: bold;padding:5px 0px;"></div>
             </div>
             <!--##################### Fin del detalle de la compra ###################################-->
-
+            
             <!--##################### Inicio del pie de factura ###################################-->
             <div style="border-left: 1px solid #000000; border-right: 1px solid #000000">
                 <p style="padding:7px 10px;font-size: 9pt;"><b>SON: ' . $gcl->getResult(round($notacredito->Total, 2, PHP_ROUND_HALF_UP), "SOLES") . '</b></p>
@@ -316,23 +322,23 @@ if (is_array($notaCreditoDatos)) {
                         <table class="items" style="font-family:Arial; font-size: 9pt; border-collapse: collapse;" width="100%">
                             <tr>
                                 <td class="totals" width="55%" >IMPORTE BRUTO:</td>
-                                <td class="cost"  width="45%">S/ ' . number_format(round(($venta->SubTotal), 2, PHP_ROUND_HALF_UP), 2, '.', '') . '</td>
+                                <td class="cost"  width="45%">S/ ' . number_format(round(($notacredito->SubTotal), 2, PHP_ROUND_HALF_UP), 2, '.', '') . '</td>
                             </tr>  
                             <tr>
                                 <td class="totals" width="55%">DESCUENTO TOTAL: </td>
-                                <td class="cost" width="45%">S/ -' . number_format(round(($venta->Descuento), 2, PHP_ROUND_HALF_UP), 2, '.', '') . '</td>
+                                <td class="cost" width="45%">S/ -' . number_format(round(($notacredito->Descuento), 2, PHP_ROUND_HALF_UP), 2, '.', '') . '</td>
                             </tr>
                             <tr>
                                 <td class="totals" width="55%">SUB IMPORTE: </td>
-                                <td class="cost" width="45%">S/ ' . number_format(round(($venta->SubTotal - $venta->Descuento), 2, PHP_ROUND_HALF_UP), 2, '.', '') . '</td>
+                                <td class="cost" width="45%">S/ ' . number_format(round(($notacredito->SubImporte), 2, PHP_ROUND_HALF_UP), 2, '.', '') . '</td>
                             </tr>
                             <tr>
                                 <td class="totals" width="55%">IGV(18%). </td>
-                                <td class="cost" width="45%">S/ ' . number_format(round(($venta->Impuesto), 2, PHP_ROUND_HALF_UP), 2, '.', '') . '</td>
+                                <td class="cost" width="45%">S/ ' . number_format(round(($notacredito->Impuesto), 2, PHP_ROUND_HALF_UP), 2, '.', '') . '</td>
                             </tr>
                             <tr>
                                 <td class="totals" width="55%">IMPORTE NETO :</td>
-                                <td class="cost" width="45%">S/ ' . number_format(round($venta->Total, 2, PHP_ROUND_HALF_UP), 2, '.', '') . '</td>
+                                <td class="cost" width="45%">S/ ' . number_format(round($notacredito->Total, 2, PHP_ROUND_HALF_UP), 2, '.', '') . '</td>
                             </tr>
                         </table>
                     </div>
@@ -361,8 +367,9 @@ if (is_array($notaCreditoDatos)) {
                     </table>
                 </div>
             </div>
-            <footer>     
-            </footer>
+            <!--##################### Fin del pie de factura ###################################-->
+
+         
         </body>
         </html>';
 

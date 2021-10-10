@@ -20,9 +20,10 @@
 
                 <li class="treeview" id="treeview-ingresos"><a class="app-menu__item" href="#" data-toggle="treeview"><i class="app-menu__icon fa fa-external-link-square" style="transform: rotate(180deg) translateX(12px);"></i><span class="app-menu__label">Ingresos</span><i class="treeview-indicator fa fa-angle-right"></i></a>
                         <ul class="treeview-menu">
-                                <li><a class="app-menu__item" id="tab-ventas" href="ventas.php"><i class="app-menu__icon fa fa-minus"></i><span class="app-menu__label">Ventas</span></a></li>
-                                <li><a class="app-menu__item" id="tab-notacredito" href="notacredito.php"><i class="app-menu__icon fa fa-minus"></i><span class="app-menu__label">Nota de Crédito</span></a></li>
-                                <li><a class="app-menu__item" id="tab-consultarcomprobante" href="consultarcomprobante.php"><i class="app-menu__icon fa fa-minus"></i><span class="app-menu__label">Consultar Comprobante</span></a></li>
+                                <li><a class="app-menu__item" id="tab-ventas" href="ventas.php"><i class="app-menu__icon fa fa-circle-o"></i><span class="app-menu__label">Ventas</span></a></li>
+                                <li><a class="app-menu__item" id="tab-notacredito" href="notacredito.php"><i class="app-menu__icon fa fa-circle-o"></i><span class="app-menu__label">Nota de Crédito</span></a></li>
+                                <li><a class="app-menu__item" id="tab-consultaindividual" href="consultaindividual.php"><i class="app-menu__icon fa fa-circle-o"></i><span class="app-menu__label">Consultar Estado</span></a></li>
+                                <li><a class="app-menu__item" id="tab-consultaglobal" href="consultaglobal.php"><i class="app-menu__icon fa fa-circle-o"></i><span class="app-menu__label">Consulta Global</span></a></li>
                         </ul>
                 </li>
 
@@ -36,17 +37,17 @@
 
                 <li class="treeview" id="treeview-contactos"><a class="app-menu__item" href="#" data-toggle="treeview"><i class="app-menu__icon fa fa-users"></i><span class="app-menu__label">Contactos</span><i class="treeview-indicator fa fa-angle-right"></i></a>
                         <ul class="treeview-menu">
-                                <li><a class="app-menu__item" id="tab-clientes" href="clientes.php"><i class="app-menu__icon fa fa-minus"></i><span class="app-menu__label">Clientes</span></a></li>
-                                <li><a class="app-menu__item" id="tab-proveedores" href="proveedores.php"><i class="app-menu__icon fa fa-minus"></i><span class="app-menu__label">Proveedores</span></a></li>
+                                <li><a class="app-menu__item" id="tab-clientes" href="clientes.php"><i class="app-menu__icon fa fa-circle-o"></i><span class="app-menu__label">Clientes</span></a></li>
+                                <li><a class="app-menu__item" id="tab-proveedores" href="proveedores.php"><i class="app-menu__icon fa fa-circle-o"></i><span class="app-menu__label">Proveedores</span></a></li>
                         </ul>
                 </li>
 
                 <li class="treeview" id="treeview-inventario"><a class="app-menu__item" href="#" data-toggle="treeview"><i class="app-menu__icon fa fa-cubes"></i><span class="app-menu__label">Inventario</span><i class="treeview-indicator fa fa-angle-right"></i></a>
                         <ul class="treeview-menu">
-                                <li><a class="app-menu__item" id="tab-productos" href="productos.php"><i class="app-menu__icon fa fa-minus"></i><span class="app-menu__label">Productos</span></a></li>
+                                <li><a class="app-menu__item" id="tab-productos" href="productos.php"><i class="app-menu__icon fa fa-circle-o"></i><span class="app-menu__label">Productos</span></a></li>
                                 <!-- <li><a class="app-menu__item" id="tab-inventario" href="inventario.php"><i class="app-menu__icon fa fa-minus"></i><span class="app-menu__label">Inventario</span></a></li> -->
-                                <li><a class="app-menu__item" id="tab-kardexproducto" href="kardexproducto.php"><i class="app-menu__icon fa fa-minus"></i><span class="app-menu__label">Kardex</span></a></li>
-                                <li><a class="app-menu__item" id="tab-ajustes" href="ajustes.php"><i class="app-menu__icon fa fa-minus"></i><span class="app-menu__label">Ajustes</span></a></li>
+                                <li><a class="app-menu__item" id="tab-kardexproducto" href="kardexproducto.php"><i class="app-menu__icon fa fa-circle-o"></i><span class="app-menu__label">Kardex</span></a></li>
+                                <li><a class="app-menu__item" id="tab-ajustes" href="ajustes.php"><i class="app-menu__icon fa fa-circle-o"></i><span class="app-menu__label">Ajustes</span></a></li>
                         </ul>
                 </li>
 
@@ -65,23 +66,23 @@
                                 <span class="app-menu__label">Contabilidad</span>
                                 <i class="treeview-indicator fa fa-angle-right"></i>
                         </a>
-                </li>
+                </li>-->
 
                 <li>
-                        <a class="app-menu__item" href="#">
+                        <a class="app-menu__item" href="reporte.php">
                                 <i class="app-menu__icon fa fa-book"></i>
                                 <span class="app-menu__label">Reportes</span>
                         </a>
                 </li>
 
-                <li>
+                <!--<li>
                         <a class="app-menu__item" id="tab-reportes" href="#">
                                 <i class="app-menu__icon fa fa-bar-chart"></i>
                                 <span class="app-menu__label">Gráficos</span>
                         </a>
-                </li> -->
+                </li> 
 
-                <!-- <li>
+                <li>
                         <a class="app-menu__item" id="tab-graficos" href="#">
                                 <i class="app-menu__icon fa fa-laptop"></i>
                                 <span class="app-menu__label">Tienda en Línea</span>
@@ -91,7 +92,7 @@
 
                 <li class="treeview" id="treeview-configuracion"><a class="app-menu__item" href="#" data-toggle="treeview"><i class="app-menu__icon fa fa-cog"></i><span class="app-menu__label">Configuración</span><i class="treeview-indicator fa fa-angle-right"></i></a>
                         <ul class="treeview-menu">
-                                <li><a class="app-menu__item" id="tab-empresa" href="empresa.php"><i class="app-menu__icon fa fa-minus"></i><span class="app-menu__label">Empresa</span></a></li>
+                                <li><a class="app-menu__item" id="tab-empresa" href="empresa.php"><i class="app-menu__icon fa fa-circle-o"></i><span class="app-menu__label">Empresa</span></a></li>
                         </ul>
                 </li>
 
@@ -104,7 +105,7 @@
 
         /// Elementos de li
         const tabs = [
-                "index", "ventas", "notacredito", "consultarcomprobante",
+                "index", "ventas", "notacredito", "consultaindividual", "consultaglobal",
                 "productos", "inventario", "kardexproducto", "ajustes",
                 "registrarproducto", "actualizarproducto",
                 "clientes", "proveedores",
@@ -122,14 +123,16 @@
 
         /// Funcion que asigna la clase active
         function setActive(id) {
-                if (id == "tab-ventas" || id == "tab-notacredito" || id == "tab-consultarcomprobante") {
+                if (id == "tab-ventas" || id == "tab-notacredito" || id == "tab-consultaindividual" || id == "tab-consultaglobal") {
                         document.getElementById("treeview-ingresos").setAttribute("class", "treeview is-expanded");
                         if (id == "tab-ventas") {
                                 document.getElementById("tab-ventas").setAttribute("class", "app-menu__item active");
                         } else if (id == "tab-notacredito") {
                                 document.getElementById("tab-notacredito").setAttribute("class", "app-menu__item active");
-                        } else if (id == "tab-consultarcomprobante") {
-                                document.getElementById("tab-consultarcomprobante").setAttribute("class", "app-menu__item active");
+                        } else if (id == "tab-consultaindividual") {
+                                document.getElementById("tab-consultaindividual").setAttribute("class", "app-menu__item active");
+                        } else if (id == "tab-consultaglobal") {
+                                document.getElementById("tab-consultaglobal").setAttribute("class", "app-menu__item active");
                         }
                 } else if (id == "tab-clientes" || id == "tab-proveedores") {
                         document.getElementById("treeview-contactos").setAttribute("class", "treeview is-expanded");

@@ -113,6 +113,7 @@ if (isset($_SESSION['IdEmpleado'])) {
                         url: "../app/controller/EmpleadoController.php",
                         method: "GET",
                         data: {
+                            "type": "login",
                             "usuario": $("#txtUsuario").val().trim(),
                             "clave": $("#txtClave").val().trim()
                         },
