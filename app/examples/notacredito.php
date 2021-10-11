@@ -313,7 +313,7 @@ if (!is_array($result)) {
         $cbc = $item->appendChild($cbc);
         $price = $xml->createElement('cac:Price');
         $price = $InvoiceLine->appendChild($price);
-        $cbc = $xml->createElement('cbc:PriceAmount', number_format(round($precioBruto, 2, PHP_ROUND_HALF_UP), 2, '.', ''));
+        $cbc = $xml->createElement('cbc:PriceAmount', number_format(round($precioBruto, 4, PHP_ROUND_HALF_UP), 4, '.', ''));
         $cbc = $price->appendChild($cbc);
         $cbc->setAttribute('currencyID', $notacredito->TipoMoneda);
     }

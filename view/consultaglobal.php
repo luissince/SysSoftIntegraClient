@@ -77,26 +77,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     </div>
                 </div>
 
-                <div class="row">
-                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                        <div class="form-group text-center" id="ulPagination">
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-double-left"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-left"></i>
-                            </button>
-                            <span class="btn btn-outline-secondary disabled" id="lblPaginacion">0 - 0</span>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-right"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-double-right"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
             </div>
         </main>
         <?php include "./layout/footer.php"; ?>
@@ -104,15 +84,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
         <script>
             let tools = new Tools();
             let state = false;
-            let paginacion = 0;
-            let opcion = 0;
-            let totalPaginacion = 0;
-            let filasPorPagina = 5;
             let tbody = $("#tbList");
             let arrayVentas = [];
-            let arrayPagina = [];
-
-            let ulPagination = $("#ulPagination");
 
             $(document).ready(function() {
                 $("#txtFechaInicial").val(tools.getCurrentDate());
@@ -143,13 +116,10 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 tools.promiseFetchGet("../app/examples/pages/cdrStatusGlobal.php", {
                     "fechaInicial": fechaInicial,
                     "fechaFinal": fechaFinal,
-                    // "posicionPagina": ((paginacion - 1) * filasPorPagina),
-                    // "filasPorPagina": filasPorPagina
                 }, function() {
                     tbody.empty();
                     tbody.append('<tr><td class="text-center" colspan="9"><img src="./images/loading.gif" id="imgLoad" width="34" height="34" /> <p>Cargando información...</p></td></tr>');
                     state = true;
-                    totalPaginacion = 0;
                     arrayVentas = [];
                 }).then(result => {
                     let object = result;
@@ -174,8 +144,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     tbody.append('<tr><td class="text-center" colspan="9"> <p>No hay comprobantes para mostrar.</p></td></tr>');
                     state = false;
                 } else {
-                    arrayPagina = arrayVentas;
-
 
                     for (let venta of arrayVentas) {
                         let datetime = tools.getDateForma(venta.Fecha) + "<br>" + tools.getTimeForma24(venta.Hora, true);
@@ -203,55 +171,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             '<td class="text-left">' + venta.Mensaje + '</td>' +
                             '</tr>');
                     }
-
-                    totalPaginacion = parseInt(Math.ceil((parseFloat(arrayVentas.length) / filasPorPagina)));
-
-                    let i = 1;
-                    let range = [];
-                    while (i <= totalPaginacion) {
-                        range.push(i);
-                        i++;
-                    }
-
-                    let min = Math.min.apply(null, range);
-                    let max = Math.max.apply(null, range);
-
-                    let paginacionHtml = `
-                            <button class="btn btn-outline-secondary" onclick="onEventPaginacionInicio(${min})">
-                                <i class="fa fa-angle-double-left"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary" onclick="onEventAnteriorPaginacion()">
-                                <i class="fa fa-angle-left"></i>
-                            </button>
-                            <span class="btn btn-outline-secondary disabled" id="lblPaginacion">${paginacion} - ${totalPaginacion}</span>
-                            <button class="btn btn-outline-secondary" onclick="onEventSiguientePaginacion()">
-                                <i class="fa fa-angle-right"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary" onclick="onEventPaginacionFinal(${max})">
-                                <i class="fa fa-angle-double-right"></i>
-                            </button>`;
-                    ulPagination.html(paginacionHtml);
                     state = false;
-                }
-            }
-
-            function onEventPaginacionInicio(value) {
-
-            }
-
-            function onEventPaginacionFinal(value) {
-
-            }
-
-            function onEventAnteriorPaginacion() {
-
-            }
-
-            function onEventSiguientePaginacion() {
-                if (!state) {
-                    if (paginacion < totalPaginacion) {
-                        paginacion++;
-                    }
                 }
             }
         </script>
