@@ -185,14 +185,6 @@ class VentasADO
         }
     }
 
-    private static function limitar_cadena($cadena, $limite, $sufijo)
-    {
-        if (strlen($cadena) > $limite) {
-            return substr($cadena, 0, $limite) . $sufijo;
-        }
-        return $cadena;
-    }
-
     public static function ListVentaDetalle($idventa)
     {
         try {
@@ -1378,7 +1370,7 @@ class VentasADO
                     "Simbolo" => $row["Simbolo"],
                     "Total" => floatval($row["Total"]),
                     "Xmlsunat" => $row["Xmlsunat"],
-                    "Xmldescripcion" => VentasADO::limitar_cadena($row["Xmldescripcion"], 90, "...")
+                    "Xmldescripcion" => $row["Xmldescripcion"]
                 ));
             }
 

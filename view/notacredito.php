@@ -399,7 +399,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                     '<button class="btn btn-secondary btn-sm"><img src="./images/accept.svg" width="26" /></button>' :
                                     '<button class="btn btn-secondary btn-sm" onclick="firmarXml(\'' + detalle.IdNotaCredito + '\')"><img src="./images/unable.svg" width="26" /></button>';
 
-                                let descripcion = '<p class="recortar-texto">' + (detalle.Xmldescripcion === "" ? "Por Generar Xml" : detalle.Xmldescripcion) + '</p>';
+                                let descripcion = '<p class="recortar-texto">' + (detalle.Xmldescripcion === "" ? "Por Generar Xml" : limitar_cadena(detalle.Xmldescripcion, 90, '...')) + '</p>';
 
                                 tbList.append('<tr>' +
                                     '<td class="text-center">' + detalle.Id + '</td>' +
@@ -590,6 +590,14 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     }
                 });
             }
+
+            function limitar_cadena(cadena, limite, sufijo) {
+                if (cadena.length > limite) {
+                    return cadena.substr(0, limite) + sufijo;
+                }
+                return cadena;
+            }
+
 
             function openPdf(idNotaCredito) {
                 window.open("../app/sunat/pdfnotacredito.php?idNotaCredito=" + idNotaCredito, "_blank");

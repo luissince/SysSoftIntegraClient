@@ -518,7 +518,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                         '<button class="btn btn-secondary btn-sm" onclick="firmarXml(\'' + venta.IdVenta + '\')"><img src="./images/unable.svg" width="26" /></button>'
                                     );
 
-                                let descripcion = '<p class="recortar-texto">' + (venta.Xmldescripcion === "" ? "Por Generar Xml" : venta.Xmldescripcion) + '</p>';
+                                let descripcion = '<p class="recortar-texto">' + (venta.Xmldescripcion === "" ? "Por Generar Xml" : limitar_cadena(venta.Xmldescripcion, 90, '...')) + '</p>';
 
                                 tbody.append('<tr>' +
                                     ' <td class="text-center">' + venta.id + '</td >' +
@@ -920,6 +920,13 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
             function openPdf(idVenta) {
                 window.open("../app/sunat/pdfventas.php?idVenta=" + idVenta, "_blank");
+            }
+
+            function limitar_cadena(cadena, limite, sufijo) {
+                if (cadena.length > limite) {
+                    return cadena.substr(0, limite) + sufijo;
+                }
+                return cadena;
             }
 
             function onEventPaginacionInicio(value) {
