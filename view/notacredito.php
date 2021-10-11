@@ -16,39 +16,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
         <?php include "./layout/header.php"; ?>
         <!-- Sidebar menu-->
         <?php include "./layout/menu.php"; ?>
-        <!-- modal generar excel -->
-        <div class="row">
-            <div class="modal fade" id="mdAlert" data-backdrop="static">
-                <div class="modal-dialog modal-sm">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h4 class="modal-title">
-                                <i class="fa fa-file-excel">
-                                </i> Generar Excel
-                            </h4>
-                            <button type="button" class="close" id="btnClose">
-                                <i class="fa fa-close"></i>
-                            </button>
-
-                        </div>
-                        <div class="modal-body">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <span>¿Generar el excel?</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-success" id="btnFacturados">
-                                <i class="fa fa-check"></i> Generar</button>
-                            <button type="button" class="btn btn-danger" id="btnCancelar">
-                                <i class="fa fa-remove"></i> Cancelar</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- modal generar excel -->
         <!-- Modal del detalle de ingreso -->
         <div class="row">
             <div class="modal fade" id="id-modal-productos" data-backdrop="static">
@@ -357,29 +324,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     event.preventDefault();
                 });
 
-
-                // $("#btnExcel").click(function() {
-                //     openExcel();
-                // });
-
-                // $("#btnExcel").keypress(function(event) {
-                //     if (event.keyCode === 13) {
-                //         openExcel();
-                //     }
-                //     event.preventDefault();
-                // });
-
-                // $("#btnTxt").click(function() {
-                //     openText();
-                // });
-
-                // $("#btnTxt").keypress(function(event) {
-                //     if (event.keyCode === 13) {
-                //         openText();
-                //         event.preventDefault();
-                //     }
-                // });
-
                 loadInitNotaCredito();
             });
 
@@ -646,39 +590,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     }
                 });
             }
-
-
-            // function openExcel() {
-            //     $("#mdAlert").modal("show");
-
-            //     $("#btnFacturados").unbind();
-            //     $("#btnFacturados").bind("click", function() {
-            //         let fechaInicial = $("#txtFechaInicial").val();
-            //         let fechaFinal = $("#txtFechaFinal").val();
-            //         if (fechaInicial !== "" && fechaInicial !== undefined && fechaFinal !== "" && fechaFinal !== undefined) {
-            //             window.open("../app/sunat/excelnotacredito.php?txtFechaInicial=" + fechaInicial + "&txtFechaFinal=" + fechaFinal + "&facturado=1", "_blank");
-            //             $("#mdAlert").modal("hide");
-            //         }
-            //     });
-
-            //     $("#btnCancelar").unbind();
-            //     $("#btnCancelar").bind("click", function() {
-            //         $("#mdAlert").modal("hide");
-            //     });
-
-            //     $("#btnClose").unbind();
-            //     $("#btnClose").bind("click", function() {
-            //         $("#mdAlert").modal("hide");
-            //     });
-            // }
-
-            // function openText() {
-            //     let fechaInicial = $("#txtFechaInicial").val();
-            //     let fechaFinal = $("#txtFechaFinal").val();
-            //     if (fechaInicial !== "" && fechaInicial !== undefined && fechaFinal !== "" && fechaFinal !== undefined) {
-            //         window.open("../app/sunat/txtnotacredito.php?txtFechaInicial=" + fechaInicial + "&txtFechaFinal=" + fechaFinal + "&facturado=1", "_blank");
-            //     }
-            // }
 
             function openPdf(idNotaCredito) {
                 window.open("../app/sunat/pdfnotacredito.php?idNotaCredito=" + idNotaCredito, "_blank");

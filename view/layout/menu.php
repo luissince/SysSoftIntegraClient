@@ -69,7 +69,7 @@
                 </li>-->
 
                 <li>
-                        <a class="app-menu__item" href="reporte.php">
+                        <a class="app-menu__item" id="tab-reporte" href="reporte.php">
                                 <i class="app-menu__icon fa fa-book"></i>
                                 <span class="app-menu__label">Reportes</span>
                         </a>
@@ -105,10 +105,19 @@
 
         /// Elementos de li
         const tabs = [
-                "index", "ventas", "notacredito", "consultaindividual", "consultaglobal",
-                "productos", "inventario", "kardexproducto", "ajustes",
-                "registrarproducto", "actualizarproducto",
-                "clientes", "proveedores",
+                "index",
+                "ventas",
+                "notacredito",
+                "consultaindividual", "consultaglobal",
+                "productos",
+                "inventario",
+                "kardexproducto",
+                "ajustes",
+                "registrarproducto",
+                "actualizarproducto",
+                "clientes",
+                "proveedores",
+                "reporte",
                 "empresa"
         ];
 
@@ -155,6 +164,10 @@
                                 document.getElementById("tab-productos").setAttribute("class", "app-menu__item active");
                         } else if (id == "tab-actualizarproducto") {
                                 document.getElementById("tab-productos").setAttribute("class", "app-menu__item active");
+                        }
+                } else if (id == "tab-reporte") {
+                        if (id == "tab-reporte") {
+                                document.getElementById("tab-reporte").setAttribute("class", "app-menu__item active");
                         }
                 } else if (id == "tab-empresa") {
                         document.getElementById("treeview-configuracion").setAttribute("class", "treeview is-expanded");

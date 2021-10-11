@@ -57,7 +57,7 @@ class VentasADO
                     "Total" => $row["Total"],
                     "Observaciones" => $row["Observaciones"],
                     "Xmlsunat" => $row["Xmlsunat"],
-                    "Xmldescripcion" => VentasADO::limitar_cadena($row["Xmldescripcion"], 90, "..."),
+                    "Xmldescripcion" => $row["Xmldescripcion"],
                     "IdNotaCredito" => $row["IdNotaCredito"],
                     "SerieNotaCredito" => $row["SerieNotaCredito"],
                     "NumeracionNotaCredito" => $row["NumeracionNotaCredito"]
@@ -271,7 +271,7 @@ class VentasADO
 
             $cmdEmpresa = Database::getInstance()->getDb()->prepare("SELECT TOP 1 
             d.IdAuxiliar,e.NumeroDocumento,e.RazonSocial,e.NombreComercial,e.Domicilio,
-            e.Telefono,e.Email,e.Image
+            e.Telefono,e.Celular,e.Email,e.Image
             FROM EmpresaTB AS e INNER JOIN DetalleTB AS d ON e.TipoDocumento = d.IdDetalle AND d.IdMantenimiento = '0003'");
             $cmdEmpresa->execute();
             $rowEmpresa = $cmdEmpresa->fetch();
@@ -282,6 +282,7 @@ class VentasADO
                 "NombreComercial" => $rowEmpresa['NombreComercial'],
                 "Domicilio" => $rowEmpresa['Domicilio'],
                 "Telefono" => $rowEmpresa['Telefono'],
+                "Celular" => $rowEmpresa['Celular'],
                 "Email" => $rowEmpresa['Email'],
                 "Image" => $rowEmpresa['Image'] == null ? "" : base64_encode($rowEmpresa['Image'])
             );

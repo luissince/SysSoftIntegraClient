@@ -228,7 +228,7 @@ if (is_array($ventaDatos)) {
                     <tr>
                         <td style=" background: rgb(2,2,3);border: 1px solid black;padding:6px;"><p>Nombre:</p></td>
                         <td colspan="3" style="width:27%; border: 1px solid black; color: black;padding:6px;"><p>' . $venta->Informacion . '</p></td>
-                        <td style="width:20%; border-right: 1px solid black; color: black; text-align:center;border: 1px solid black;padding:6px;"><p>' . $venta->FechaVenta . '</p></td>
+                        <td style="width:20%; border-right: 1px solid black; color: black; text-align:center;border: 1px solid black;padding:6px;"><p>' . date("d/m/Y", strtotime($venta->FechaVenta)) . '</p></td>
                     </tr>    
                     <tr>
                         <td style=" background: rgb(2,2,3);border: 1px solid black;padding:6px;"><p>Dirección:</p></td>

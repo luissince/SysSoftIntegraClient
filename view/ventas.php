@@ -17,41 +17,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
         <!-- Sidebar menu-->
         <?php include "./layout/menu.php"; ?>
 
-        <!-- modal generar excel -->
-        <div class="row">
-            <div class="modal fade" id="mdAlert" data-backdrop="static">
-                <div class="modal-dialog modal-sm">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h4 class="modal-title">
-                                <i class="fa fa-file-excel">
-                                </i> Generar Excel
-                            </h4>
-                            <button type="button" class="close" id="btnClose">
-                                <i class="fa fa-close"></i>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="row">
-                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                                    <span>¿Generar el excel con todos los comprobante generados o solo los facturados?</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-success" id="btnTodos">
-                                <i class="fa fa-check"></i> Todos</button>
-                            <button type="button" class="btn btn-success" id="btnFacturados">
-                                <i class="fa fa-check"></i> Facturados</button>
-                            <button type="button" class="btn btn-danger" id="btnCancelar">
-                                <i class="fa fa-remove"></i> Cancelar</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- modal generar excel -->
-
         <!-- Modal del detalle de ingreso -->
         <div class="row">
             <div class="modal fade" id="id-modal-productos" data-backdrop="static">
@@ -219,22 +184,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             </select>
                         </div>
                     </div>
-                    <!-- <div class="col-xl-2 col-lg-3 col-md-12 col-sm-12 col-12">
-                        <label>Generar Excel:</label>
-                        <div class="form-group">
-                            <button class="btn btn-success" id="btnExcel">
-                                <i class="fa fa-file-excel-o"></i> Generar Excel
-                            </button>
-                        </div>
-                    </div> -->
-                    <!-- <div class="col-xl-2 col-lg-3 col-md-12 col-sm-12 col-12">
-                        <label>Generar Txt:</label>
-                        <div class="form-group">
-                            <button class="btn btn-secondary" id="btnTxt">
-                                <i class="fa fa-file-text"></i> Generar Txt
-                            </button>
-                        </div>
-                    </div> -->
                 </div>
 
                 <div class="row">
@@ -400,28 +349,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     }
                     event.preventDefault();
                 });
-
-                // $("#btnExcel").click(function() {
-                //     openExcel();
-                // });
-
-                // $("#btnExcel").keypress(function(event) {
-                //     if (event.keyCode === 13) {
-                //         openExcel();
-                //     }
-                //     event.preventDefault();
-                // });
-
-                // $("#btnTxt").click(function() {
-                //     openText();
-                // });
-
-                // $("#btnTxt").keypress(function(event) {
-                //     if (event.keyCode === 13) {
-                //         openText();
-                //         event.preventDefault();
-                //     }
-                // });
 
                 $("#btnEnvioMasivo").click(function() {
                     onEventEnvioMasivo();
@@ -1030,47 +957,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     }
                 }
             }
-
-            // function openExcel() {
-            //     $("#mdAlert").modal("show");
-            //     $("#btnTodos").unbind();
-            //     $("#btnTodos").bind("click", function() {
-            //         let fechaInicial = $("#txtFechaInicial").val();
-            //         let fechaFinal = $("#txtFechaFinal").val();
-            //         if (fechaInicial !== "" && fechaInicial !== undefined && fechaFinal !== "" && fechaFinal !== undefined) {
-            //             window.open("../app/sunat/excelventa.php?txtFechaInicial=" + fechaInicial + "&txtFechaFinal=" + fechaFinal + "&facturado=0", "_blank");
-            //             $("#mdAlert").modal("hide");
-            //         }
-            //     });
-
-            //     $("#btnFacturados").unbind();
-            //     $("#btnFacturados").bind("click", function() {
-            //         let fechaInicial = $("#txtFechaInicial").val();
-            //         let fechaFinal = $("#txtFechaFinal").val();
-            //         if (fechaInicial !== "" && fechaInicial !== undefined && fechaFinal !== "" && fechaFinal !== undefined) {
-            //             window.open("../app/sunat/excelventa.php?txtFechaInicial=" + fechaInicial + "&txtFechaFinal=" + fechaFinal + "&facturado=1", "_blank");
-            //             $("#mdAlert").modal("hide");
-            //         }
-            //     });
-
-            //     $("#btnCancelar").unbind();
-            //     $("#btnCancelar").bind("click", function() {
-            //         $("#mdAlert").modal("hide");
-            //     });
-
-            //     $("#btnClose").unbind();
-            //     $("#btnClose").bind("click", function() {
-            //         $("#mdAlert").modal("hide");
-            //     });
-            // }
-
-            // function openText() {
-            //     let fechaInicial = $("#txtFechaInicial").val();
-            //     let fechaFinal = $("#txtFechaFinal").val();
-            //     if (fechaInicial !== "" && fechaInicial !== undefined && fechaFinal !== "" && fechaFinal !== undefined) {
-            //         window.open("../app/sunat/txtventas.php?txtFechaInicial=" + fechaInicial + "&txtFechaFinal=" + fechaFinal + "&facturado=1", "_blank");
-            //     }
-            // }
         </script>
     </body>
 
