@@ -41,19 +41,19 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 </div>
 
                 <div class="row">
-                    <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
-                        <label>Buscar: </label>
+                    <div class="col-xl-3 col-lg-5 col-md-12 col-sm-12 col-12">
+                        <label>Buscar por clave o clave alterna(Enter): </label>
                         <div class="form-group">
                             <input type="text" class="form-control" placeholder="Clave o clave alterna" class="input-primary " id="txtClaveProducto">
                         </div>
                     </div>
-                    <div class="col-xl-5 col-lg-5 col-md-12 col-sm-12 col-12">
-                        <label>Buscar:</label>
+                    <div class="col-xl-5 col-lg-7 col-md-12 col-sm-12 col-12">
+                        <label>Buscar por la Descripción:</label>
                         <div class="form-group">
                             <input type="text" class="form-control" placeholder="Descripción del producto" class="input-primary" id="txtDescripcionProducto">
                         </div>
                     </div>
-                    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                    <div class="col-xl-4 col-lg-12 col-md-12 col-sm-12 col-12">
                         <label>Paginación:</label>
                         <div class="form-group">
                             <button class="btn btn-primary" id="btnAnterior">
@@ -111,10 +111,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
             $(document).ready(function() {
                 loadInitProductos();
-                $("#tbList").on("click", "tr", function(event) {
-                    $(".selected-table-tr").removeClass("selected-table-tr");
-                    $(this).addClass("selected-table-tr");
-                });
+
                 $("#btnAnterior").click(function() {
                     if (!state) {
                         if (paginacion > 1) {
@@ -123,6 +120,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         }
                     }
                 });
+
                 $("#btnSiguiente").click(function() {
                     if (!state) {
                         if (paginacion < totalPaginacion) {
@@ -131,6 +129,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         }
                     }
                 });
+
                 $("#txtClaveProducto").keyup(function(event) {
                     if (event.keyCode !== 9 && event.keyCode !== 18) {
                         if ($("#txtClaveProducto").val().trim() != "") {
@@ -142,6 +141,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         }
                     }
                 });
+
                 $("#txtDescripcionProducto").keyup(function(event) {
                     if (event.keyCode !== 9 && event.keyCode !== 18) {
                         if ($("#txtDescripcionProducto").val().trim() != "") {
@@ -153,30 +153,25 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         }
                     }
                 });
+
                 $("#btnAgregar").click(function() {
                     window.location.href = "registrarproducto.php";
                 });
+
                 $("#btnAgregar").keypress(function(event) {
                     if (event.keyCode === 13) {
                         window.location.href = "registrarproducto.php";
                     }
                     event.preventDefault();
                 });
+
                 $("#btnReload").click(function() {
                     loadInitProductos();
                 });
+
                 $("#btnReload").keypress(function(event) {
                     if (event.keyCode === 13) {
                         loadInitProductos();
-                    }
-                    event.preventDefault();
-                });
-                $("#btnReporte").click(function() {
-
-                });
-                $("#btnReporte").keypress(function(event) {
-                    if (event.keyCode === 13) {
-
                     }
                     event.preventDefault();
                 });
@@ -206,82 +201,77 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 }
             }
 
-            function loadListaProductos(opcion, clave, nombre) {
-                $.ajax({
-                    url: "../app/controller/SuministroController.php",
-                    method: "GET",
-                    data: {
+            async function loadListaProductos(opcion, clave, nombre) {
+                try {
+                    let result = await tools.promiseFetchGet("../app/controller/SuministroController.php", {
                         "type": "listaproductos",
                         "opcion": opcion,
                         "clave": clave,
                         "nombre": nombre,
                         "posicionPagina": ((paginacion - 1) * filasPorPagina),
                         "filasPorPagina": filasPorPagina
-                    },
-                    beforeSend: function() {
+                    }, function() {
                         tbList.empty();
                         tbList.append('<tr><td class="text-center" colspan="10"><img src="./images/loading.gif" id="imgLoad" width="34" height="34" /> <p>Cargando información...</p></td></tr>');
                         state = true;
                         totalPaginacion = 0;
-                    },
-                    success: function(result) {
-                        let object = result;
-                        if (object.estado === 1) {
-                            tbList.empty();
+                    });
 
-                            if (object.data.length == 0) {
-                                tbList.append('<tr><td class="text-center" colspan="10"><p>No hay datos para mostrar.</p></td></tr>');
-                                lblPaginaActual.html(0);
-                                lblPaginaSiguiente.html(0);
-                                state = false;
-                            } else {
+                    let object = result;
+                    if (object.estado === 1) {
+                        tbList.empty();
 
-                                for (let suministro of object.data) {
-                                    let image = "./images/noimage.jpg";
-                                    if (suministro.NuevaImagen != '') {
-                                        image = ("data:image/png;base64," + suministro.NuevaImagen);
-                                    }
-
-                                    let clave = suministro.Clave + " " + (suministro.ClaveAlterna == "" ? "" : " - " + suministro.ClaveAlterna);
-                                    let cantidad = parseFloat(suministro.Cantidad) <= 0 ? '<span class="text-xs-bold text-danger">' + tools.formatMoney(suministro.Cantidad) + '(' + suministro.UnidadCompraNombre + ')' + '</span>' : '<span class="text-xs-bold text-primary">' + tools.formatMoney(suministro.Cantidad) + '(' + suministro.UnidadCompraNombre + ')' + '</span>';
-                                    tbList.append('<tr>' +
-                                        '<td class="text-center">' + suministro.Id + '</td>' +
-                                        '<td>' + clave + '<br>' + suministro.NombreMarca + '</td>' +
-                                        '<td>' + suministro.Categoria + '<br>' + suministro.Marca + '</td>' +
-                                        '<td class="text-right">' + tools.formatMoney(suministro.PrecioCompra) + '</td>' +
-                                        '<td class="text-right">' + tools.formatMoney(suministro.PrecioVentaGeneral) + '</td>' +
-                                        '<td class="text-right">' + suministro.ImpuestoNombre + '</td>' +
-                                        '<td class="text-right">' + cantidad + '</td>' +
-                                        '<td class="text-center"><figure><img style="width:70px;height:70px;object-fit:cover;" src="' + image + '" alt="Producto"/></figure></td>' +
-                                        '<td class="text-center">' +
-                                        '<a href="actualizarproducto.php?idSuministro=' + suministro.IdSuministro + '" class="btn btn-warning"><i class="fa fa-edit"></i></a>' +
-                                        '</td>' +
-                                        '<td>' +
-                                        '<button type="button" class="btn btn-danger" onclick="removeProducto(\'' + suministro.IdSuministro + '\')"><i class="fa fa-trash"></i></button>' +
-                                        '</td>' +
-                                        '</tr>');
-                                }
-                                totalPaginacion = parseInt(Math.ceil((parseFloat(object.total) / filasPorPagina)));
-                                lblPaginaActual.html(paginacion);
-                                lblPaginaSiguiente.html(totalPaginacion);
-                                state = false;
-                            }
+                        if (object.data.length == 0) {
+                            tbList.append('<tr><td class="text-center" colspan="10"><p>No hay datos para mostrar.</p></td></tr>');
+                            lblPaginaActual.html(0);
+                            lblPaginaSiguiente.html(0);
+                            state = false;
                         } else {
-                            tbList.empty();
-                            tbList.append('<tr><td class="text-center" colspan="10"><p>' + object.message + '</p></td></tr>');
-                            lblPaginaActual.html("0");
-                            lblPaginaSiguiente.html("0");
+
+                            for (let suministro of object.data) {
+                                let image = "./images/noimage.jpg";
+                                if (suministro.NuevaImagen != '') {
+                                    image = ("data:image/png;base64," + suministro.NuevaImagen);
+                                }
+
+                                let clave = suministro.Clave + " " + (suministro.ClaveAlterna == "" ? "" : " - " + suministro.ClaveAlterna);
+                                let cantidad = parseFloat(suministro.Cantidad) <= 0 ? '<span class="text-xs-bold text-danger">' + tools.formatMoney(suministro.Cantidad) + '(' + suministro.UnidadCompraNombre + ')' + '</span>' : '<span class="text-xs-bold text-primary">' + tools.formatMoney(suministro.Cantidad) + '(' + suministro.UnidadCompraNombre + ')' + '</span>';
+                                tbList.append('<tr>' +
+                                    '<td class="text-center">' + suministro.Id + '</td>' +
+                                    '<td>' + clave + '<br>' + suministro.NombreMarca + '</td>' +
+                                    '<td>' + suministro.Categoria + '<br>' + suministro.Marca + '</td>' +
+                                    '<td class="text-right">' + tools.formatMoney(suministro.PrecioCompra) + '</td>' +
+                                    '<td class="text-right">' + tools.formatMoney(suministro.PrecioVentaGeneral) + '</td>' +
+                                    '<td class="text-right">' + suministro.ImpuestoNombre + '</td>' +
+                                    '<td class="text-right">' + cantidad + '</td>' +
+                                    '<td class="text-center"><img style="width:70px;height:70px;object-fit:cover;" src="' + image + '" alt="Producto"/></td>' +
+                                    '<td class="text-center">' +
+                                    '<a href="actualizarproducto.php?idSuministro=' + suministro.IdSuministro + '" class="btn btn-warning"><i class="fa fa-edit"></i></a>' +
+                                    '</td>' +
+                                    '<td>' +
+                                    '<button type="button" class="btn btn-danger" onclick="removeProducto(\'' + suministro.IdSuministro + '\')"><i class="fa fa-trash"></i></button>' +
+                                    '</td>' +
+                                    '</tr>');
+                            }
+                            totalPaginacion = parseInt(Math.ceil((parseFloat(object.total) / filasPorPagina)));
+                            lblPaginaActual.html(paginacion);
+                            lblPaginaSiguiente.html(totalPaginacion);
                             state = false;
                         }
-                    },
-                    error: function(error) {
+                    } else {
                         tbList.empty();
-                        tbList.append('<tr><td class="text-center" colspan="10"><p>' + error.responseText + '</p></td></tr>');
+                        tbList.append('<tr><td class="text-center" colspan="10"><p>' + object.message + '</p></td></tr>');
                         lblPaginaActual.html("0");
                         lblPaginaSiguiente.html("0");
                         state = false;
                     }
-                });
+                } catch (error) {
+                    tbList.empty();
+                    tbList.append('<tr><td class="text-center" colspan="10"><p>' + error.responseText + '</p></td></tr>');
+                    lblPaginaActual.html("0");
+                    lblPaginaSiguiente.html("0");
+                    state = false;
+                }
             }
 
             function removeProducto(IdSuministro) {

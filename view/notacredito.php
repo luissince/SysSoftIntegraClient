@@ -152,22 +152,14 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             <input class="form-control" type="date" id="txtFechaFinal" />
                         </div>
                     </div>
-                    <!-- <div class="col-xl-2 col-lg-3 col-md-12 col-sm-12 col-12">
-                        <label>Generar Excel:</label>
+                    <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+                        <label>Comprobantes:</label>
                         <div class="form-group">
-                            <button class="btn btn-success" id="btnExcel">
-                                <i class="fa fa-file-excel"></i> Excel por Fecha
-                            </button>
+                            <select id="cbComprobante" class="form-control">
+                                <option value="0">TODOS</option>
+                            </select>
                         </div>
-                    </div> -->
-                    <!-- <div class="col-xl-2 col-lg-3 col-md-12 col-sm-12 col-12">
-                        <label>Generar Txt:</label>
-                        <div class="form-group">
-                            <button class="btn btn-secondary" id="btnTxt">
-                                <i class="fa fa-file-text"></i> Generar Txt
-                            </button>
-                        </div>
-                    </div> -->
+                    </div>
                 </div>
 
                 <div class="row">
@@ -192,7 +184,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         </div>
                     </div> -->
 
-                    <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+                    <div class="col-xl-3 col-lg-12 col-md-12 col-sm-12 col-12">
                         <label>Paginación:</label>
                         <div class="form-group" id="ulPagination">
                             <button class="btn btn-outline-secondary">

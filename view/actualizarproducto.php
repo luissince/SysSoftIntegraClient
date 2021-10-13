@@ -899,37 +899,13 @@ if (!isset($_SESSION['IdEmpleado'])) {
             async function loadInit() {
                 try {
                     $("#cbImpuesto").empty();
-                    let promiseFetchImpuesto = new Promise(function(resolve, reject) {
-                        $.ajax({
-                            url: "../app/controller/SuministroController.php",
-                            method: "GET",
-                            data: {
-                                "type": "impuestos"
-                            },
-                            success: function(result) {
-                                resolve(result);
-                            },
-                            error: function(error) {
-                                reject(error);
-                            }
-                        });
+                    let promiseFetchImpuesto = tools.promiseFetchGet("../app/controller/SuministroController.php", {
+                        "type": "impuestos"
                     });
 
-                    let promiseFetchProducto = new Promise(function(resolve, reject) {
-                        $.ajax({
-                            url: "../app/controller/SuministroController.php",
-                            method: 'GET',
-                            data: {
-                                "type": "getproducto",
-                                "idSuministro": idSuministro
-                            },
-                            success: function(result) {
-                                resolve(result);
-                            },
-                            error: function(error) {
-                                reject(error);
-                            }
-                        });
+                    let promiseFetchProducto = tools.promiseFetchGet("../app/controller/SuministroController.php", {
+                        "type": "getproducto",
+                        "idSuministro": idSuministro
                     });
 
                     let promise = await Promise.all([promiseFetchImpuesto, promiseFetchProducto]);
@@ -1250,14 +1226,10 @@ if (!isset($_SESSION['IdEmpleado'])) {
             }
 
             function enviarRegistro(image, listaPrecios) {
-                tools.ModalDialog("Producto", "¿Está seguro de continuar?", function(value) {
+                tools.ModalDialog("Producto", "¿Está seguro de continuar?", async function(value) {
                     if (value == true) {
-                        $.ajax({
-                            url: "../app/controller/SuministroController.php",
-                            type: 'POST',
-                            accepts: "application/json",
-                            contentType: "application/json; charset=utf-8",
-                            data: JSON.stringify({
+                        try {
+                            let result = await tools.promiseFetchPost("../app/controller/SuministroController.php", {
                                 "type": "updatesuministro",
                                 "IdSuministro": idSuministro,
                                 "Origen": $("#rbTodoModulos").is(":checked") ? 1 : $("#rbModuloVentas").is(":checked") ? 2 : 3,
@@ -1287,30 +1259,26 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 "ClaveUnica": $("#txtClaveUnica").val(),
                                 "Imagen": image,
                                 "ListaPrecios": listaPrecios,
-                            }),
-                            beforeSend: function() {
+                            }, function() {
                                 tools.ModalAlertInfo("Producto", "Se está procesando la información.");
-                            },
-                            success: function(result) {
-                                if (result.estado == 1) {
-                                    tools.ModalAlertSuccess("Producto", result.message);
-                                    setTimeout(function() {
-                                        location.href = "productos.php";
-                                    }, 1000);
-                                } else if (result.estado == 2) {
-                                    tools.ModalAlertWarning("Producto", result.message);
-                                } else if (result.estado == 3) {
-                                    tools.ModalAlertWarning("Producto", result.message);
-                                } else if (result.estado == 4) {
-                                    tools.ModalAlertWarning("Producto", result.message);
-                                } else {
-                                    tools.ModalAlertWarning("Producto", result.message);
-                                }
-                            },
-                            error: function(error) {
-                                tools.ModalAlertError("Producto", "Se produjo un error: " + error.responseText);
+                            });
+
+                            if (result.estado == 1) {
+                                tools.ModalAlertSuccess("Producto", result.message, function() {
+                                    location.href = "productos.php";
+                                });
+                            } else if (result.estado == 2) {
+                                tools.ModalAlertWarning("Producto", result.message);
+                            } else if (result.estado == 3) {
+                                tools.ModalAlertWarning("Producto", result.message);
+                            } else if (result.estado == 4) {
+                                tools.ModalAlertWarning("Producto", result.message);
+                            } else {
+                                tools.ModalAlertWarning("Producto", result.message);
                             }
-                        });
+                        } catch (error) {
+                            tools.ModalAlertError("Producto", "Se produjo un error: " + error.responseText);
+                        }
                     }
                 });
             }
