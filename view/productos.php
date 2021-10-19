@@ -41,7 +41,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 </div>
 
                 <div class="row">
-                    <div class="col-xl-3 col-lg-5 col-md-12 col-sm-12 col-12">
+                    <div class="col-xl-4 col-lg-5 col-md-12 col-sm-12 col-12">
                         <label>Buscar por clave o clave alterna(Enter): </label>
                         <div class="form-group">
                             <input type="text" class="form-control" placeholder="Clave o clave alterna" class="input-primary " id="txtClaveProducto">
@@ -53,7 +53,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             <input type="text" class="form-control" placeholder="Descripción del producto" class="input-primary" id="txtDescripcionProducto">
                         </div>
                     </div>
-                    <div class="col-xl-4 col-lg-12 col-md-12 col-sm-12 col-12">
+                    <div class="col-xl-3 col-lg-12 col-md-12 col-sm-12 col-12">
                         <label>Paginación:</label>
                         <div class="form-group">
                             <button class="btn btn-primary" id="btnAnterior">

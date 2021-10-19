@@ -389,9 +389,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         "type": "modalproductos",
                         "tipo": tipo,
                         "value": value,
-                        "libre": 1,
-                        "venta": 1,
-                        "insumo": 1,
                         "posicionPagina": ((paginacion - 1) * filasPorPagina),
                         "filasPorPagina": filasPorPagina
                     },
@@ -414,11 +411,12 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 state = false;
                             } else {
                                 for (let producto of productos) {
+                                    let cantidad = producto.Cantidad <= 0 ? "<span class='text-danger'>" + tools.formatMoney(parseFloat(producto.Cantidad)) + "</span>" : "<span class='text-success'>" + tools.formatMoney(parseFloat(producto.Cantidad)) + "</span>";
                                     tbProductos.append('<tr ondblclick="onSelectProducto(\'' + producto.IdSuministro + '\',\'' + producto.NombreMarca + '\')">' +
                                         '<td>' + producto.Id + '</td>' +
                                         '<td>' + producto.Clave + '</br>' + producto.NombreMarca + '</td>' +
                                         '<td>' + producto.Categoria + '<br>' + producto.Marca + '</td>' +
-                                        '<td>' + tools.formatMoney(parseFloat(producto.Cantidad)) + '</td>' +
+                                        '<td>' + cantidad + '</td>' +
                                         '<td>' + producto.ImpuestoNombre + '</td>' +
                                         '<td>' + tools.formatMoney(parseFloat(producto.PrecioVentaGeneral)) + '</td>' +
                                         '</tr>');
