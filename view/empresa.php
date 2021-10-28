@@ -84,10 +84,19 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     </div>
 
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                             <label class="form-text"> Dirección Fiscal:</label>
                             <div class="form-group">
                                 <input id="txtDireccion" class="form-control" type="text" placeholder="Ingrese su dirección fiscal">
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-text"> Ubigeo:</label>
+                            <div class="form-group">
+                                <select class="form-control" id="cbUbigeo">
+                                    <option value="">- Seleccionar -</option>
+                                </select>
                             </div>
                         </div>
                     </div>

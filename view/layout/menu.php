@@ -20,10 +20,11 @@
 
                 <li class="treeview" id="treeview-ingresos"><a class="app-menu__item" href="#" data-toggle="treeview"><i class="app-menu__icon fa fa-external-link-square" style="transform: rotate(180deg) translateX(12px);"></i><span class="app-menu__label">Ingresos</span><i class="treeview-indicator fa fa-angle-right"></i></a>
                         <ul class="treeview-menu">
-                                <li><a class="app-menu__item" id="tab-ventas" href="ventas.php"><i class="app-menu__icon fa fa-circle-o"></i><span class="app-menu__label">Ventas</span></a></li>
+                                <li><a class="app-menu__item" id="tab-comprobantes" href="comprobantes.php"><i class="app-menu__icon fa fa-circle-o"></i><span class="app-menu__label">Comprobantes</span></a></li>
                                 <li><a class="app-menu__item" id="tab-notacredito" href="notacredito.php"><i class="app-menu__icon fa fa-circle-o"></i><span class="app-menu__label">Nota de Crédito</span></a></li>
                                 <li><a class="app-menu__item" id="tab-consultaindividual" href="consultaindividual.php"><i class="app-menu__icon fa fa-circle-o"></i><span class="app-menu__label">Consultar Estado</span></a></li>
                                 <li><a class="app-menu__item" id="tab-consultaglobal" href="consultaglobal.php"><i class="app-menu__icon fa fa-circle-o"></i><span class="app-menu__label">Consulta Global</span></a></li>
+                                <li><a class="app-menu__item" id="tab-cotizacion" href="cotizacion.php"><i class="app-menu__icon fa fa-circle-o"></i><span class="app-menu__label">Cotización</span></a></li>
                         </ul>
                 </li>
 
@@ -106,9 +107,11 @@
         /// Elementos de li
         const tabs = [
                 "index",
-                "ventas",
+                "comprobantes",
                 "notacredito",
-                "consultaindividual", "consultaglobal",
+                "consultaindividual",
+                "consultaglobal",
+                "cotizacion",
                 "productos",
                 "inventario",
                 "kardexproducto",
@@ -132,16 +135,18 @@
 
         /// Funcion que asigna la clase active
         function setActive(id) {
-                if (id == "tab-ventas" || id == "tab-notacredito" || id == "tab-consultaindividual" || id == "tab-consultaglobal") {
+                if (id == "tab-comprobantes" || id == "tab-notacredito" || id == "tab-consultaindividual" || id == "tab-consultaglobal" || id == "tab-cotizacion") {
                         document.getElementById("treeview-ingresos").setAttribute("class", "treeview is-expanded");
-                        if (id == "tab-ventas") {
-                                document.getElementById("tab-ventas").setAttribute("class", "app-menu__item active");
+                        if (id == "tab-comprobantes") {
+                                document.getElementById("tab-comprobantes").setAttribute("class", "app-menu__item active");
                         } else if (id == "tab-notacredito") {
                                 document.getElementById("tab-notacredito").setAttribute("class", "app-menu__item active");
                         } else if (id == "tab-consultaindividual") {
                                 document.getElementById("tab-consultaindividual").setAttribute("class", "app-menu__item active");
                         } else if (id == "tab-consultaglobal") {
                                 document.getElementById("tab-consultaglobal").setAttribute("class", "app-menu__item active");
+                        } else if (id == "tab-cotizacion") {
+                                document.getElementById("tab-cotizacion").setAttribute("class", "app-menu__item active");
                         }
                 } else if (id == "tab-clientes" || id == "tab-proveedores") {
                         document.getElementById("treeview-contactos").setAttribute("class", "treeview is-expanded");

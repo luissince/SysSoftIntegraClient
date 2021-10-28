@@ -229,8 +229,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         } else {
             print json_encode(array(
                 "estado" => 0,
-                "message" => $result,
-                "precios" => $body["ListaPrecios"]
+                "message" => $result
             ));
         }
     } else if ($body["type"] == "insertsuministro") {

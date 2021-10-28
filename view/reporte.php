@@ -24,7 +24,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         <div class="modal-header">
                             <h4 class="modal-title">
                                 <i class="fa fa-file-excel">
-                                </i> Generar Excel Ventas
+                                </i> Generar Excel Ventas Sunat
                             </h4>
                             <button type="button" class="close" id="btnCloseVentas">
                                 <i class="fa fa-close"></i>
@@ -130,7 +130,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 <div class="card-body text-center">
                                     <img src="./images/reportglobal.png" alt="Vender" width="87">
                                     <p style="margin-top: 10px;font-size: 14pt;color:#C68907;">
-                                        Reporte General de Ventas
+                                        Reporte General de Ventas Sunat
                                     </p>
                                 </div>
                             </div>

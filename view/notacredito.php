@@ -141,19 +141,19 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
                 <div class="row">
                     <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
-                        <label>Fecha de Inicio:</label>
+                        <label><img src="./images/calendar.png" width="22" height="22"> Fecha de Inicio:</label>
                         <div class="form-group">
                             <input class="form-control" type="date" id="txtFechaInicial" />
                         </div>
                     </div>
                     <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
-                        <label>Fecha de Fin:</label>
+                        <label><img src="./images/calendar.png" width="22" height="22"> Fecha de Fin:</label>
                         <div class="form-group">
                             <input class="form-control" type="date" id="txtFechaFinal" />
                         </div>
                     </div>
                     <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
-                        <label>Comprobantes:</label>
+                        <label><img src="./images/igual.png" width="22" height="22"> Comprobantes:</label>
                         <div class="form-group">
                             <select id="cbComprobante" class="form-control">
                                 <option value="0">TODOS</option>
@@ -165,40 +165,21 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 <div class="row">
                     <div class="col-xl-6 col-lg-8 col-md-12 col-sm-12 col-12">
                         <label>Buscar:</label>
-                        <div class="form-group">
+                        <div class="form-group d-flex">
                             <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <button type="button" class="btn btn-danger" id="btnReload"><i class="fa fa-refresh"></i> Recargar</button>
-                                </div>
                                 <input type="text" class="form-control" placeholder="Escribir para filtrar" id="txtSearch">
+                                <div class="input-group-append">
+                                    <button type="button" class="btn btn-success" id="btnBuscar"><i class="fa fa-search"></i> Buscar</button>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
-                        <label>Procesar:</label>
+                    <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+                        <label>Opción:</label>
                         <div class="form-group">
-                            <button class="btn btn-primary" id="btnEnvioMasivo">
-                                <i class="fa fa-arrow-circle-up"></i> Envío masivo
-                            </button>
-                        </div>
-                    </div> -->
-
-                    <div class="col-xl-3 col-lg-12 col-md-12 col-sm-12 col-12">
-                        <label>Paginación:</label>
-                        <div class="form-group" id="ulPagination">
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-double-left"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-left"></i>
-                            </button>
-                            <span class="btn btn-outline-secondary disabled" id="lblPaginacion">0 - 0</span>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-right"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-double-right"></i>
+                            <button class="btn btn-secondary" id="btnReload">
+                                <i class="fa fa-refresh"></i> Recargar
                             </button>
                         </div>
                     </div>
@@ -226,6 +207,27 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
                                 </tbody>
                             </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12 col-sm-12 col-12 text-center">
+                        <label>Paginación</label>
+                        <div class="form-group" id="ulPagination">
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-double-left"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-left"></i>
+                            </button>
+                            <span class="btn btn-outline-secondary disabled" id="lblPaginacion">0 - 0</span>
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-right"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-double-right"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -287,23 +289,35 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     }
                 });
 
-                // $("#btnAnterior").click(function() {
-                //     if (!state) {
-                //         if (paginacion > 1) {
-                //             paginacion--;
-                //             onEventPaginacion();
-                //         }
-                //     }
-                // });
+                $("#btnBuscar").click(function() {
+                    let value = $("#txtSearch").val();
+                    if (event.keyCode !== 9 && event.keyCode !== 18) {
+                        if (value.trim().length != 0) {
+                            if (!state) {
+                                paginacion = 1;
+                                fillNotaCreditoTable(2, value.trim(), "", "");
+                                opcion = 2;
+                            }
+                        }
+                    }
+                });
 
-                // $("#btnSiguiente").click(function() {
-                //     if (!state) {
-                //         if (paginacion < totalPaginacion) {
-                //             paginacion++;
-                //             onEventPaginacion();
-                //         }
-                //     }
-                // });
+                $("#btnBuscar").keypress(function(event) {
+                    if (event.keyCode == 13) {
+                        let value = $("#txtSearch").val();
+                        if (event.keyCode !== 9 && event.keyCode !== 18) {
+                            if (value.trim().length != 0) {
+                                if (!state) {
+                                    paginacion = 1;
+                                    fillNotaCreditoTable(2, value.trim(), "", "");
+                                    opcion = 2;
+                                }
+                            }
+                        }
+                        event.preventDefault();
+                    }
+                });
+
 
                 $("#btnReload").click(function() {
                     loadInitNotaCredito();

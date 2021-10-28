@@ -84,7 +84,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="4" stroke-miterlimit="10"></circle>
                         </svg>
                     </div>
-                    <h4 class="l-text text-center p-10" id="lblTextOverlayProducto">Cargando información...</h4>
+                    <h4 class="l-text text-center p-10 text-white" id="lblTextOverlayProducto">Cargando información...</h4>
                 </div>
 
 
@@ -549,22 +549,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         event.preventDefault();
                     }
                 });
-
-                // $("#txtClave").keypress(function(event) {
-                //     var key = window.Event ? event.which : event.keyCode;
-                //     var c = String.fromCharCode(key);
-                //     if ((c < '0' || c > '9') && (c != '\b') && (c < 'a' || c > 'z') && (c < 'A' || c > 'Z')) {
-                //         event.preventDefault();
-                //     }
-                // });
-
-                // $("#txtClaveAlterna").keypress(function(event) {
-                //     var key = window.Event ? event.which : event.keyCode;
-                //     var c = String.fromCharCode(key);
-                //     if ((c < '0' || c > '9') && (c != '\b') && (c < 'a' || c > 'z') && (c < 'A' || c > 'Z')) {
-                //         event.preventDefault();
-                //     }
-                // });
 
                 $("#cbCosto").change(function() {
                     if ($("#cbCosto").is(":checked")) {
@@ -1037,21 +1021,32 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 loadModalId(mantenimiento, "");
             }
 
-            function loadModalId(idMantenimiento, nombre) {
-                $("#tbLista").empty();
-                $.get("../app/controller/SuministroController.php", {
-                    "type": "detalles",
-                    "mantenimiento": idMantenimiento,
-                    "nombre": nombre
-                }, function(data, status) {
-                    if (status === "success") {
-                        for (let value of data.data) {
-                            $("#tbLista").append('<tr id="' + value.IdDetalle + '" name="' + value.Nombre + '" ondblclick="selectModal(\'' + idMantenimiento + '\',\'' + value.IdDetalle + '\',\'' + value.Nombre + '\')">' +
-                                '    <td tabindex="-1">' + value.Nombre + '</td>' +
-                                '</tr>');
+            async function loadModalId(idMantenimiento, nombre) {
+                try {
+                    let result = await tools.promiseFetchGet("../app/controller/SuministroController.php", {
+                        "type": "detalles",
+                        "mantenimiento": idMantenimiento,
+                        "nombre": nombre
+                    }, function() {
+                        $("#tbLista").empty();
+                    });
+
+                    if (result.estado == 1) {
+                        if (result.data.length == 0) {
+                            $("#tbLista").append(`<tr> <td>No hay datos para mostrar.</td></tr>`);
+                        } else {
+                            for (let value of result.data) {
+                                $("#tbLista").append(`<tr id="${ value.IdDetalle }" name="${ value.Nombre }" ondblclick="selectModal('${ idMantenimiento }','${  value.IdDetalle }','${  value.Nombre }')">
+                                    <td tabindex="-1">${value.Nombre}</td>                        
+                                </tr>`);
+                            }
                         }
+                    } else {
+                        $("#tbLista").append(`<tr> <td>No hay datos para mostrar.</td></tr>`);
                     }
-                });
+                } catch (error) {
+                    $("#tbLista").append(`<tr> <td>No hay datos para mostrar.</td></tr>`);
+                }
             }
 
             function modalDetalle() {
@@ -1095,6 +1090,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         $("#idOpciones").modal("hide");
                         $("#tbLista").empty();
                         index = -1;
+                        event.preventDefault();
                     }
                 });
 
