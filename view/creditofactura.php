@@ -110,7 +110,40 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 <div class="row">
                     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                         <div class="form-group">
-                            <h4> Notas de Crédito Emitidas</h4>
+                            <h4> Resumen de documentos emitidos</h4>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-12">
+                        <div class="form-group">
+                            <img src="./images/sunat_logo.png" width="28" height="28" />
+                            <span class="small">Estados SUNAT:</span>
+                        </div>
+                    </div>
+                    <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-12">
+                        <div class="form-group">
+                            <img src="./images/accept.svg" width="28" height="28" />
+                            <span class="small">Aceptado</span>
+                        </div>
+                    </div>
+                    <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-12">
+                        <div class="form-group">
+                            <img src="./images/unable.svg" width="28" height="28" />
+                            <span class="small"> Rechazado</span>
+                        </div>
+                    </div>
+                    <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-12">
+                        <div class="form-group">
+                            <img src="./images/reuse.svg" width="28" height="28" />
+                            <span class="small"> Pendiente de Envío</span>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                        <div class="form-group">
+                            <img src="./images/error.svg" width="28" height="28" />
+                            <span class="small">Comunicación de Baja (Anulado)</span>
                         </div>
                     </div>
                 </div>
@@ -170,7 +203,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         </div>
                     </div>
 
-                    <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+                    <!-- <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
                         <label>Total de Nota de Crédito:</label>
                         <div class="form-group">
                             <div class="input-group">
@@ -178,7 +211,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 <div class="input-group-append"><span class="input-group-text" id="lblTotalNotaCredito">0.00</span></div>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
 
                 <div class="row">
@@ -196,6 +229,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                         <th style="width:15%;">Detalle</th>
                                         <th style="width:10%;">Estado</th>
                                         <th style="width:10%;">Total</th>
+                                        <th style="width:10%;">Estado SUNAT</th>
+                                        <th style="width:20%;">Observación <br> SUNAT</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tbList">
@@ -394,7 +429,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     },
                     function() {
                         tbList.empty();
-                        tbList.append('<tr><td class="text-center" colspan="9"><img src="./images/loading.gif" id="imgLoad" width="34" height="34" /> <p>Cargando información...</p></td></tr>');
+                        tbList.append('<tr><td class="text-center" colspan="11"><img src="./images/loading.gif" id="imgLoad" width="34" height="34" /> <p>Cargando información...</p></td></tr>');
                         state = true;
                         totalPaginacion = 0;
                         lblTotalNotaCredito.html('0.00');
@@ -403,7 +438,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
                     if (result.estado == 1) {
                         if (result.data.length == 0) {
-                            tbList.append('<tr><td class="text-center" colspan="9"><p>No hay datos para mostrar</p></td></tr>');
+                            tbList.append('<tr><td class="text-center" colspan="11"><p>No hay datos para mostrar</p></td></tr>');
                             ulPagination.html(`
                             <button class="btn btn-outline-secondary">
                                 <i class="fa fa-angle-double-left"></i>
@@ -426,6 +461,14 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
                                 let estado = detalle.Estado == "1" ? '<div class="badge badge-success">REGISTRADO</div>' : '<div class="badge badge-danger">ANULADO</div>';
 
+                                let estadosunat = detalle.Xmlsunat === "" ?
+                                    '<button class="btn btn-secondary btn-sm" onclick="firmarXml(\'' + detalle.IdNotaCredito + '\')"><img src="./images/reuse.svg" width="26"/></button>' :
+                                    detalle.Xmlsunat === "0" ?
+                                    '<button class="btn btn-secondary btn-sm"><img src="./images/accept.svg" width="26" /></button>' :
+                                    '<button class="btn btn-secondary btn-sm" onclick="firmarXml(\'' + detalle.IdNotaCredito + '\')"><img src="./images/unable.svg" width="26" /></button>';
+
+                                let descripcion = '<p class="recortar-texto">' + (detalle.Xmldescripcion === "" ? "Por Generar Xml" : limitar_cadena(detalle.Xmldescripcion, 90, '...')) + '</p>';
+
                                 tbList.append('<tr>' +
                                     '<td class="text-center">' + detalle.Id + '</td>' +
                                     '<td class="text-center">' + pdf + '</td>' +
@@ -436,6 +479,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                     '<td class="text-left">Comprobante Editado' + '<br>' + detalle.Serie + '-' + detalle.Numeracion + '</td>' +
                                     '<td class="text-center">' + estado + '</td>' +
                                     '<td class="text-right">' + detalle.Simbolo + " " + tools.formatMoney(detalle.Total) + '</td>' +
+                                    '<td class="text-center">' + estadosunat + '</td>' +
+                                    '<td class="text-left">' + descripcion + '</td>' +
                                     '</tr>');
                             }
                             lblTotalNotaCredito.html(tools.formatMoney(result.suma));
@@ -469,7 +514,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             state = false;
                         }
                     } else {
-                        tbList.append('<tr><td class="text-center" colspan="9"><p>' + result.message + '</p></td></tr>');
+                        tbList.append('<tr><td class="text-center" colspan="11"><p>' + result.message + '</p></td></tr>');
                         ulPagination.html(`
                             <button class="btn btn-outline-secondary">
                                 <i class="fa fa-angle-double-left"></i>
@@ -488,7 +533,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     }
                 }).catch(error => {
                     tbList.empty();
-                    tbList.append('<tr><td class="text-center" colspan="9"><p>' + error.responseText + '</p></td></tr>');
+                    tbList.append('<tr><td class="text-center" colspan="11"><p>' + error.responseText + '</p></td></tr>');
                     ulPagination.html(`
                             <button class="btn btn-outline-secondary">
                                 <i class="fa fa-angle-double-left"></i>
@@ -504,6 +549,40 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 <i class="fa fa-angle-double-right"></i>
                             </button>`);
                     state = false;
+                });
+            }
+
+            function firmarXml(idNotaCredito) {
+                tools.ModalDialog("Nota de Crédito", "¿Está seguro de enviar el documento?", function(value) {
+                    if (value == true) {
+
+                        $.ajax({
+                            url: "../app/examples/notacredito.php",
+                            method: "GET",
+                            data: {
+                                "idNotaCredito": idNotaCredito
+                            },
+                            beforeSend: function() {
+                                tools.ModalAlertInfo("Ventas", "Firmando xml y enviando a la sunat.");
+                            },
+                            success: function(result) {
+                                let object = result;
+                                if (object.state === true) {
+                                    if (object.accept === true) {
+                                        tools.ModalAlertSuccess("Ventas", "Resultado: Código " + object.code + " " + object.description);
+                                    } else {
+                                        tools.ModalAlertWarning("Ventas", "Resultado: Código " + object.code + " " + object.description);
+                                    }
+                                } else {
+                                    tools.ModalAlertWarning("Ventas", "Resultado: Código " + object.code + " " + object.description);
+                                }
+                            },
+                            error: function(error) {
+                                tools.ModalAlertError("Ventas", "Error en el momento de firmar el xml: " + error.responseText);
+                            }
+                        });
+
+                    }
                 });
             }
 

@@ -53,20 +53,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             <input type="text" class="form-control" placeholder="Descripción del producto" class="input-primary" id="txtDescripcionProducto">
                         </div>
                     </div>
-                    <div class="col-xl-3 col-lg-12 col-md-12 col-sm-12 col-12">
-                        <label>Paginación:</label>
-                        <div class="form-group">
-                            <button class="btn btn-primary" id="btnAnterior">
-                                <i class="fa fa-arrow-circle-left"></i>
-                            </button>
-                            <span class="m-2" id="lblPaginaActual">0</span>
-                            <span class="m-2">de</span>
-                            <span class="m-2" id="lblPaginaSiguiente">0</span>
-                            <button class="btn btn-primary" id="btnSiguiente">
-                                <i class="fa fa-arrow-circle-right"></i>
-                            </button>
-                        </div>
-                    </div>
                 </div>
 
                 <div class="row">
@@ -94,6 +80,27 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     </div>
                 </div>
 
+                <div class="row">
+                    <div class="col-md-12 col-sm-12 col-12 text-center">
+                        <label>Paginación</label>
+                        <div class="form-group" id="ulPagination">
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-double-left"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-left"></i>
+                            </button>
+                            <span class="btn btn-outline-secondary disabled" id="lblPaginacion">0 - 0</span>
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-right"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-double-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </main>
         <?php include "./layout/footer.php"; ?>
@@ -106,29 +113,11 @@ if (!isset($_SESSION['IdEmpleado'])) {
             let totalPaginacion = 0;
             let filasPorPagina = 20;
             let tbList = $("#tbList");
-            let lblPaginaActual = $("#lblPaginaActual");
-            let lblPaginaSiguiente = $("#lblPaginaSiguiente");
+
+            let ulPagination = $("#ulPagination");
 
             $(document).ready(function() {
                 loadInitProductos();
-
-                $("#btnAnterior").click(function() {
-                    if (!state) {
-                        if (paginacion > 1) {
-                            paginacion--;
-                            onEventPaginacion();
-                        }
-                    }
-                });
-
-                $("#btnSiguiente").click(function() {
-                    if (!state) {
-                        if (paginacion < totalPaginacion) {
-                            paginacion++;
-                            onEventPaginacion();
-                        }
-                    }
-                });
 
                 $("#txtClaveProducto").keyup(function(event) {
                     if (event.keyCode !== 9 && event.keyCode !== 18) {
@@ -192,7 +181,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 }
             }
 
-
             function loadInitProductos() {
                 if (!state) {
                     paginacion = 1;
@@ -223,8 +211,20 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
                         if (object.data.length == 0) {
                             tbList.append('<tr><td class="text-center" colspan="10"><p>No hay datos para mostrar.</p></td></tr>');
-                            lblPaginaActual.html(0);
-                            lblPaginaSiguiente.html(0);
+                            ulPagination.html(`
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-double-left"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-left"></i>
+                            </button>
+                            <span class="btn btn-outline-secondary disabled" id="lblPaginacion">0 - 0</span>
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-right"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-double-right"></i>
+                            </button>`);
                             state = false;
                         } else {
 
@@ -253,24 +253,109 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                     '</td>' +
                                     '</tr>');
                             }
+
                             totalPaginacion = parseInt(Math.ceil((parseFloat(object.total) / filasPorPagina)));
-                            lblPaginaActual.html(paginacion);
-                            lblPaginaSiguiente.html(totalPaginacion);
+
+                            let i = 1;
+                            let range = [];
+                            while (i <= totalPaginacion) {
+                                range.push(i);
+                                i++;
+                            }
+
+                            let min = Math.min.apply(null, range);
+                            let max = Math.max.apply(null, range);
+
+                            let paginacionHtml = `
+                            <button class="btn btn-outline-secondary" onclick="onEventPaginacionInicio(${min})">
+                                <i class="fa fa-angle-double-left"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary" onclick="onEventAnteriorPaginacion()">
+                                <i class="fa fa-angle-left"></i>
+                            </button>
+                            <span class="btn btn-outline-secondary disabled" id="lblPaginacion">${paginacion} - ${totalPaginacion}</span>
+                            <button class="btn btn-outline-secondary" onclick="onEventSiguientePaginacion()">
+                                <i class="fa fa-angle-right"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary" onclick="onEventPaginacionFinal(${max})">
+                                <i class="fa fa-angle-double-right"></i>
+                            </button>`;
+                            ulPagination.html(paginacionHtml);
                             state = false;
                         }
                     } else {
                         tbList.empty();
                         tbList.append('<tr><td class="text-center" colspan="10"><p>' + object.message + '</p></td></tr>');
-                        lblPaginaActual.html("0");
-                        lblPaginaSiguiente.html("0");
+                        ulPagination.html(`
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-double-left"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-left"></i>
+                            </button>
+                            <span class="btn btn-outline-secondary disabled" id="lblPaginacion">0 - 0</span>
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-right"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-double-right"></i>
+                            </button>`);
                         state = false;
                     }
                 } catch (error) {
                     tbList.empty();
                     tbList.append('<tr><td class="text-center" colspan="10"><p>' + error.responseText + '</p></td></tr>');
-                    lblPaginaActual.html("0");
-                    lblPaginaSiguiente.html("0");
+                    ulPagination.html(`
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-double-left"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-left"></i>
+                            </button>
+                            <span class="btn btn-outline-secondary disabled" id="lblPaginacion">0 - 0</span>
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-right"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-double-right"></i>
+                            </button>`);
                     state = false;
+                }
+            }
+
+            function onEventPaginacionInicio(value) {
+                if (!state) {
+                    if (value !== paginacion) {
+                        paginacion = value;
+                        onEventPaginacion();
+                    }
+                }
+            }
+
+            function onEventPaginacionFinal(value) {
+                if (!state) {
+                    if (value !== paginacion) {
+                        paginacion = value;
+                        onEventPaginacion();
+                    }
+                }
+            }
+
+            function onEventAnteriorPaginacion() {
+                if (!state) {
+                    if (paginacion > 1) {
+                        paginacion--;
+                        onEventPaginacion();
+                    }
+                }
+            }
+
+            function onEventSiguientePaginacion() {
+                if (!state) {
+                    if (paginacion < totalPaginacion) {
+                        paginacion++;
+                        onEventPaginacion();
+                    }
                 }
             }
 

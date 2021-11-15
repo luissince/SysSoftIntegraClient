@@ -17,9 +17,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         $fechaFinal = $_GET['fechaFinal'];
         $comprobante = $_GET['comprobante'];
         $estado = $_GET['estado'];
+        $facturacion = $_GET['facturacion'];
         $posicionPagina = $_GET['posicionPagina'];
         $filasPorPagina = $_GET['filasPorPagina'];
-        $ventas = VentasADO::ListVentas($opcion, $busqueda, $fechaInicial, $fechaFinal, intval($comprobante), intval($estado), $posicionPagina, $filasPorPagina);
+        $ventas = VentasADO::ListVentas($opcion, $busqueda, $fechaInicial, $fechaFinal, intval($comprobante), intval($estado), boolval($facturacion), $posicionPagina, $filasPorPagina);
         if (is_array($ventas)) {
             print json_encode(array(
                 "estado" => 1,
@@ -81,7 +82,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             print json_encode(array(
                 "estado" => 1,
                 "data" => $notacredito[0],
-                "total" => $notacredito[1]
+                "total" => $notacredito[1],
+                "suma" => $notacredito[2]
             ));
         } else {
             print json_encode(array(

@@ -95,7 +95,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
         <main class="app-content">
 
             <div class="app-title">
-                <h1><i class="fa fa-folder"></i> Comprobantes <small>Lista</small></h1>
+                <h1><i class="fa fa-folder"></i> Boletas/facturas <small>Lista</small></h1>
             </div>
 
             <div class="tile mb-4">
@@ -488,6 +488,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         "fechaFinal": fechaFinal,
                         "comprobante": comprobante,
                         "estado": estado,
+                        "facturacion": 1,
                         "posicionPagina": ((paginacion - 1) * filasPorPagina),
                         "filasPorPagina": filasPorPagina
                     },

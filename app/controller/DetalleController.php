@@ -10,31 +10,9 @@ require __DIR__ . './../src/autoload.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     if ($_GET["type"] == "detailname") {
-        $result = DetalleADO::GetDetailIdName(array($_GET["value1"], $_GET["value2"], $_GET["value3"]));
-        if (is_array($result)) {
-            print json_encode(array(
-                "estado" => 1,
-                "data" => $result,
-            ));
-        } else {
-            print json_encode(array(
-                "estado" => 0,
-                "message" => $result,
-            ));
-        }
+        print json_encode(DetalleADO::GetDetailIdName(array($_GET["value1"], $_GET["value2"], $_GET["value3"])));
     } else if ($_GET["type"] == "detailid") {
-        $result = DetalleADO::GetDetailId($_GET["value"]);
-        if (is_array($result)) {
-            print json_encode(array(
-                "estado" => 1,
-                "data" => $result,
-            ));
-        } else {
-            print json_encode(array(
-                "estado" => 0,
-                "message" => $result,
-            ));
-        }
+        print json_encode(DetalleADO::GetDetailId($_GET["value"]));
     }
 } else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }

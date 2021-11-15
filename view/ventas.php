@@ -16,6 +16,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
         <?php include "./layout/header.php"; ?>
         <!-- Sidebar menu-->
         <?php include "./layout/menu.php"; ?>
+
         <!-- Modal del detalle de ingreso -->
         <div class="row">
             <div class="modal fade" id="id-modal-productos" data-backdrop="static">
@@ -24,7 +25,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
                         <div class="modal-header">
                             <h4 class="modal-title"><i class="fa fa-indent">
-                                </i> Detalle de la nota de crédito</h4>
+                                </i> Detalle de la venta</h4>
                             <button type="button" class="close" id="btnCloseModal">
                                 <i class="fa fa-close"></i>
                             </button>
@@ -94,23 +95,24 @@ if (!isset($_SESSION['IdEmpleado'])) {
         <main class="app-content">
 
             <div class="app-title">
-                <h1><i class="fa fa-folder"></i> Nota de Crédito <small>Lista</small></h1>
+                <h1><i class="fa fa-folder"></i> Ventas <small>Lista</small></h1>
             </div>
 
             <div class="tile mb-4">
-                <div class="overlay p-5" id="divOverlayNotaCredito">
+
+                <div class="overlay p-5" id="divOverlayVentas">
                     <div class="m-loader mr-4">
                         <svg class="m-circular" viewBox="25 25 50 50">
                             <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="4" stroke-miterlimit="10"></circle>
                         </svg>
                     </div>
-                    <h4 class="l-text text-center text-white p-10" id="lblTextOverlayNotaCredito">Cargando información...</h4>
+                    <h4 class="l-text text-center text-white p-10" id="lblTextOverlayVentas">Cargando información...</h4>
                 </div>
 
                 <div class="row">
-                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
                         <div class="form-group">
-                            <h4> Notas de Crédito Emitidas</h4>
+                            <h4> Lista de Ventas</h4>
                         </div>
                     </div>
                 </div>
@@ -141,8 +143,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         <div class="form-group">
                             <select id="cbEstado" class="form-control">
                                 <option value="0">TODOS</option>
-                                <option value="1">REGISTRADO</option>
-                                <option value="2">ANULADO</option>
                             </select>
                         </div>
                     </div>
@@ -155,7 +155,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             <div class="input-group">
                                 <input type="text" class="form-control" placeholder="Escribir para filtrar" id="txtSearch">
                                 <div class="input-group-append">
-                                    <button type="button" class="btn btn-success" id="btnBuscar"><i class="fa fa-search"></i> Buscar</button>
+                                    <button class="btn btn-success" type="button" id="btnBuscar">Buscar</button>
                                 </div>
                             </div>
                         </div>
@@ -171,29 +171,30 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     </div>
 
                     <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
-                        <label>Total de Nota de Crédito:</label>
+                        <label>Total de Ventas:</label>
                         <div class="form-group">
                             <div class="input-group">
                                 <div class="input-group-prepend"><span class="input-group-text">S/</span></div>
-                                <div class="input-group-append"><span class="input-group-text" id="lblTotalNotaCredito">0.00</span></div>
+                                <div class="input-group-append"><span class="input-group-text" id="lblTotalVenta">0.00</span></div>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="row">
-                    <div class="col-md-12 col-sm-12 col-xs-12">
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                         <div class="table-responsive">
-                            <table class="table table-striped table-hover">
+                            <table class="table table-hover table-striped">
                                 <thead class="table-header-background">
                                     <tr>
                                         <th style="width:5%;">#</th>
-                                        <th style="width:5%;">Pdf</th>
+                                        <th style="width:5%;">PDF</th>
                                         <th style="width:5%;">Detalle</th>
                                         <th style="width:10%;">Fecha</th>
-                                        <th style="width:10%;">Comprobante</th>
+                                        <th style="width:15%;">Comprobante</th>
                                         <th style="width:15%;">Cliente</th>
-                                        <th style="width:15%;">Detalle</th>
+                                        <th style="width:10%;">Tipo</th>
+                                        <th style="width:10%;">Metodo</th>
                                         <th style="width:10%;">Estado</th>
                                         <th style="width:10%;">Total</th>
                                     </tr>
@@ -238,10 +239,12 @@ if (!isset($_SESSION['IdEmpleado'])) {
             let opcion = 0;
             let totalPaginacion = 0;
             let filasPorPagina = 10;
-            let tbList = $("#tbList");
+            let tbody = $("#tbList");
+            let arrayVentas = [];
+
 
             let ulPagination = $("#ulPagination");
-            let lblTotalNotaCredito = $("#lblTotalNotaCredito");
+            let lblTotalVenta = $("#lblTotalVenta");
 
             $(document).ready(function() {
 
@@ -249,26 +252,50 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 $("#txtFechaFinal").val(tools.getCurrentDate());
 
                 $("#txtFechaInicial").on("change", function() {
-                    var fechaInicial = $("#txtFechaInicial").val();
-                    var fechaFinal = $("#txtFechaFinal").val();
-                    if (tools.validateDate(fechaInicial) && tools.validateDate(fechaFinal)) {
-                        if (!state) {
-                            paginacion = 1;
-                            fillNotaCreditoTable(1, "", fechaInicial, fechaFinal);
-                            opcion = 1;
-                        }
+                    let fechaInicial = $("#txtFechaInicial").val();
+                    let fechaFinal = $("#txtFechaFinal").val();
+                    let comprobante = $("#cbComprobante").val();
+                    let estadoVenta = $("#cbEstado").val();
+                    if (!state) {
+                        paginacion = 1;
+                        fillVentasTable(1, "", fechaInicial, fechaFinal, comprobante, estadoVenta);
+                        opcion = 1;
                     }
                 });
 
                 $("#txtFechaFinal").on("change", function() {
-                    var fechaInicial = $("#txtFechaInicial").val();
-                    var fechaFinal = $("#txtFechaFinal").val();
-                    if (tools.validateDate(fechaInicial) && tools.validateDate(fechaFinal)) {
-                        if (!state) {
-                            paginacion = 1;
-                            fillNotaCreditoTable(1, "", fechaInicial, fechaFinal);
-                            opcion = 1;
-                        }
+                    let fechaInicial = $("#txtFechaInicial").val();
+                    let fechaFinal = $("#txtFechaFinal").val();
+                    let comprobante = $("#cbComprobante").val();
+                    let estadoVenta = $("#cbEstado").val();
+                    if (!state) {
+                        paginacion = 1;
+                        fillVentasTable(1, "", fechaInicial, fechaFinal, comprobante, estadoVenta);
+                        opcion = 1;
+                    }
+                });
+
+                $("#cbComprobante").change(function(event) {
+                    let fechaInicial = $("#txtFechaInicial").val();
+                    let fechaFinal = $("#txtFechaFinal").val();
+                    let comprobante = $("#cbComprobante").val();
+                    let estadoVenta = $("#cbEstado").val();
+                    if (!state) {
+                        paginacion = 1;
+                        fillVentasTable(1, "", fechaInicial, fechaFinal, comprobante, estadoVenta);
+                        opcion = 1;
+                    }
+                });
+
+                $("#cbEstado").change(function() {
+                    let fechaInicial = $("#txtFechaInicial").val();
+                    let fechaFinal = $("#txtFechaFinal").val();
+                    let comprobante = $("#cbComprobante").val();
+                    let estadoVenta = $("#cbEstado").val();
+                    if (!state) {
+                        paginacion = 1;
+                        fillVentasTable(1, "", fechaInicial, fechaFinal, comprobante, estadoVenta);
+                        opcion = 1;
                     }
                 });
 
@@ -278,7 +305,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         if (value.trim().length != 0) {
                             if (!state) {
                                 paginacion = 1;
-                                fillNotaCreditoTable(2, value.trim(), "", "");
+                                fillVentasTable(2, value.trim(), "", "", 0, 0);
                                 opcion = 2;
                             }
                         }
@@ -291,7 +318,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         if (value.trim().length != 0) {
                             if (!state) {
                                 paginacion = 1;
-                                fillNotaCreditoTable(2, value.trim(), "", "");
+                                fillVentasTable(2, value.trim(), "", "", 0, 0);
                                 opcion = 2;
                             }
                         }
@@ -305,7 +332,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             if (value.trim().length != 0) {
                                 if (!state) {
                                     paginacion = 1;
-                                    fillNotaCreditoTable(2, value.trim(), "", "");
+                                    fillVentasTable(2, value.trim(), "", "", 0, 0);
                                     opcion = 2;
                                 }
                             }
@@ -314,14 +341,13 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     }
                 });
 
-
                 $("#btnReload").click(function() {
-                    loadInitNotaCredito();
+                    loadInitVentas();
                 });
 
                 $("#btnReload").keypress(function(event) {
                     if (event.keyCode === 13) {
-                        loadInitNotaCredito();
+                        loadInitVentas();
                     }
                     event.preventDefault();
                 });
@@ -331,14 +357,25 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
             async function loadDataInit() {
                 try {
+                    $("#cbEstado").empty();
                     $("#cbComprobante").empty();
+
                     let promiseFetchComprobante = tools.promiseFetchGet(
                         "../app/controller/TipoDocumentoController.php", {
-                            "type": "GetDocumentoCombBoxNotaCredito"
+                            "type": "getdocumentocomboboxventas"
                         }
                     );
 
-                    let promise = await Promise.all([promiseFetchComprobante]);
+                    let promiseFetchEstado = tools.promiseFetchGet(
+                        "../app/controller/DetalleController.php", {
+                            "type": "detailname",
+                            "value1": "2",
+                            "value2": "0009",
+                            "value3": "",
+                        }
+                    );
+
+                    let promise = await Promise.all([promiseFetchComprobante, promiseFetchEstado]);
                     let result = await promise;
 
                     let comprobante = result[0];
@@ -350,10 +387,21 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     } else {
                         $("#cbComprobante").append('<option value="0">TODOS</option>');
                     }
-                    $("#divOverlayNotaCredito").addClass('d-none');
-                    loadInitNotaCredito();
+
+                    let estado = result[1];
+                    if (estado.estado === 1) {
+                        $("#cbEstado").append('<option value="0">TODOS</option>');
+                        for (let value of estado.data) {
+                            $("#cbEstado").append('<option value="' + value.IdDetalle + '">' + value.Nombre + ' </option>');
+                        }
+                    } else {
+                        $("#cbEstado").append('<option value="0">TODOS</option>');
+                    }
+
+                    $("#divOverlayVentas").addClass("d-none");
+                    loadInitVentas();
                 } catch (error) {
-                    $("#lblTextOverlayNotaCredito").html(error.message);
+                    $("#lblTextOverlayVentas").html(error.message);
                 }
             }
 
@@ -361,49 +409,54 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 let fechaInicial = $("#txtFechaInicial").val();
                 let fechaFinal = $("#txtFechaFinal").val();
                 let value = $("#txtSearch").val();
+                let comprobante = $('#cbComprobante').children('option').length > 0 && $("#cbComprobante").val() != "" ? $("#cbComprobante").val() : 0;
+                let estadoVenta = $('#cbEstado').children('option').length > 0 && $("#cbEstado").val() != "" ? $("#cbEstado").val() : 0;
                 switch (opcion) {
                     case 1:
-                        fillNotaCreditoTable(1, "", fechaInicial, fechaFinal);
+                        fillVentasTable(1, "", fechaInicial, fechaFinal, comprobante, estadoVenta);
                         break;
                     case 2:
-                        fillNotaCreditoTable(2, value.trim(), "", "");
+                        fillVentasTable(2, value.trim(), "", "", 0, 0);
                         break;
                 }
             }
 
-            function loadInitNotaCredito() {
-                let fechaInicial = $("#txtFechaInicial").val();
-                let fechaFinal = $("#txtFechaFinal").val();
+            function loadInitVentas() {
                 if (!state) {
                     paginacion = 1;
-                    fillNotaCreditoTable(1, "", fechaInicial, fechaFinal);
+                    fillVentasTable(1, "", $("#txtFechaInicial").val(), $("#txtFechaFinal").val(), 0, 0);
                     opcion = 1;
                 }
             }
 
-            function fillNotaCreditoTable(opcion, search, fechaInicial, fechaFinal) {
+            function fillVentasTable(opcion, busqueda, fechaInicial, fechaFinal, comprobante, estado) {
                 tools.promiseFetchGet(
                     "../app/controller/VentaController.php", {
-                        "type": "listaNotaCredito",
+                        "type": "venta",
                         "opcion": opcion,
-                        "search": search,
+                        "busqueda": busqueda,
                         "fechaInicial": fechaInicial,
                         "fechaFinal": fechaFinal,
+                        "comprobante": comprobante,
+                        "estado": estado,
+                        "facturacion": 0,
                         "posicionPagina": ((paginacion - 1) * filasPorPagina),
                         "filasPorPagina": filasPorPagina
                     },
                     function() {
-                        tbList.empty();
-                        tbList.append('<tr><td class="text-center" colspan="9"><img src="./images/loading.gif" id="imgLoad" width="34" height="34" /> <p>Cargando información...</p></td></tr>');
+                        tbody.empty();
+                        tbody.append('<tr><td class="text-center" colspan="10"><img src="./images/loading.gif" id="imgLoad" width="34" height="34" /> <p>Cargando información...</p></td></tr>');
                         state = true;
                         totalPaginacion = 0;
-                        lblTotalNotaCredito.html('0.00');
-                    }).then(result => {
-                    tbList.empty();
-
-                    if (result.estado == 1) {
-                        if (result.data.length == 0) {
-                            tbList.append('<tr><td class="text-center" colspan="9"><p>No hay datos para mostrar</p></td></tr>');
+                        arrayVentas = [];
+                    }
+                ).then(result => {
+                    let object = result;
+                    if (object.estado === 1) {
+                        arrayVentas = object.data;
+                        tbody.empty();
+                        if (arrayVentas.length == 0) {
+                            tbody.append('<tr><td class="text-center" colspan="10"><p>No hay datos para mostrar.</p></td></tr>');
                             ulPagination.html(`
                             <button class="btn btn-outline-secondary">
                                 <i class="fa fa-angle-double-left"></i>
@@ -418,29 +471,49 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             <button class="btn btn-outline-secondary">
                                 <i class="fa fa-angle-double-right"></i>
                             </button>`);
+                            lblTotalVenta.html(tools.formatMoney(parseFloat(object.suma)));
                             state = false;
                         } else {
-                            for (let detalle of result.data) {
-                                let pdf = '<button class="btn btn-secondary btn-sm"  onclick="openPdf(\'' + detalle.IdNotaCredito + '\')"><img src="./images/pdf.svg" width="26" /> </button>';
-                                let ver = '<button class="btn btn-secondary btn-sm" onclick="opeModalDetalleIngreso(\'' + detalle.IdVenta + '\')"><img src="./images/file.svg" width="26" /></button>';
+                            for (let venta of arrayVentas) {
+                                let pdf = '<button class="btn btn-secondary btn-sm"  onclick="openPdf(\'' + venta.IdVenta + '\')"><img src="./images/pdf.svg" width="26" /> </button>';
+                                let ver = '<button class="btn btn-secondary btn-sm" onclick="opeModalDetalleIngreso(\'' + venta.IdVenta + '\')"><img src="./images/file.svg" width="26" /></button>';
 
-                                let estado = detalle.Estado == "1" ? '<div class="badge badge-success">REGISTRADO</div>' : '<div class="badge badge-danger">ANULADO</div>';
+                                let datetime = tools.getDateForma(venta.FechaVenta) + "<br>" + tools.getTimeForma24(venta.HoraVenta, true);
+                                let comprobante = venta.Comprobante + " <br/>" + (venta.Serie + "-" + venta.Numeracion) + (venta.IdNotaCredito == 1 ? " <span class='text-danger'>" + "Modificado(" + venta.SerieNotaCredito + "-" + venta.NumeracionNotaCredito + ")</span>" : "");
+                                let cliente = venta.DocumentoCliente + "<br>" + venta.Cliente;
+                                let estado = "";
 
-                                tbList.append('<tr>' +
-                                    '<td class="text-center">' + detalle.Id + '</td>' +
-                                    '<td class="text-center">' + pdf + '</td>' +
-                                    '<td class="text-center">' + ver + '</td>' +
-                                    '<td class="text-left">' + tools.getDateForma(detalle.FechaNotaCredito) + '<br>' + tools.getTimeForma24(detalle.HoraNotaCredito) + '</td>' +
-                                    '<td class="text-left">' + detalle.SerieNotaCredito + '-' + detalle.NumeracionNotaCredito + '</td>' +
-                                    '<td class="text-left">' + detalle.NumeroDocumento + '<br>' + detalle.Informacion + '</td>' +
-                                    '<td class="text-left">Comprobante Editado' + '<br>' + detalle.Serie + '-' + detalle.Numeracion + '</td>' +
-                                    '<td class="text-center">' + estado + '</td>' +
-                                    '<td class="text-right">' + detalle.Simbolo + " " + tools.formatMoney(detalle.Total) + '</td>' +
-                                    '</tr>');
+                                if (venta.Estado == 3) {
+                                    estado = '<div class="badge badge-danger">ANULADO</div>';
+                                } else if (venta.Tipo == 2 && venta.Estado == 2) {
+                                    estado = '<div class="badge badge-warning">POR COBRAR</div>';
+                                } else if (venta.Tipo == 1 && venta.Estado == 4) {
+                                    estado = '<div class="badge badge-primary">POR LLEVAR</div>';
+                                } else {
+                                    estado = '<div class="badge badge-success">COBRADO</div>';
+                                }
+
+                                let tipo = venta.Tipo == "1" ? "CONTADO" : "CRÉDITO";
+
+                                let total = venta.Simbolo + " " + tools.formatMoney(venta.Total);
+
+
+                                tbody.append('<tr>' +
+                                    ' <td class="text-center">' + venta.id + '</td >' +
+                                    ' <td class="text-center">' + pdf + '</td>' +
+                                    ' <td class="text-centerr">' + ver + '</td>' +
+                                    ' <td class="text-left">' + datetime + '</td>' +
+                                    ' <td class="text-left">' + comprobante + '</td>' +
+                                    ' <td class="text-left">' + cliente + '</td>' +
+                                    ' <td class="text-center">' + tipo + '</td>' +
+                                    ' <td class="text-center">' + venta.FormaName + '</td>' +
+                                    ' <td class="text-center">' + estado + '</td>' +
+                                    ' <td class="text-right">' + total + '</td>' +
+                                    '</tr >');
                             }
-                            lblTotalNotaCredito.html(tools.formatMoney(result.suma));
 
-                            totalPaginacion = parseInt(Math.ceil((parseFloat(result.total) / filasPorPagina)));
+                            totalPaginacion = parseInt(Math.ceil((parseFloat(object.total) / filasPorPagina)));
+
                             let i = 1;
                             let range = [];
                             while (i <= totalPaginacion) {
@@ -450,6 +523,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
                             let min = Math.min.apply(null, range);
                             let max = Math.max.apply(null, range);
+
+                            lblTotalVenta.html(tools.formatMoney(parseFloat(object.suma)));
 
                             let paginacionHtml = `
                             <button class="btn btn-outline-secondary" onclick="onEventPaginacionInicio(${min})">
@@ -465,11 +540,40 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             <button class="btn btn-outline-secondary" onclick="onEventPaginacionFinal(${max})">
                                 <i class="fa fa-angle-double-right"></i>
                             </button>`;
+                            // range.forEach(e => {
+                            //     if (e === min || e === max) {
+                            //         if (e === min) {
+                            //             paginacionHtml += `                                         
+                            //                 <li class="page-item">
+                            //                     <button class="page-link" onclick="onEventAnteriorPaginacion()"><i class="fa fa-angle-double-left "></i></button>
+                            //                 </li> 
+                            //                 <li class="page-item ${e == paginacion?"active":""}">
+                            //                         <button class="page-link" onclick="onEventPaginacionInicio(${e})">${e}</button>
+                            //                 </li>
+                            //                 `;
+                            //         } else {
+                            //             paginacionHtml += `                                            
+                            //                 <li class="page-item ${e == paginacion?"active":""} ">
+                            //                         <button class="page-link" onclick="onEventPaginacionFinal(${e})">${e}</button>
+                            //                 </li>      
+                            //                 <li class="page-item">
+                            //                     <button class="page-link" onclick="onEventSiguientePaginacion()"><i class="fa fa-angle-double-right "></i></button>
+                            //                 </li>                                  
+                            //                 `;
+                            //         }
+                            //     } else {
+                            //         paginacionHtml += `
+                            //                 <li class="page-item ${e == paginacion?"active":""}">
+                            //                     <button class="page-link">${e}</button>
+                            //                 </li>`;
+                            //     }
+                            // });
+
                             ulPagination.html(paginacionHtml);
                             state = false;
                         }
                     } else {
-                        tbList.append('<tr><td class="text-center" colspan="9"><p>' + result.message + '</p></td></tr>');
+                        tbody.empty();
                         ulPagination.html(`
                             <button class="btn btn-outline-secondary">
                                 <i class="fa fa-angle-double-left"></i>
@@ -484,11 +588,12 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             <button class="btn btn-outline-secondary">
                                 <i class="fa fa-angle-double-right"></i>
                             </button>`);
+                        tbody.append('<tr><td class="text-center" colspan="10"><p>' + object.message + '</p></td></tr>');
+                        lblTotalVenta.html(tools.formatMoney(parseFloat(0)));
                         state = false;
                     }
                 }).catch(error => {
-                    tbList.empty();
-                    tbList.append('<tr><td class="text-center" colspan="9"><p>' + error.responseText + '</p></td></tr>');
+                    tbody.empty();
                     ulPagination.html(`
                             <button class="btn btn-outline-secondary">
                                 <i class="fa fa-angle-double-left"></i>
@@ -503,6 +608,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             <button class="btn btn-outline-secondary">
                                 <i class="fa fa-angle-double-right"></i>
                             </button>`);
+                    tbody.append('<tr><td class="text-center" colspan="10"><p>' + error.responseText + '</p></td></tr>');
+                    lblTotalVenta.html(tools.formatMoney(parseFloat(0)));
                     state = false;
                 });
             }
@@ -583,16 +690,15 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 });
             }
 
+            function openPdf(idVenta) {
+                window.open("../app/sunat/pdfventas.php?idVenta=" + idVenta, "_blank");
+            }
+
             function limitar_cadena(cadena, limite, sufijo) {
                 if (cadena.length > limite) {
                     return cadena.substr(0, limite) + sufijo;
                 }
                 return cadena;
-            }
-
-
-            function openPdf(idNotaCredito) {
-                window.open("../app/sunat/pdfnotacredito.php?idNotaCredito=" + idNotaCredito, "_blank");
             }
 
             function onEventPaginacionInicio(value) {

@@ -20,11 +20,22 @@
 
                 <li class="treeview" id="treeview-ingresos"><a class="app-menu__item" href="#" data-toggle="treeview"><i class="app-menu__icon fa fa-external-link-square" style="transform: rotate(180deg) translateX(12px);"></i><span class="app-menu__label">Ingresos</span><i class="treeview-indicator fa fa-angle-right"></i></a>
                         <ul class="treeview-menu">
-                                <li><a class="app-menu__item" id="tab-comprobantes" href="comprobantes.php"><i class="app-menu__icon fa fa-circle-o"></i><span class="app-menu__label">Comprobantes</span></a></li>
-                                <li><a class="app-menu__item" id="tab-notacredito" href="notacredito.php"><i class="app-menu__icon fa fa-circle-o"></i><span class="app-menu__label">Nota de Crédito</span></a></li>
+                                <li><a class="app-menu__item" id="tab-ventas" href="ventas.php"><i class="app-menu__icon fa fa-circle-o"></i><span class="app-menu__label">Ventas</span></a></li>
+                                <li><a class="app-menu__item" id="tab-pagosrecibidos" href="#"><i class="app-menu__icon fa fa-circle-o"></i><span class="app-menu__label">Pagos recibidos</span></a></li>
+                                <li><a class="app-menu__item" id="tab-notacredito" href="notacredito.php"><i class="app-menu__icon fa fa-circle-o"></i><span class="app-menu__label">Nota de crédito</span></a></li>
+                                <li><a class="app-menu__item" id="tab-guiaremision" href="#"><i class="app-menu__icon fa fa-circle-o"></i><span class="app-menu__label">Guía remisión</span></a></li>
+                                <li><a class="app-menu__item" id="tab-cotizacion" href="cotizacion.php"><i class="app-menu__icon fa fa-circle-o"></i><span class="app-menu__label">Cotización</span></a></li>
+                        </ul>
+                </li>
+
+                <li class="treeview" id="treeview-facturacion"><a class="app-menu__item" href="#" data-toggle="treeview"><i class="app-menu__icon fa fa-skyatlas" style="transform: rotate(180deg) translateX(12px);"></i><span class="app-menu__label">Facturación Electrónica</span><i class="treeview-indicator fa fa-angle-right"></i></a>
+                        <ul class="treeview-menu">
+                                <li><a class="app-menu__item" id="tab-comprobantes" href="comprobantes.php"><i class="app-menu__icon fa fa-circle-o"></i><span class="app-menu__label">Boletas/Facturas</span></a></li>
+                                <li><a class="app-menu__item" id="tab-creditofactura" href="creditofactura.php"><i class="app-menu__icon fa fa-circle-o"></i><span class="app-menu__label">Nota de Crédito</span></a></li>
+                                <li><a class="app-menu__item" id="tab-debitofactura" href="#"><i class="app-menu__icon fa fa-circle-o"></i><span class="app-menu__label">Nota de Débito</span></a></li>
                                 <li><a class="app-menu__item" id="tab-consultaindividual" href="consultaindividual.php"><i class="app-menu__icon fa fa-circle-o"></i><span class="app-menu__label">Consultar Estado</span></a></li>
                                 <li><a class="app-menu__item" id="tab-consultaglobal" href="consultaglobal.php"><i class="app-menu__icon fa fa-circle-o"></i><span class="app-menu__label">Consulta Global</span></a></li>
-                                <li><a class="app-menu__item" id="tab-cotizacion" href="cotizacion.php"><i class="app-menu__icon fa fa-circle-o"></i><span class="app-menu__label">Cotización</span></a></li>
+
                         </ul>
                 </li>
 
@@ -107,19 +118,30 @@
         /// Elementos de li
         const tabs = [
                 "index",
-                "comprobantes",
+
+                "ventas",
+                "pagosrecibidos",
                 "notacredito",
+                "guiaremision",
+                "cotizacion",
+
+                "comprobantes",
+                "creditofactura",
+                "debitofactura",
                 "consultaindividual",
                 "consultaglobal",
-                "cotizacion",
+
+                "clientes",
+                "proveedores",
+
                 "productos",
                 "inventario",
                 "kardexproducto",
                 "ajustes",
+
                 "registrarproducto",
                 "actualizarproducto",
-                "clientes",
-                "proveedores",
+
                 "reporte",
                 "empresa"
         ];
@@ -135,18 +157,31 @@
 
         /// Funcion que asigna la clase active
         function setActive(id) {
-                if (id == "tab-comprobantes" || id == "tab-notacredito" || id == "tab-consultaindividual" || id == "tab-consultaglobal" || id == "tab-cotizacion") {
+                if (id == "tab-ventas" || id == "tab-pagosrecibidos" || id == "tab-notacredito" || id == "tab-guiaremision" || id == "tab-cotizacion") {
                         document.getElementById("treeview-ingresos").setAttribute("class", "treeview is-expanded");
-                        if (id == "tab-comprobantes") {
-                                document.getElementById("tab-comprobantes").setAttribute("class", "app-menu__item active");
+                        if (id == "tab-ventas") {
+                                document.getElementById("tab-ventas").setAttribute("class", "app-menu__item active");
+                        } else if (id == "tab-pagosrecibidos") {
+                                document.getElementById("tab-pagosrecibidos").setAttribute("class", "app-menu__item active");
                         } else if (id == "tab-notacredito") {
                                 document.getElementById("tab-notacredito").setAttribute("class", "app-menu__item active");
+                        } else if (id == "tab-guiaremision") {
+                                document.getElementById("tab-guiaremision").setAttribute("class", "app-menu__item active");
+                        } else if (id == "tab-cotizacion") {
+                                document.getElementById("tab-cotizacion").setAttribute("class", "app-menu__item active");
+                        }
+                } else if (id == "tab-comprobantes" || id == "tab-creditofactura" || id == "tab-debitofactura" || id == "tab-consultaindividual" || id == "tab-consultaglobal") {
+                        document.getElementById("treeview-facturacion").setAttribute("class", "treeview is-expanded");
+                        if (id == "tab-comprobantes") {
+                                document.getElementById("tab-comprobantes").setAttribute("class", "app-menu__item active");
+                        } else if (id == "tab-creditofactura") {
+                                document.getElementById("tab-creditofactura").setAttribute("class", "app-menu__item active");
+                        } else if (id == "tab-debitofactura") {
+                                document.getElementById("tab-debitofactura").setAttribute("class", "app-menu__item active");
                         } else if (id == "tab-consultaindividual") {
                                 document.getElementById("tab-consultaindividual").setAttribute("class", "app-menu__item active");
                         } else if (id == "tab-consultaglobal") {
                                 document.getElementById("tab-consultaglobal").setAttribute("class", "app-menu__item active");
-                        } else if (id == "tab-cotizacion") {
-                                document.getElementById("tab-cotizacion").setAttribute("class", "app-menu__item active");
                         }
                 } else if (id == "tab-clientes" || id == "tab-proveedores") {
                         document.getElementById("treeview-contactos").setAttribute("class", "treeview is-expanded");

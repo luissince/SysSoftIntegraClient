@@ -26,9 +26,9 @@ class DetalleADO
             $comando->bindParam(2, $value[1], PDO::PARAM_STR);
             $comando->bindParam(3, $value[2], PDO::PARAM_STR);
             $comando->execute();
-            return $comando->fetchAll(PDO::FETCH_OBJ);
+            return array("estado" => 1, "data" => $comando->fetchAll(PDO::FETCH_OBJ));
         } catch (Exception $ex) {
-            return $ex->getMessage();
+            return array("estado" => 0, "message" => $ex->getMessage(),);
         }
     }
 
@@ -38,9 +38,9 @@ class DetalleADO
             $comando = Database::getInstance()->getDb()->prepare("{CALL Sp_Get_Detalle_Id(?)}");
             $comando->bindParam(1, $value, PDO::PARAM_STR);
             $comando->execute();
-            return $comando->fetchAll(PDO::FETCH_OBJ);
+            return array("estado" => 1, "data" => $comando->fetchAll(PDO::FETCH_OBJ),);
         } catch (Exception $ex) {
-            return $ex->getMessage();
+            return array("estado" => 0, "message" => $ex->getMessage());
         }
     }
 }

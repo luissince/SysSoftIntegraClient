@@ -27,4 +27,15 @@ class TipoDocumentoADO
             return $ex->getMessage();
         }
     }
+
+    public static function GetDocumentoCombBoxNotaCredito()
+    {
+        try {
+            $comando = Database::getInstance()->getDb()->prepare("SELECT IdTipoDocumento,Nombre,Serie, Predeterminado FROM TipoDocumentoTB WHERE NotaCredito = 1");
+            $comando->execute();
+            return $comando->fetchAll(PDO::FETCH_CLASS);
+        } catch (Exception $ex) {
+            return $ex->getMessage();
+        }
+    }
 }
