@@ -17,6 +17,192 @@ if (!isset($_SESSION['IdEmpleado'])) {
         <!-- Sidebar menu-->
         <?php include "./layout/menu.php"; ?>
 
+        <div class="row">
+            <div class="modal fade" id="modalCrudProveedor" data-backdrop="static">
+                <div class="modal-dialog modal-md">
+                    <div class="modal-content">
+
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="lblTitleCrudProveedor">
+                                <i class="fa fa-user"></i> Registrar Proveedor
+                            </h4>
+                            <button type="button" class="close" id="btnCloseCrudProveedor">
+                                <i class="fa fa-close"></i>
+                            </button>
+                        </div>
+
+                        <div class="modal-body">
+
+                            <div class="tile">
+                                <div class="overlay p-5" id="divOverlayCrudProveedor">
+                                    <div class="m-loader mr-4">
+                                        <svg class="m-circular" viewBox="25 25 50 50">
+                                            <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="4" stroke-miterlimit="10"></circle>
+                                        </svg>
+                                    </div>
+                                    <h4 class="l-text text-center text-white p-10" id="lblTextOverlayCrudProveedor">Cargando información...</h4>
+                                </div>
+
+                                <div class="bs-component">
+                                    <ul class="nav nav-tabs">
+                                        <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#tabPrimero" id="navTabPrimero">Datos básicos</a></li>
+                                        <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#tabSegundo" id="navTabSegundo">Datos de contacto</a></li>
+                                    </ul>
+                                    <div class="tab-content">
+                                        <div class="tab-pane fade active show p-2" id="tabPrimero">
+
+                                            <div class="row">
+                                                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                                                    <div class="form-group">
+                                                        <label>Tipo documento</label>
+                                                        <div class="input-group">
+                                                            <select class="form-control" id="cbDocumentType">
+                                                                <option value="">- Seleccione -</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                                                    <div class="form-group">
+                                                        <label>N° Documento</label>
+                                                        <div class="input-group">
+                                                            <input id="txtDocumentNumber" type="text" class="form-control" placeholder="00000000" title="Ingrese su n° de documento">
+                                                            <div class="input-group-append">
+                                                                <button class="btn btn-secondary" type="button" title="Reniec" id="btmReniec">
+                                                                    <img src="./images/sunat_logo.png" width="18" height="18">
+                                                                </button>
+                                                            </div>
+                                                            <div class="input-group-append">
+                                                                <button class="btn btn-secondary" type="button" title="Sunat" id="btnSunat">
+                                                                    <img src="./images/reniec.png" width="18" height="18">
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                                    <div class="form-group">
+                                                        <label>Razón social/Datos de la persona</label>
+                                                        <div class="input-group">
+                                                            <input id="txtInformacion" class="form-control" type="text" placeholder="Ingrese Razón social/Datos de la persona" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                                                    <div class="form-group">
+                                                        <label>Teléfono</label>
+                                                        <div class="input-group">
+                                                            <input id="txtTelefono" class="form-control" type="text" placeholder="Ingrese su Teléfono" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                                                    <div class="form-group">
+                                                        <label>Celular</label>
+                                                        <div class="input-group">
+                                                            <input id="txtCelular" class="form-control" type="text" placeholder="Ingrese n° de Celular" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                                                    <div class="form-group">
+                                                        <label>Email</label>
+                                                        <div class="input-group">
+                                                            <input id="txtEmail" class="form-control" type="text" placeholder="Ingrese su Email" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                                                    <div class="form-group">
+                                                        <label>Página Web</label>
+                                                        <div class="input-group">
+                                                            <input id="txtPage" class="form-control" type="text" placeholder="Ingrese su Página Web" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                                    <div class="form-group">
+                                                        <label>Dirección</label>
+                                                        <div class="input-group">
+                                                            <input id="txtDireccion" class="form-control" type="text" placeholder="Ingrese su Dirección" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="tab-pane fade p-2" id="tabSegundo">
+
+                                            <div class="row">
+                                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                                    <div class="form-group">
+                                                        <label>Representante</label>
+                                                        <div class="input-group">
+                                                            <input id="txtRepresentante" class="form-control" type="text" placeholder="Ingrese su Representante" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-md-12 col-sm-12 col-xs-12">
+                                                    <label>Estado </label>
+                                                    <div class="row">
+                                                        <div class="col-md-6 col-sm-12 col-xs-12">
+                                                            <div class="form-group">
+                                                                <input type="radio" id="rbActivo" name="rbEstado" checked>
+                                                                <label for="rbActivo">
+                                                                    Activo
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6 col-sm-12 col-xs-12">
+                                                            <div class="form-group">
+                                                                <input type="radio" id="rbInactivo" name="rbEstado">
+                                                                <label for="rbInactivo" class="radio-custom-label">
+                                                                    Inactivo
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="modal-footer">
+                                <div class="row">
+                                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                        <button class="btn btn-success" type="button" id="btnSaveCrudProveedor"><i class="fa fa-save"></i> Guardar</button>
+                                        <button class="btn btn-danger" type="button" id="btnCancelCrudProveedor"><i class="fa fa-close"></i> Cancelar</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <main class="app-content">
 
             <div class="app-title">
@@ -114,6 +300,9 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
             let ulPagination = $("#ulPagination");
 
+            let idProveedor = "";
+            let idEmpleado = "<?= $_SESSION['IdEmpleado']; ?>";
+
             $(document).ready(function() {
 
 
@@ -143,12 +332,12 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 });
 
                 $("#btnAgregar").click(function() {
-                    // window.location.href = "registrarproducto.php";
+                    AgregarProveedor();
                 });
 
                 $("#btnAgregar").keypress(function(event) {
                     if (event.keyCode === 13) {
-                        // window.location.href = "registrarproducto.php";
+                        AgregarProveedor();
                     }
                     event.preventDefault();
                 });
@@ -165,6 +354,40 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 });
 
                 loadInitProveedores();
+
+                //-----------------------------------------------------------
+                $("#btnSaveCrudProveedor").click(function(event) {
+                    CrudProveedor();
+                });
+
+                $("#btnSaveCrudProveedor").click(function(event) {
+                    if (event.keyCode === 13) {
+                        CrudProveedor();
+                        event.preventDefault();
+                    }
+                });
+
+                $("#btnCloseCrudProveedor").click(function(event) {
+                    LimpiarModalProveedor();
+                });
+
+                $("#btnCloseCrudProveedor").click(function(event) {
+                    if (event.keyCode === 13) {
+                        LimpiarModalProveedor();
+                        event.preventDefault();
+                    }
+                });
+
+                $("#btnCancelCrudProveedor").click(function(event) {
+                    LimpiarModalProveedor();
+                });
+
+                $("#btnCancelCrudProveedor").keypress(function(event) {
+                    if (event.keyCode === 13) {
+                        LimpiarModalProveedor();
+                        event.preventDefault();
+                    }
+                });
             });
 
             function onEventPaginacion() {
@@ -229,8 +452,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                     '<td class="text-left">' + proveedor.Telefono + '<br>' + proveedor.Celular + '</td>' +
                                     '<td class="text-left">' + proveedor.Direccion + '</td>' +
                                     '<td class="text-left">' + proveedor.Representante + '</td>' +
-                                    '<td class="text-center"><button class="btn btn-warning"><i class="fa fa-edit"></i><button</td>' +
-                                    '<td class="text-center"><button class="btn btn-danger"><i class="fa fa-trash"></i><button</td>' +
+                                    '<td class="text-center"><button class="btn btn-warning" onclick="EditarProveedor(\'' + proveedor.IdProveedor + '\')"><i class="fa fa-edit"></i><button</td>' +
+                                    '<td class="text-center"><button class="btn btn-danger" onclick="DeleteProveedor(\'' + proveedor.IdProveedor + '\')"><i class="fa fa-trash"></i><button</td>' +
                                     '</tr>');
                             }
                             totalPaginacion = parseInt(Math.ceil((parseFloat(object.total) / filasPorPagina)));
@@ -336,6 +559,194 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         onEventPaginacion();
                     }
                 }
+            }
+
+            async function AgregarProveedor() {
+                $("#lblTitleCrudProveedor").html('<i class="fa fa-user"></i> Registrar Proveedor');
+                $("#modalCrudProveedor").modal("show");
+                $('#modalCrudProveedor').on('shown.bs.modal', function(e) {
+                    $("#cbDocumentType").focus();
+                });
+                $("#cbDocumentType").empty();
+                $("#lblTextOverlayCrudProveedor").html("Cargando información...");
+                try {
+                    let result = await tools.promiseFetchGet("../app/controller/DetalleController.php", {
+                        "type": "detailid",
+                        "value": "0003"
+                    });
+
+                    if (result.estado == 1) {
+                        $("#cbDocumentType").append('<option value="">- Seleccione -</option>');
+                        for (let value of result.data) {
+                            $("#cbDocumentType").append('<option value="' + value.IdDetalle + '">' + value.Nombre + '</option>');
+                        }
+                        $("#divOverlayCrudProveedor").addClass('d-none');
+                    } else {
+                        $("#cbDocumentType").append('<option value="">- Seleccione -</option>');
+                        $("#lblTextOverlayCrudProveedor").html(result.message);
+                    }
+                } catch (error) {
+                    $("#cbDocumentType").append('<option value="">- Seleccione -</option>');
+                    $("#lblTextOverlayCrudProveedor").html("Se produjo un error interno intente nuevamente por favor.");
+                }
+            }
+
+            async function EditarProveedor(id) {
+                $("#lblTitleCrudProveedor").html('<i class="fa fa-user"></i> Editar Proveedor');
+                $("#modalCrudProveedor").modal("show");
+                $('#modalCrudProveedor').on('shown.bs.modal', function(e) {
+                    $("#cbDocumentType").focus();
+                });
+                $("#cbDocumentType").empty();
+                $("#lblTextOverlayCrudProveedor").html("Cargando información...");
+                try {
+
+                    let result = await tools.promiseFetchGet("../app/controller/DetalleController.php", {
+                        "type": "detailid",
+                        "value": "0003"
+                    });
+
+                    if (result.estado == 1) {
+                        $("#cbDocumentType").append('<option value="">- Seleccione -</option>');
+                        for (let value of result.data) {
+                            $("#cbDocumentType").append('<option value="' + value.IdDetalle + '">' + value.Nombre + '</option>');
+                        }
+
+                        let proveedor = await tools.promiseFetchGet("../app/controller/ProveedorController.php", {
+                            "type": "GetByIdProveedor",
+                            "idProveedor": id
+                        });
+
+                        if (proveedor.estado == 1) {
+                            idProveedor = proveedor.data.IdProveedor;
+                            $("#cbDocumentType").val(proveedor.data.TipoDocumento);
+                            $("#txtDocumentNumber").val(proveedor.data.NumeroDocumento);
+                            $("#txtInformacion").val(proveedor.data.RazonSocial);
+                            $("#txtTelefono").val(proveedor.data.Telefono);
+                            $("#txtCelular").val(proveedor.data.Celular);
+                            $("#txtEmail").val(proveedor.data.Email);
+                            $("#txtPage").val(proveedor.data.PaginaWeb);
+                            $("#txtDireccion").val(proveedor.data.Direccion);
+                            $("#txtRepresentante").val(proveedor.data.Representante);
+                            if (proveedor.data.Estado == "1") {
+                                $("#rbActivo").prop("checked", true);
+                            } else {
+                                $("#rbInactivo").prop("checked", true);
+                            }
+                            $("#divOverlayCrudProveedor").addClass('d-none');
+                        } else {
+                            $("#lblTextOverlayCrudProveedor").html(result.message);
+                        }
+                    } else {
+                        $("#cbDocumentType").append('<option value="">- Seleccione -</option>');
+                        $("#lblTextOverlayCrudProveedor").html(result.message);
+                    }
+                } catch (error) {
+                    $("#cbDocumentType").append('<option value="">- Seleccione -</option>');
+                    $("#lblTextOverlayCrudProveedor").html("Se produjo un error interno intente nuevamente por favor.");
+                }
+
+            }
+
+
+            function LimpiarModalProveedor() {
+                $("#modalCrudProveedor").modal("hide");
+                $('#modalCrudProveedor').on('hidden.bs.modal', function(e) {
+                    $("#cbDocumentType").val('');
+                    $("#txtDocumentNumber").val('');
+                    $("#txtInformacion").val('');
+                    $("#txtTelefono").val('');
+                    $("#txtCelular").val('');
+                    $("#txtEmail").val('');
+                    $("#txtPage").val('');
+                    $("#txtDireccion").val('');
+                    $("#txtRepresentante").val('');
+                    $("#rbActivo").prop("checked", true);
+                    $("#navTabPrimero").addClass('active');
+                    $("#navTabSegundo").removeClass('active');
+                    $("#tabPrimero").addClass('active');
+                    $("#tabPrimero").addClass('show');
+                    $("#tabSegundo").removeClass('active');
+                    $("#tabSegundo").removeClass('show');
+                    $("#divOverlayCrudProveedor").removeClass('d-none');
+                    $("#lblTextOverlayCrudProveedor").html("Cargando información...");
+                    idProveedor = "";
+                });
+            }
+
+            function CrudProveedor() {
+                if ($("#cbDocumentType").val() == "") {
+                    tools.AlertWarning("", "Seleccione el Tipo de Documento.");
+                    $("#cbDocumentType").focus();
+                } else if ($("#txtDocumentNumber").val() == "") {
+                    tools.AlertWarning("", "Ingrese el Número de Documento.");
+                    $("#txtDocumentNumber").focus();
+                } else if ($("#txtInformacion").val() == "") {
+                    tools.AlertWarning("", "Ingrese la Informacion del Proveedor.");
+                    $("#txtInformacion").focus();
+                } else {
+                    tools.ModalDialog("Proveedor", "¿Está seguro de continuar?", async function(value) {
+                        if (value == true) {
+                            try {
+                                let result = await tools.promiseFetchPost("../app/controller/ProveedorController.php", {
+                                        "type": "crudProveedor",
+                                        "IdProveedor": idProveedor,
+                                        "TipoDocumento": $("#cbDocumentType").val(),
+                                        "NumeroDocumento": $("#txtDocumentNumber").val(),
+                                        "RazonSocial": $("#txtInformacion").val(),
+                                        "NombreComercial": "",
+                                        "Ambito": 0,
+                                        "Estado": $("#rbActivo").is(":checked") ? 1 : 0,
+                                        "Telefono": $("#txtTelefono").val(),
+                                        "Celular": $("#txtCelular").val(),
+                                        "Email": $("#txtEmail").val(),
+                                        "PaginaWeb": $("#txtPage").val(),
+                                        "Direccion": $("#txtDireccion").val(),
+                                        "UsuarioRegistro": idEmpleado,
+                                        "Representante": $("#txtRepresentante").val()
+                                    },
+                                    function() {
+                                        LimpiarModalProveedor();
+                                        tools.ModalAlertInfo("Proveedor", "Se está procesando la información.");
+                                    });
+
+                                if (result.estado == 1) {
+                                    tools.ModalAlertSuccess("Proveedor", result.message);
+                                    loadInitProveedores();
+                                } else {
+                                    tools.ModalAlertWarning("Proveedor", result.message);
+                                }
+                            } catch (error) {
+                                tools.ModalAlertError("Proveedor", "Se produjo un error interno intente nuevamente.");
+                            }
+                        }
+                    });
+                }
+            }
+
+            function DeleteProveedor(id) {
+                tools.ModalDialog("Proveedor", "¿Está seguro de eliminar el proveedor?", async function(value) {
+                    if (value == true) {
+                        try {
+                            let result = await tools.promiseFetchPost("../app/controller/ProveedorController.php", {
+                                    "type": "deleteProveedor",
+                                    "IdProveedor": id,
+                                },
+                                function() {
+                                    tools.ModalAlertInfo("Proveedor", "Se está procesando la información.");
+                                });
+
+                            if (result.estado == 1) {
+                                tools.ModalAlertSuccess("Proveedor", result.message);
+                                loadInitProveedores();
+                            } else {
+                                tools.ModalAlertWarning("Proveedor", result.message);
+                            }
+                        } catch (error) {
+                            tools.ModalAlertError("Proveedor", "Se produjo un error interno intente nuevamente.");
+                        }
+                    }
+                });
             }
         </script>
     </body>

@@ -540,34 +540,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             <button class="btn btn-outline-secondary" onclick="onEventPaginacionFinal(${max})">
                                 <i class="fa fa-angle-double-right"></i>
                             </button>`;
-                            // range.forEach(e => {
-                            //     if (e === min || e === max) {
-                            //         if (e === min) {
-                            //             paginacionHtml += `                                         
-                            //                 <li class="page-item">
-                            //                     <button class="page-link" onclick="onEventAnteriorPaginacion()"><i class="fa fa-angle-double-left "></i></button>
-                            //                 </li> 
-                            //                 <li class="page-item ${e == paginacion?"active":""}">
-                            //                         <button class="page-link" onclick="onEventPaginacionInicio(${e})">${e}</button>
-                            //                 </li>
-                            //                 `;
-                            //         } else {
-                            //             paginacionHtml += `                                            
-                            //                 <li class="page-item ${e == paginacion?"active":""} ">
-                            //                         <button class="page-link" onclick="onEventPaginacionFinal(${e})">${e}</button>
-                            //                 </li>      
-                            //                 <li class="page-item">
-                            //                     <button class="page-link" onclick="onEventSiguientePaginacion()"><i class="fa fa-angle-double-right "></i></button>
-                            //                 </li>                                  
-                            //                 `;
-                            //         }
-                            //     } else {
-                            //         paginacionHtml += `
-                            //                 <li class="page-item ${e == paginacion?"active":""}">
-                            //                     <button class="page-link">${e}</button>
-                            //                 </li>`;
-                            //     }
-                            // });
 
                             ulPagination.html(paginacionHtml);
                             state = false;

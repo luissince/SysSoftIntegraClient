@@ -70,11 +70,11 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         <div class="card">
 
                             <div class="card-header">
-                                <div class="row mb-2">
+                                <div class="row">
                                     <div class="col-md-12">
 
-                                        <div class="input-group">
-                                            <div class="input-group-append">
+                                        <div class="bs-component" style="margin-bottom: 15px;">
+                                            <div class="btn-group" role="group">
                                                 <button id="btnProductos" class="btn btn-secondary" type="button" title="Lista de Productos">
                                                     <div class="row">
                                                         <div class="col-md-12">
@@ -167,7 +167,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                                 </button>
                                             </div>
                                         </div>
-
                                     </div>
                                 </div>
 

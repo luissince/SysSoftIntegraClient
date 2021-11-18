@@ -439,7 +439,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
                                 tbList.append('<tr>' +
                                     '<td class="text-center">' + cliente.Id + '</td>' +
-                                    '<td class="text-left">' + cliente.NumeroDocumento + '</td>' +
+                                    '<td class="text-left">' + cliente.TipoDocumento + '<br>' + cliente.NumeroDocumento + '</td>' +
                                     '<td class="text-left">' + cliente.Informacion + '</td>' +
                                     '<td class="text-left">' + cliente.Telefono + '<br>' + cliente.Celular + '</td>' +
                                     '<td class="text-left">' + cliente.Direccion + '</td>' +
@@ -678,7 +678,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     $("#txtInformacion").focus();
                 } else {
 
-                    tools.ModalDialog("Producto", "¿Está seguro de continuar?", async function(value) {
+                    tools.ModalDialog("Cliente", "¿Está seguro de continuar?", async function(value) {
                         if (value == true) {
                             try {
                                 let result = await tools.promiseFetchPost("../app/controller/ClienteController.php", {
@@ -716,7 +716,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
             }
 
             function DeleteCliente(id) {
-                tools.ModalDialog("Producto", "¿Está seguro de eliminar el cliente?", async function(value) {
+                tools.ModalDialog("Cliente", "¿Está seguro de eliminar el cliente?", async function(value) {
                     if (value == true) {
                         try {
                             let result = await tools.promiseFetchPost("../app/controller/ClienteController.php", {
@@ -741,7 +741,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
             }
 
             function PredeterminadoCliente(id) {
-                tools.ModalDialog("Producto", "¿Está seguro de poner como predeterminado al cliente?", async function(value) {
+                tools.ModalDialog("Cliente", "¿Está seguro de poner como predeterminado al cliente?", async function(value) {
                     if (value == true) {
                         try {
                             let result = await tools.promiseFetchPost("../app/controller/ClienteController.php", {

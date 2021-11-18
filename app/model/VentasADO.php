@@ -20,7 +20,6 @@ class VentasADO
 
     public static function ListVentas($opcion, $value, $fechaInicial, $fechaFinal, $comprobante, $estado, $facturacion, $posicionPagina, $filasPorPagina)
     {
-        $array = array();
         try {
             $comandoVenta = Database::getInstance()->getDb()->prepare("{CALL Sp_Listar_Ventas_All(?,?,?,?,?,?,?,?,?)}");
             $comandoVenta->bindParam(1, $opcion, PDO::PARAM_INT);
@@ -97,10 +96,17 @@ class VentasADO
                 $resultSuma = floatval(round($row["Total"], 2, PHP_ROUND_HALF_UP));
             }
 
-            array_push($array, $arrayVenta, $resultTotal, $resultSuma);
-            return $array;
+            return array(
+                "estado" => 1,
+                "data" => $arrayVenta,
+                "total" => $resultTotal,
+                "suma" => $resultSuma
+            );
         } catch (Exception $ex) {
-            return $ex->getMessage();
+            return array(
+                "estado" => 2,
+                "message" => $ex->getMessage(),
+            );
         }
     }
 
@@ -191,32 +197,14 @@ class VentasADO
     public static function ListVentaDetalle($idventa)
     {
         try {
-            $array = array();
+
             $venta = null;
-            $empresa = null;
             $ventadetalle = array();
 
             $comandoVenta = Database::getInstance()->getDb()->prepare("{CALL Sp_Obtener_Venta_ById(?)}");
             $comandoVenta->bindParam(1, $idventa, PDO::PARAM_STR);
             $comandoVenta->execute();
             $venta = $comandoVenta->fetchObject();
-
-            $cmdEmpresa = Database::getInstance()->getDb()->prepare("SELECT TOP 1 
-            d.IdAuxiliar,e.NumeroDocumento,e.RazonSocial,e.NombreComercial,e.Domicilio,
-            e.Telefono,e.Email,e.Image
-            FROM EmpresaTB AS e INNER JOIN DetalleTB AS d ON e.TipoDocumento = d.IdDetalle AND d.IdMantenimiento = '0003'");
-            $cmdEmpresa->execute();
-            $rowEmpresa = $cmdEmpresa->fetch();
-            $empresa  = (object)array(
-                "IdAuxiliar" => $rowEmpresa['IdAuxiliar'],
-                "NumeroDocumento" => $rowEmpresa['NumeroDocumento'],
-                "RazonSocial" => $rowEmpresa['RazonSocial'],
-                "NombreComercial" => $rowEmpresa['NombreComercial'],
-                "Domicilio" => $rowEmpresa['Domicilio'],
-                "Telefono" => $rowEmpresa['Telefono'],
-                "Email" => $rowEmpresa['Email'],
-                "Image" => $rowEmpresa['Image'] == null ? "" : base64_encode($rowEmpresa['Image'])
-            );
 
             $comandoVentaDetalle = Database::getInstance()->getDb()->prepare("{CALL Sp_Listar_Ventas_Detalle_By_Id(?)}");
             $comandoVentaDetalle->bindParam(1, $idventa, PDO::PARAM_STR);
@@ -244,10 +232,17 @@ class VentasADO
                     "Codigo" => $row["Codigo"]
                 ));
             }
-            array_push($array, $venta, $ventadetalle, $empresa);
-            return $array;
+
+            return array(
+                "estado" => 1,
+                "venta" => $venta,
+                "ventadetalle" => $ventadetalle
+            );
         } catch (Exception $ex) {
-            return $ex->getMessage();
+            return array(
+                "estado" => 2,
+                "message" => $ex->getMessage(),
+            );
         }
     }
 
@@ -552,9 +547,15 @@ class VentasADO
                     "Utilidad" => floatval($row["Utilidad"])
                 ));
             }
-            return $arrayDetalle;
+            return array(
+                "estado" => 1,
+                "data" => $arrayDetalle
+            );
         } catch (Exception $ex) {
-            return $ex->getMessage();
+            return array(
+                "estado" => 2,
+                "message" => $ex->getMessage(),
+            );
         }
     }
 
@@ -767,7 +768,7 @@ class VentasADO
     public static function LoadProductosAgotados($posicionPaginaAgotados, $filasPorPaginaAgotados)
     {
         try {
-            $array = array();
+
             $comandoProductosAgotados = Database::getInstance()->getDb()->prepare("SELECT NombreMarca, PrecioVentaGeneral, Cantidad 
             FROM SuministroTB 
             WHERE Cantidad <= 0 
@@ -787,10 +788,17 @@ class VentasADO
             FROM SuministroTB WHERE Cantidad <= 0 ");
             $comandoProductosAgotadosCount->execute();
             $resultTotal = $comandoProductosAgotadosCount->fetchColumn();
-            array_push($array, $arrayProductosAgotados, $resultTotal);
-            return $array;
+
+            return array(
+                "estado" => 1,
+                "productosAgotadosLista" => $arrayProductosAgotados,
+                "productosAgotadosTotal" => $resultTotal
+            );
         } catch (Exception $ex) {
-            return $ex->getMessage();
+            return array(
+                "estado" => 0,
+                "message" => $ex->getMessage(),
+            );
         }
     }
 
@@ -819,9 +827,16 @@ class VentasADO
             $comandoProductosAgotadosCount->execute();
             $resultTotal = $comandoProductosAgotadosCount->fetchColumn();
             array_push($array, $arrayProductosPorAgotarse, $resultTotal);
-            return $array;
+            return array(
+                "estado" => 1,
+                "productoPorAgotarseLista" => $arrayProductosPorAgotarse,
+                "productoPorAgotarseTotal" => $resultTotal
+            );
         } catch (Exception $ex) {
-            return $ex->getMessage();
+            return array(
+                "estado" => 0,
+                "message" => $ex->getMessage(),
+            );
         }
     }
 
@@ -1146,8 +1161,6 @@ class VentasADO
     public static function ListarComprobanteParaNotaCredito($comprobante)
     {
         try {
-            $array = array();
-
             $cmdNotaCredito = Database::getInstance()->getDb()->prepare("SELECT IdTipoDocumento,Nombre FROM TipoDocumentoTB WHERE NotaCredito = 1");
             $cmdNotaCredito->execute();
 
@@ -1256,10 +1269,21 @@ class VentasADO
                 ));
             }
 
-            array_push($array, $arrayNotaCredito,  $arrayMoneda, $arrayTipoComprobante, $arrayMotivoAnulacion, $arrayTipoDocumento, $resultVenta, $arrayDetalle);
-            return $array;
+            return array(
+                "estado" => 1,
+                "notaCredito" => $arrayNotaCredito,
+                "monedas" => $arrayMoneda,
+                "tipoComprobante" => $arrayTipoComprobante,
+                "motivoAnulacion" => $arrayMotivoAnulacion,
+                "tipoDocumento" => $arrayTipoDocumento,
+                "venta" => $resultVenta,
+                "detalle" => $arrayDetalle
+            );
         } catch (Exception $ex) {
-            return $ex->getMessage();
+            return array(
+                "estado" => 2,
+                "message" => $ex->getMessage(),
+            );
         }
     }
 
@@ -1332,10 +1356,16 @@ class VentasADO
             }
 
             Database::getInstance()->getDb()->commit();
-            return "registrado";
+            return array(
+                "estado" => 1,
+                "message" => "Se registro correctamente la nota de crédito."
+            );
         } catch (Exception $ex) {
             Database::getInstance()->getDb()->rollback();
-            return $ex->getMessage();
+            return array(
+                "estado" => 0,
+                "message" => $ex->getMessage(),
+            );
         }
     }
 
@@ -1400,10 +1430,17 @@ class VentasADO
                 $resultSuma = floatval(round($row["Total"], 2, PHP_ROUND_HALF_UP));
             }
 
-            array_push($array, $arrayNotaCredito, $resultTotal, $resultSuma);
-            return $array;
+            return array(
+                "estado" => 1,
+                "data" => $arrayNotaCredito,
+                "total" => $resultTotal,
+                "suma" => $resultSuma
+            );
         } catch (Exception $ex) {
-            return $ex->getMessage();
+            return array(
+                "estado" => 2,
+                "message" => $ex->getMessage(),
+            );
         }
     }
 
@@ -1583,16 +1620,21 @@ class VentasADO
                 ));
             }
 
-            return $array;
+            return array(
+                "estado" => 1,
+                "data" => $array
+            );
         } catch (Exception $ex) {
-            return $ex->getMessage();
+            return array(
+                "estado" => 2,
+                "message" => $ex->getMessage(),
+            );
         }
     }
 
     public static function ListarDetalleNotificaciones($posicionPagina, $filasPorPagina)
     {
         try {
-            $array = array();
 
             $cmdNotificaciones = Database::getInstance()->getDb()->prepare("SELECT 
             v.FechaVenta as Fecha,
@@ -1660,10 +1702,16 @@ class VentasADO
                 $resultTotal +=  $row["Total"];
             }
 
-            array_push($array, $resultLista, $resultTotal);
-            return $array;
+            return array(
+                "estado" => 1,
+                "data" => $resultLista,
+                "total" => $resultTotal,
+            );
         } catch (Exception $ex) {
-            return $ex->getMessage();
+            return array(
+                "estado" => 2,
+                "message" => $ex->getMessage(),
+            );
         }
     }
 
@@ -1674,9 +1722,16 @@ class VentasADO
             $cmdDetalle = Database::getInstance()->getDb()->prepare("{CALL Sp_Get_Detalle_Id(?)}");
             $cmdDetalle->bindValue(1, $idMantenimiento, PDO::PARAM_STR);
             $cmdDetalle->execute();
-            return $cmdDetalle->fetchAll(PDO::FETCH_OBJ);
+
+            return array(
+                "estado" => 1,
+                "data" => $cmdDetalle->fetchAll(PDO::FETCH_OBJ)
+            );
         } catch (Exception $ex) {
-            return $ex->getMessage();
+            return array(
+                "estado" => 2,
+                "message" => $ex->getMessage(),
+            );
         }
     }
 }

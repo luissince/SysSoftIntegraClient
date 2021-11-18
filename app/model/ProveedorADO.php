@@ -21,7 +21,6 @@ class ProveedorADO
     public static function ListProveedor($buscar, $posicionPagina, $filasPorPagina)
     {
         try {
-            $array = array();
 
             $comandoVenta = Database::getInstance()->getDb()->prepare("{CALL Sp_Listar_Proveedor(?,?,?)}");
             $comandoVenta->bindParam(1, $buscar, PDO::PARAM_STR);
@@ -52,10 +51,162 @@ class ProveedorADO
             $comandoTotal->execute();
             $resultTotal = $comandoTotal->fetchColumn();
 
-            array_push($array, $arrayVenta, $resultTotal);
-            return $array;
-        } catch (PDOException $ex) {
-            return $ex->getMessage();
+            return array(
+                "estado" => 1,
+                "data" => $arrayVenta,
+                "total" => $resultTotal
+            );
+        } catch (Exception $ex) {
+            return array(
+                "estado" => 2,
+                "message" => $ex->getMessage(),
+            );
+        }
+    }
+
+    public static function GetByIdProveedor($idProveedor)
+    {
+        try {
+            $cmdProveedor = Database::getInstance()->getDb()->prepare("{CALL Sp_Get_Proveedor_By_Id(?)}");
+            $cmdProveedor->bindParam(1, $idProveedor, PDO::PARAM_STR);
+            $cmdProveedor->execute();
+            return array("estado" => 1, "data" => $cmdProveedor->fetchObject(), "d" => $idProveedor);
+        } catch (Exception $ex) {
+            return array("estado" => 0, "message" => $ex->getMessage());
+        }
+    }
+
+    public static function CrudProveedor($body)
+    {
+        try {
+            Database::getInstance()->getDb()->beginTransaction();
+
+            $cmdValidate = Database::getInstance()->getDb()->prepare("SELECT IdProveedor FROM ProveedorTB WHERE IdProveedor = ?");
+            $cmdValidate->bindParam(1, $body["IdProveedor"], PDO::PARAM_STR);
+            $cmdValidate->execute();
+            if ($cmdValidate->fetch()) {
+
+                $cmdValidate = Database::getInstance()->getDb()->prepare("SELECT NumeroDocumento FROM ProveedorTB WHERE IdProveedor <> ? AND NumeroDocumento = ?");
+                $cmdValidate->bindParam(1, $body["IdProveedor"], PDO::PARAM_STR);
+                $cmdValidate->bindParam(2, $body["NumeroDocumento"], PDO::PARAM_STR);
+                $cmdValidate->execute();
+                if ($cmdValidate->fetch()) {
+                    Database::getInstance()->getDb()->rollback();
+                    return array("estado" => 2, "message" => "No se puede haber 2 proveedores con el mismo número de documento.");
+                } else {
+
+                    $cmdProveedor = Database::getInstance()->getDb()->prepare("UPDATE ProveedorTB 
+                    SET 
+                    TipoDocumento=?,
+                    NumeroDocumento=?,
+                    RazonSocial=UPPER(?),
+                    NombreComercial=UPPER(?),
+                    Ambito=?,
+                    Estado=?,
+                    Telefono=?,
+                    Celular=?,
+                    Email=?,
+                    PaginaWeb=?,
+                    Direccion=?,
+                    Representante=? 
+                    WHERE IdProveedor=?");
+                    $cmdProveedor->execute(array(
+                        $body["TipoDocumento"],
+                        $body["NumeroDocumento"],
+                        $body["RazonSocial"],
+                        $body["NombreComercial"],
+                        $body["Ambito"],
+                        $body["Estado"],
+                        $body["Telefono"],
+                        $body["Celular"],
+                        $body["Email"],
+                        $body["PaginaWeb"],
+                        $body["Direccion"],
+                        $body["Representante"],
+                        $body["IdProveedor"]
+                    ));
+                    Database::getInstance()->getDb()->commit();
+                    return array("estado" => 1, "message" => "Se actualizó correctamente el proveedor.");
+                }
+            } else {
+                $cmdValidate = Database::getInstance()->getDb()->prepare("SELECT NumeroDocumento FROM ProveedorTB WHERE NumeroDocumento = ?");
+                $cmdValidate->bindParam(1, $body["NumeroDocumento"], PDO::PARAM_STR);
+                $cmdValidate->execute();
+                if ($cmdValidate->fetch()) {
+                    Database::getInstance()->getDb()->rollback();
+                    return array("estado" => 2, "message" => "No se puede haber 2 proveedores con el mismo número de documento.");
+                } else {
+
+                    $codProveedor = Database::getInstance()->getDb()->prepare("SELECT dbo.Fc_Proveedor_Codigo_Alfanumerico();");
+                    $codProveedor->execute();
+                    $idProveedor = $codProveedor->fetchColumn();
+
+                    $cmdProveedor = Database::getInstance()->getDb()->prepare("INSERT INTO
+                    ProveedorTB(
+                    IdProveedor,
+                    TipoDocumento,
+                    NumeroDocumento,
+                    RazonSocial,
+                    NombreComercial,
+                    Ambito,
+                    Estado,
+                    Telefono,
+                    Celular,
+                    Email,
+                    PaginaWeb,
+                    Direccion,
+                    UsuarioRegistro,
+                    FechaRegistro,
+                    Representante)
+                    values(?,?,?,UPPER(?),UPPER(?),?,?,?,?,?,?,?,?,GETDATE(),?)");
+                    $cmdProveedor->execute(array(
+                        $idProveedor,
+                        $body["TipoDocumento"],
+                        $body["NumeroDocumento"],
+                        $body["RazonSocial"],
+                        $body["NombreComercial"],
+                        $body["Ambito"],
+                        $body["Estado"],
+                        $body["Telefono"],
+                        $body["Celular"],
+                        $body["Email"],
+                        $body["PaginaWeb"],
+                        $body["Direccion"],
+                        $body["UsuarioRegistro"],
+                        $body["Representante"],
+                    ));
+                }
+                Database::getInstance()->getDb()->commit();
+                return array("estado" => 1, "message" => "Se registró correctamente el proveedor.");
+            }
+        } catch (Exception $ex) {
+            Database::getInstance()->getDb()->rollback();
+            return array("estado" => 0, "message" => $ex->getMessage());
+        }
+    }
+
+    public static function DeleteProveedor($body)
+    {
+        try {
+            Database::getInstance()->getDb()->beginTransaction();
+
+            $cmdValidate = Database::getInstance()->getDb()->prepare("SELECT * FROM CompraTB WHERE Proveedor = ?");
+            $cmdValidate->bindParam(1, $body["IdProveedor"], PDO::PARAM_STR);
+            $cmdValidate->execute();
+            if ($cmdValidate->fetch()) {
+                Database::getInstance()->getDb()->rollback();
+                return array("estado" => 2, "message" => "No se puede eliminar el proveedor ya que está ligado a una compra.");
+            } else {
+                $cmdProveedor = Database::getInstance()->getDb()->prepare("DELETE FROM ProveedorTB WHERE IdProveedor = ?");
+                $cmdProveedor->bindParam(1, $body["IdProveedor"], PDO::PARAM_STR);
+                $cmdProveedor->execute();
+
+                Database::getInstance()->getDb()->commit();
+                return array("estado" => 1, "message" => "Eliminado correctamente el proveedor.");
+            }
+        } catch (Exception $ex) {
+            Database::getInstance()->getDb()->rollback();
+            return array("estado" => 0, "message" => $ex->getMessage());
         }
     }
 }
