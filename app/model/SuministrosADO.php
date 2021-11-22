@@ -504,6 +504,20 @@ class SuministrosADO
                         ));
                     }
 
+                    $cmdAlmacen = Database::getInstance()->getDb()->prepare("SELECT IdAlmacen FROM AlmacenTB");
+                    $cmdAlmacen->execute();
+                    while ($row = $cmdAlmacen->fetch()) {
+                        if ($row["IdAlmacen"] != 0) {
+                            $cmdCantidad = Database::getInstance()->getDb()->prepare("INSERT INTO CantidadTB(IdAlmacen,IdSuministro,StockMinimo,StockMaximo,Cantidad) VALUES(?,?,?,?,0)");
+                            $cmdCantidad->execute(array(
+                                $row["IdAlmacen"],
+                                $idSuministro,
+                                $suministro["StockMinimo"],
+                                $suministro["StockMaximo"]
+                            ));
+                        }
+                    }
+
                     Database::getInstance()->getDb()->commit();
                     return "registrado";
                 }

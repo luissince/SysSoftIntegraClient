@@ -80,7 +80,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     }
 } else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $body = json_decode(file_get_contents("php://input"), true);
-    if ($body == "crudnotacredito") {
+    if ($body["type"] == "crudnotacredito") {
         print json_encode(VentasADO::RegistrarNotaCredito($body));
+    } else if ($body["type"] == "crudventa") {
+        print json_encode(VentasADO::RegistrarVenta($body));
     }
 }

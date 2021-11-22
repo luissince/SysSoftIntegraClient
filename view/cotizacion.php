@@ -17,6 +17,81 @@ if (!isset($_SESSION['IdEmpleado'])) {
         <!-- Sidebar menu-->
         <?php include "./layout/menu.php"; ?>
 
+        <!-- Modal del detalle de ingreso -->
+        <div class="row">
+            <div class="modal fade" id="idModalCotizacion" data-backdrop="static">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+
+                        <div class="modal-header">
+                            <h4 class="modal-title"><i class="fa fa-indent">
+                                </i> Detalle de la cotización</h4>
+                            <button type="button" class="close" id="btnCloseModal">
+                                <i class="fa fa-close"></i>
+                            </button>
+                        </div>
+
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                    <div class="table-responsive">
+                                        <table class="table border-0">
+                                            <thead>
+                                                <tr>
+                                                    <th class="text-left border-0 p-1">Comprobante</th>
+                                                    <th class="text-left border-0 p-1" id="thComprobante">--</th>
+                                                </tr>
+                                                <tr>
+                                                    <th class="text-left border-0 p-1">Cliente</th>
+                                                    <th class="text-left border-0 p-1" id="thCliente">--</th>
+                                                </tr>
+                                                <tr>
+                                                    <th class="text-left border-0 p-1">Fecha y Hora:</th>
+                                                    <th class="text-left border-0 p-1" id="thFechaHora">--</th>
+                                                </tr>
+                                                <tr>
+                                                    <th class="text-left border-0 p-1">Estado:</th>
+                                                    <th id="thEstado">--</th>
+                                                </tr>
+                                                <tr>
+                                                    <th class="text-left border-0 p-1">Total:</th>
+                                                    <th class="text-left border-0 p-1" id="thTotal">0.00</th>
+                                                </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped" style="border-width: 1px;border-style: dashed;border-color: #007bff;">
+                                            <thead style="background-color: #0766cc;color: white;">
+                                                <tr>
+                                                    <th style="width:5%;">N°</th>
+                                                    <th style="width:30%;">Descripción</th>
+                                                    <th style="width:15%;">Cantidad</th>
+                                                    <th style="width:15%;">Impuesto</th>
+                                                    <th style="width:15%;">Precio</th>
+                                                    <th style="width:15%;">Descuento</th>
+                                                    <th style="width:15%;">Importe</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="tbIngresosDetalle">
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal del detalle de ingreso -->
+
         <main class="app-content">
 
             <div class="app-title">
@@ -80,7 +155,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                         <th scope="col" class="th-porcent-15">Fecha</th>
                                         <th scope="col" class="th-porcent-25">Cliente</th>
                                         <th scope="col" class="th-porcent-10">Total</th>
-                                        <th scope="col" class="th-porcent-5">Mirar</th>
+                                        <th scope="col" class="th-porcent-5">Detalle</th>
                                         <th scope="col" class="th-porcent-5">Editar</th>
                                         <th scope="col" class="th-porcent-5">Eliminar</th>
                                     </tr>

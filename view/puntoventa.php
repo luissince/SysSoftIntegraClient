@@ -17,22 +17,12 @@ if (!isset($_SESSION['IdEmpleado'])) {
         <!-- Sidebar menu-->
         <?php include "./layout/menu.php"; ?>
 
-        <!-- modal lista cliente -->
-        <?php include('./layout/puntoventa/modalListaCliente.php'); ?>
-
         <!-- modal proceso venta -->
         <?php include('./layout/puntoventa/modalProcesoVenta.php'); ?>
         <!-- modal productos -->
         <?php include('./layout/puntoventa/modalProductos.php'); ?>
-        <!-- modal lista precio -->
-        <?php include('./layout/puntoventa/modalListaPrecios.php'); ?>
-        <!-- modal cantidad -->
-        <?php include('./layout/puntoventa/modalCantidad.php'); ?>
-        <!-- modal precio -->
-        <?php include('./layout/puntoventa/modalPrecio.php'); ?>
         <!-- modal movimiento caja -->
         <?php include('./layout/puntoventa/modalMovimientoCaja.php'); ?>
-
 
         <main class="app-content">
 
@@ -49,20 +39,9 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
                 <div class="row">
                     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                        <!-- <div class="form-group d-flex"> -->
                         <h4 class="mr-3"> Punto de Venta</h4>
-                        <!-- <button type="button" class="btn btn-warning rounded"><i class="fa fa-plus"></i> Agregar Venta</button> -->
-                        <!-- </div> -->
                     </div>
                 </div>
-
-                <!-- <div class="bs-component"> -->
-                <!-- <ul class="nav nav-tabs" id="ulNavTabs">
-                        <li class="nav-item" id="liVenta1"><a class="nav-link active" data-toggle="tab" href="#Venta1">Venta 1 <i class="fa fa-close" onclick="closeTab('Venta1')"></i></a></li>
-                    </ul> -->
-                <!-- <div class="tab-content" id="divTabContent"> -->
-
-                <!-- <div class="tab-pane fade active show pt-1" id="Venta1"> -->
 
                 <div class="row">
                     <!-- columna 1 -->
@@ -83,33 +62,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                                     </div>
                                                     <div class="row">
                                                         <div class="col-md-12">
-                                                            Productos
-                                                        </div>
-                                                    </div>
-                                                </button>
-
-                                                <button id="btnListaPrecios" class="btn btn-secondary" type="button" title="Lista de Precios">
-                                                    <div class="row">
-                                                        <div class="col-md-12">
-                                                            <image src="./images/prices.png" width="22" />
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-md-12">
-                                                            Precios
-                                                        </div>
-                                                    </div>
-                                                </button>
-
-                                                <button id="btnCantidad" class="btn btn-secondary" type="button" title="Cambiar cantidades">
-                                                    <div class="row">
-                                                        <div class="col-md-12">
-                                                            <image src="./images/plus.png" width="22" />
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-md-12">
-                                                            Cantidad
+                                                            Productos(F2)
                                                         </div>
                                                     </div>
                                                 </button>
@@ -122,12 +75,12 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                                     </div>
                                                     <div class="row">
                                                         <div class="col-md-12">
-                                                            Mov. Caja
+                                                            Mov. Caja(F3)
                                                         </div>
                                                     </div>
                                                 </button>
 
-                                                <button class="btn btn-secondary" type="button" title="Movimiento de caja">
+                                                <button id="btnLimpiar" class="btn btn-secondary" type="button" title="Movimiento de caja">
                                                     <div class="row">
                                                         <div class="col-md-12">
                                                             <image src="./images/escoba.png" width="22" />
@@ -135,7 +88,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                                     </div>
                                                     <div class="row">
                                                         <div class="col-md-12">
-                                                            Limpiar
+                                                            Limpiar(F4)
                                                         </div>
                                                     </div>
                                                 </button>
@@ -148,7 +101,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                                     </div>
                                                     <div class="row">
                                                         <div class="col-md-12">
-                                                            Ventas
+                                                            Ventas(F6)
                                                         </div>
                                                     </div>
                                                 </button>
@@ -161,7 +114,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                                     </div>
                                                     <div class="row">
                                                         <div class="col-md-12">
-                                                            Cotización
+                                                            Cotización(F7)
                                                         </div>
                                                     </div>
                                                 </button>
@@ -213,7 +166,9 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                                     </tr>
                                                 </thead>
                                                 <tbody id="tbList">
-
+                                                    <tr>
+                                                        <td colspan="6" align="center">!No hay datos para mostrar¡</td>
+                                                    </tr>
                                                 </tbody>
                                             </table>
                                         </div>
@@ -228,12 +183,12 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
                             <div class="card-header p-0">
                                 <button id="btnCobrar" class="btn btn-success btn-block">
-                                    <div class="row">
+                                    <div class="row justify-content-center p-2">
                                         <div class="col-md-6 col-sm-6 col-6 text-left">
-                                            <h5 class="text-white">COBRAR</h5>
+                                            <span class="text-white h5">COBRAR (F1)</span>
                                         </div>
                                         <div class="col-md-6 col-sm-6 col-6 text-right">
-                                            <h5 class="text-white" id="lblTotal">M 0.00</h5>
+                                            <span class="text-white h5" id="lblTotal">M 0.00</span>
                                         </div>
                                     </div>
                                 </button>
@@ -253,7 +208,9 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                             </select>
                                         </div>
                                     </div>
+                                </div>
 
+                                <div class="row">
                                     <div class="col-md-12 col-sm-12 col-12 pt-2">
                                         <div class="row">
                                             <div class="col-md-6 text-left">
@@ -264,102 +221,128 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                             </div>
                                         </div>
                                     </div>
+                                </div>
 
-                                    <div class="col-md-12 col-sm-12 col-12">
-                                        <div class="form-group">
-                                            <div class="input-group">
-                                                <div class="input-group-prepend">
-                                                    <span class="form-control">
-                                                        <image src="./images/options.png" width="22" />
-                                                    </span>
-                                                </div>
-                                                <select id="cbTipoDocumento" class="form-control" title="Comprobante de venta">
-                                                    <option>Tipo de documento</option>
-                                                </select>
-                                            </div>
+                                <div class="tile">
+
+                                    <div class="overlay d-none p-5" id="divOverlayCliente">
+                                        <div class="m-loader mr-4">
+                                            <svg class="m-circular" viewBox="25 25 50 50">
+                                                <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="4" stroke-miterlimit="10"></circle>
+                                            </svg>
                                         </div>
+                                        <h4 class="l-text text-center text-white p-10" id="lblTextOverlayCliente">Cargando información...</h4>
                                     </div>
 
-                                    <div class="col-md-12 col-sm-12 col-12">
-                                        <div class="form-group">
-                                            <div class="input-group">
-                                                <div class="input-group-prepend">
-                                                    <span class="form-control">
-                                                        <image src="./images/search.png" width="22" />
-                                                    </span>
-                                                </div>
-                                                <input id="txtNumero" type="text" class="form-control" placeholder="00000000" title="Número de documento">
-                                                <div class="input-group-append">
-                                                    <button class="btn btn-secondary" type="button" title="Cliente">
-                                                        <image src="./images/search_caja.png" width="18" height="18" />
-                                                    </button>
-                                                </div>
-                                                <div class="input-group-append">
-                                                    <button class="btn btn-secondary" type="button" title="Reniec">
-                                                        <image src="./images/sunat_logo.png" width="18" height="18" />
-                                                    </button>
-                                                </div>
-                                                <div class="input-group-append">
-                                                    <button class="btn btn-secondary" type="button" title="Sunat">
-                                                        <image src="./images/reniec.png" width="18" height="18" />
-                                                    </button>
+                                    <div class="row">
+                                        <div class="col-md-12 col-sm-12 col-12">
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="form-control">
+                                                            <image src="./images/options.png" width="22" />
+                                                        </span>
+                                                    </div>
+                                                    <select id="cbTipoDocumento" class="form-control" title="Comprobante de venta">
+                                                        <option>Tipo de documento</option>
+                                                    </select>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div class="col-md-12 col-sm-12 col-12">
-                                        <div class="form-group">
-                                            <div class="input-group">
-                                                <div class="input-group-prepend">
-                                                    <span class="form-control">
-                                                        <image src="./images/client.png" width="22" />
-                                                    </span>
+                                    <div class="row">
+                                        <div class="col-md-12 col-sm-12 col-12">
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="form-control">
+                                                            <image src="./images/search.png" width="22" />
+                                                        </span>
+                                                    </div>
+                                                    <input id="txtNumero" type="text" class="form-control" placeholder="00000000" title="Número de documento">
+                                                    <div class="input-group-append">
+                                                        <button class="btn btn-secondary" type="button" id="btnCliente">
+                                                            <image src="./images/search_caja.png" width="18" height="18" />
+                                                        </button>
+                                                    </div>
+                                                    <div class="input-group-append">
+                                                        <button class="btn btn-secondary" type="button" id="btnSunat">
+                                                            <image src="./images/sunat_logo.png" width="18" height="18" />
+                                                        </button>
+                                                    </div>
+                                                    <div class="input-group-append">
+                                                        <button class="btn btn-secondary" type="button" id="btnReniec">
+                                                            <image src="./images/reniec.png" width="18" height="18" />
+                                                        </button>
+                                                    </div>
                                                 </div>
-                                                <input id="txtCliente" type="text" class="form-control" placeholder="Cliente" title="Información del cliente">
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div class="col-md-12 col-sm-12 col-12">
-                                        <div class="form-group">
-                                            <div class="input-group">
-                                                <div class="input-group-prepend">
-                                                    <span class="form-control">
-                                                        <image src="./images/phone.png" width="22" />
-                                                    </span>
+                                    <div class="row">
+                                        <div class="col-md-12 col-sm-12 col-12">
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="form-control">
+                                                            <image src="./images/client.png" width="22" />
+                                                        </span>
+                                                    </div>
+                                                    <input id="txtCliente" type="text" class="form-control" placeholder="Cliente" title="Información del cliente">
                                                 </div>
-                                                <input id="txtCelular" type="text" class="form-control" placeholder="N° de Celular" title="Número de celular">
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div class="col-md-12 col-sm-12 col-12">
-                                        <div class="form-group">
-                                            <div class="input-group">
-                                                <div class="input-group-prepend">
-                                                    <span class="form-control">
-                                                        <image src="./images/email.png" width="22" />
-                                                    </span>
+                                    <div class="row">
+                                        <div class="col-md-12 col-sm-12 col-12">
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="form-control">
+                                                            <image src="./images/phone.png" width="22" />
+                                                        </span>
+                                                    </div>
+                                                    <input id="txtCelular" type="text" class="form-control" placeholder="N° de Celular" title="Número de celular">
                                                 </div>
-                                                <input id="txtEmail" type="text" class="form-control" placeholder="Correo Electrónico" title="Correo Electrónico">
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div class="col-md-12 col-sm-12 col-12">
-                                        <div class="form-group">
-                                            <div class="input-group">
-                                                <div class="input-group-prepend">
-                                                    <span class="form-control">
-                                                        <image src="./images/directory.png" width="22" />
-                                                    </span>
+                                    <div class="row">
+                                        <div class="col-md-12 col-sm-12 col-12">
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="form-control">
+                                                            <image src="./images/email.png" width="22" />
+                                                        </span>
+                                                    </div>
+                                                    <input id="txtEmail" type="text" class="form-control" placeholder="Correo Electrónico" title="Correo Electrónico">
                                                 </div>
-                                                <input id="txtDireccion" type="text" class="form-control" placeholder="Dirección de Vivienda o Local" title="Dirección de Vivienda">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-12 col-sm-12 col-12">
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="form-control">
+                                                            <image src="./images/directory.png" width="22" />
+                                                        </span>
+                                                    </div>
+                                                    <input id="txtDireccion" type="text" class="form-control" placeholder="Dirección de Vivienda o Local" title="Dirección de Vivienda">
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+
+
                                 <div class="row">
                                     <div class="col-md-12 col-sm-12 col-12">
                                         <table class="table border-0">
@@ -395,33 +378,20 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     </div>
                 </div>
 
-                <!-- </div> -->
-                <!-- </div> -->
-                <!-- </div> -->
-            </div>
             </div>
         </main>
 
         <?php include "./layout/footer.php"; ?>
-        <script src="js/puntoventa/modalListaCliente.js"></script>
         <script src="js/puntoventa/modalProcesoVenta.js"></script>
-
         <script src="js/puntoventa/modalProductos.js"></script>
-        <script src="js/puntoventa/modalListaPrecios.js"></script>
-        <script src="js/puntoventa/modalCantidad.js"></script>
-        <script src="js/puntoventa/modalPrecio.js"></script>
         <script src="js/puntoventa/modalMovimientoCaja.js"></script>
 
         <script src="./js/notificaciones.js"></script>
         <script>
             let tools = new Tools();
             let modalProductos = new ModalProductos();
-            let modalListaCliente = new ModalListaCliente();
             let modalProcesoVenta = new ModalProcesoVenta();
-            let modalCantidad = new ModalCantidad();
-            let modalPrecio = new ModalPrecio();
             let modalMovimientoCaja = new ModalMovimientoCaja();
-            let modalListaPrecios = new ModalListaPrecios();
 
             let monedaSimbolo = "M";
             let importeBruto = 0;
@@ -430,19 +400,52 @@ if (!isset($_SESSION['IdEmpleado'])) {
             let impuestoNeto = 0;
             let importeNeto = 0;
 
-            let idCliente = "";
-
             let listaProductos = [];
 
-            $(document).ready(function() {
+            let state_view_pago = 0;
+            let vueltoContado = 0;
+            let total_venta = 0;
+            let estadoCobroContado = false;
+
+            let idEmpleado = "<?= $_SESSION['IdEmpleado'] ?>";
+
+            window.addEventListener('keydown', function(event) {
+
+                if (event.ctrlKey && event.key === 'd' || event.ctrlKey && event.key === 'D') {
+                    $("#txtCodigoBarra").focus();
+                    event.preventDefault();
+                }
+                if (event.key === 'F1' || event.key === 'f1') {
+                    modalVenta();
+                    event.preventDefault();
+                }
+                if (event.key === 'F2' || event.key === 'f2') {
+                    modalProductos.openModalInitVentas();
+                    event.preventDefault();
+                }
+                if (event.key === 'F3' || event.key === 'f3') {
+
+                    event.preventDefault();
+                }
+                if (event.key === 'F4' || event.key === 'f4') {
+                    resetVenta();
+                    event.preventDefault();
+                }
+                if (event.key === 'F6' || event.key === 'f6') {
+
+                    event.preventDefault();
+                }
+                if (event.key === 'F7' || event.key === 'f7') {
+
+                    event.preventDefault();
+                }
+            });
+
+            $(window).ready(function() {
 
                 modalProductos.init();
-                modalListaCliente.init();
                 modalProcesoVenta.init();
-                modalCantidad.init();
-                modalPrecio.init();
                 modalMovimientoCaja.init();
-                modalListaPrecios.init();
 
                 $("#cbComprobante").change(async function() {
                     if ($('#cbComprobante').children('option').length > 0 && $("#cbComprobante").val() != "") {
@@ -456,6 +459,68 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     }
                 });
 
+                $("#txtNumero").keydown(function(event) {
+                    if (event.keyCode === 13) {
+                        if ($("#txtNumero").val().trim().length != 0) {
+                            searchCliente($("#txtNumero").val().trim());
+                        }
+                        event.preventDefault();
+                    }
+                });
+
+                $("#btnCliente").click(function() {
+                    if ($("#txtNumero").val().trim().length != 0) {
+                        searchCliente($("#txtNumero").val().trim());
+                    }
+                });
+
+                $("#btnCliente").keypress(function(event) {
+                    if (event.keyCode == 13) {
+                        searchCliente($("#txtNumero").val().trim());
+                        event.preventDefault();
+                    }
+                });
+
+                $("#btnSunat").click(function() {
+                    if ($("#txtNumero").val().trim().length == 11) {
+                        searchSunat($("#txtNumero").val().trim());
+                    }
+                });
+
+                $("#btnSunat").keypress(function(event) {
+                    if (event.keyCode == 13) {
+                        if ($("#txtNumero").val().trim().length == 11) {
+                            searchSunat($("#txtNumero").val().trim());
+                        }
+                        event.preventDefault();
+                    }
+                });
+
+                $("#btnReniec").click(function() {
+                    if ($("#txtNumero").val().trim().length == 8) {
+                        searchReniec($("#txtNumero").val().trim());
+                    }
+                });
+
+                $("#btnReniec").keypress(function(event) {
+                    if (event.keyCode == 13) {
+                        if ($("#txtNumero").val().trim().length == 8) {
+                            searchReniec($("#txtNumero").val().trim());
+                        }
+                        event.preventDefault();
+                    }
+                });
+
+                $("#btnLimpiar").click(function(event) {
+                    resetVenta();
+                });
+
+                $("#btnLimpiar").keypress(function(event) {
+                    if (event.keyCode == 13) {
+                        resetVenta();
+                        event.preventDefault();
+                    }
+                });
                 resetVenta();
             });
 
@@ -468,69 +533,21 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     $("#lblSerie").empty();
                     $("#lblNumeracion").empty();
 
-                    let promiseFetchMoneda = new Promise(function(resolve, reject) {
-                        $.ajax({
-                            url: "../app/controller/MonedaController.php",
-                            method: "GET",
-                            data: {
-                                "type": "getmonedacombobox"
-                            },
-                            success: function(result) {
-                                resolve(result);
-                            },
-                            error: function(error) {
-                                reject(error);
-                            }
-                        });
+                    let promiseFetchMoneda = tools.promiseFetchGet("../app/controller/MonedaController.php", {
+                        "type": "getmonedacombobox"
                     });
 
-                    let promiseFetchComprobante = new Promise(function(resolve, reject) {
-                        $.ajax({
-                            url: "../app/controller/TipoDocumentoController.php",
-                            method: "GET",
-                            data: {
-                                "type": "getdocumentocomboboxventas"
-                            },
-                            success: function(result) {
-                                resolve(result);
-                            },
-                            error: function(error) {
-                                reject(error);
-                            }
-                        });
+                    let promiseFetchComprobante = tools.promiseFetchGet("../app/controller/TipoDocumentoController.php", {
+                        "type": "getdocumentocomboboxventas"
                     });
 
-                    let promiseFetchDocumento = new Promise(function(resolve, reject) {
-                        $.ajax({
-                            url: "../app/controller/DetalleController.php",
-                            method: "GET",
-                            data: {
-                                "type": "detailid",
-                                "value": "0003"
-                            },
-                            success: function(result) {
-                                resolve(result);
-                            },
-                            error: function(error) {
-                                reject(error);
-                            }
-                        });
+                    let promiseFetchDocumento = tools.promiseFetchGet("../app/controller/DetalleController.php", {
+                        "type": "detailid",
+                        "value": "0003"
                     });
 
-                    let promiseFetchCliente = new Promise(function(resolve, reject) {
-                        $.ajax({
-                            url: "../app/controller/EmpleadoController.php",
-                            method: "GET",
-                            data: {
-                                "type": "predeterminate"
-                            },
-                            success: function(result) {
-                                resolve(result);
-                            },
-                            error: function(error) {
-                                reject(error);
-                            }
-                        });
+                    let promiseFetchCliente = tools.promiseFetchGet("../app/controller/EmpleadoController.php", {
+                        "type": "predeterminate"
                     });
 
                     let promise = await Promise.all([promiseFetchMoneda, promiseFetchComprobante, promiseFetchDocumento, promiseFetchCliente]);
@@ -585,7 +602,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
                     let cliente = result[3];
                     if (cliente.estado === 1) {
-                        idCliente = cliente.cliente.IdCliente;
                         $("#txtNumero").val(cliente.cliente.NumeroDocumento);
                         $("#txtCliente").val(cliente.cliente.Informacion);
                         $("#txtCelular").val(cliente.cliente.Celular);
@@ -643,20 +659,28 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 impuestoNeto = 0;
                 importeNeto = 0;
 
-                for (let value of listaProductos) {
-                    $("#tbList").append('<tr role="row" class="odd">' +
-                        '<td class="text-center"><button class="btn btn-danger" onclick="removeDetalleProducto(\'' + value.idSuministro + '\')"><i class="fa fa-trash"></i></button></td>' +
-                        '<td><input readonly id="c-' + value.idSuministro + '" type="text" class="form-control" placeholder="0" onkeypress="onKeyPressTable(this)" onkeydown="onKeyDownTableCantidad(this,\'' + value.idSuministro + '\')" value="' + tools.formatMoney(value.cantidad) + '" onfocusout="onFocusOutTable()" ondblclick="onClickTable(\'' + "c-" + value.idSuministro + '\')" autocomplete="off" /></td>' +
-                        '<td>' + value.clave + '<br>' + value.nombreMarca + '</td>' +
-                        '<td class="text-center">' + value.impuestoNombre + '</td>' +
-                        '<td><input readonly id="p-' + value.idSuministro + '" type="text" class="form-control" placeholder="0" onkeypress="onKeyPressTable(this)"  onkeydown="onKeyDownTablePrecio(this,\'' + value.idSuministro + '\')" value="' + tools.formatMoney(value.precioVentaGeneral) + '" onfocusout="onFocusOutTable()" ondblclick="onClickTable(\'' + "p-" + value.idSuministro + '\')" autocomplete="off" /></td>' +
-                        '<td class="text-center">' + tools.formatMoney(value.cantidad * value.precioVentaGeneral) + '</td>' +
-                        '</tr>');
 
-                    importeBruto += value.importeBruto;
-                    descuentoBruto += value.descuentoSumado;
-                    subImporteNeto += value.subImporteNeto;
-                    impuestoNeto += value.impuestoSumado;
+
+                if (listaProductos.length == 0) {
+                    $("#tbList").append(`<tr> 
+                        <td colspan = "6" align = "center"> !No hay datos para mostrar¡ </td> 
+                    </tr>`);
+                } else {
+                    for (let value of listaProductos) {
+                        $("#tbList").append('<tr role="row" class="odd">' +
+                            '<td class="text-center"><button class="btn btn-danger" onclick="removeDetalleProducto(\'' + value.idSuministro + '\')"><i class="fa fa-trash"></i></button></td>' +
+                            '<td><input readonly id="c-' + value.idSuministro + '" type="text" class="form-control" placeholder="0" onkeypress="onKeyPressTable(this)" onkeydown="onKeyDownTableCantidad(this,\'' + value.idSuministro + '\')" value="' + tools.formatMoney(value.cantidad) + '" onfocusout="onFocusOutTable()" ondblclick="onClickTable(\'' + "c-" + value.idSuministro + '\')" autocomplete="off" /></td>' +
+                            '<td>' + value.clave + '<br>' + value.nombreMarca + '</td>' +
+                            '<td class="text-center">' + value.impuestoNombre + '</td>' +
+                            '<td><input readonly id="p-' + value.idSuministro + '" type="text" class="form-control" placeholder="0" onkeypress="onKeyPressTable(this)"  onkeydown="onKeyDownTablePrecio(this,\'' + value.idSuministro + '\')" value="' + tools.formatMoney(value.precioVentaGeneral) + '" onfocusout="onFocusOutTable()" ondblclick="onClickTable(\'' + "p-" + value.idSuministro + '\')" autocomplete="off" /></td>' +
+                            '<td class="text-center">' + tools.formatMoney(value.cantidad * value.precioVentaGeneral) + '</td>' +
+                            '</tr>');
+
+                        importeBruto += value.importeBruto;
+                        descuentoBruto += value.descuentoSumado;
+                        subImporteNeto += value.subImporteNeto;
+                        impuestoNeto += value.impuestoSumado;
+                    }
                 }
                 importeNeto = subImporteNeto + impuestoNeto;
 
@@ -684,7 +708,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     for (let i = 0; i < listaProductos.length; i++) {
                         if (listaProductos[i].idSuministro == idSuministro) {
                             let suministro = listaProductos[i];
-                            suministro.cantidad = tools.isNumeric(value.value) ? value.value <= 0 ? 1 : value.value : 1;
+                            suministro.cantidad = tools.isNumeric(value.value) ? value.value <= 0 ? 1 : parseFloat(value.value) : 1;
 
                             let porcentajeRestante = suministro.precioVentaGeneralUnico * (suministro.descuento / 100.00);
                             suministro.descuentoCalculado = porcentajeRestante;
@@ -709,7 +733,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         if (listaProductos[i].idSuministro == idSuministro) {
                             let suministro = listaProductos[i];
 
-                            let monto = tools.isNumeric(value.value) ? value.value <= 0 ? 1 : value.value : 1;
+                            let monto = tools.isNumeric(value.value) ? value.value <= 0 ? 1 : parseFloat(value.value) : 1;
 
                             let valor_sin_impuesto = monto / ((suministro.impuestoValor / 100.00) + 1);
                             let descuento = suministro.descuento;
@@ -746,46 +770,196 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 $("#" + idSuministro).removeAttr("readonly");
             }
 
-            function closeTab(idTab) {
-                if ($("#ulNavTabs li").length > 1) {
-                    let isSelected = $($("#li" + idTab + " a")[0]).hasClass("active");
-                    $("#li" + idTab).remove();
-                    $("#" + idTab).remove();
-                    if (isSelected) {
-                        $("#ulNavTabs li").each(function() {
-                            $("#" + $(this)[0].id + " a").removeClass("active")
-                        });
-
-                        $("#divTabContent > div").each(function() {
-                            $("#" + $(this)[0].id + "").removeClass("active show");
-                        });
-
-                        $("#" + $("#ulNavTabs li")[0].id + " a").addClass("active");
-                        $("#" + $("#divTabContent > div")[0].id + "").addClass("active show");
-                    } else {
-
-                    }
-                } else {
-                    // $("#ulNavTabs li a i")[0].remove();
-                }
-            }
-
             function getSerieNumeracionEspecifico(idTipoDocumento) {
-                return new Promise(function(resolve, reject) {
-                    fetch("../app/controller/ComprobanteController.php?type=getserienumeracion&idTipoDocumento=" + idTipoDocumento).then(response => {
-                        return response.json()
-                    }).then(result => {
-                        resolve(result);
-                    }).catch(error => {
-                        reject(error);
-                    });
+                return tools.promiseFetchGet("../app/controller/ComprobanteController.php", {
+                    "type": "getserienumeracion",
+                    "idTipoDocumento": idTipoDocumento
                 });
             }
 
-            async function resetVenta() {
+            function searchCliente(numero) {
+                tools.promiseFetchGet("../app/controller/ClienteController.php", {
+                    "type": "GetSearchClienteNumeroDocumento",
+                    "opcion": "2",
+                    "search": numero
+                }, function() {
+                    $("#divOverlayCliente").removeClass("d-none");
+                }).then(function(result) {
+                    if (result.estado == 1) {
+                        $("#txtCliente").val(result.cliente.Informacion);
+                        $("#txtCelular").val(result.cliente.Celular);
+                        $("#txtEmail").val(result.cliente.Email);
+                        $("#txtDireccion").val(result.cliente.Direccion);
+                    }
+                    $("#divOverlayCliente").addClass("d-none");
+                }).catch(function(error) {
+                    $("#divOverlayCliente").addClass("d-none");
+                });
+            }
+
+            function searchReniec(numero) {
+                tools.promiseFetchGet("https://dniruc.apisperu.com/api/v1/dni/" + numero + "?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImFsZXhhbmRlcl9keF8xMEBob3RtYWlsLmNvbSJ9.6TLycBwcRyW1d-f_hhCoWK1yOWG_HJvXo8b-EoS5MhE", {}, function() {
+                    $("#divOverlayCliente").removeClass("d-none");
+                }).then(function(result) {
+                    $("#txtCliente").val(result.apellidoPaterno + " " + result.apellidoMaterno + " " + result.nombres);
+                    $("#txtCelular").val('');
+                    $("#txtEmail").val('');
+                    $("#txtDireccion").val('');
+                    $("#divOverlayCliente").addClass("d-none");
+                }).catch(function(error) {
+                    $("#divOverlayCliente").addClass("d-none");
+                });
+            }
+
+            function searchSunat(numero) {
+                tools.promiseFetchGet("https://dniruc.apisperu.com/api/v1/ruc/" + numero + "?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImFsZXhhbmRlcl9keF8xMEBob3RtYWlsLmNvbSJ9.6TLycBwcRyW1d-f_hhCoWK1yOWG_HJvXo8b-EoS5MhE", {}, function() {
+                    $("#divOverlayCliente").removeClass("d-none");
+                }).then(function(result) {
+                    $("#txtCliente").val(result.razonSocial);
+                    $("#txtCelular").val('');
+                    $("#txtEmail").val('');
+                    $("#txtDireccion").val(result.direccion == null ? '' : result.direccion);
+                    $("#divOverlayCliente").addClass("d-none");
+                }).catch(function(error) {
+                    $("#divOverlayCliente").addClass("d-none");
+                });
+            }
+
+            function resetVenta() {
                 $("#divOverlayPuntoVenta").removeClass("d-none");
                 $("#txtCodigoBarra").focus();
                 loadInit();
+
+                importeBruto = 0;
+                descuentoBruto = 0;
+                subImporteNeto = 0;
+                impuestoNeto = 0;
+                importeNeto = 0;
+
+                listaProductos = [];
+                renderTableProductos();
+
+                state_view_pago = 0;
+                vueltoContado = 0;
+                total_venta = 0;
+                estadoCobroContado = false;
+            }
+
+            function modalVenta() {
+                if (listaProductos.length !== 0) {
+                    $("#modalProcesoVenta").modal("show");
+                    $("#lblTotalModal").html(monedaSimbolo + " " + tools.formatMoney(importeNeto));
+                    $("#lblVueltoNombre").html('Su cambio:');
+                    $("#lblVuelto").html(monedaSimbolo + ' 0.00');
+                    total_venta = importeNeto;
+                } else {
+                    tools.AlertWarning("", "No hay productos en la lista para continuar.");
+                }
+            }
+
+            function crudVenta() {
+                if (state_view_pago == 0) {
+                    if (!estadoCobroContado) {
+                        $("#txtEfectivo").focus();
+                        tools.AlertWarning("", "El monto es menor que el total.");
+                    } else {
+                        let efectivo = 0;
+                        let vuelto = vueltoContado;
+                        let tarjeta = 0;
+                        let deposito = 0;
+
+                        if (false) {
+
+                        } else {
+                            if (tools.isNumeric($("#txtEfectivo").val()) && parseFloat($("#txtEfectivo").val()) > 0) {
+                                efectivo = parseFloat($("#txtEfectivo").val());
+                            }
+
+                            if (tools.isNumeric($("#txtTarjeta").val()) && parseFloat($("#txtTarjeta").val()) > 0) {
+                                tarjeta = parseFloat($("#txtTarjeta").val());
+                            }
+
+                            if (tools.isNumeric($("#txtEfectivo").val()) && tools.isNumeric($("#txtTarjeta").val())) {
+                                if ((parseFloat($("#txtEfectivo").val())) >= total_venta) {
+                                    tools.AlertWarning("", "Los valores ingresados no son correctos!!");
+                                    return;
+                                }
+                                let efectivo = parseFloat($("#txtEfectivo").val());
+                                let tarjeta = parseFloat($("#txtTarjeta").val());
+                                if ((efectivo + tarjeta) != total_venta) {
+                                    tools.AlertWarning("", "El monto a pagar no debe ser mayor al total!!");
+                                    return;
+                                }
+                            }
+
+                            if (!tools.isNumeric($("#txtEfectivo").val()) && tools.isNumeric($("#txtTarjeta").val())) {
+                                if ((parseFloat($("#txtTarjeta").val())) > total_venta) {
+                                    tools.AlertWarning("", "El pago con tarjeta no debe ser mayor al total!!");
+                                    return;
+                                }
+                            }
+                        }
+
+                        completeVenta(1, 1, efectivo, vuelto, tarjeta, deposito);
+                    }
+                } else if (state_view_pago == 1) {
+                    completeVenta();
+                } else {
+                    completeVenta();
+                }
+            }
+
+            function completeVenta(tipo, estado, efectivo, vuelto, tarjeta, deposito) {
+                tools.ModalDialog("Venta", '¿Está seguro de continuar?', function(value) {
+                    if (value == true) {
+                        tools.promiseFetchPost("../app/controller/VentaController.php", {
+                            "type": "crudventa",
+                            "TipoDocumento": $("#cbTipoDocumento").val(),
+                            "NumeroDocumento": $("#txtNumero").val().trim(),
+                            "Informacion": $("#txtCliente").val().trim(),
+                            "Telefono": "",
+                            "Celular": $("#txtCelular").val().trim(),
+                            "Email": $("#txtEmail").val().trim(),
+                            "Direccion": $("#txtDireccion").val().trim(),
+                            "Representante": "",
+                            "Estado": 1,
+                            "Predeterminado": false,
+                            "Sistema": false,
+                            "IdComprobante": $("#cbComprobante").val(),
+                            "IdEmpleado": idEmpleado,
+                            "IdMoneda": $("#cbMoneda").val(),
+                            "FechaVencimiento": tools.getCurrentDate(),
+                            "HoraVencimiento": tools.getCurrentTime(),
+                            "SubTotal": importeBruto,
+                            "Descuento": descuentoBruto,
+                            "Impuesto": impuestoNeto,
+                            "Total": importeNeto,
+                            "Tipo": tipo,
+                            "Estado": estado,
+                            "Efectivo": efectivo,
+                            "Vuelto": vuelto,
+                            "Tarjeta": tarjeta,
+                            "Deposito": deposito,
+                            "NumeroOperacion": "",
+                            "Lista": listaProductos
+
+                        }, function() {
+                            modalProcesoVenta.resetProcesoVenta();
+                            resetVenta();
+                            tools.ModalAlertInfo("Venta", "Se está procesando la información.");
+                        }).then(function(result) {
+                            if (result.estado == 1) {
+                                tools.ModalAlertSuccess("Venta", result.message);
+                            } else {
+                                tools.ModalAlertWarning("Venta", result.message);
+                            }
+                            console.log(result);
+                        }).catch(function(error) {
+                            console.log(error)
+                            tools.ModalAlertError("Venta", "Se produjo un error interno intente nuevamente.");
+                        });
+                    }
+                });
             }
         </script>
     </body>

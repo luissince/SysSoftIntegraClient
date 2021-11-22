@@ -1734,4 +1734,268 @@ class VentasADO
             );
         }
     }
+
+    public static function RegistrarVenta($body)
+    {
+        try {
+            Database::getInstance()->getDb()->beginTransaction();
+            $idCliente = "";
+
+            $cmdValidate = Database::getInstance()->getDb()->prepare("SELECT IdCliente FROM ClienteTB WHERE NumeroDocumento = ?");
+            $cmdValidate->bindParam(1, $body["NumeroDocumento"], PDO::PARAM_STR);
+            $cmdValidate->execute();
+            if ($row = $cmdValidate->fetch()) {
+                $idCliente = $row["IdCliente"];
+                $cmdCliente = Database::getInstance()->getDb()->prepare("UPDATE ClienteTB SET TipoDocumento=?,Informacion = ?,Celular=?,Email=?,Direccion=? WHERE IdCliente =  ?");
+                $cmdCliente->bindParam(1, $body["TipoDocumento"], PDO::PARAM_STR);
+                $cmdCliente->bindParam(2, $body["Informacion"], PDO::PARAM_STR);
+                $cmdCliente->bindParam(3, $body["Celular"], PDO::PARAM_STR);
+                $cmdCliente->bindParam(4, $body["Email"], PDO::PARAM_STR);
+                $cmdCliente->bindParam(5, $body["Direccion"], PDO::PARAM_STR);
+                $cmdCliente->bindParam(6, $row["IdCliente"], PDO::PARAM_STR);
+                $cmdCliente->execute();
+            } else {
+                $codigoCliente = Database::getInstance()->getDb()->prepare("SELECT dbo.Fc_Cliente_Codigo_Alfanumerico();");
+                $codigoCliente->execute();
+                $idGeneradoCli = $codigoCliente->fetchColumn();
+
+                $cmdCliente = Database::getInstance()->getDb()->prepare("INSERT INTO ClienteTB(
+                    IdCliente,
+                    TipoDocumento,
+                    NumeroDocumento,
+                    Informacion,
+                    Telefono,
+                    Celular,
+                    Email,
+                    Direccion,
+                    Representante,
+                    Estado,
+                    Predeterminado,
+                    Sistema)
+                    VALUES(?,?,?,?,?,?,?,?,?,?,?,?)");
+                $cmdCliente->bindParam(1, $idGeneradoCli, PDO::PARAM_STR);
+                $cmdCliente->bindParam(2, $body["TipoDocumento"], PDO::PARAM_STR);
+                $cmdCliente->bindParam(3, $body["NumeroDocumento"], PDO::PARAM_STR);
+                $cmdCliente->bindParam(4, $body["Informacion"], PDO::PARAM_STR);
+                $cmdCliente->bindParam(5, $body["Telefono"], PDO::PARAM_STR);
+                $cmdCliente->bindParam(6, $body["Celular"], PDO::PARAM_STR);
+                $cmdCliente->bindParam(7, $body["Email"], PDO::PARAM_STR);
+                $cmdCliente->bindParam(8, $body["Direccion"], PDO::PARAM_STR);
+                $cmdCliente->bindParam(9, $body["Representante"], PDO::PARAM_STR);
+                $cmdCliente->bindParam(10, $body["Estado"], PDO::PARAM_INT);
+                $cmdCliente->bindParam(11, $body["Predeterminado"], PDO::PARAM_BOOL);
+                $cmdCliente->bindParam(12, $body["Sistema"], PDO::PARAM_BOOL);
+                $cmdCliente->execute();
+                $idCliente = $idGeneradoCli;
+            }
+
+            $serie_numeracion = Database::getInstance()->getDb()->prepare("SELECT dbo.Fc_Serie_Numero(?)");
+            $serie_numeracion->bindParam(1, $body["IdComprobante"], PDO::PARAM_STR);
+            $serie_numeracion->execute();
+            $id_comprabante =  explode("-", $serie_numeracion->fetchColumn());
+
+            $codigo_venta = Database::getInstance()->getDb()->prepare("SELECT dbo.Fc_Venta_Codigo_Alfanumerico()");
+            $codigo_venta->execute();
+            $id_venta = $codigo_venta->fetchColumn();
+
+            $venta = Database::getInstance()->getDb()->prepare("INSERT INTO VentaTB
+                       (IdVenta
+                       ,Cliente
+                       ,Vendedor
+                       ,Comprobante
+                       ,Moneda
+                       ,Serie
+                       ,Numeracion
+                       ,FechaVenta
+                       ,HoraVenta
+                       ,FechaVencimiento
+                       ,HoraVencimiento
+                       ,SubTotal
+                       ,Descuento
+                       ,Impuesto
+                       ,Total
+                       ,Tipo
+                       ,Estado
+                       ,Observaciones
+                       ,Efectivo
+                       ,Vuelto
+                       ,Tarjeta
+                       ,Codigo
+                       ,Deposito
+                       ,NumeroOperacion
+                       ,Procedencia)
+                 VALUES (?,?,?,?,?,?,?,GETDATE(),GETDATE(),?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,1)");
+            $venta->execute(array(
+                $id_venta,
+                $idCliente,
+                $body["IdEmpleado"],
+                $body["IdComprobante"],
+                $body["IdMoneda"],
+                $id_comprabante[0],
+                $id_comprabante[1],
+                $body["FechaVencimiento"],
+                $body["HoraVencimiento"],
+                $body["SubTotal"],
+                $body["Descuento"],
+                $body["Impuesto"],
+                $body["Total"],
+                $body["Tipo"],
+                $body["Estado"],
+                "",
+                $body["Efectivo"],
+                $body["Vuelto"],
+                $body["Tarjeta"],
+                "",
+                $body["Deposito"],
+                $body["NumeroOperacion"]
+            ));
+
+            $cmdComprobante = Database::getInstance()->getDb()->prepare("INSERT INTO ComprobanteTB(IdTipoDocumento,Serie,Numeracion,FechaRegistro)VALUES(?,?,?,GETDATE())");
+            $cmdComprobante->execute(array(
+                $body["IdComprobante"],
+                $id_comprabante[0],
+                $id_comprabante[1],
+            ));
+
+            $cmdDetalle = Database::getInstance()->getDb()->prepare("INSERT INTO DetalleVentaTB
+            (IdVenta
+            ,IdArticulo
+            ,Cantidad
+            ,CostoVenta
+            ,PrecioVenta
+            ,Descuento
+            ,IdOperacion
+            ,IdImpuesto
+            ,NombreImpuesto
+            ,ValorImpuesto
+            ,Importe
+            ,Bonificacion
+            ,PorLlevar
+            ,Estado)
+            VALUES
+            (?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+
+            $cmdSuministroUpdate = Database::getInstance()->getDb()->prepare("UPDATE SuministroTB SET Cantidad = Cantidad - ? WHERE IdSuministro = ?");
+
+            $cmdSuministroKardex = Database::getInstance()->getDb()->prepare("INSERT INTO 
+            KardexSuministroTB(
+            IdSuministro,
+            Fecha,
+            Hora,
+            Tipo,
+            Movimiento,
+            Detalle,
+            Cantidad,
+            Costo, 
+            Total,
+            IdAlmacen) 
+            VALUES(?,GETDATE(),GETDATE(),?,?,?,?,?,?,?)");
+
+            foreach ($body["Lista"] as $value) {
+                $cantidad = $value["valorInventario"] == 2 ? $value["importeNeto"] / $value["precioVentaGeneralAuxiliar"] : $value["cantidad"];
+                $precio = $value["valorInventario"] == 2 ? $value["precioVentaGeneralAuxiliar"] : $value["precioVentaGeneral"];
+
+                $cmdDetalle->execute(array(
+                    $id_venta,
+                    $value["idSuministro"],
+                    $cantidad,
+                    $value["costoCompra"],
+                    $precio,
+                    $value["descuento"],
+                    $value["impuestoOperacion"],
+                    $value["impuestoId"],
+                    $value["impuestoNombre"],
+                    $value["impuestoValor"],
+                    $precio * $value["cantidad"],
+                    $value["bonificacion"],
+                    $cantidad,
+                    "C"
+                ));
+
+                if ($value["inventario"] == "1" && $value["valorInventario"] == "1") {
+                    $cmdSuministroUpdate->execute(array($value["cantidad"] + $value["bonificacion"], $value["idSuministro"]));
+                } else if ($value["inventario"] == "1" && $value["valorInventario"] == "2") {
+                    $cmdSuministroUpdate->execute(array($value["importeNeto"] / $value["precioVentaGeneralAuxiliar"], $value["idSuministro"]));
+                } else if ($value["inventario"] == "1" && $value["valorInventario"] == "3") {
+                    $cmdSuministroUpdate->execute(array($value["cantidad"], $value["idSuministro"]));
+                }
+
+                if ($value["valorInventario"] == "1") {
+                    $cantidadKardex = $value["cantidad"] + $value["bonificacion"];
+                } else if ($value["valorInventario"] == "2") {
+                    $cantidadKardex = $value["importeNeto"] / $value["precioVentaGeneralAuxiliar"];
+                } else {
+                    $cantidadKardex = $value["cantidad"];
+                }
+
+                $cmdSuministroKardex->execute(array(
+                    $value["idSuministro"],
+                    2,
+                    1,
+                    "VENTA CON SERIE Y NUMERACIÓN: " . $id_comprabante[0] . "-" . $id_comprabante[1] . ($value["bonificacion"] <= 0 ? "" : "(BONIFICACIÓN: " . $value["bonificacion"] . ")"),
+                    $cantidadKardex,
+                    $value["costoCompra"],
+                    $cantidadKardex * $value["costoCompra"],
+                    0
+                ));
+            }
+
+            $cmdIngreso = Database::getInstance()->getDb()->prepare("INSERT INTO IngresoTB(
+                IdProcedencia,
+                IdUsuario,
+                Detalle,
+                Procedencia,
+                Fecha,
+                Hora,
+                Forma,
+                Monto)
+                VALUES(?,?,?,?,GETDATE(),GETDATE(),?,?)");
+
+            if ($body["Deposito"] > 0) {
+                $cmdIngreso->execute(array(
+                    $id_venta,
+                    $body["IdEmpleado"],
+                    "VENTA CON DEPOSITO DE SERIE Y NUMERACIÓN DEL COMPROBANTE " . $id_comprabante[0] . "-" . $id_comprabante[1],
+                    1,
+                    3,
+                    $body["Deposito"]
+                ));
+            } else {
+                if ($body["Efectivo"] > 0) {
+                    $cmdIngreso->execute(array(
+                        $id_venta,
+                        $body["IdEmpleado"],
+                        "VENTA CON EFECTIVO DE SERIE Y NUMERACIÓN DEL COMPROBANTE " . $id_comprabante[0] . "-" . $id_comprabante[1],
+                        1,
+                        1,
+                        $body["Tarjeta"] > 0 ? $body["Efectivo"] : $body["Total"]
+                    ));
+                }
+
+                if ($body["Tarjeta"] > 0) {
+                    $cmdIngreso->execute(array(
+                        $id_venta,
+                        $body["IdEmpleado"],
+                        "VENTA CON TAJETA DE SERIE Y NUMERACIÓN DEL COMPROBANTE " . $id_comprabante[0] . "-" . $id_comprabante[1],
+                        1,
+                        2,
+                        $body["Tarjeta"]
+                    ));
+                }
+            }
+
+            Database::getInstance()->getDb()->commit();
+            return array(
+                "estado" => 1,
+                "message" => "Se registro correctamente la venta.",
+                "data" => $body
+            );
+        } catch (PDOException $ex) {
+            Database::getInstance()->getDb()->rollback();
+            return array("estado" => 0, "message" => $ex->getMessage());
+        } catch (Exception $ex) {
+            Database::getInstance()->getDb()->rollback();
+            return array("estado" => 0, "message" => $ex->getMessage());
+        }
+    }
 }

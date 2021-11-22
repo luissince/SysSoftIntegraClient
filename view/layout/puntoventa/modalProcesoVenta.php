@@ -16,83 +16,84 @@
                     <div class="row">
                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                             <div class="text-center">
-                                <h3>Total a pagar: <span>S/ 10.00</span></h3>
+                                <h3>TOTAL A PAGAR: <span id="lblTotalModal">M 0.00</span></h3>
                             </div>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-3 col-sm-3">
+                        <div class="col-md-4 col-sm-4">
                             <hr>
                         </div>
-                        <div class="col-md-6 col-sm-6">
-                            <h6 class="text-center">Tipos de pagos</h6>
+                        <div class="col-md-4 col-sm-4 d-flex align-items-center justify-content-center">
+                            <h6 class="mb-0">Tipos de pagos</h6>
                         </div>
-                        <div class="col-md-3 col-sm-3">
+                        <div class="col-md-4 col-sm-4">
                             <hr>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-4 col-sm-4">
-                            <div class="text-center">
-                                <button id="btnContado" class="btn btn-primary" type="button" title="Pago al contado">
-                                    <div class="text-center">
-                                        <i class="fa fa-money"></i>
+                            <button id="btnContado" class="btn btn-primary btn-block" type="button" title="Pago al contado">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <img src="./images/efectivo.png" width="28">
                                     </div>
-                                    <div class="text-center">
-                                        <label>Contado</label>
-                                    </div>
-                                </button>
-                            </div>
+                                </div>
+                                <div class="text-center">
+                                    <label>Contado</label>
+                                </div>
+                            </button>
                         </div>
                         <div class="col-md-4 col-sm-4">
-                            <div class="text-center">
-                                <button id="btnCredito" class="btn btn-secondary" type="button" title="Pago al credito">
-                                    <div class="text-center">
-                                        <i class="fa fa-shopping-bag"></i>
+                            <button id="btnCredito" class="btn btn-secondary btn-block" type="button" title="Pago al credito">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <img src="./images/generar.png" width="28">
                                     </div>
-                                    <div class="text-center">
-                                        <label>Credito</label>
-                                    </div>
-                                </button>
-                            </div>
+                                </div>
+                                <div class="text-center">
+                                    <label>Crédito</label>
+                                </div>
+                            </button>
                         </div>
                         <div class="col-md-4 col-sm-4">
-                            <div class="text-center">
-                                <button id="btnAdelantado" class="btn btn-secondary" type="button" title="Pago adelantado">
-                                    <div class="text-center">
-                                        <i class="fa fa-suitcase"></i>
+                            <button id="btnAdelantado" class="btn btn-secondary btn-block" type="button" title="Pago adelantado">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <img src="./images/presupuesto.png" width="28">
                                     </div>
-                                    <div class="text-center">
-                                        <label>Adelanto</label>
-                                    </div>
-                                </button>
-                            </div>
+                                </div>
+                                <div class="text-center">
+                                    <label>Adelanto</label>
+                                </div>
+                            </button>
                         </div>
                     </div>
-                    <hr class="mt-3 mb-2"/>
+                    <hr class="mt-3 mb-2" />
 
                     <div id="boxContado">
-                        <div class="row">
-                            <div class="col-md-12 col-sm-12">
+                        <div class="row d-flex justify-content-center">
+                            <div class="col-md-6 col-sm-12">
                                 <div class="form-group">
                                     <label for="txtEfectivo">Efectivo: </label>
                                     <input id="txtEfectivo" type="text" class="form-control" placeholder="0.0">
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-12 col-sm-12">
+                        <div class="row d-flex justify-content-center">
+                            <div class="col-md-6 col-sm-12">
                                 <div class="form-group">
                                     <label for="txtTarjeta">Tarjeta: </label>
                                     <input id="txtTarjeta" type="text" class="form-control" placeholder="0.0">
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row d-flex justify-content-center">
                             <div class="col-md-12 col-sm-12">
                                 <div class="form-group">
-                                    <div class="text-center">
-                                        <h6>Por pagar: <span id="lblVuelto" class="text-primary">S/ 00.00</span></h6>
+                                    <div class="text-center d-flex justify-content-center">
+                                        <h3 class="mr-1" id="lblVueltoNombre">N.V.</h3>
+                                        <h3 class="text-primary" id="lblVuelto"> 0.00</h3>
                                     </div>
                                 </div>
                             </div>
@@ -111,7 +112,7 @@
                     </div>
 
                     <div id="boxAdelantado" class="d-none">
-                    <div class="row">
+                        <div class="row">
                             <div class="col-md-12 col-sm-12">
                                 <div class="form-group">
                                     <label><i class="fa fa-info text-info"></i> El proceso de pago adelantado consiste en registrar el monto/dinero sin modificar la cantidad de los productos agregados en el detalle de venta.</label>
@@ -149,7 +150,7 @@
                         <div class="col-md-12 col-sm-12">
                             <div class="form-group">
                                 <div class="text-center">
-                                    <button id="btnCompletarVenta" class="btn btn-info" type="button" title="Procesar venta"><i class="fa fa-save"></i> Completar venta</button>
+                                    <button id="btnCompletarVenta" class="btn btn-success" type="button" title="Procesar venta"><i class="fa fa-save"></i> Completar venta</button>
                                 </div>
                             </div>
                         </div>

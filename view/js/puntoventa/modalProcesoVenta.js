@@ -3,18 +3,70 @@ function ModalProcesoVenta() {
 
     this.init = function () {
 
-        $('#modalProcesoVenta').on('shown.bs.modal', function () {
-            // $('#txtSearchLista').trigger('focus')
-        })
-
         $("#btnCobrar").click(function () {
-            if (true) {
-                $("#modalProcesoVenta").modal("show");
-                // console.log('dentro al ModalProcesoVenta')
-            } else {
-                // console.log('no dentro al ModalProcesoVenta');  
-            }
+            modalVenta();
+        });
 
+        $('#modalProcesoVenta').on('shown.bs.modal', function () {
+            $('#txtEfectivo').trigger('focus');
+        });
+
+        $("#txtEfectivo").keyup(function (event) {
+            if ($("#txtEfectivo").val() == "") {
+                vueltoContado = total_venta;
+                TotalAPagarContado();
+                return;
+            }
+            if (tools.isNumeric($("#txtEfectivo").val())) {
+                TotalAPagarContado();
+            }
+        });
+
+        $("#txtEfectivo").keydown(function (event) {
+            if (event.keyCode == 13) {
+                crudVenta();
+                event.preventDefault();
+            }
+        });
+
+        $("#txtEfectivo").keypress(function (event) {
+            var key = window.Event ? event.which : event.keyCode;
+            var c = String.fromCharCode(key);
+            if ((c < '0' || c > '9') && (c != '\b') && (c != '.')) {
+                event.preventDefault();
+            }
+            if (c == '.' && $("#txtEfectivo").val().includes(".")) {
+                event.preventDefault();
+            }
+        });
+
+        $("#txtTarjeta").keyup(function (event) {
+            if ($("#txtTarjeta").val() == "") {
+                vueltoContado = total_venta;
+                TotalAPagarContado();
+                return;
+            }
+            if (tools.isNumeric($("#txtTarjeta").val())) {
+                TotalAPagarContado();
+            }
+        });
+
+        $("#txtTarjeta").keydown(function (event) {
+            if (event.keyCode == 13) {
+                crudVenta();
+                event.preventDefault();
+            }
+        });
+
+        $("#txtTarjeta").keypress(function (event) {
+            var key = window.Event ? event.which : event.keyCode;
+            var c = String.fromCharCode(key);
+            if ((c < '0' || c > '9') && (c != '\b') && (c != '.')) {
+                event.preventDefault();
+            }
+            if (c == '.' && $("#txtTarjeta").val().includes(".")) {
+                event.preventDefault();
+            }
         });
 
         $("#btnContado").click(function () {
@@ -30,7 +82,7 @@ function ModalProcesoVenta() {
             $("#boxContado").removeClass("d-none");
             $("#boxCredito").addClass("d-none");
             $("#boxAdelantado").addClass("d-none");
-
+            state_view_pago = 0;
         });
 
         $("#btnCredito").click(function () {
@@ -46,7 +98,7 @@ function ModalProcesoVenta() {
             $("#boxContado").addClass("d-none");
             $("#boxCredito").removeClass("d-none");
             $("#boxAdelantado").addClass("d-none");
-
+            state_view_pago = 1;
         });
 
         $("#btnAdelantado").click(function () {
@@ -62,12 +114,27 @@ function ModalProcesoVenta() {
             $("#boxContado").addClass("d-none");
             $("#boxCredito").addClass("d-none");
             $("#boxAdelantado").removeClass("d-none");
+            state_view_pago = 2;
         });
 
         $("#btnCloseModalProcesoVenta").click(function () {
             clearModalProcesoVenta();
         });
 
+        $("#btnCompletarVenta").click(function () {
+            crudVenta();
+        });
+
+        $("#btnCompletarVenta").keypress(function (event) {
+            if (event.keyCode == 13) {
+                crudVenta();
+                event.preventDefault();
+            }
+        });
+    }
+
+    this.resetProcesoVenta = function () {
+        clearModalProcesoVenta();
     }
 
     function clearModalProcesoVenta() {
@@ -88,10 +155,56 @@ function ModalProcesoVenta() {
 
         $("#txtEfectivo").val('');
         $("#txtTarjeta").val('');
-        // $("#txtFechaVencimiento").val(tools.getCurrentDate());
         $("#txtEfectivoAdelanto").val('');
         $("#txtTarjetaAdelanto").val('');
+        $("#lblVueltoNombre").html('Su cambio:');
+        $("#lblVuelto").html(monedaSimbolo + ' 0.00');
+
+        state_view_pago = 0;
+        vueltoContado = 0;
+        total_venta = 0;
+        estadoCobroContado = false;
     }
 
+    function TotalAPagarContado() {
+        if ($("#txtEfectivo").val() == '' && $("#txtTarjeta").val() == '') {
+            $("#lblVuelto").html(monedaSimbolo + " 0.00");
+            $("#lblVueltoNombre").html("POR PAGAR: ");
+            estadoCobroContado = false;
+        } else if ($("#txtEfectivo").val() == '') {
+            if (parseFloat($("#txtTarjeta").val()) >= total_venta) {
+                vueltoContado = parseFloat($("#txtTarjeta").val()) - total_venta;
+                $("#lblVueltoNombre").html("SU CAMBIO ES: ");
+                estadoCobroContado = true;
+            } else {
+                vueltoContado = total_venta - parseFloat($("#txtTarjeta").val());
+                $("#lblVueltoNombre").html("POR PAGAR: ");
+                estadoCobroContado = false;
+            }
+        } else if ($("#txtTarjeta").val() == '') {
+            if (parseFloat($("#txtEfectivo").val()) >= total_venta) {
+                vueltoContado = parseFloat($("#txtEfectivo").val()) - total_venta;
+                $("#lblVueltoNombre").html("SU CAMBIO ES: ");
+                estadoCobroContado = true;
+            } else {
+                vueltoContado = total_venta - parseFloat($("#txtEfectivo").val());
+                $("#lblVueltoNombre").html("POR PAGAR: ");
+                estadoCobroContado = false;
+            }
+        } else {
+            let suma = (parseFloat($("#txtEfectivo").val())) + (parseFloat($("#txtTarjeta").val()));
+            if (suma >= total_venta) {
+                vueltoContado = suma - total_venta;
+                $("#lblVueltoNombre").html("SU CAMBIO ES: ");
+                estadoCobroContado = true;
+            } else {
+                vueltoContado = total_venta - suma;
+                $("#lblVueltoNombre").html("POR PAGAR: ");
+                estadoCobroContado = false;
+            }
+        }
+
+        $("#lblVuelto").html(monedaSimbolo + " " + tools.formatMoney(vueltoContado, 2));
+    }
 
 }

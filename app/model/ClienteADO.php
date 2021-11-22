@@ -249,4 +249,17 @@ class ClienteADO
             );
         }
     }
+
+    public static function GetSearchClienteNumeroDocumento($opcion, $search)
+    {
+        try {
+            $cmdCliente = Database::getInstance()->getDb()->prepare("{CALL Sp_Obtener_Cliente_Informacion_NumeroDocumento(?,?)}");
+            $cmdCliente->bindParam(1, $opcion, PDO::PARAM_INT);
+            $cmdCliente->bindParam(2, $search, PDO::PARAM_STR);
+            $cmdCliente->execute();
+            return array("estado" => 1, "cliente" => $cmdCliente->fetch(PDO::FETCH_OBJ));
+        } catch (Exception $ex) {
+            return array("estado" => 0, "message" => $ex->getMessage());
+        }
+    }
 }

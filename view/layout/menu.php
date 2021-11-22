@@ -21,7 +21,7 @@
                 <li class="treeview" id="treeview-ingresos"><a class="app-menu__item" href="#" data-toggle="treeview"><i class="app-menu__icon fa fa-external-link-square" style="transform: rotate(180deg) translateX(12px);"></i><span class="app-menu__label">Ingresos</span><i class="treeview-indicator fa fa-angle-right"></i></a>
                         <ul class="treeview-menu">
                                 <li><a class="app-menu__item" id="tab-ventas" href="ventas.php"><i class="app-menu__icon fa fa-circle-o"></i><span class="app-menu__label">Ventas</span></a></li>
-                                <li><a class="app-menu__item" id="tab-pagosrecibidos" href="#"><i class="app-menu__icon fa fa-circle-o"></i><span class="app-menu__label">Pagos recibidos</span></a></li>
+                                <li><a class="app-menu__item" id="tab-pago" href="pago.php"><i class="app-menu__icon fa fa-circle-o"></i><span class="app-menu__label">Pagos recibidos</span></a></li>
                                 <li><a class="app-menu__item" id="tab-notacredito" href="notacredito.php"><i class="app-menu__icon fa fa-circle-o"></i><span class="app-menu__label">Nota de crédito</span></a></li>
                                 <li><a class="app-menu__item" id="tab-guiaremision" href="#"><i class="app-menu__icon fa fa-circle-o"></i><span class="app-menu__label">Guía remisión</span></a></li>
                                 <li><a class="app-menu__item" id="tab-cotizacion" href="cotizacion.php"><i class="app-menu__icon fa fa-circle-o"></i><span class="app-menu__label">Cotización</span></a></li>
@@ -120,7 +120,7 @@
                 "index",
 
                 "ventas",
-                "pagosrecibidos",
+                "pago",
                 "notacredito",
                 "guiaremision",
                 "cotizacion",
@@ -157,12 +157,12 @@
 
         /// Funcion que asigna la clase active
         function setActive(id) {
-                if (id == "tab-ventas" || id == "tab-pagosrecibidos" || id == "tab-notacredito" || id == "tab-guiaremision" || id == "tab-cotizacion") {
+                if (id == "tab-ventas" || id == "tab-pago" || id == "tab-notacredito" || id == "tab-guiaremision" || id == "tab-cotizacion") {
                         document.getElementById("treeview-ingresos").setAttribute("class", "treeview is-expanded");
                         if (id == "tab-ventas") {
                                 document.getElementById("tab-ventas").setAttribute("class", "app-menu__item active");
-                        } else if (id == "tab-pagosrecibidos") {
-                                document.getElementById("tab-pagosrecibidos").setAttribute("class", "app-menu__item active");
+                        } else if (id == "tab-pago") {
+                                document.getElementById("tab-pago").setAttribute("class", "app-menu__item active");
                         } else if (id == "tab-notacredito") {
                                 document.getElementById("tab-notacredito").setAttribute("class", "app-menu__item active");
                         } else if (id == "tab-guiaremision") {

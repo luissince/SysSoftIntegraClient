@@ -60,6 +60,10 @@ function ModalProductos() {
         });
     }
 
+    this.openModalInitVentas = function () {
+        loadInitVentas();
+    }
+
     function onEventPaginacion() {
         switch (opcionProductos) {
             case 0:
@@ -192,7 +196,16 @@ function ModalProductos() {
                     for (let i = 0; i < listaProductos.length; i++) {
                         if (listaProductos[i].idSuministro == idSuministro) {
                             let currenteObject = listaProductos[i];
-                            currenteObject.cantidad += 1;
+
+                            currenteObject.cantidad = parseFloat(currenteObject.cantidad) + 1;
+
+                            let porcentajeRestante = currenteObject.precioVentaGeneralUnico * (currenteObject.descuento / 100.00);
+                            currenteObject.descuentoSumado = porcentajeRestante * currenteObject.cantidad;
+                            currenteObject.impuestoSumado = currenteObject.cantidad * (currenteObject.precioVentaGeneralReal * (currenteObject.impuestoValor / 100.00));
+
+                            currenteObject.importeBruto = currenteObject.cantidad * currenteObject.precioVentaGeneralUnico;
+                            currenteObject.subImporteNeto = currenteObject.cantidad * currenteObject.precioVentaGeneralReal;
+                            currenteObject.importeNeto = currenteObject.cantidad * currenteObject.precioVentaGeneral;
                             break;
                         }
                     }
@@ -200,22 +213,12 @@ function ModalProductos() {
             }
         }
         renderTableProductos();
-        clearModalProductos();
+        $("#txtSearchProducto").focus();
     }
 
     function clearModalProductos() {
         $("#modalProductos").modal("hide");
-
         $("#tbListProductos").empty();
-        // $("#tbListaAddPrecios").empty();
-
-        // $("#navListaProductos").removeClass("active");
-        // $("#navAgregarProducto").removeClass("active");
-        // $("#navListaProductos").addClass("active");
-
-        // $("#listProducts").removeClass("in active show");
-        // $("#addProducto").removeClass("in active show");
-        // $("#listProducts").addClass("in active show");
     }
 
 }
