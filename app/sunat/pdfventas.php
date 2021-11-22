@@ -10,10 +10,11 @@ use SysSoftIntegra\Model\VentasADO;
 
 $ventaDatos = VentasADO::ListVentaDetalle($_GET["idVenta"]);
 
-if (is_array($ventaDatos)) {
-    $venta = $ventaDatos[0];
-    $detalleVenta = $ventaDatos[1];
-    $empresa = $ventaDatos[2];
+
+if ($ventaDatos["estado"] == 1) {
+    $venta = $ventaDatos["venta"];
+    $detalleVenta = $ventaDatos["ventadetalle"];
+    $empresa = $ventaDatos["empresa"];
 
     $photo = $empresa->Image == "" ?  "<img src=\"./../../view/images/logo.png\"/>" : "<img src=\"data:image/(png|jpg|gif);base64, " . $empresa->Image . "\"/>";
 

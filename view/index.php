@@ -8,6 +8,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
     <!DOCTYPE html>
     <html lang="es">
+    <!-- background: linear-gradient(to right bottom, rgb(77, 84, 209), rgb(165, 28, 123) 50%, rgb(238, 74, 55) 100%) center center; -->
 
     <head>
         <?php include './layout/head.php'; ?>
@@ -98,7 +99,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             <div class="card mb-3 text-white bg-white">
                                 <div class="card-body">
                                     <h4 class="text-warning">Intermedios</h4>
-                                    <h4 id="lblProductosInternmedios" class="text-dark">0</h4>
+                                    <h4 id="lblProductosIntermedios" class="text-dark">0</h4>
                                 </div>
                             </div>
                         </div>
@@ -143,9 +144,9 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                         </div>
                                         <div class="col-md-6">
                                             <div class="tile">
-                                                <h3 class="tile-title">Bar Chart</h3>
+                                                <h3 class="tile-title">Resumen</h3>
                                                 <div class="embed-responsive embed-responsive-16by9">
-                                                    <canvas class="embed-responsive-item" id="barChartDemo" width="444" height="249" style="width: 444px; height: 249px;"></canvas>
+
                                                 </div>
                                             </div>
                                         </div>
@@ -325,18 +326,17 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 cargarDashboard();
             });
 
-            function cargarDashboard() {
+            async function cargarDashboard() {
                 posicionPaginaAgotados = 1;
                 posicionPaginaPorAgotarse = 1;
                 let totalVentas = $("#lblTotalVentas");
                 let totalCompras = $('#lblTotalCompras');
                 let totalCuentasPorCobrar = $('#lblTotalCuentasPorCobrar');
                 let totalCuentasPorPagar = $('#lblTotalCuentasPorPagar');
+                productoVendidos.empty();
 
-                $.ajax({
-                    url: "../app/controller/VentaController.php",
-                    method: "GET",
-                    data: {
+                try {
+                    let result = await tools.promiseFetchGet("../app/controller/VentaController.php", {
                         type: "global",
                         fechaActual: tools.getCurrentDate(),
                         posicionPaginaAgotados: ((posicionPaginaAgotados - 1) * filasPorPaginaAgotados),
@@ -344,113 +344,104 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
                         posicionPaginaPorAgotarse: ((posicionPaginaPorAgotarse - 1) * filasPorPaginaPorAgotarse),
                         filasPorPaginaPorAgotarse: filasPorPaginaPorAgotarse,
-                    },
-                    beforeSend: function() {
-                        productoVendidos.empty();
-                    },
-                    success: function(result) {
-                        // console.log(result.data[0])
-                        totalVentas.html("S/  " + tools.formatMoney(result.data[0].TotalVentas));
-                        totalCompras.html("S/  " + tools.formatMoney(result.data[0].TotalCompras));
-                        totalCuentasPorCobrar.html(result.data[0].TotalCuentasCobrar);
-                        totalCuentasPorPagar.html(result.data[0].TotalCuentasPagar);
-                        let productosVendidos = result.data[0].ProductosMasVendidos;
-                        for (let data of productosVendidos) {
-                            let image = "./images/noimage.jpg";
-                            if (data.Imagen != '') {
-                                image = ("data:image/png;base64," + data.Imagen);
-                            }
-                            productoVendidos.append('<li class="item">' +
-                                '<div class="product-img">' +
-                                '    <img src="' + image + '" alt="Product Image" class="img-size-70">' +
-                                '</div>' +
-                                '<div class="product-info">' +
-                                '    <span class="product-title text-primary">' + data.NombreMarca + '' +
-                                '    </span>' +
-                                '    <span class="product-price badge badge-warning float-right">' + tools.formatMoney(data.Cantidad, 0) + ' ' + data.Medida + '</span>' +
-                                '</div>' +
-                                '</li>');
-                        }
+                    });
 
-                        // /*vista donde carga */
-                        let dataActual = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-                        for (let value of result.data[0].VentasMesActual) {
-                            if (value.Mes == 1) {
-                                dataActual[0] = tools.formatMoney(value.Monto)
-                            } else if (value.Mes == 2) {
-                                dataActual[1] = tools.formatMoney(value.Monto)
-                            } else if (value.Mes == 3) {
-                                dataActual[2] = tools.formatMoney(value.Monto)
-                            } else if (value.Mes == 4) {
-                                dataActual[3] = tools.formatMoney(value.Monto)
-                            } else if (value.Mes == 5) {
-                                dataActual[4] = tools.formatMoney(value.Monto)
-                            } else if (value.Mes == 6) {
-                                dataActual[5] = tools.formatMoney(value.Monto)
-                            } else if (value.Mes == 7) {
-                                dataActual[6] = tools.formatMoney(value.Monto)
-                            } else if (value.Mes == 8) {
-                                dataActual[7] = tools.formatMoney(value.Monto)
-                            } else if (value.Mes == 9) {
-                                dataActual[8] = tools.formatMoney(value.Monto)
-                            } else if (value.Mes == 10) {
-                                dataActual[9] = tools.formatMoney(value.Monto)
-                            } else if (value.Mes == 11) {
-                                dataActual[10] = tools.formatMoney(value.Monto)
-                            } else if (value.Mes == 12) {
-                                dataActual[11] = tools.formatMoney(value.Monto)
-                            }
+                    console.log(result)
+
+                    let data = result.data[0];
+
+                    totalVentas.html("S/  " + tools.formatMoney(data.TotalVentas));
+                    totalCompras.html("S/  " + tools.formatMoney(data.TotalCompras));
+                    totalCuentasPorCobrar.html(data.TotalCuentasCobrar);
+                    totalCuentasPorPagar.html(data.TotalCuentasPagar);
+                    let productosVendidos = data.ProductosMasVendidos;
+
+                    for (let value of productosVendidos) {
+                        let image = "./images/noimage.jpg";
+                        if (value.Imagen != '') {
+                            image = ("data:image/png;base64," + value.Imagen);
                         }
-                        diagramaVentas(dataActual);
-                        ProductosAgotados(result);
-                        ProductosPorAgotarse(result);
-                    },
-                    error: function(error) {
-                        //   console.log(error);
+                        productoVendidos.append('<li class="item">' +
+                            '<div class="product-img">' +
+                            '    <img src="' + image + '" alt="Product Image" class="img-size-70">' +
+                            '</div>' +
+                            '<div class="product-info">' +
+                            '    <span class="product-title text-primary">' + value.NombreMarca + '' +
+                            '    </span>' +
+                            '    <span class="product-price badge badge-warning float-right">' + tools.formatMoney(value.Cantidad, 0) + ' ' + value.Medida + '</span>' +
+                            '</div>' +
+                            '</li>');
                     }
-                });
+
+                    // /*vista donde carga */
+                    let dataActual = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+                    for (let value of data.VentasMesActual) {
+                        if (value.Mes == 1) {
+                            dataActual[0] = tools.formatMoney(value.Monto)
+                        } else if (value.Mes == 2) {
+                            dataActual[1] = tools.formatMoney(value.Monto)
+                        } else if (value.Mes == 3) {
+                            dataActual[2] = tools.formatMoney(value.Monto)
+                        } else if (value.Mes == 4) {
+                            dataActual[3] = tools.formatMoney(value.Monto)
+                        } else if (value.Mes == 5) {
+                            dataActual[4] = tools.formatMoney(value.Monto)
+                        } else if (value.Mes == 6) {
+                            dataActual[5] = tools.formatMoney(value.Monto)
+                        } else if (value.Mes == 7) {
+                            dataActual[6] = tools.formatMoney(value.Monto)
+                        } else if (value.Mes == 8) {
+                            dataActual[7] = tools.formatMoney(value.Monto)
+                        } else if (value.Mes == 9) {
+                            dataActual[8] = tools.formatMoney(value.Monto)
+                        } else if (value.Mes == 10) {
+                            dataActual[9] = tools.formatMoney(value.Monto)
+                        } else if (value.Mes == 11) {
+                            dataActual[10] = tools.formatMoney(value.Monto)
+                        } else if (value.Mes == 12) {
+                            dataActual[11] = tools.formatMoney(value.Monto)
+                        }
+                    }
+
+                    $("#lblProductosNegativos").html(data.InventarioNegativo);
+                    $("#lblProductosIntermedios").html(data.InventarioIntermedio);
+
+                    diagramaVentas(dataActual);
+                    // ProductosAgotados(result.agota);
+                    // ProductosPorAgotarse(result.porag);
+                } catch (error) {
+
+                }
+
             }
 
-            function cargarProductosAgotados() {
-                $.ajax({
-                    url: "../app/controller/VentaController.php",
-                    method: "GET",
-                    data: {
+            async function cargarProductosAgotados() {
+                try {
+                    let result = await tools.promiseFetchGet("../app/controller/VentaController.php", {
                         type: "productosAgotados",
                         posicionPaginaAgotados: ((posicionPaginaAgotados - 1) * filasPorPaginaAgotados),
                         filasPorPaginaAgotados: filasPorPaginaAgotados
-                    },
-                    beforeSend: function() {
-                        productoAgotado.empty();
-                    },
-                    success: function(result) {
-                        ProductosAgotados(result);
-                    },
-                    error: function(error) {
-                        // console.log(error);
-                    }
-                });
+                    });
+
+                    ProductosAgotados(result);
+                } catch (error) {
+
+                }
             }
 
-            function cargarProductosPorAgotarse() {
-                $.ajax({
-                    url: "../app/controller/VentaController.php",
-                    method: "GET",
-                    data: {
+            async function cargarProductosPorAgotarse() {
+                try {
+                    productosPorAgotarse.empty();
+                    let result = await tools.promiseFetchGet("../app/controller/VentaController.php", {
                         type: "productosPorAgotarse",
                         posicionPaginaPorAgotarse: ((posicionPaginaPorAgotarse - 1) * filasPorPaginaPorAgotarse),
                         filasPorPaginaPorAgotarse: filasPorPaginaPorAgotarse,
-                    },
-                    beforeSend: function() {
-                        productosPorAgotarse.empty();
-                    },
-                    success: function(result) {
-                        ProductosPorAgotarse(result);
-                    },
-                    error: function(error) {
-                        //console.log(error);
-                    }
-                });
+                    });
+
+                    ProductosPorAgotarse(result);
+                } catch (error) {
+
+                }
             }
 
             function ProductosAgotados(result) {
@@ -499,7 +490,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
             }
 
-
             function diagramaVentas(dataActual, dataPasada) {
                 var data = {
                     labels: ["ENE", "FEB", "MAR", "ABR", "MAY", "JUN", "JUL", "AGO", "SET", "OCT", "NOV", "DIC"],
@@ -547,9 +537,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
                 var ctxl = $("#lineChartDemo").get(0).getContext("2d");
                 var lineChart = new Chart(ctxl).Line(data);
-
-                var ctxb = $("#barChartDemo").get(0).getContext("2d");
-                var barChart = new Chart(ctxb).Bar(data);
             }
         </script>
     </body>

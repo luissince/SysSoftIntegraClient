@@ -233,10 +233,28 @@ class VentasADO
                 ));
             }
 
+            $cmdEmpresa = Database::getInstance()->getDb()->prepare("SELECT TOP 1 
+            d.IdAuxiliar,e.NumeroDocumento,e.RazonSocial,e.NombreComercial,e.Domicilio,
+            e.Telefono,e.Email,e.Image
+            FROM EmpresaTB AS e INNER JOIN DetalleTB AS d ON e.TipoDocumento = d.IdDetalle AND d.IdMantenimiento = '0003'");
+            $cmdEmpresa->execute();
+            $rowEmpresa = $cmdEmpresa->fetch();
+            $empresa  = (object)array(
+                "IdAuxiliar" => $rowEmpresa['IdAuxiliar'],
+                "NumeroDocumento" => $rowEmpresa['NumeroDocumento'],
+                "RazonSocial" => $rowEmpresa['RazonSocial'],
+                "NombreComercial" => $rowEmpresa['NombreComercial'],
+                "Domicilio" => $rowEmpresa['Domicilio'],
+                "Telefono" => $rowEmpresa['Telefono'],
+                "Email" => $rowEmpresa['Email'],
+                "Image" => $rowEmpresa['Image'] == null ? "" : base64_encode($rowEmpresa['Image'])
+            );
+
             return array(
                 "estado" => 1,
                 "venta" => $venta,
-                "ventadetalle" => $ventadetalle
+                "ventadetalle" => $ventadetalle,
+                "empresa" => $empresa
             );
         } catch (Exception $ex) {
             return array(
@@ -670,9 +688,17 @@ class VentasADO
             FROM VentaTB as v 
             INNER JOIN DetalleVentaTB as dv on dv.IdVenta = v.IdVenta
             LEFT JOIN NotaCreditoTB as nc on nc.IdVenta = v.IdVenta
-            WHERE CAST(v.FechaVenta AS DATE) = ? AND v.Tipo = 1 AND v.Estado <> 3 and nc.IdNotaCredito is null");
+            WHERE 
+            CAST(v.FechaVenta AS DATE) = ? AND v.Estado = 1 AND nc.IdNotaCredito IS NULL
+            OR
+            CAST(v.FechaVenta AS DATE) = ? AND v.Estado = 4 AND nc.IdNotaCredito IS NULL");
             $comandoTotalVentas->bindParam(1, $fecha, PDO::PARAM_STR);
+            $comandoTotalVentas->bindParam(2, $fecha, PDO::PARAM_STR);
             $comandoTotalVentas->execute();
+            $totalVentas = 0;
+            while ($row = $comandoTotalVentas->fetch()) {
+                $totalVentas += $row["Monto"];
+            }
 
             $comandoTotalCompras = Database::getInstance()->getDb()->prepare("SELECT isnull(sum(d.Importe),0) 
             FROM CompraTB AS c INNER JOIN DetalleCompraTB AS d
@@ -687,19 +713,19 @@ class VentasADO
             $comantoTotalCuentasPagar = Database::getInstance()->getDb()->prepare("SELECT COUNT(*) FROM CompraTB WHERE TipoCompra = 2 AND EstadoCompra = 2");
             $comantoTotalCuentasPagar->execute();
 
-            $comandoProductosMasVendidos = Database::getInstance()->getDb()->prepare("SELECT  TOP 10
+            $comandoProductosMasVendidos = Database::getInstance()->getDb()->prepare("SELECT TOP 10
             dt.IdArticulo, 
             s.NombreMarca, 
             s.NuevaImagen as NuevaImagen,
             SUM(dt.Cantidad) as Cantidad,
             d.Nombre as Medida
-                    from DetalleVentaTB as dt 
-                    inner join VentaTB as v on v.IdVenta=dt.IdVenta
-                    inner join SuministroTB as s on dt.IdArticulo=s.IdSuministro 
-                    inner join DetalleTB as d on d.IdDetalle = s.UnidadCompra and d.IdMantenimiento = '0013'
-                    where MONTH(v.FechaVenta) = MONTH(GETDATE()) AND YEAR(v.FechaVenta) = YEAR(GETDATE()) 
-                    group by dt.IdArticulo, s.NombreMarca, NuevaImagen,d.Nombre
-                    order by Cantidad DESC");
+            from DetalleVentaTB as dt 
+            inner join VentaTB as v on v.IdVenta=dt.IdVenta
+            inner join SuministroTB as s on dt.IdArticulo=s.IdSuministro 
+            inner join DetalleTB as d on d.IdDetalle = s.UnidadCompra and d.IdMantenimiento = '0013'
+            where MONTH(v.FechaVenta) = MONTH(GETDATE()) AND YEAR(v.FechaVenta) = YEAR(GETDATE()) 
+            group by dt.IdArticulo, s.NombreMarca, NuevaImagen,d.Nombre
+            order by Cantidad desc");
             $comandoProductosMasVendidos->execute();
 
             $arrayProductosMasVendidos = array();
@@ -716,10 +742,14 @@ class VentasADO
             $date = new DateTime($fecha);
 
             $comandoVentasMesActual = Database::getInstance()->getDb()->prepare("SELECT 
-            month(vt.FechaVenta) as Mes, 
+            month(vt.FechaVenta) AS Mes, 
             sum(vt.Total) AS Monto
-            FROM VentaTB AS vt left join NotaCreditoTB as nc on nc.IdVenta = vt.IdVenta
-            where vt.Estado <> 3 and nc.IdNotaCredito is null and year(vt.FechaVenta) = 2021
+            FROM VentaTB AS vt 
+            LEFT JOIN NotaCreditoTB AS nc ON nc.IdVenta = vt.IdVenta
+            WHERE 
+            vt.Estado = 1 AND nc.IdNotaCredito IS NULL AND year(vt.FechaVenta) = year(GETDATE())
+            OR
+            vt.Estado = 4 AND nc.IdNotaCredito IS NULL AND year(vt.FechaVenta) = year(GETDATE())
             GROUP BY month(vt.FechaVenta)");
             $comandoVentasMesActual->bindValue(1, $date->format('Y'), PDO::PARAM_STR);
             $comandoVentasMesActual->execute();
@@ -747,20 +777,39 @@ class VentasADO
                     "Monto" => floatval($row["Monto"]),
                 ));
             }
+
+            $cmdInventarioNegativo = Database::getInstance()->getDb()->prepare("SELECT COUNT(*) AS Cantidad FROM SuministroTB WHERE Cantidad <=0");
+            $cmdInventarioNegativo->execute();
+            $inventarioNegativo = 0;
+            if ($row = $cmdInventarioNegativo->fetch()) {
+                $inventarioNegativo = $row["Cantidad"];
+            }
+
+            $cmdInventarioIntermedio = Database::getInstance()->getDb()->prepare("SELECT COUNT(*) AS Cantidad FROM SuministroTB WHERE Cantidad > 0 AND StockMinimo <= Cantidad");
+            $cmdInventarioIntermedio->execute();
+            $inventarioIntermedio = 0;
+            if ($row = $cmdInventarioIntermedio->fetch()) {
+                $inventarioIntermedio = $row["Cantidad"];
+            }
             //
             array_push($array, array(
-                "TotalVentas" => $comandoTotalVentas->fetchColumn(),
+                "TotalVentas" => $totalVentas,
                 "TotalCompras" => $comandoTotalCompras->fetchColumn(),
                 "TotalCuentasCobrar" => $comantoTotalCuentasCobrar->fetchColumn(),
                 "TotalCuentasPagar" => $comantoTotalCuentasPagar->fetchColumn(),
                 "ProductosMasVendidos" => $arrayProductosMasVendidos,
                 "VentasMesActual" => $arrayVentaMesActual,
-                "VentasMesAnterior" => $arrayVentaMesAnterior
+                "VentasMesAnterior" => $arrayVentaMesAnterior,
+                "InventarioNegativo" => $inventarioNegativo,
+                "InventarioIntermedio" => $inventarioIntermedio
             ));
 
-            return $array;
+            return array(
+                "estado" => 1,
+                "data" => $array,
+            );
         } catch (Exception $ex) {
-            return $ex->getMessage();
+            return array("estado" => 0, "message" => $ex->getMessage());
         }
     }
 
@@ -769,13 +818,17 @@ class VentasADO
     {
         try {
 
-            $comandoProductosAgotados = Database::getInstance()->getDb()->prepare("SELECT NombreMarca, PrecioVentaGeneral, Cantidad 
+            $comandoProductosAgotados = Database::getInstance()->getDb()->prepare("SELECT 
+            NombreMarca, 
+            PrecioVentaGeneral, 
+            Cantidad 
             FROM SuministroTB 
             WHERE Cantidad <= 0 
             ORDER BY Cantidad ASC offset ? ROWS FETCH NEXT ? ROWS ONLY");
             $comandoProductosAgotados->bindParam(1, $posicionPaginaAgotados, PDO::PARAM_INT);
             $comandoProductosAgotados->bindParam(2, $filasPorPaginaAgotados, PDO::PARAM_INT);
             $comandoProductosAgotados->execute();
+
             $arrayProductosAgotados = array();
             while ($rows = $comandoProductosAgotados->fetch()) {
                 array_push($arrayProductosAgotados, array(

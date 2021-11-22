@@ -47,29 +47,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         print json_encode(VentasADO::GetDetalleId($_GET["idMantenimiento"]));
         exit();
     } else if ($_GET["type"] == "listarDetalleNotificaciones") {
-        $posicionPagina = $_GET['posicionPagina'];
-        $filasPorPagina = $_GET['filasPorPagina'];
-        print json_encode(VentasADO::ListarDetalleNotificaciones(intval($posicionPagina), intval($filasPorPagina)));
+        print json_encode(VentasADO::ListarDetalleNotificaciones(intval($_GET['posicionPagina']), intval($_GET['filasPorPagina'])));
         exit();
     } else if ($_GET["type"] == "global") {
-        $data = VentasADO::LoadDashboard($_GET["fechaActual"]);
-        $productoAgotados = VentasADO::LoadProductosAgotados(intval($_GET["posicionPaginaAgotados"]), intval($_GET["filasPorPaginaAgotados"]));
-        $productosPorAgotarse = VentasADO::LoadProductosPorAgotarse(intval($_GET["posicionPaginaPorAgotarse"]), intval($_GET["filasPorPaginaPorAgotarse"]));
-        if (is_array($data) && is_array($productoAgotados) && is_array($productosPorAgotarse)) {
-            print json_encode(array(
-                "estado" => 1,
-                "data" => $data,
-                "productosAgotadosLista" => $productoAgotados[0],
-                "productosAgotadosTotal" => $productoAgotados[1],
-                "productoPorAgotarseLista" => $productosPorAgotarse[0],
-                "productoPorAgotarseTotal" => $productosPorAgotarse[1]
-            ));
-        } else {
-            print json_encode(array(
-                "estado" => 0,
-                "message" => $data,
-            ));
-        }
+        print json_encode(VentasADO::LoadDashboard($_GET["fechaActual"]));
         exit();
     } else if ($_GET["type"] == "productosAgotados") {
         print json_encode(VentasADO::LoadProductosAgotados(intval($_GET["posicionPaginaAgotados"]), intval($_GET["filasPorPaginaAgotados"])));

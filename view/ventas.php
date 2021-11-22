@@ -474,23 +474,28 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             lblTotalVenta.html(tools.formatMoney(parseFloat(object.suma)));
                             state = false;
                         } else {
+
                             for (let venta of arrayVentas) {
                                 let pdf = '<button class="btn btn-secondary btn-sm"  onclick="openPdf(\'' + venta.IdVenta + '\')"><img src="./images/pdf.svg" width="26" /> </button>';
                                 let ver = '<button class="btn btn-secondary btn-sm" onclick="opeModalDetalleIngreso(\'' + venta.IdVenta + '\')"><img src="./images/file.svg" width="26" /></button>';
 
                                 let datetime = tools.getDateForma(venta.FechaVenta) + "<br>" + tools.getTimeForma24(venta.HoraVenta, true);
-                                let comprobante = venta.Comprobante + " <br/>" + (venta.Serie + "-" + venta.Numeracion) + (venta.IdNotaCredito == 1 ? " <span class='text-danger'>" + "Modificado(" + venta.SerieNotaCredito + "-" + venta.NumeracionNotaCredito + ")</span>" : "");
+                                let comprobante = venta.Comprobante + " <br/>" + (venta.Serie + "-" + venta.Numeracion) + (venta.IdNotaCredito == 1 ? "<br> <span class='text-danger'>" + "Modificado(" + venta.SerieNotaCredito + "-" + venta.NumeracionNotaCredito + ")</span>" : "");
                                 let cliente = venta.DocumentoCliente + "<br>" + venta.Cliente;
                                 let estado = "";
 
-                                if (venta.Estado == 3) {
-                                    estado = '<div class="badge badge-danger">ANULADO</div>';
-                                } else if (venta.Tipo == 2 && venta.Estado == 2) {
-                                    estado = '<div class="badge badge-warning">POR COBRAR</div>';
-                                } else if (venta.Tipo == 1 && venta.Estado == 4) {
-                                    estado = '<div class="badge badge-primary">POR LLEVAR</div>';
+                                if (venta.IdNotaCredito == 1) {
+                                    estado = '<div class="badge badge-danger">MODIFICADO</div>';
                                 } else {
-                                    estado = '<div class="badge badge-success">COBRADO</div>';
+                                    if (venta.Estado == 3) {
+                                        estado = '<div class="badge badge-danger">ANULADO</div>';
+                                    } else if (venta.Tipo == 2 && venta.Estado == 2) {
+                                        estado = '<div class="badge badge-warning">POR COBRAR</div>';
+                                    } else if (venta.Tipo == 1 && venta.Estado == 4) {
+                                        estado = '<div class="badge badge-primary">POR LLEVAR</div>';
+                                    } else {
+                                        estado = '<div class="badge badge-success">COBRADO</div>';
+                                    }
                                 }
 
                                 let tipo = venta.Tipo == "1" ? "CONTADO" : "CRÉDITO";
