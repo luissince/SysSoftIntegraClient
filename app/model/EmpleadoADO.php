@@ -40,11 +40,39 @@ class EmpleadoADO
             $comando->execute();
             $resultCliente = $comando->fetchObject();
             if ($resultCliente) {
+                $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+                header($protocol . ' ' . 200 . ' ' . "OK");
+
                 return $resultCliente;
             } else {
-                return false;
+                $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+                header($protocol . ' ' . 200 . ' ' . "OK");
+
+                return null;
             }
         } catch (Exception $ex) {
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+
+            return $ex->getMessage();
+        }
+    }
+
+    public static function GetListEmpleados()
+    {
+        try {
+
+            $cmdEmpleados = Database::getInstance()->getDb()->prepare("SELECT IdEmpleado,Apellidos,Nombres FROM EmpleadoTB");
+            $cmdEmpleados->execute();
+
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 200 . ' ' . "OK");
+
+            return $cmdEmpleados->fetchAll(PDO::FETCH_OBJ);
+        } catch (Exception $ex) {
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+
             return $ex->getMessage();
         }
     }

@@ -23,7 +23,7 @@ class EmpresaADO
             $comando = Database::getInstance()->getDb()->prepare("SELECT TOP 1 * FROM EmpresaTB");
             $comando->execute();
             $row = $comando->fetch();
-            $object  = (object)array(
+            $resultEmpresa  = (object)array(
                 "IdEmpresa" => $row['IdEmpresa'],
                 "GiroComercial" => $row['GiroComercial'],
                 "Nombre" => $row['Nombre'],
@@ -37,14 +37,35 @@ class EmpresaADO
                 "RazonSocial" => $row['RazonSocial'],
                 "NombreComercial" => $row['NombreComercial'],
                 "Image" => $row['Image'] == null ? "" : base64_encode($row['Image']),
+                "Ubigeo" => $row['Ubigeo'] == null ?  0 : $row['Ubigeo'],
                 "UsuarioSol" => $row['UsuarioSol'],
                 "ClaveSol" => $row['ClaveSol'],
                 "CertificadoRuta" => $row['CertificadoRuta'],
                 "CertificadoClave" => $row['CertificadoClave']
             );
 
-            return $object;
+            $cmdUbigeo = Database::getInstance()->getDb()->prepare("SELECT 
+            IdUbigeo,
+            Ubigeo,
+            Departamento,
+            Provincia,
+            Distrito
+            FROM UbigeoTB");
+            $cmdUbigeo->execute();
+            $resultUbigeo = $cmdUbigeo->fetchAll(PDO::FETCH_OBJ);
+
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 200 . ' ' . "OK");
+
+            return array(
+                "estado" => 1,
+                "empresa" => $resultEmpresa,
+                "ubigeo" => $resultUbigeo
+            );
         } catch (Exception $ex) {
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+
             return $ex->getMessage();
         }
     }
@@ -69,10 +90,9 @@ class EmpresaADO
                 $respuesta = openssl_pkcs12_read($pkcs12, $certificados, $body['txtClaveCertificado']);
 
                 if ($respuesta) {
-                    $publicKeyPem  = $certificados['cert']; //Archivo público
-                    $privateKeyPem = $certificados['pkey']; //Archivo privado
-                    // file_put_contents('../../resources/cert.pem', $privateKeyPem . '' . $publicKeyPem);
-                    // chmod("../../resources/cert.pem", 0777);
+                    $publicKeyPem  = $certificados['cert'];
+                    $privateKeyPem = $certificados['pkey'];
+
                     file_put_contents('../resources/private_key.pem', $privateKeyPem);
                     file_put_contents('../resources/public_key.pem', $publicKeyPem);
                     chmod("../resources/private_key.pem", 0777);
@@ -95,6 +115,7 @@ class EmpresaADO
                 PaginaWeb=?,
                 Email=?,
                 Image=?,
+                Ubigeo=?,
                 UsuarioSol=?,
                 ClaveSol=?,
                 CertificadoRuta=?,
@@ -109,11 +130,12 @@ class EmpresaADO
                 $comando->bindParam(7, $body['txtPaginWeb'], PDO::PARAM_STR);
                 $comando->bindParam(8, $body['txtEmail'], PDO::PARAM_STR);
                 $comando->bindParam(9, $body['image'],  PDO::PARAM_LOB, 0, PDO::SQLSRV_ENCODING_BINARY);
-                $comando->bindParam(10, $body['txtUsuarioSol'], PDO::PARAM_STR);
-                $comando->bindParam(11, $body['txtClaveSol'], PDO::PARAM_STR);
-                $comando->bindParam(12, $path, PDO::PARAM_STR);
-                $comando->bindParam(13, $body['txtClaveCertificado'], PDO::PARAM_STR);
-                $comando->bindParam(14, $body['idEmpresa'], PDO::PARAM_INT);
+                $comando->bindParam(10, $body['cbUbigeo'], PDO::PARAM_INT);
+                $comando->bindParam(11, $body['txtUsuarioSol'], PDO::PARAM_STR);
+                $comando->bindParam(12, $body['txtClaveSol'], PDO::PARAM_STR);
+                $comando->bindParam(13, $path, PDO::PARAM_STR);
+                $comando->bindParam(14, $body['txtClaveCertificado'], PDO::PARAM_STR);
+                $comando->bindParam(15, $body['idEmpresa'], PDO::PARAM_INT);
                 $comando->execute();
             } else {
                 $comando = Database::getInstance()->getDb()->prepare("UPDATE EmpresaTB SET 
@@ -125,6 +147,7 @@ class EmpresaADO
                 Celular=?,
                 PaginaWeb=?,
                 Email=?,
+                Ubigeo=?,
                 UsuarioSol=?,
                 ClaveSol=?,
                 CertificadoRuta=?,
@@ -138,19 +161,31 @@ class EmpresaADO
                 $comando->bindParam(6, $body['txtCelular'], PDO::PARAM_STR);
                 $comando->bindParam(7, $body['txtPaginWeb'], PDO::PARAM_STR);
                 $comando->bindParam(8, $body['txtEmail'], PDO::PARAM_STR);
-                $comando->bindParam(9, $body['txtUsuarioSol'], PDO::PARAM_STR);
-                $comando->bindParam(10, $body['txtClaveSol'], PDO::PARAM_STR);
-                $comando->bindParam(11, $path, PDO::PARAM_STR);
-                $comando->bindParam(12, $body['txtClaveCertificado'], PDO::PARAM_STR);
-                $comando->bindParam(13, $body['idEmpresa'], PDO::PARAM_INT);
+                $comando->bindParam(9, $body['cbUbigeo'], PDO::PARAM_INT);
+                $comando->bindParam(10, $body['txtUsuarioSol'], PDO::PARAM_STR);
+                $comando->bindParam(11, $body['txtClaveSol'], PDO::PARAM_STR);
+                $comando->bindParam(12, $path, PDO::PARAM_STR);
+                $comando->bindParam(13, $body['txtClaveCertificado'], PDO::PARAM_STR);
+                $comando->bindParam(14, $body['idEmpresa'], PDO::PARAM_INT);
                 $comando->execute();
             }
 
             Database::getInstance()->getDb()->commit();
-            return "updated";
+
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 200 . ' ' . "OK");
+
+            return array(
+                "state" => 1,
+                "message" => "Se modificó correctamente los datos."
+            );
         } catch (Exception $ex) {
             unlink('../resources/' . $file_path);
             Database::getInstance()->getDb()->rollback();
+
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+
             return $ex->getMessage();
         }
     }

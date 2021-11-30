@@ -5,9 +5,9 @@
 
                 <div class="modal-header">
                     <h4 class="modal-title">
-                        <i class="fa fa-balance-scale"></i> Movimiento de caja
+                        <i class="fa fa-window-maximize"></i> Movimiento de caja
                     </h4>
-                    <button type="button" class="close" id="btnCloseModalMovimientoCaja">
+                    <button type="button" class="close" data-dismiss="modal">
                         <i class="fa fa-close"></i>
                     </button>
                 </div>
@@ -18,7 +18,7 @@
                             <div class="form-group">
                                 <label for="cbxMovimiento">Movimiento: </label>
                                 <select id="cbxMovimiento" class="form-control">
-                                    <option value="">--selected--</option>
+                                    <option value="">- Seleccione -</option>
                                     <option value="1">ENTRADA</option>
                                     <option value="2">SALIDAD</option>
                                 </select>
@@ -45,7 +45,7 @@
                             <div class="form-group">
                                 <div class="text-center">
                                     <button id="btnEjecutarMovimiento" class="btn btn-info" type="button" title="Aceptar"><i class="fa fa-check"></i> Aceptar</button>
-                                    <button id="btnCancelMovimiento" class="btn btn-danger" type="button" title="Cancelar"><i class="fa fa-close"></i> Cancelar</button>
+                                    <button class="btn btn-danger" type="button" title="Cancelar" data-dismiss="modal"><i class="fa fa-close"></i> Cancelar</button>
                                 </div>
                             </div>
                         </div>

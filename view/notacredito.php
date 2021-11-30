@@ -583,14 +583,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 });
             }
 
-            function limitar_cadena(cadena, limite, sufijo) {
-                if (cadena.length > limite) {
-                    return cadena.substr(0, limite) + sufijo;
-                }
-                return cadena;
-            }
-
-
             function openPdf(idNotaCredito) {
                 window.open("../app/sunat/pdfnotacredito.php?idNotaCredito=" + idNotaCredito, "_blank");
             }

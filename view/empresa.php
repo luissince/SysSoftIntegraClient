@@ -27,6 +27,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
                 </div>
             </div>
+
             <div class="tile mb-4">
 
                 <div class="overlay d-none" id="divOverlayEmpresa">
@@ -204,6 +205,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
             let txtCelular = $("#txtCelular");
             let txtPaginWeb = $("#txtPaginWeb");
             let txtEmail = $("#txtEmail");
+            let cbUbigeo = $("#cbUbigeo");
             let txtUsuarioSol = $("#txtUsuarioSol");
             let txtClaveSol = $("#txtClaveSol");
             let lblNameCertificado = $("#lblNameCertificado");
@@ -232,78 +234,51 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 $("#btnGuardar").click(function() {
                     crudEmpresa();
                 });
-                modalEvents();
+
                 LoadDataEmpresa();
             });
 
-            function modalEvents() {
-                $('#modalAlert').on('shown.bs.modal', function(e) {
-                    $("#btnButtonAcceptModal").focus();
-                })
+            async function LoadDataEmpresa() {
+                try {
 
-                $("#btnIconCloseModal").click(function(event) {
-                    $("#modalAlert").modal('hide');
-                });
-
-                $("#btnIconCloseModal").keypress(function(event) {
-                    if (event.keyCode === 13) {
-                        $("#modalAlert").modal('hide');
-                    }
-                    event.preventDefault();
-                });
-
-                $("#btnButtonAcceptModal").click(function(event) {
-                    $("#modalAlert").modal('hide');
-                });
-
-                $("#btnButtonAcceptModal").keypress(function(event) {
-                    if (event.keyCode === 13) {
-                        $("#modalAlert").modal('hide');
-                    }
-                    event.preventDefault();
-                });
-            }
-
-            function LoadDataEmpresa() {
-                $.ajax({
-                    url: "../app/controller/EmpresaController.php",
-                    method: "GET",
-                    data: {},
-                    beforeSend: function() {
+                    let result = await tools.promiseFetchGet("../app/controller/EmpresaController.php", {
+                        "type": "getempresa"
+                    }, function() {
                         tools.AlertInfo("Mi Empresa", "Cargando información.", "toast-bottom-right");
                         $("#divOverlayEmpresa").removeClass("d-none");
-                    },
-                    success: function(result) {
-                        let data = result;
-                        if (data.estado == 1) {
-                            idEmpresa = data.result.IdEmpresa;
-                            txtNumDocumento.val(data.result.NumeroDocumento);
-                            txtRazonSocial.val(data.result.RazonSocial);
-                            txtNomComercial.val(data.result.NombreComercial);
-                            if (data.result.Image == "") {
-                                lblImagen.attr("src", "./images/noimage.jpg");
-                            } else {
-                                lblImagen.attr("src", "data:image/png;base64," + data.result.Image);
-                            }
-                            txtDireccion.val(data.result.Domicilio);
-                            txtTelefono.val(data.result.Telefono);
-                            txtCelular.val(data.result.Celular);
-                            txtPaginWeb.val(data.result.PaginaWeb);
-                            txtEmail.val(data.result.Email);
-                            txtUsuarioSol.val(data.result.UsuarioSol);
-                            txtClaveSol.val(data.result.ClaveSol);
-                            lblNameCertificado.html(data.result.CertificadoRuta);
-                            txtClaveCertificado.val(data.result.CertificadoClave);
-                            $("#divOverlayEmpresa").addClass("d-none");
-                        } else {
-                            $("#lblTextOverlayEmpresa").html(data.message);
-                        }
+                    });
 
-                    },
-                    error: function(error) {
-                        $("#lblTextOverlayEmpresa").html("Error en :" + error.responseText);
+                    let empresa = result.empresa;
+                    idEmpresa = empresa.IdEmpresa;
+                    txtNumDocumento.val(empresa.NumeroDocumento);
+                    txtRazonSocial.val(empresa.RazonSocial);
+                    txtNomComercial.val(empresa.NombreComercial);
+                    if (empresa.Image == "") {
+                        lblImagen.attr("src", "./images/noimage.jpg");
+                    } else {
+                        lblImagen.attr("src", "data:image/png;base64," + empresa.Image);
                     }
-                });
+                    txtDireccion.val(empresa.Domicilio);
+                    txtTelefono.val(empresa.Telefono);
+                    txtCelular.val(empresa.Celular);
+                    txtPaginWeb.val(empresa.PaginaWeb);
+                    txtEmail.val(empresa.Email);
+                    txtUsuarioSol.val(empresa.UsuarioSol);
+                    txtClaveSol.val(empresa.ClaveSol);
+                    lblNameCertificado.html(empresa.CertificadoRuta);
+                    txtClaveCertificado.val(empresa.CertificadoClave);
+
+                    let ubigeo = result.ubigeo;
+                    for (let value of ubigeo) {
+                        cbUbigeo.append('<option value="' + value.IdUbigeo + '">' + value.Departamento + ' - ' + value.Provincia + ' - ' + value.Distrito + '(' + value.Ubigeo + ')</option>');
+                    }
+
+                    cbUbigeo.val(empresa.Ubigeo);
+
+                    $("#divOverlayEmpresa").addClass("d-none");
+                } catch (error) {
+                    $("#lblTextOverlayEmpresa").html("Error en :" + error.responseText);
+                }
             }
 
             function crudEmpresa() {
@@ -318,6 +293,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 formData.append("txtCelular", txtCelular.val());
                 formData.append("txtPaginWeb", txtPaginWeb.val());
                 formData.append("txtEmail", txtEmail.val());
+                formData.append("cbUbigeo", cbUbigeo.val());
 
                 formData.append("imageType", fileImage[0].files.length);
                 formData.append("image", fileImage[0].files[0]);
@@ -345,11 +321,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 tools.ModalAlertInfo("Mi Empresa", "Procesando petición..");
                             },
                             success: function(result) {
-                                if (result.state == 1) {
-                                    tools.ModalAlertSuccess("Mi Empresa", result.message);
-                                } else {
-                                    tools.ModalAlertWarning("Mi Empresa", result.message);
-                                }
+                                tools.ModalAlertSuccess("Mi Empresa", result.message);
                             },
                             error: function(error) {
                                 tools.ModalAlertError("Mi Empresa", "Se produjo un error: " + error.responseText);

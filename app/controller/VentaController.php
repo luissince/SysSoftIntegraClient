@@ -20,11 +20,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         $facturacion = $_GET['facturacion'];
         $posicionPagina = $_GET['posicionPagina'];
         $filasPorPagina = $_GET['filasPorPagina'];
-        print json_encode(VentasADO::ListVentas($opcion, $busqueda, $fechaInicial, $fechaFinal, intval($comprobante), intval($estado), boolval($facturacion), $posicionPagina, $filasPorPagina));
+        print json_encode(VentasADO::ListVentas($opcion, $busqueda, $fechaInicial, $fechaFinal, intval($comprobante), intval($estado), boolval($facturacion), intval($posicionPagina), intval($filasPorPagina)));
         exit();
-    } else if ($_GET["type"] == "allventa") {
+    } else if ($_GET["type"] == "ventadetalle") {
         print json_encode(VentasADO::ListVentaDetalle($_GET['idVenta']));
         exit();
+    } else if ($_GET["type"] == "listComprobantes") {
+        $opcion = $_GET['opcion'];
+        $busqueda = $_GET['busqueda'];
+        $fechaInicial = $_GET['fechaInicial'];
+        $fechaFinal = $_GET['fechaFinal'];
+        $comprobante = $_GET['comprobante'];
+        $estado = $_GET['estado'];
+        $posicionPagina = $_GET['posicionPagina'];
+        $filasPorPagina = $_GET['filasPorPagina'];
+        print json_encode(VentasADO::ListComprobantes(intval($opcion), $busqueda,  $fechaInicial, $fechaFinal, intval($comprobante), intval($estado), intval($posicionPagina), intval($filasPorPagina)));
     } else if ($_GET["type"] == "getventanotacredito") {
         print json_encode(VentasADO::ListarComprobanteParaNotaCredito($_GET['comprobante']));
         exit();
@@ -36,6 +46,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         $posicionPagina = $_GET["posicionPagina"];
         $filasPorPagina = $_GET["filasPorPagina"];
         print json_encode(VentasADO::ListaNotaCredito($opcion, $buscar, $fechaInicio, $fechaFinal, $posicionPagina, $filasPorPagina));
+        exit();
+    } else if ($_GET["type"] == "notacreditotalle") {
+        print json_encode(VentasADO::ListarDetalleNotaCredito($_GET["idNotaCredito"]));
         exit();
     } else if ($_GET["type"] == "listarNotificaciones") {
         print json_encode(VentasADO::ListarNotificaciones());
@@ -57,6 +70,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         exit();
     } else if ($_GET["type"] == "productosPorAgotarse") {
         print json_encode(VentasADO::LoadProductosPorAgotarse(intval($_GET["posicionPaginaPorAgotarse"]), intval($_GET["filasPorPaginaPorAgotarse"])));
+        exit();
+    } else if ($_GET["type"] == "ventasEchas") {
+        print json_encode(VentasADO::ListVentasMostrarLibres(intval($_GET["opcion"]), $_GET["buscar"], intval($_GET["posicionPagina"]), intval($_GET["filasPorPagina"])));
+        exit();
+    } else if ($_GET["type"] == "ventaAgregar") {
+        print json_encode(VentasADO::VentaAgregarTerminar($_GET["idVenta"]));
         exit();
     }
 } else if ($_SERVER['REQUEST_METHOD'] == 'POST') {

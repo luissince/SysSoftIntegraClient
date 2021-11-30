@@ -416,105 +416,30 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 }
             }
 
-            function fillNotaCreditoTable(opcion, search, fechaInicial, fechaFinal) {
-                tools.promiseFetchGet(
-                    "../app/controller/VentaController.php", {
-                        "type": "listaNotaCredito",
-                        "opcion": opcion,
-                        "search": search,
-                        "fechaInicial": fechaInicial,
-                        "fechaFinal": fechaFinal,
-                        "posicionPagina": ((paginacion - 1) * filasPorPagina),
-                        "filasPorPagina": filasPorPagina
-                    },
-                    function() {
-                        tbList.empty();
-                        tbList.append('<tr><td class="text-center" colspan="11"><img src="./images/loading.gif" id="imgLoad" width="34" height="34" /> <p>Cargando información...</p></td></tr>');
-                        state = true;
-                        totalPaginacion = 0;
-                        lblTotalNotaCredito.html('0.00');
-                    }).then(result => {
+            async function fillNotaCreditoTable(opcion, search, fechaInicial, fechaFinal) {
+                try {
+                    let result = await tools.promiseFetchGet(
+                        "../app/controller/VentaController.php", {
+                            "type": "listaNotaCredito",
+                            "opcion": opcion,
+                            "search": search,
+                            "fechaInicial": fechaInicial,
+                            "fechaFinal": fechaFinal,
+                            "posicionPagina": ((paginacion - 1) * filasPorPagina),
+                            "filasPorPagina": filasPorPagina
+                        },
+                        function() {
+                            tbList.empty();
+                            tbList.append('<tr><td class="text-center" colspan="11"><img src="./images/loading.gif" id="imgLoad" width="34" height="34" /> <p>Cargando información...</p></td></tr>');
+                            state = true;
+                            totalPaginacion = 0;
+                            lblTotalNotaCredito.html('0.00');
+                        });
+
                     tbList.empty();
 
-                    if (result.estado == 1) {
-                        if (result.data.length == 0) {
-                            tbList.append('<tr><td class="text-center" colspan="11"><p>No hay datos para mostrar</p></td></tr>');
-                            ulPagination.html(`
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-double-left"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-left"></i>
-                            </button>
-                            <span class="btn btn-outline-secondary disabled" id="lblPaginacion">0 - 0</span>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-right"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-double-right"></i>
-                            </button>`);
-                            state = false;
-                        } else {
-                            for (let detalle of result.data) {
-                                let pdf = '<button class="btn btn-secondary btn-sm"  onclick="openPdf(\'' + detalle.IdNotaCredito + '\')"><img src="./images/pdf.svg" width="26" /> </button>';
-                                let ver = '<button class="btn btn-secondary btn-sm" onclick="opeModalDetalleIngreso(\'' + detalle.IdVenta + '\')"><img src="./images/file.svg" width="26" /></button>';
-
-                                let estado = detalle.Estado == "1" ? '<div class="badge badge-success">REGISTRADO</div>' : '<div class="badge badge-danger">ANULADO</div>';
-
-                                let estadosunat = detalle.Xmlsunat === "" ?
-                                    '<button class="btn btn-secondary btn-sm" onclick="firmarXml(\'' + detalle.IdNotaCredito + '\')"><img src="./images/reuse.svg" width="26"/></button>' :
-                                    detalle.Xmlsunat === "0" ?
-                                    '<button class="btn btn-secondary btn-sm"><img src="./images/accept.svg" width="26" /></button>' :
-                                    '<button class="btn btn-secondary btn-sm" onclick="firmarXml(\'' + detalle.IdNotaCredito + '\')"><img src="./images/unable.svg" width="26" /></button>';
-
-                                let descripcion = '<p class="recortar-texto">' + (detalle.Xmldescripcion === "" ? "Por Generar Xml" : limitar_cadena(detalle.Xmldescripcion, 90, '...')) + '</p>';
-
-                                tbList.append('<tr>' +
-                                    '<td class="text-center">' + detalle.Id + '</td>' +
-                                    '<td class="text-center">' + pdf + '</td>' +
-                                    '<td class="text-center">' + ver + '</td>' +
-                                    '<td class="text-left">' + tools.getDateForma(detalle.FechaNotaCredito) + '<br>' + tools.getTimeForma24(detalle.HoraNotaCredito) + '</td>' +
-                                    '<td class="text-left">' + detalle.SerieNotaCredito + '-' + detalle.NumeracionNotaCredito + '</td>' +
-                                    '<td class="text-left">' + detalle.NumeroDocumento + '<br>' + detalle.Informacion + '</td>' +
-                                    '<td class="text-left">Comprobante Editado' + '<br>' + detalle.Serie + '-' + detalle.Numeracion + '</td>' +
-                                    '<td class="text-center">' + estado + '</td>' +
-                                    '<td class="text-right">' + detalle.Simbolo + " " + tools.formatMoney(detalle.Total) + '</td>' +
-                                    '<td class="text-center">' + estadosunat + '</td>' +
-                                    '<td class="text-left">' + descripcion + '</td>' +
-                                    '</tr>');
-                            }
-                            lblTotalNotaCredito.html(tools.formatMoney(result.suma));
-
-                            totalPaginacion = parseInt(Math.ceil((parseFloat(result.total) / filasPorPagina)));
-                            let i = 1;
-                            let range = [];
-                            while (i <= totalPaginacion) {
-                                range.push(i);
-                                i++;
-                            }
-
-                            let min = Math.min.apply(null, range);
-                            let max = Math.max.apply(null, range);
-
-                            let paginacionHtml = `
-                            <button class="btn btn-outline-secondary" onclick="onEventPaginacionInicio(${min})">
-                                <i class="fa fa-angle-double-left"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary" onclick="onEventAnteriorPaginacion()">
-                                <i class="fa fa-angle-left"></i>
-                            </button>
-                            <span class="btn btn-outline-secondary disabled" id="lblPaginacion">${paginacion} - ${totalPaginacion}</span>
-                            <button class="btn btn-outline-secondary" onclick="onEventSiguientePaginacion()">
-                                <i class="fa fa-angle-right"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary" onclick="onEventPaginacionFinal(${max})">
-                                <i class="fa fa-angle-double-right"></i>
-                            </button>`;
-                            ulPagination.html(paginacionHtml);
-                            state = false;
-                        }
-                    } else {
-                        tbList.append('<tr><td class="text-center" colspan="11"><p>' + result.message + '</p></td></tr>');
+                    if (result.data.length == 0) {
+                        tbList.append('<tr><td class="text-center" colspan="11"><p>No hay datos para mostrar</p></td></tr>');
                         ulPagination.html(`
                             <button class="btn btn-outline-secondary">
                                 <i class="fa fa-angle-double-left"></i>
@@ -530,8 +455,66 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 <i class="fa fa-angle-double-right"></i>
                             </button>`);
                         state = false;
+                    } else {
+                        for (let detalle of result.data) {
+                            let pdf = '<button class="btn btn-secondary btn-sm"  onclick="openPdf(\'' + detalle.IdNotaCredito + '\')"><img src="./images/pdf.svg" width="26" /> </button>';
+                            let ver = '<button class="btn btn-secondary btn-sm" onclick="opeModalDetalleIngreso(\'' + detalle.IdVenta + '\')"><img src="./images/file.svg" width="26" /></button>';
+
+                            let estado = detalle.Estado == "1" ? '<div class="badge badge-success">REGISTRADO</div>' : '<div class="badge badge-danger">ANULADO</div>';
+
+                            let estadosunat = detalle.Xmlsunat === "" ?
+                                '<button class="btn btn-secondary btn-sm" onclick="firmarXml(\'' + detalle.IdNotaCredito + '\')"><img src="./images/reuse.svg" width="26"/></button>' :
+                                detalle.Xmlsunat === "0" ?
+                                '<button class="btn btn-secondary btn-sm"><img src="./images/accept.svg" width="26" /></button>' :
+                                '<button class="btn btn-secondary btn-sm" onclick="firmarXml(\'' + detalle.IdNotaCredito + '\')"><img src="./images/unable.svg" width="26" /></button>';
+
+                            let descripcion = '<p class="recortar-texto">' + (detalle.Xmldescripcion === "" ? "Por Generar Xml" : limitar_cadena(detalle.Xmldescripcion, 90, '...')) + '</p>';
+
+                            tbList.append('<tr>' +
+                                '<td class="text-center">' + detalle.Id + '</td>' +
+                                '<td class="text-center">' + pdf + '</td>' +
+                                '<td class="text-center">' + ver + '</td>' +
+                                '<td class="text-left">' + tools.getDateForma(detalle.FechaNotaCredito) + '<br>' + tools.getTimeForma24(detalle.HoraNotaCredito) + '</td>' +
+                                '<td class="text-left">' + detalle.SerieNotaCredito + '-' + detalle.NumeracionNotaCredito + '</td>' +
+                                '<td class="text-left">' + detalle.NumeroDocumento + '<br>' + detalle.Informacion + '</td>' +
+                                '<td class="text-left">Comprobante Editado' + '<br>' + detalle.Serie + '-' + detalle.Numeracion + '</td>' +
+                                '<td class="text-center">' + estado + '</td>' +
+                                '<td class="text-right">' + detalle.Simbolo + " " + tools.formatMoney(detalle.Total) + '</td>' +
+                                '<td class="text-center">' + estadosunat + '</td>' +
+                                '<td class="text-left">' + descripcion + '</td>' +
+                                '</tr>');
+                        }
+                        lblTotalNotaCredito.html(tools.formatMoney(result.suma));
+
+                        totalPaginacion = parseInt(Math.ceil((parseFloat(result.total) / filasPorPagina)));
+                        let i = 1;
+                        let range = [];
+                        while (i <= totalPaginacion) {
+                            range.push(i);
+                            i++;
+                        }
+
+                        let min = Math.min.apply(null, range);
+                        let max = Math.max.apply(null, range);
+
+                        let paginacionHtml = `
+                            <button class="btn btn-outline-secondary" onclick="onEventPaginacionInicio(${min})">
+                                <i class="fa fa-angle-double-left"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary" onclick="onEventAnteriorPaginacion()">
+                                <i class="fa fa-angle-left"></i>
+                            </button>
+                            <span class="btn btn-outline-secondary disabled" id="lblPaginacion">${paginacion} - ${totalPaginacion}</span>
+                            <button class="btn btn-outline-secondary" onclick="onEventSiguientePaginacion()">
+                                <i class="fa fa-angle-right"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary" onclick="onEventPaginacionFinal(${max})">
+                                <i class="fa fa-angle-double-right"></i>
+                            </button>`;
+                        ulPagination.html(paginacionHtml);
+                        state = false;
                     }
-                }).catch(error => {
+                } catch (error) {
                     tbList.empty();
                     tbList.append('<tr><td class="text-center" colspan="11"><p>' + error.responseText + '</p></td></tr>');
                     ulPagination.html(`
@@ -549,44 +532,12 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 <i class="fa fa-angle-double-right"></i>
                             </button>`);
                     state = false;
-                });
+                }
             }
 
-            function firmarXml(idNotaCredito) {
-                tools.ModalDialog("Nota de Crédito", "¿Está seguro de enviar el documento?", function(value) {
-                    if (value == true) {
 
-                        $.ajax({
-                            url: "../app/examples/notacredito.php",
-                            method: "GET",
-                            data: {
-                                "idNotaCredito": idNotaCredito
-                            },
-                            beforeSend: function() {
-                                tools.ModalAlertInfo("Ventas", "Firmando xml y enviando a la sunat.");
-                            },
-                            success: function(result) {
-                                let object = result;
-                                if (object.state === true) {
-                                    if (object.accept === true) {
-                                        tools.ModalAlertSuccess("Ventas", "Resultado: Código " + object.code + " " + object.description);
-                                    } else {
-                                        tools.ModalAlertWarning("Ventas", "Resultado: Código " + object.code + " " + object.description);
-                                    }
-                                } else {
-                                    tools.ModalAlertWarning("Ventas", "Resultado: Código " + object.code + " " + object.description);
-                                }
-                            },
-                            error: function(error) {
-                                tools.ModalAlertError("Ventas", "Error en el momento de firmar el xml: " + error.responseText);
-                            }
-                        });
 
-                    }
-                });
-            }
-
-            function opeModalDetalleIngreso(idVenta) {
+            async function opeModalDetalleIngreso(idVenta) {
                 $("#id-modal-productos").modal("show");
                 $("#btnCloseModal").unbind();
                 $("#btnCloseModal").bind("click", function(event) {
@@ -606,60 +557,56 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 let thEstado = $("#thEstado");
                 let thTotal = $("#thTotal");
                 let tbIngresosDetalle = $("#tbIngresosDetalle");
-                $.ajax({
-                    url: "../app/controller/VentaController.php",
-                    method: "GET",
-                    data: {
+                try {
+                    tbIngresosDetalle.empty();
+                    tbIngresosDetalle.append('<tr><td class="text-center" colspan="6"><img src="./images/loading.gif" id="imgLoad" width="34" height="34" /> <p>Cargando información...</p></td></tr>');
+
+                    let result = await tools.promiseFetchGet("../app/controller/VentaController.php", {
                         "type": "allventa",
-                        idVenta: idVenta
-                    },
-                    beforeSend: function() {
+                        "idVenta": idVenta
+                    });
+
+                    let object = result;
+                    if (object.estado == 1) {
                         tbIngresosDetalle.empty();
-                        tbIngresosDetalle.append('<tr><td class="text-center" colspan="6"><img src="./images/loading.gif" id="imgLoad" width="34" height="34" /> <p>Cargando información...</p></td></tr>');
-                    },
-                    success: function(result) {
-                        let object = result;
-                        if (object.estado == 1) {
-                            tbIngresosDetalle.empty();
-                            let venta = object.venta;
-                            thComprobante.html(venta.Serie + "-" + venta.Numeracion);
-                            thCliente.html(venta.NumeroDocumento + " - " + venta.Informacion);
-                            thFechaHora.html(tools.getDateForma(venta.FechaVenta) + " - " + tools.getTimeForma24(venta.HoraVenta));
-                            thEstado.html(venta.Estado == 3 ? "ANULADO" : venta.Estado == 2 ? "POR COBRAR" : "COBRADO");
-                            thEstado.removeClass();
-                            thEstado.addClass(venta.Estado == 3 ? "text-left text-danger border-0 p-1" : "text-left text-success border-0 p-1");
-                            let detalleventa = object.ventadetalle;
-                            let total = 0;
-                            for (let venta of detalleventa) {
-                                let num = venta.id;
-                                let descripcion = venta.Clave + "<br>" + venta.NombreMarca;
-                                let cantidad = venta.Cantidad;
-                                let impuesto = venta.NombreImpuesto;
-                                let precio = venta.PrecioVenta;
-                                let descuento = venta.Descuento;
-                                let importe = cantidad * precio;
-                                tbIngresosDetalle.append('<tr>' +
-                                    '<td>' + num + '</td>' +
-                                    '<td class="td-left">' + descripcion + '</td>' +
-                                    '<td>' + tools.formatMoney(cantidad) + "<br>" + venta.UnidadCompra + '</td>' +
-                                    '<td>' + impuesto + '</td>' +
-                                    '<td>' + tools.formatMoney(precio) + '</td>' +
-                                    '<td>' + tools.formatMoney(descuento) + '</td>' +
-                                    '<td>' + tools.formatMoney(importe) + '</td>' +
-                                    '</tr>');
-                                total += parseFloat(importe);
-                            }
-                            thTotal.html(venta.Simbolo + " " + tools.formatMoney(total));
-                        } else {
-                            tbIngresosDetalle.empty();
-                            tbIngresosDetalle.append('<tr><td class="text-center" colspan="6"><p>' + object.message + '</p></td></tr>');
+                        let venta = object.venta;
+                        thComprobante.html(venta.Serie + "-" + venta.Numeracion);
+                        thCliente.html(venta.NumeroDocumento + " - " + venta.Informacion);
+                        thFechaHora.html(tools.getDateForma(venta.FechaVenta) + " - " + tools.getTimeForma24(venta.HoraVenta));
+                        thEstado.html(venta.Estado == 3 ? "ANULADO" : venta.Estado == 2 ? "POR COBRAR" : "COBRADO");
+                        thEstado.removeClass();
+                        thEstado.addClass(venta.Estado == 3 ? "text-left text-danger border-0 p-1" : "text-left text-success border-0 p-1");
+                        let detalleventa = object.ventadetalle;
+                        let total = 0;
+                        for (let venta of detalleventa) {
+                            let num = venta.id;
+                            let descripcion = venta.Clave + "<br>" + venta.NombreMarca;
+                            let cantidad = venta.Cantidad;
+                            let impuesto = venta.NombreImpuesto;
+                            let precio = venta.PrecioVenta;
+                            let descuento = venta.Descuento;
+                            let importe = cantidad * precio;
+                            tbIngresosDetalle.append('<tr>' +
+                                '<td>' + num + '</td>' +
+                                '<td class="td-left">' + descripcion + '</td>' +
+                                '<td>' + tools.formatMoney(cantidad) + "<br>" + venta.UnidadCompra + '</td>' +
+                                '<td>' + impuesto + '</td>' +
+                                '<td>' + tools.formatMoney(precio) + '</td>' +
+                                '<td>' + tools.formatMoney(descuento) + '</td>' +
+                                '<td>' + tools.formatMoney(importe) + '</td>' +
+                                '</tr>');
+                            total += parseFloat(importe);
                         }
-                    },
-                    error: function(error) {
+                        thTotal.html(venta.Simbolo + " " + tools.formatMoney(total));
+                    } else {
                         tbIngresosDetalle.empty();
-                        tbIngresosDetalle.append('<tr><td class="text-center" colspan="6"><p>' + error.responseText + '</p></td></tr>');
+                        tbIngresosDetalle.append('<tr><td class="text-center" colspan="6"><p>' + object.message + '</p></td></tr>');
                     }
-                });
+                } catch (error) {
+                    console.log(error);
+                    tbIngresosDetalle.empty();
+                    tbIngresosDetalle.append('<tr><td class="text-center" colspan="6"><p>' + error.responseText + '</p></td></tr>');
+                }
             }
 
             function limitar_cadena(cadena, limite, sufijo) {

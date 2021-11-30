@@ -262,4 +262,22 @@ class ClienteADO
             return array("estado" => 0, "message" => $ex->getMessage());
         }
     }
+
+    public static function GetListCliente()
+    {
+        try {
+            $cmdCliente = Database::getInstance()->getDb()->prepare("SELECT IdCliente,NumeroDocumento,Informacion FROM ClienteTB");
+            $cmdCliente->execute();
+
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 200 . ' ' . "OK");
+
+            return  $cmdCliente->fetchAll(PDO::FETCH_OBJ);
+        } catch (Exception $ex) {
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+
+            return $ex->getMessage();
+        }
+    }
 }

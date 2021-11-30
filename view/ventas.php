@@ -110,9 +110,15 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 </div>
 
                 <div class="row">
-                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                         <div class="form-group">
-                            <h4> Lista de Ventas</h4>
+                            <a href="puntoventa.php" class=" btn btn-primary">
+                                <i class="fa fa-plus"></i> Nueva venta
+                            </a>
+
+                            <button class="btn btn-secondary" id="btnReload">
+                                <i class="fa fa-refresh"></i> Recargar
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -158,15 +164,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                     <button class="btn btn-success" type="button" id="btnBuscar">Buscar</button>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-
-                    <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
-                        <label>Opción:</label>
-                        <div class="form-group">
-                            <button class="btn btn-secondary" id="btnReload">
-                                <i class="fa fa-refresh"></i> Recargar
-                            </button>
                         </div>
                     </div>
 
@@ -379,29 +376,21 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     let result = await promise;
 
                     let comprobante = result[0];
-                    if (comprobante.estado === 1) {
-                        $("#cbComprobante").append('<option value="0">TODOS</option>');
-                        for (let value of comprobante.data) {
-                            $("#cbComprobante").append('<option value="' + value.IdTipoDocumento + '">' + value.Nombre + ' </option>');
-                        }
-                    } else {
-                        $("#cbComprobante").append('<option value="0">TODOS</option>');
+                    $("#cbComprobante").append('<option value="0">TODOS</option>');
+                    for (let value of comprobante) {
+                        $("#cbComprobante").append('<option value="' + value.IdTipoDocumento + '">' + value.Nombre + ' </option>');
                     }
 
                     let estado = result[1];
-                    if (estado.estado === 1) {
-                        $("#cbEstado").append('<option value="0">TODOS</option>');
-                        for (let value of estado.data) {
-                            $("#cbEstado").append('<option value="' + value.IdDetalle + '">' + value.Nombre + ' </option>');
-                        }
-                    } else {
-                        $("#cbEstado").append('<option value="0">TODOS</option>');
+                    $("#cbEstado").append('<option value="0">TODOS</option>');
+                    for (let value of estado) {
+                        $("#cbEstado").append('<option value="' + value.IdDetalle + '">' + value.Nombre + ' </option>');
                     }
 
                     $("#divOverlayVentas").addClass("d-none");
                     loadInitVentas();
                 } catch (error) {
-                    $("#lblTextOverlayVentas").html(error.message);
+                    $("#lblTextOverlayVentas").html(error.responseText);
                 }
             }
 
@@ -429,128 +418,37 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 }
             }
 
-            function fillVentasTable(opcion, busqueda, fechaInicial, fechaFinal, comprobante, estado) {
-                tools.promiseFetchGet(
-                    "../app/controller/VentaController.php", {
-                        "type": "venta",
-                        "opcion": opcion,
-                        "busqueda": busqueda,
-                        "fechaInicial": fechaInicial,
-                        "fechaFinal": fechaFinal,
-                        "comprobante": comprobante,
-                        "estado": estado,
-                        "facturacion": 0,
-                        "posicionPagina": ((paginacion - 1) * filasPorPagina),
-                        "filasPorPagina": filasPorPagina
-                    },
-                    function() {
-                        tbody.empty();
-                        tbody.append('<tr><td class="text-center" colspan="10"><img src="./images/loading.gif" id="imgLoad" width="34" height="34" /> <p>Cargando información...</p></td></tr>');
-                        state = true;
-                        totalPaginacion = 0;
-                        arrayVentas = [];
-                    }
-                ).then(result => {
-                    let object = result;
-                    if (object.estado === 1) {
-                        arrayVentas = object.data;
-                        tbody.empty();
-                        if (arrayVentas.length == 0) {
-                            tbody.append('<tr><td class="text-center" colspan="10"><p>No hay datos para mostrar.</p></td></tr>');
-                            ulPagination.html(`
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-double-left"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-left"></i>
-                            </button>
-                            <span class="btn btn-outline-secondary disabled" id="lblPaginacion">0 - 0</span>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-right"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-double-right"></i>
-                            </button>`);
-                            lblTotalVenta.html(tools.formatMoney(parseFloat(object.suma)));
-                            state = false;
-                        } else {
+            async function fillVentasTable(opcion, busqueda, fechaInicial, fechaFinal, comprobante, estado) {
+                try {
 
-                            for (let venta of arrayVentas) {
-                                let pdf = '<button class="btn btn-secondary btn-sm"  onclick="openPdf(\'' + venta.IdVenta + '\')"><img src="./images/pdf.svg" width="26" /> </button>';
-                                let ver = '<button class="btn btn-secondary btn-sm" onclick="opeModalDetalleIngreso(\'' + venta.IdVenta + '\')"><img src="./images/file.svg" width="26" /></button>';
-
-                                let datetime = tools.getDateForma(venta.FechaVenta) + "<br>" + tools.getTimeForma24(venta.HoraVenta, true);
-                                let comprobante = venta.Comprobante + " <br/>" + (venta.Serie + "-" + venta.Numeracion) + (venta.IdNotaCredito == 1 ? "<br> <span class='text-danger'>" + "Modificado(" + venta.SerieNotaCredito + "-" + venta.NumeracionNotaCredito + ")</span>" : "");
-                                let cliente = venta.DocumentoCliente + "<br>" + venta.Cliente;
-                                let estado = "";
-
-                                if (venta.IdNotaCredito == 1) {
-                                    estado = '<div class="badge badge-danger">MODIFICADO</div>';
-                                } else {
-                                    if (venta.Estado == 3) {
-                                        estado = '<div class="badge badge-danger">ANULADO</div>';
-                                    } else if (venta.Tipo == 2 && venta.Estado == 2) {
-                                        estado = '<div class="badge badge-warning">POR COBRAR</div>';
-                                    } else if (venta.Tipo == 1 && venta.Estado == 4) {
-                                        estado = '<div class="badge badge-primary">POR LLEVAR</div>';
-                                    } else {
-                                        estado = '<div class="badge badge-success">COBRADO</div>';
-                                    }
-                                }
-
-                                let tipo = venta.Tipo == "1" ? "CONTADO" : "CRÉDITO";
-
-                                let total = venta.Simbolo + " " + tools.formatMoney(venta.Total);
-
-
-                                tbody.append('<tr>' +
-                                    ' <td class="text-center">' + venta.id + '</td >' +
-                                    ' <td class="text-center">' + pdf + '</td>' +
-                                    ' <td class="text-centerr">' + ver + '</td>' +
-                                    ' <td class="text-left">' + datetime + '</td>' +
-                                    ' <td class="text-left">' + comprobante + '</td>' +
-                                    ' <td class="text-left">' + cliente + '</td>' +
-                                    ' <td class="text-center">' + tipo + '</td>' +
-                                    ' <td class="text-center">' + venta.FormaName + '</td>' +
-                                    ' <td class="text-center">' + estado + '</td>' +
-                                    ' <td class="text-right">' + total + '</td>' +
-                                    '</tr >');
-                            }
-
-                            totalPaginacion = parseInt(Math.ceil((parseFloat(object.total) / filasPorPagina)));
-
-                            let i = 1;
-                            let range = [];
-                            while (i <= totalPaginacion) {
-                                range.push(i);
-                                i++;
-                            }
-
-                            let min = Math.min.apply(null, range);
-                            let max = Math.max.apply(null, range);
-
-                            lblTotalVenta.html(tools.formatMoney(parseFloat(object.suma)));
-
-                            let paginacionHtml = `
-                            <button class="btn btn-outline-secondary" onclick="onEventPaginacionInicio(${min})">
-                                <i class="fa fa-angle-double-left"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary" onclick="onEventAnteriorPaginacion()">
-                                <i class="fa fa-angle-left"></i>
-                            </button>
-                            <span class="btn btn-outline-secondary disabled" id="lblPaginacion">${paginacion} - ${totalPaginacion}</span>
-                            <button class="btn btn-outline-secondary" onclick="onEventSiguientePaginacion()">
-                                <i class="fa fa-angle-right"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary" onclick="onEventPaginacionFinal(${max})">
-                                <i class="fa fa-angle-double-right"></i>
-                            </button>`;
-
-                            ulPagination.html(paginacionHtml);
-                            state = false;
+                    let result = await tools.promiseFetchGet(
+                        "../app/controller/VentaController.php", {
+                            "type": "venta",
+                            "opcion": opcion,
+                            "busqueda": busqueda,
+                            "fechaInicial": fechaInicial,
+                            "fechaFinal": fechaFinal,
+                            "comprobante": comprobante,
+                            "estado": estado,
+                            "facturacion": 0,
+                            "posicionPagina": ((paginacion - 1) * filasPorPagina),
+                            "filasPorPagina": filasPorPagina
+                        },
+                        function() {
+                            tbody.empty();
+                            tbody.append('<tr><td class="text-center" colspan="10"><img src="./images/loading.gif" id="imgLoad" width="34" height="34" /> <p>Cargando información...</p></td></tr>');
+                            state = true;
+                            totalPaginacion = 0;
+                            arrayVentas = [];
                         }
-                    } else {
-                        tbody.empty();
+                    );
+
+                    let object = result;
+
+                    arrayVentas = object.data;
+                    tbody.empty();
+                    if (arrayVentas.length == 0) {
+                        tbody.append('<tr><td class="text-center" colspan="10"><p>No hay datos para mostrar.</p></td></tr>');
                         ulPagination.html(`
                             <button class="btn btn-outline-secondary">
                                 <i class="fa fa-angle-double-left"></i>
@@ -565,11 +463,86 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             <button class="btn btn-outline-secondary">
                                 <i class="fa fa-angle-double-right"></i>
                             </button>`);
-                        tbody.append('<tr><td class="text-center" colspan="10"><p>' + object.message + '</p></td></tr>');
-                        lblTotalVenta.html(tools.formatMoney(parseFloat(0)));
+                        lblTotalVenta.html(tools.formatMoney(parseFloat(object.suma)));
+                        state = false;
+                    } else {
+
+                        for (let venta of arrayVentas) {
+                            let pdf = '<button class="btn btn-secondary btn-sm"  onclick="openPdf(\'' + venta.IdVenta + '\')"><img src="./images/pdf.svg" width="26" /> </button>';
+                            let ver = '<button class="btn btn-secondary btn-sm" onclick="opeModalDetalleIngreso(\'' + venta.IdVenta + '\')"><img src="./images/file.svg" width="26" /></button>';
+
+                            let datetime = tools.getDateForma(venta.FechaVenta) + "<br>" + tools.getTimeForma24(venta.HoraVenta, true);
+                            let comprobante = venta.Comprobante + " <br/>" + (venta.Serie + "-" + venta.Numeracion) + (venta.IdNotaCredito == 1 ? "<br> <span class='text-danger'>" + "Modificado(" + venta.SerieNotaCredito + "-" + venta.NumeracionNotaCredito + ")</span>" : "");
+                            let cliente = venta.DocumentoCliente + "<br>" + venta.Cliente;
+                            let estado = "";
+
+                            if (venta.IdNotaCredito == 1) {
+                                estado = '<div class="badge badge-danger">MODIFICADO</div>';
+                            } else {
+                                if (venta.Estado == 3) {
+                                    estado = '<div class="badge badge-danger">ANULADO</div>';
+                                } else if (venta.Tipo == 2 && venta.Estado == 2) {
+                                    estado = '<div class="badge badge-warning">POR COBRAR</div>';
+                                } else if (venta.Tipo == 1 && venta.Estado == 4) {
+                                    estado = '<div class="badge badge-primary">POR LLEVAR</div>';
+                                } else {
+                                    estado = '<div class="badge badge-success">COBRADO</div>';
+                                }
+                            }
+
+                            let tipo = venta.Tipo == "1" ? "CONTADO" : "CRÉDITO";
+
+                            let total = venta.Simbolo + " " + tools.formatMoney(venta.Total);
+
+
+                            tbody.append('<tr>' +
+                                ' <td class="text-center">' + venta.id + '</td >' +
+                                ' <td class="text-center">' + pdf + '</td>' +
+                                ' <td class="text-centerr">' + ver + '</td>' +
+                                ' <td class="text-left">' + datetime + '</td>' +
+                                ' <td class="text-left">' + comprobante + '</td>' +
+                                ' <td class="text-left">' + cliente + '</td>' +
+                                ' <td class="text-center">' + tipo + '</td>' +
+                                ' <td class="text-center">' + venta.FormaName + '</td>' +
+                                ' <td class="text-center">' + estado + '</td>' +
+                                ' <td class="text-right">' + total + '</td>' +
+                                '</tr >');
+                        }
+
+                        totalPaginacion = parseInt(Math.ceil((parseFloat(object.total) / filasPorPagina)));
+
+                        let i = 1;
+                        let range = [];
+                        while (i <= totalPaginacion) {
+                            range.push(i);
+                            i++;
+                        }
+
+                        let min = Math.min.apply(null, range);
+                        let max = Math.max.apply(null, range);
+
+                        lblTotalVenta.html(tools.formatMoney(parseFloat(object.suma)));
+
+                        let paginacionHtml = `
+                            <button class="btn btn-outline-secondary" onclick="onEventPaginacionInicio(${min})">
+                                <i class="fa fa-angle-double-left"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary" onclick="onEventAnteriorPaginacion()">
+                                <i class="fa fa-angle-left"></i>
+                            </button>
+                            <span class="btn btn-outline-secondary disabled" id="lblPaginacion">${paginacion} - ${totalPaginacion}</span>
+                            <button class="btn btn-outline-secondary" onclick="onEventSiguientePaginacion()">
+                                <i class="fa fa-angle-right"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary" onclick="onEventPaginacionFinal(${max})">
+                                <i class="fa fa-angle-double-right"></i>
+                            </button>`;
+
+                        ulPagination.html(paginacionHtml);
                         state = false;
                     }
-                }).catch(error => {
+
+                } catch (error) {
                     tbody.empty();
                     ulPagination.html(`
                             <button class="btn btn-outline-secondary">
@@ -588,10 +561,10 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     tbody.append('<tr><td class="text-center" colspan="10"><p>' + error.responseText + '</p></td></tr>');
                     lblTotalVenta.html(tools.formatMoney(parseFloat(0)));
                     state = false;
-                });
+                }
             }
 
-            function opeModalDetalleIngreso(idVenta) {
+            async function opeModalDetalleIngreso(idVenta) {
                 $("#id-modal-productos").modal("show");
                 $("#btnCloseModal").unbind();
                 $("#btnCloseModal").bind("click", function(event) {
@@ -611,71 +584,58 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 let thEstado = $("#thEstado");
                 let thTotal = $("#thTotal");
                 let tbIngresosDetalle = $("#tbIngresosDetalle");
-                $.ajax({
-                    url: "../app/controller/VentaController.php",
-                    method: "GET",
-                    data: {
-                        "type": "allventa",
-                        idVenta: idVenta
-                    },
-                    beforeSend: function() {
+
+                try {
+                    let result = await tools.promiseFetchGet("../app/controller/VentaController.php", {
+                        "type": "ventadetalle",
+                        "idVenta": idVenta
+                    }, function() {
                         tbIngresosDetalle.empty();
                         tbIngresosDetalle.append('<tr><td class="text-center" colspan="6"><img src="./images/loading.gif" id="imgLoad" width="34" height="34" /> <p>Cargando información...</p></td></tr>');
-                    },
-                    success: function(result) {
-                        let object = result;
-                        if (object.estado == 1) {
-                            tbIngresosDetalle.empty();
-                            let venta = object.venta;
-                            thComprobante.html(venta.Serie + "-" + venta.Numeracion);
-                            thCliente.html(venta.NumeroDocumento + " - " + venta.Informacion);
-                            thFechaHora.html(tools.getDateForma(venta.FechaVenta) + " - " + tools.getTimeForma24(venta.HoraVenta));
-                            thEstado.html(venta.Estado == 3 ? "ANULADO" : venta.Estado == 2 ? "POR COBRAR" : "COBRADO");
-                            thEstado.removeClass();
-                            thEstado.addClass(venta.Estado == 3 ? "text-left text-danger border-0 p-1" : "text-left text-success border-0 p-1");
-                            let detalleventa = object.ventadetalle;
-                            let total = 0;
-                            for (let venta of detalleventa) {
-                                let num = venta.id;
-                                let descripcion = venta.Clave + "<br>" + venta.NombreMarca;
-                                let cantidad = venta.Cantidad;
-                                let impuesto = venta.NombreImpuesto;
-                                let precio = venta.PrecioVenta;
-                                let descuento = venta.Descuento;
-                                let importe = cantidad * precio;
-                                tbIngresosDetalle.append('<tr>' +
-                                    '<td>' + num + '</td>' +
-                                    '<td class="td-left">' + descripcion + '</td>' +
-                                    '<td>' + tools.formatMoney(cantidad) + "<br>" + venta.UnidadCompra + '</td>' +
-                                    '<td>' + impuesto + '</td>' +
-                                    '<td>' + tools.formatMoney(precio) + '</td>' +
-                                    '<td>' + tools.formatMoney(descuento) + '</td>' +
-                                    '<td>' + tools.formatMoney(importe) + '</td>' +
-                                    '</tr>');
-                                total += parseFloat(importe);
-                            }
-                            thTotal.html(venta.Simbolo + " " + tools.formatMoney(total));
-                        } else {
-                            tbIngresosDetalle.empty();
-                            tbIngresosDetalle.append('<tr><td class="text-center" colspan="6"><p>' + object.message + '</p></td></tr>');
-                        }
-                    },
-                    error: function(error) {
-                        tbIngresosDetalle.empty();
-                        tbIngresosDetalle.append('<tr><td class="text-center" colspan="6"><p>' + error.responseText + '</p></td></tr>');
+
+                    });
+
+                    let object = result;
+
+                    tbIngresosDetalle.empty();
+                    let venta = object.venta;
+                    thComprobante.html(venta.Serie + "-" + venta.Numeracion);
+                    thCliente.html(venta.NumeroDocumento + " - " + venta.Informacion);
+                    thFechaHora.html(tools.getDateForma(venta.FechaVenta) + " - " + tools.getTimeForma24(venta.HoraVenta));
+                    thEstado.html(venta.Estado == 3 ? "ANULADO" : venta.Estado == 2 ? "POR COBRAR" : "COBRADO");
+                    thEstado.removeClass();
+                    thEstado.addClass(venta.Estado == 3 ? "text-left text-danger border-0 p-1" : "text-left text-success border-0 p-1");
+                    let detalleventa = object.ventadetalle;
+                    let total = 0;
+                    for (let venta of detalleventa) {
+                        let num = venta.id;
+                        let descripcion = venta.Clave + "<br>" + venta.NombreMarca;
+                        let cantidad = venta.Cantidad;
+                        let impuesto = venta.NombreImpuesto;
+                        let precio = venta.PrecioVenta;
+                        let descuento = venta.Descuento;
+                        let importe = cantidad * precio;
+                        tbIngresosDetalle.append('<tr>' +
+                            '<td>' + num + '</td>' +
+                            '<td class="td-left">' + descripcion + '</td>' +
+                            '<td>' + tools.formatMoney(cantidad) + "<br>" + venta.UnidadCompra + '</td>' +
+                            '<td>' + impuesto + '</td>' +
+                            '<td>' + tools.formatMoney(precio) + '</td>' +
+                            '<td>' + tools.formatMoney(descuento) + '</td>' +
+                            '<td>' + tools.formatMoney(importe) + '</td>' +
+                            '</tr>');
+                        total += parseFloat(importe);
                     }
-                });
+                    thTotal.html(venta.Simbolo + " " + tools.formatMoney(total));
+
+                } catch (error) {
+                    tbIngresosDetalle.empty();
+                    tbIngresosDetalle.append('<tr><td class="text-center" colspan="6"><p>' + error.responseText + '</p></td></tr>');
+                }
             }
 
             function openPdf(idVenta) {
                 window.open("../app/sunat/pdfventas.php?idVenta=" + idVenta, "_blank");
-            }
-
-            function limitar_cadena(cadena, limite, sufijo) {
-                if (cadena.length > limite) {
-                    return cadena.substr(0, limite) + sufijo;
-                }
-                return cadena;
             }
 
             function onEventPaginacionInicio(value) {

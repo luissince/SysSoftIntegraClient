@@ -151,7 +151,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
                 <div class="row">
                     <div class="col-xl-6 col-lg-8 col-md-12 col-sm-12 col-12">
-                        <label>Buscar:</label>
+                        <label><img src="./images/search.png" width="22" height="22"> Filtrar por cliente o procedencia:</label>
                         <div class="form-group d-flex">
                             <div class="input-group">
                                 <input type="text" class="form-control" placeholder="Escribir para filtrar" id="txtSearch">
@@ -262,6 +262,57 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         event.preventDefault();
                     }
                 });
+
+                $("#btnRecargar").click(function(event) {
+                    loadInitIngreso();
+                });
+
+                $("#btnRecargar").keypress(function(event) {
+                    if (event.keyCode == 13) {
+                        loadInitIngreso();
+                        event.preventDefault();
+                    }
+                });
+
+                $("#txtSearch").keyup(function(event) {
+                    if (event.keyCode !== 9 && event.keyCode !== 18) {
+                        if (event.keyCode === 13) {
+                            if ($("#txtSearch").val().trim() != "") {
+                                if (!state) {
+                                    paginacion = 1;
+                                    fillIngreso($("#txtSearch").val().trim());
+                                    opcion = 1;
+                                }
+                            }
+                            event.preventDefault();
+                        }
+                    }
+                });
+
+                $("#btnBuscar").click(function(event) {
+                    if ($("#txtSearch").val().trim() != "") {
+                        if (!state) {
+                            paginacion = 1;
+                            fillIngreso($("#txtSearch").val().trim());
+                            opcion = 1;
+                        }
+                    }
+                });
+
+                $("#btnBuscar").keypress(function(event) {
+                    if (event.keyCode == 13) {
+                        if ($("#txtSearch").val().trim() != "") {
+                            if (!state) {
+                                paginacion = 1;
+                                fillIngreso($("#txtSearch").val().trim());
+                                opcion = 1;
+                            }
+                        }
+                        event.preventDefault();
+                    }
+                });
+
+
                 loadInitIngreso();
 
                 //---------------------------------------------------------
@@ -301,7 +352,14 @@ if (!isset($_SESSION['IdEmpleado'])) {
             });
 
             function onEventPaginacion() {
-
+                switch (opcion) {
+                    case 0:
+                        fillIngreso();
+                        break;
+                    case 1:
+                        fillIngreso($("#txtSearch").val().trim());
+                        break;
+                }
             }
 
             function loadInitIngreso() {
@@ -312,84 +370,23 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 }
             }
 
-            function fillIngreso() {
-                tools.promiseFetchGet("../app/controller/IngresoController.php", {
-                    "type": "lista",
-                    "posicionPagina": ((paginacion - 1) * filasPorPagina),
-                    "filasPorPagina": filasPorPagina
-                }, function() {
+            async function fillIngreso() {
+                try {
+                    let result = await tools.promiseFetchGet("../app/controller/IngresoController.php", {
+                        "type": "lista",
+                        "posicionPagina": ((paginacion - 1) * filasPorPagina),
+                        "filasPorPagina": filasPorPagina
+                    }, function() {
+                        tbody.empty();
+                        tbody.append('<tr><td class="text-center" colspan="8"><img src="./images/loading.gif" id="imgLoad" width="34" height="34" /> <p>Cargando información...</p></td></tr>');
+                        totalPaginacion = 0;
+                        state = true;
+
+                    });
+
                     tbody.empty();
-                    tbody.append('<tr><td class="text-center" colspan="8"><img src="./images/loading.gif" id="imgLoad" width="34" height="34" /> <p>Cargando información...</p></td></tr>');
-                    totalPaginacion = 0;
-                    state = true;
-
-                }).then(function(result) {
-                    if (result.estado == 1) {
-                        tbody.empty();
-                        if (result.data.length == 0) {
-                            tbody.append('<tr><td class="text-center" colspan="8"><p>No hay ingresos para mostrar.</p></td></tr>');
-                            ulPagination.html(`
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-double-left"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-left"></i>
-                            </button>
-                            <span class="btn btn-outline-secondary disabled" id="lblPaginacion">0 - 0</span>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-right"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-double-right"></i>
-                            </button>`);
-                            state = false;
-                        } else {
-                            for (let value of result.data) {
-                                tbody.append(`<tr>
-                                <td class="text-center">${value.Id}</td>
-                                <td><button class="btn btn-secondary btn-sm"><img src="./images/pdf.svg" width="26"></button></td>
-                                <td>${tools.getDateForma(value.Fecha)}<br>${tools.getTimeForma24(value.Hora)}</td>
-                                <td>${value.NumeroDocumento}<br>${value.Informacion}</td>
-                                <td>${value.Detalle}</td>
-                                <td>${value.Procedencia}</td>
-                                <td>${value.Forma}</td>
-                                <td class="text-center">${tools.formatMoney(value.Monto)}</td>
-                                </tr>                                
-                                `);
-                            }
-
-                            totalPaginacion = parseInt(Math.ceil((parseFloat(result.total) / filasPorPagina)));
-
-                            let i = 1;
-                            let range = [];
-                            while (i <= totalPaginacion) {
-                                range.push(i);
-                                i++;
-                            }
-
-                            let min = Math.min.apply(null, range);
-                            let max = Math.max.apply(null, range);
-
-                            let paginacionHtml = `
-                            <button class="btn btn-outline-secondary" onclick="onEventPaginacionInicio(${min})">
-                                <i class="fa fa-angle-double-left"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary" onclick="onEventAnteriorPaginacion()">
-                                <i class="fa fa-angle-left"></i>
-                            </button>
-                            <span class="btn btn-outline-secondary disabled" id="lblPaginacion">${paginacion} - ${totalPaginacion}</span>
-                            <button class="btn btn-outline-secondary" onclick="onEventSiguientePaginacion()">
-                                <i class="fa fa-angle-right"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary" onclick="onEventPaginacionFinal(${max})">
-                                <i class="fa fa-angle-double-right"></i>
-                            </button>`;
-
-                            ulPagination.html(paginacionHtml);
-                            state = false;
-                        }
-                    } else {
-                        tbody.empty();
+                    if (result.data.length == 0) {
+                        tbody.append('<tr><td class="text-center" colspan="8"><p>No hay ingresos para mostrar.</p></td></tr>');
                         ulPagination.html(`
                             <button class="btn btn-outline-secondary">
                                 <i class="fa fa-angle-double-left"></i>
@@ -404,10 +401,53 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             <button class="btn btn-outline-secondary">
                                 <i class="fa fa-angle-double-right"></i>
                             </button>`);
-                        tbody.append('<tr><td class="text-center" colspan="8"><p>' + result.message + '</p></td></tr>');
+                        state = false;
+                    } else {
+                        for (let value of result.data) {
+                            tbody.append(`<tr>
+                                <td class="text-center">${value.Id}</td>
+                                <td><button class="btn btn-secondary btn-sm"><img src="./images/pdf.svg" width="26"></button></td>
+                                <td>${tools.getDateForma(value.Fecha)}<br>${tools.getTimeForma24(value.Hora)}</td>
+                                <td>${value.NumeroDocumento}<br>${value.Informacion}</td>
+                                <td>${value.Detalle}</td>
+                                <td>${value.Procedencia}</td>
+                                <td>${value.Forma}</td>
+                                <td class="text-center">${tools.formatMoney(value.Monto)}</td>
+                                </tr>                                
+                                `);
+                        }
+
+                        totalPaginacion = parseInt(Math.ceil((parseFloat(result.total) / filasPorPagina)));
+
+                        let i = 1;
+                        let range = [];
+                        while (i <= totalPaginacion) {
+                            range.push(i);
+                            i++;
+                        }
+
+                        let min = Math.min.apply(null, range);
+                        let max = Math.max.apply(null, range);
+
+                        let paginacionHtml = `
+                            <button class="btn btn-outline-secondary" onclick="onEventPaginacionInicio(${min})">
+                                <i class="fa fa-angle-double-left"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary" onclick="onEventAnteriorPaginacion()">
+                                <i class="fa fa-angle-left"></i>
+                            </button>
+                            <span class="btn btn-outline-secondary disabled" id="lblPaginacion">${paginacion} - ${totalPaginacion}</span>
+                            <button class="btn btn-outline-secondary" onclick="onEventSiguientePaginacion()">
+                                <i class="fa fa-angle-right"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary" onclick="onEventPaginacionFinal(${max})">
+                                <i class="fa fa-angle-double-right"></i>
+                            </button>`;
+
+                        ulPagination.html(paginacionHtml);
                         state = false;
                     }
-                }).catch(function(error) {
+                } catch (error) {
                     tbody.empty();
                     ulPagination.html(`
                             <button class="btn btn-outline-secondary">
@@ -425,7 +465,43 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             </button>`);
                     tbody.append('<tr><td class="text-center" colspan="8"><p>' + error.responseText + '</p></td></tr>');
                     state = false;
-                });
+                }
+            }
+
+            function onEventPaginacionInicio(value) {
+                if (!state) {
+                    if (value !== paginacion) {
+                        paginacion = value;
+                        onEventPaginacion();
+                    }
+                }
+            }
+
+            function onEventPaginacionFinal(value) {
+                if (!state) {
+                    if (value !== paginacion) {
+                        paginacion = value;
+                        onEventPaginacion();
+                    }
+                }
+            }
+
+            function onEventAnteriorPaginacion() {
+                if (!state) {
+                    if (paginacion > 1) {
+                        paginacion--;
+                        onEventPaginacion();
+                    }
+                }
+            }
+
+            function onEventSiguientePaginacion() {
+                if (!state) {
+                    if (paginacion < totalPaginacion) {
+                        paginacion++;
+                        onEventPaginacion();
+                    }
+                }
             }
 
             async function NuevoPago() {
@@ -436,14 +512,11 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         "type": "listaCliente"
                     });
 
-                    if (result.estado == 1) {
-                        $("#cbCliente").append('<option value="">- Seleccione -</option>');
-                        for (let value of result.data) {
-                            $("#cbCliente").append('<option value="' + value.IdCliente + '">' + value.Informacion + '</option>');
-                        }
-                    } else {
-                        $("#cbCliente").append('<option value="">- Seleccione -</option>');
+                    $("#cbCliente").append('<option value="">- Seleccione -</option>');
+                    for (let value of result.data) {
+                        $("#cbCliente").append('<option value="' + value.IdCliente + '">' + value.NumeroDocumento + ' - ' + value.Informacion + '</option>');
                     }
+
                     $("#divOverlayIngreso").addClass("d-none");
                 } catch (error) {
                     $("#cbCliente").append('<option value="">- Seleccione -</option>');
@@ -473,7 +546,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 "type": "insert",
                                 "idProcedencia": "",
                                 "idCliente": $("#cbCliente").val(),
-                                "detalle": $("#txtObservacion").val(),
+                                "detalle": $("#txtObservacion").val().toUpperCase(),
                                 "monto": $("#txtMonto").val(),
                                 "procedencia": 3,
                                 "forma": $("#rbEfectivo").is(":checked") ? 1 : $("#rbTarjeta").is(":checked") ? 2 : 3,

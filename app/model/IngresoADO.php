@@ -50,20 +50,33 @@ class IngresoADO
             $cmdIngreso->execute();
             $totalIngreso = $cmdIngreso->fetchColumn();
 
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 200 . ' ' . "OK");
+
             return array("estado" => 1, "data" => $resultIngreso, "total" => $totalIngreso);
         } catch (Exception $ex) {
-            return array("estado" => 0, "message" => $ex->getMessage());
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+
+            return $ex->getMessage();
         }
     }
 
     public static function ListarClientes()
     {
         try {
-            $cmdCliente = Database::getInstance()->getDb()->prepare("SELECT IdCliente,Informacion FROM ClienteTB");
+            $cmdCliente = Database::getInstance()->getDb()->prepare("SELECT IdCliente,NumeroDocumento,Informacion FROM ClienteTB");
             $cmdCliente->execute();
+
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 200 . ' ' . "OK");
+
             return array("estado" => 1, "data" => $cmdCliente->fetchAll(PDO::FETCH_OBJ));
         } catch (Exception $ex) {
-            return array("estado" => 0, "message" => $ex->getMessage());
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+
+            return  $ex->getMessage();
         }
     }
 

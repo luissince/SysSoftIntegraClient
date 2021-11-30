@@ -134,45 +134,12 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 <!-- /.card-header -->
                                 <div class="card-body">
                                     <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="tile">
-                                                <h3 class="tile-title">Line Chart</h3>
-                                                <div class="embed-responsive embed-responsive-16by9">
-                                                    <canvas class="embed-responsive-item" id="lineChartDemo" width="444" height="249" style="width: 444px; height: 249px;"></canvas>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="tile">
-                                                <h3 class="tile-title">Resumen</h3>
-                                                <div class="embed-responsive embed-responsive-16by9">
-
-                                                </div>
+                                        <div class="col-md-12">
+                                            <div class="embed-responsive embed-responsive-16by9" style="height:320px">
+                                                <canvas class="embed-responsive-item" id="lineChartDemo" width="444" height="249"></canvas>
                                             </div>
                                         </div>
                                     </div>
-                                    <!-- <div class="row">
-                                        <div class="col-md-12">
-                                            <p class="text-center">
-                                                <strong id="lblMesActual">Ventas: --, --</strong>
-                                            </p>
-                                            <div class="card-body">
-                                                <div class="position-relative mb-4">
-                                                    <canvas id="sales-chart" class="chartjs-render-monitor"></canvas>
-                                                </div>
-
-                                                <div class="d-flex flex-row justify-content-end">
-                                                    <span class="mr-2">
-                                                        <i class="fa fa-square text-primary"></i> Este Año
-                                                    </span>
-
-                                                    <span>
-                                                        <i class="fa fa-square text-gray"></i> Año Pasado
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div> -->
                                 </div>
                             </div>
                             <!-- /.card -->
@@ -196,11 +163,11 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         </div>
                         <div class="col-md-6">
                             <div class="card mb-3 card-primary card-tabs">
-                                <div class="card-header p-0 pt-1">
+                                <div class="card-header">
+                                    <h5 class="card-title">Estado del Inventario</h5>
+                                </div>
+                                <div class="card-body">
                                     <ul class="nav nav-tabs" id="custom-tabs-two-tab" role="tablist">
-                                        <li class="pt-2 px-3">
-                                            <h5 class="card-title">Estado del Inventario</h5>
-                                        </li>
                                         <li class="nav-item">
                                             <a class="nav-link active" id="custom-tabs-two-home-tab" data-toggle="pill" href="#custom-tabs-two-home" role="tab" aria-controls="custom-tabs-two-home" aria-selected="false">Agotados</a>
                                         </li>
@@ -208,12 +175,10 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                             <a class="nav-link" id="custom-tabs-two-profile-tab" data-toggle="pill" href="#custom-tabs-two-profile" role="tab" aria-controls="custom-tabs-two-profile" aria-selected="false">Por Agotarse</a>
                                         </li>
                                     </ul>
-                                </div>
-                                <div class="card-body">
                                     <div class="tab-content" id="custom-tabs-two-tabContent">
                                         <div class="tab-pane fade active show" id="custom-tabs-two-home" role="tabpanel" aria-labelledby="custom-tabs-two-home-tab">
                                             <div class="row">
-                                                <div class="col-md-12 col-sm-12 col-xs-12">
+                                                <div class="col-md-12 col-sm-12 col-xs-12 p-1">
                                                     <div id="tvProductoAgotado">
 
                                                     </div>
@@ -235,7 +200,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                         </div>
                                         <div class="tab-pane fade" id="custom-tabs-two-profile" role="tabpanel" aria-labelledby="custom-tabs-two-profile-tab">
                                             <div class="row">
-                                                <div class="col-md-12 col-sm-12 col-xs-12">
+                                                <div class="col-md-12 col-sm-12 col-xs-12 p-1">
                                                     <div id="tvProductoPorAgotarse">
 
                                                     </div>
@@ -513,7 +478,11 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             pointHighlightStroke: "#212529",
                             data: dataPasada
                         }
-                    ]
+                    ],
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false
+                    }
                 };
                 var pdata = [{
                         value: 300,

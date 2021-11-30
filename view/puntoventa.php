@@ -23,6 +23,10 @@ if (!isset($_SESSION['IdEmpleado'])) {
         <?php include('./layout/puntoventa/modalProductos.php'); ?>
         <!-- modal movimiento caja -->
         <?php include('./layout/puntoventa/modalMovimientoCaja.php'); ?>
+        <!-- modal movimiento caja -->
+        <?php include('./layout/puntoventa/modalVentaEchas.php'); ?>
+        <!-- modal movimiento caja -->
+        <?php include('./layout/puntoventa/modalCotizacion.php'); ?>
 
         <main class="app-content">
 
@@ -54,7 +58,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
                                         <div class="bs-component" style="margin-bottom: 15px;">
                                             <div class="btn-group" role="group">
-                                                <button id="btnProductos" class="btn btn-secondary" type="button" title="Lista de Productos">
+                                                <button id="btnProductos" class="btn btn-secondary" type="button" title="Productos">
                                                     <div class="row">
                                                         <div class="col-md-12">
                                                             <image src="./images/producto.png" width="22" />
@@ -80,7 +84,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                                     </div>
                                                 </button>
 
-                                                <button id="btnLimpiar" class="btn btn-secondary" type="button" title="Movimiento de caja">
+                                                <button id="btnLimpiar" class="btn btn-secondary" type="button" title="Limpiar Vista">
                                                     <div class="row">
                                                         <div class="col-md-12">
                                                             <image src="./images/escoba.png" width="22" />
@@ -93,7 +97,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                                     </div>
                                                 </button>
 
-                                                <button class="btn btn-secondary" type="button" title="Movimiento de caja">
+                                                <button id="btnVentas" class="btn btn-secondary" type="button" title="Ventas Echas">
                                                     <div class="row">
                                                         <div class="col-md-12">
                                                             <image src="./images/view.png" width="22" />
@@ -106,7 +110,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                                     </div>
                                                 </button>
 
-                                                <button class="btn btn-secondary" type="button" title="Movimiento de caja">
+                                                <button id="btnCotizacion" class="btn btn-secondary" type="button" title="Cotización">
                                                     <div class="row">
                                                         <div class="col-md-12">
                                                             <image src="./images/cotizacion.png" width="22" />
@@ -385,6 +389,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
         <script src="js/puntoventa/modalProcesoVenta.js"></script>
         <script src="js/puntoventa/modalProductos.js"></script>
         <script src="js/puntoventa/modalMovimientoCaja.js"></script>
+        <script src="js/puntoventa/modalVentaEchas.js"></script>
+        <script src="js/puntoventa/modalCotizacion.js"></script>
 
         <script src="./js/notificaciones.js"></script>
         <script>
@@ -392,6 +398,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
             let modalProductos = new ModalProductos();
             let modalProcesoVenta = new ModalProcesoVenta();
             let modalMovimientoCaja = new ModalMovimientoCaja();
+            let modalVentaEchas = new ModalVentaEchas();
+            let modalCotizacion = new ModalCotizacion();
 
             let monedaSimbolo = "M";
             let importeBruto = 0;
@@ -446,6 +454,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 modalProductos.init();
                 modalProcesoVenta.init();
                 modalMovimientoCaja.init();
+                modalVentaEchas.init();
+                modalCotizacion.init();
 
                 $("#cbComprobante").change(async function() {
                     if ($('#cbComprobante').children('option').length > 0 && $("#cbComprobante").val() != "") {
@@ -554,62 +564,53 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     let result = await promise;
 
                     let moneda = result[0];
-                    if (moneda.estado === 1) {
-                        for (let value of moneda.data) {
-                            $("#cbMoneda").append('<option value="' + value.IdMoneda + '">' + value.Nombre + '</option>');
+
+                    for (let value of moneda) {
+                        $("#cbMoneda").append('<option value="' + value.IdMoneda + '">' + value.Nombre + '</option>');
+                    }
+                    for (let value of moneda) {
+                        if (value.Predeterminado == "1") {
+                            $("#cbMoneda").val(value.IdMoneda);
+                            monedaSimbolo = value.Simbolo;
+                            break;
                         }
-                        for (let value of moneda.data) {
-                            if (value.Predeterminado == "1") {
-                                $("#cbMoneda").val(value.IdMoneda);
-                                monedaSimbolo = value.Simbolo;
-                                break;
-                            }
-                        }
-                    } else {
-                        throw new Error("Error en obtener los datos de moneda, intentar nuevamente. Recargue la pantalla.");
                     }
 
+
                     let comprobante = result[1];
-                    if (comprobante.estado === 1) {
-                        for (let value of comprobante.data) {
-                            $("#cbComprobante").append('<option value="' + value.IdTipoDocumento + '">' + value.Nombre + '</option>');
+
+                    for (let value of comprobante) {
+                        $("#cbComprobante").append('<option value="' + value.IdTipoDocumento + '">' + value.Nombre + '</option>');
+                    }
+                    for (let value of comprobante) {
+                        if (value.Predeterminado == "1") {
+                            $("#cbComprobante").val(value.IdTipoDocumento);
+                            break;
                         }
-                        for (let value of comprobante.data) {
-                            if (value.Predeterminado == "1") {
-                                $("#cbComprobante").val(value.IdTipoDocumento);
-                                break;
-                            }
+                    }
+                    if ($('#cbComprobante').children('option').length > 0 && $("#cbComprobante").val() != "") {
+                        let serieNumeracion = await getSerieNumeracionEspecifico($('#cbComprobante').val());
+                        if (serieNumeracion.estado == 1) {
+                            $("#lblSerie").html(serieNumeracion.data[0]);
+                            $("#lblNumeracion").html(serieNumeracion.data[1]);
                         }
-                        if ($('#cbComprobante').children('option').length > 0 && $("#cbComprobante").val() != "") {
-                            let serieNumeracion = await getSerieNumeracionEspecifico($('#cbComprobante').val());
-                            if (serieNumeracion.estado == 1) {
-                                $("#lblSerie").html(serieNumeracion.data[0]);
-                                $("#lblNumeracion").html(serieNumeracion.data[1]);
-                            }
-                        }
-                    } else {
-                        throw new Error("Error en obtener los datos del comprobante, intentar nuevamente. Recargue la pantalla.");
                     }
 
                     let documento = result[2];
-                    if (documento.estado === 1) {
-                        for (let value of documento.data) {
-                            $("#cbTipoDocumento").append('<option value="' + value.IdDetalle + '">' + value.Nombre + '</option>');
-                        }
-                    } else {
-                        throw new Error("Error en obtener los datos del documento, intentar nuevamente. Recargue la pantalla.");
+                    for (let value of documento) {
+                        $("#cbTipoDocumento").append('<option value="' + value.IdDetalle + '">' + value.Nombre + '</option>');
                     }
 
                     let cliente = result[3];
-                    if (cliente.estado === 1) {
-                        $("#txtNumero").val(cliente.cliente.NumeroDocumento);
-                        $("#txtCliente").val(cliente.cliente.Informacion);
-                        $("#txtCelular").val(cliente.cliente.Celular);
-                        $("#txtEmail").val(cliente.cliente.Email);
-                        $("#txtDireccion").val(cliente.cliente.Direccion);
+                    if (cliente != null) {
+                        $("#txtNumero").val(cliente.NumeroDocumento);
+                        $("#txtCliente").val(cliente.Informacion);
+                        $("#txtCelular").val(cliente.Celular);
+                        $("#txtEmail").val(cliente.Email);
+                        $("#txtDireccion").val(cliente.Direccion);
 
-                        for (let value of documento.data) {
-                            if (value.IdDetalle == cliente.cliente.TipoDocumento) {
+                        for (let value of documento) {
+                            if (value.IdDetalle == cliente.TipoDocumento) {
                                 $("#cbTipoDocumento").val(value.IdDetalle);
                                 break;
                             }
@@ -658,8 +659,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 subImporteNeto = 0;
                 impuestoNeto = 0;
                 importeNeto = 0;
-
-
 
                 if (listaProductos.length == 0) {
                     $("#tbList").append(`<tr> 
@@ -851,7 +850,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     $("#lblTotalModal").html(monedaSimbolo + " " + tools.formatMoney(importeNeto));
                     $("#lblVueltoNombre").html('Su cambio:');
                     $("#lblVuelto").html(monedaSimbolo + ' 0.00');
-                    total_venta = importeNeto;
+                    total_venta = parseFloat(tools.formatMoney(importeNeto));
                 } else {
                     tools.AlertWarning("", "No hay productos en la lista para continuar.");
                 }

@@ -16,6 +16,13 @@ if (!isset($_SESSION['IdEmpleado'])) {
         <?php include "./layout/header.php"; ?>
         <!-- Sidebar menu-->
         <?php include "./layout/menu.php"; ?>
+        <!--  -->
+        <?php include "./layout/reporte/modalVentaLibre.php"; ?>
+        <!--  -->
+        <!--  -->
+        <?php include "./layout/reporte/modalVentaPos.php"; ?>
+        <!--  -->
+
         <!-- modal generar excel ventas-->
         <div class="row">
             <div class="modal fade" id="mdAlertVentas" data-backdrop="static">
@@ -66,6 +73,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
             </div>
         </div>
         <!-- modal generar excel ventas-->
+
         <!-- modal generar excel nota credito-->
         <div class="row">
             <div class="modal fade" id="mdAlertNotaCredito" data-backdrop="static">
@@ -123,70 +131,237 @@ if (!isset($_SESSION['IdEmpleado'])) {
             </div>
 
             <div class="tile mb-4">
+
                 <div class="row">
+                    <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+                        <div class="card mb-3 card-default">
+                            <button class="btn btn-link" id="btnVentaLibre">
+                                <h5 class="card-title">Ope. Venta/Libre</h5>
+                                <div class="card-body">
+                                    <img src="./images/sales.png" alt="Vender" width="54">
+                                </div>
+                                <div class="card-footer border-0">Documento</div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+                        <div class="card mb-3 card-default">
+                            <button class="btn btn-link" id="btnVentaPos">
+                                <h5 class="card-title">Ope. Venta/Pos</h5>
+                                <div class="card-body">
+                                    <img src="./images/caja_registradora.png" alt="Vender" width="54">
+                                </div>
+                                <div class="card-footer border-0">Documento</div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+                        <div class="card mb-3 card-default">
+                            <button class="btn btn-link" id="">
+                                <h5 class="card-title">Ingresos/Egresos</h5>
+                                <div class="card-body">
+                                    <img src="./images/movimiento.png" alt="Vender" width="54">
+                                </div>
+                                <div class="card-footer border-0">Documento</div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+                        <div class="card mb-3 card-default">
+                            <button class="btn btn-link" id="">
+                                <h5 class="card-title">Compras</h5>
+                                <div class="card-body">
+                                    <img src="./images/purchases.png" alt="Vender" width="54">
+                                </div>
+                                <div class="card-footer border-0">Documento</div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+
+                    <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+                        <div class="card mb-3 card-default">
+                            <button class="btn btn-link" id="">
+                                <h5 class="card-title">Nota Credito</h5>
+                                <div class="card-body">
+                                    <img src="./images/note.png" alt="Vender" width="54">
+                                </div>
+                                <div class="card-footer border-0">Documento</div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+                        <div class="card mb-3 card-default">
+                            <button class="btn btn-link" id="">
+                                <h5 class="card-title">Utilidades</h5>
+                                <div class="card-body">
+                                    <img src="./images/utilidad.png" alt="Vender" width="54">
+                                </div>
+                                <div class="card-footer border-0">Documento</div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+                        <div class="card mb-3 card-default">
+                            <button class="btn btn-link" id="">
+                                <h5 class="card-title">Inventario</h5>
+                                <div class="card-body">
+                                    <img src="./images/almacen.png" alt="Vender" width="54">
+                                </div>
+                                <div class="card-footer border-0">Documento</div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+                        <div class="card mb-3 card-default">
+                            <button class="btn btn-link" id="">
+                                <h5 class="card-title">Producción</h5>
+                                <div class="card-body">
+                                    <img src="./images/produccion.png" alt="Vender" width="54">
+                                </div>
+                                <div class="card-footer border-0">Documento</div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+                        <div class="card mb-3 card-default">
+                            <button class="btn btn-link" id="">
+                                <h5 class="card-title">Resumen General</h5>
+                                <div class="card-body">
+                                    <img src="./images/sitio-web.png" alt="Vender" width="54">
+                                </div>
+                                <div class="card-footer border-0">Documento</div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+                        <button class="btn btn-link" id="btnExcelVentas">
+                            <div class="card card-default" style="border-style: dashed;border-width: 1px;border-color: #2A2A28;">
+                                <div class="card-body text-center">
+                                    <img src="./images/reportglobal.png" alt="Vender" width="87">
+                                    <p style="margin-top: 10px;font-size: 14pt;color:#C68907;">
+                                        Ventas Libre
+                                    </p>
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+
                     <div class="col-lg-3 col-md-3 col-sm-12 col-12">
                         <button class="btn btn-link" id="btnExcelVentas">
                             <div class="card card-default" style="border-style: dashed;border-width: 1px;border-color: #2A2A28;">
                                 <div class="card-body text-center">
                                     <img src="./images/reportglobal.png" alt="Vender" width="87">
                                     <p style="margin-top: 10px;font-size: 14pt;color:#C68907;">
-                                        Reporte General de Ventas Sunat
+                                        Ventas Pos
                                     </p>
                                 </div>
                             </div>
                         </button>
                     </div>
+
+                    <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+                        <button class="btn btn-link" id="btnExcelVentas">
+                            <div class="card card-default" style="border-style: dashed;border-width: 1px;border-color: #2A2A28;">
+                                <div class="card-body text-center">
+                                    <img src="./images/reportglobal.png" alt="Vender" width="87">
+                                    <p style="margin-top: 10px;font-size: 14pt;color:#C68907;">
+                                        Utilidad
+                                    </p>
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+
                     <div class="col-lg-3 col-md-3 col-sm-12 col-12">
                         <button class="btn btn-link" id="btnExcelNotaCredito">
                             <div class="card card-default" style="border-style: dashed;border-width: 1px;border-color: #2A2A28;">
                                 <div class="card-body text-center">
                                     <img src="./images/reportglobal.png" alt="Vender" width="87">
                                     <p style="margin-top: 10px;font-size: 14pt;color:#C68907;">
-                                        Reporte de Nota de Crédito
+                                        Nota Crédito
                                     </p>
                                 </div>
                             </div>
                         </button>
                     </div>
-                </div>
+
+                    <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+                        <button class="btn btn-link" id="btnExcelVentas">
+                            <div class="card card-default" style="border-style: dashed;border-width: 1px;border-color: #2A2A28;">
+                                <div class="card-body text-center">
+                                    <img src="./images/reportglobal.png" alt="Vender" width="87">
+                                    <p style="margin-top: 10px;font-size: 14pt;color:#C68907;">
+                                        Facturación
+                                    </p>
+                                </div>
+                            </div>
+                        </button>
+                    </div> -->
+
+
+
             </div>
         </main>
         <?php include "./layout/footer.php"; ?>
         <script src="./js/notificaciones.js"></script>
+        <script src="./js/reporte/ModalVentaLibre.js"></script>
+        <script src="./js/reporte/ModalVentaPos.js"></script>
         <script>
             let tools = new Tools();
+            let modalVentaLibre = new ModalVentaLibre();
+            let modalVentaPos = new ModalVentaPos();
 
             $(document).ready(function() {
-                $("#txtFechaInicialVenta").val(tools.getCurrentDate());
-                $("#txtFechaFinalVenta").val(tools.getCurrentDate());
 
-                $("#txtFechaInicialNotaCredito").val(tools.getCurrentDate());
-                $("#txtFechaFinalNotaCredito").val(tools.getCurrentDate());
+                // $("#txtFechaInicialVenta").val(tools.getCurrentDate());
+                // $("#txtFechaFinalVenta").val(tools.getCurrentDate());
 
-                $("#btnExcelVentas").click(function() {
-                    openExcelVentas();
-                });
+                // $("#txtFechaInicialNotaCredito").val(tools.getCurrentDate());
+                // $("#txtFechaFinalNotaCredito").val(tools.getCurrentDate());
 
-                $("#btnExcelVentas").keypress(function(event) {
-                    if (event.keyCode === 13) {
-                        openExcelVentas();
-                    }
-                    event.preventDefault();
-                });
+                // $("#btnExcelVentas").click(function() {
+                //     openExcelVentas();
+                // });
 
-                // 
+                // $("#btnExcelVentas").keypress(function(event) {
+                //     if (event.keyCode === 13) {
+                //         openExcelVentas();
+                //     }
+                //     event.preventDefault();
+                // });
 
-                $("#btnExcelNotaCredito").click(function() {
-                    openExcelNotaCredito();
-                });
+                // // 
 
-                $("#btnExcelNotaCredito").keypress(function(event) {
-                    if (event.keyCode === 13) {
-                        openExcelNotaCredito();
-                    }
-                    event.preventDefault();
-                });
+                // $("#btnExcelNotaCredito").click(function() {
+                //     openExcelNotaCredito();
+                // });
+
+                // $("#btnExcelNotaCredito").keypress(function(event) {
+                //     if (event.keyCode === 13) {
+                //         openExcelNotaCredito();
+                //     }
+                //     event.preventDefault();
+                // });
+
+                modalVentaLibre.init();
+                modalVentaPos.init();
             });
+
+
 
             function openExcelVentas() {
                 $("#mdAlertVentas").modal("show");

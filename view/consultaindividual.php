@@ -123,23 +123,20 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     </div>
                     <div class="row">
                         <div class="col-md-12">
-                            <div class="card">
-                                <h4 class="card-header">Resultado</h4>
-                                <div class="card-body">
-                                    <div class="row" style="cursor:default;">
-                                        <div class="col-md-12">
-                                            <label>Codigo:</label>
-                                            <label class="badge badge-light" id="lblCodigo"></label>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <label>Respuesta:</label>
-                                            <label class="badge badge-light" id="lblRespuesta"></label>
-                                        </div>
-                                    </div>
-                                </div>
+                            <div class="form-group">
+                                <h4>Resultado</h4>
                             </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <label>Codigo:</label>
+                            <label class="badge badge-light" id="lblCodigo"></label>
+                        </div>
+
+                        <div class="col-md-12">
+                            <label>Respuesta:</label>
+                            <label class="badge badge-light" id="lblRespuesta"></label>
+
                         </div>
                     </div>
                 </div>
@@ -152,7 +149,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
             let tools = new Tools();
 
             $(document).ready(function() {
-                limpiarResponse();
                 loadInitConsultaAvanzada();
 
                 $("#limpiarConsulta").click(function() {
@@ -186,29 +182,18 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 });
             });
 
-            function loadInitConsultaAvanzada() {
-                $.ajax({
-                    url: "../app/controller/EmpresaController.php",
-                    method: "GET",
-                    data: {},
-                    beforeSend: function() {
-                        $("#lblTextOverlayInformacion").html('Cargando información...');
-                    },
-                    success: function(result) {
-                        if (result.estado == 1) {
-                            $("#txtRuc").val(result.result.NumeroDocumento);
-                            $("#txtUsuario").val(result.result.UsuarioSol);
-                            $("#txtClave").val(result.result.ClaveSol);
-                            $("#txtRucEmision").val(result.result.NumeroDocumento);
-                            $("#divOverlayInformacion").addClass("d-none");
-                        } else {
-                            $("#lblTextOverlayInformacion").html(result.message);
-                        }
-                    },
-                    error: function(error) {
-                        $("#lblTextOverlayInformacion").html("Se produjo un error interno, recargue la pagina por favor.");
-                    }
-                });
+            async function loadInitConsultaAvanzada() {
+                try {
+                    let result = await tools.promiseFetchGet("../app/controller/EmpresaController.php");
+                    $("#txtRuc").val(result.empresa.NumeroDocumento);
+                    $("#txtUsuario").val(result.empresa.UsuarioSol);
+                    $("#txtClave").val(result.empresa.ClaveSol);
+                    $("#txtRucEmision").val(result.empresa.NumeroDocumento);
+                    $("#divOverlayInformacion").addClass("d-none");
+
+                } catch (error) {
+                    $("#lblTextOverlayInformacion").html("Se produjo un error interno, recargue la pagina por favor.");
+                }
             }
 
             function validateFields(cdr) {

@@ -186,7 +186,7 @@ if ($ventaDatos["estado"] == 1) {
                 }
                 .footer-bottom{
                     padding-top: 10px;
-                    whidth:100%;
+                    width:100%;
                 }
             </style>
         </head>

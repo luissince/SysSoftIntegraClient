@@ -22,8 +22,14 @@ class MonedaADO
         try {
             $comando = Database::getInstance()->getDb()->prepare("SELECT IdMoneda,Nombre,Simbolo,Predeterminado FROM MonedaTB");
             $comando->execute();
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 200 . ' ' . "OK");
+
             return $comando->fetchAll(PDO::FETCH_CLASS);
         } catch (Exception $ex) {
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+
             return $ex->getMessage();
         }
     }

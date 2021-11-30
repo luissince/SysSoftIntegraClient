@@ -344,6 +344,9 @@ if (!is_array($result)) {
     if ($soapResult->isSuccess()) {
         if ($soapResult->isAccepted()) {
             VentasADO::CambiarEstadoSunatNotaCredito($idNotaCredito,  $soapResult->getCode(), $soapResult->getDescription(), $soapResult->getHashCode(), Sunat::getXmlSign());
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 200 . ' ' . "OK");
+
             echo json_encode(array(
                 "state" => $soapResult->isSuccess(),
                 "accept" => $soapResult->isAccepted(),
@@ -352,6 +355,9 @@ if (!is_array($result)) {
             ));
         } else {
             VentasADO::CambiarEstadoSunatNotaCreditoUnico($idNotaCredito, $soapResult->getCode(), $soapResult->getDescription());
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 200 . ' ' . "OK");
+
             echo json_encode(array(
                 "state" => $soapResult->isSuccess(),
                 "accept" => $soapResult->isAccepted(),
@@ -362,6 +368,9 @@ if (!is_array($result)) {
     } else {
         if ($soapResult->getCode() == "1033") {
             VentasADO::CambiarEstadoSunatNotaCreditoUnico($idNotaCredito, "0", $soapResult->getDescription());
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 200 . ' ' . "OK");
+
             echo json_encode(array(
                 "state" => false,
                 "code" => $soapResult->getCode(),
@@ -369,11 +378,10 @@ if (!is_array($result)) {
             ));
         } else {
             VentasADO::CambiarEstadoSunatNotaCreditoUnico($idNotaCredito, $soapResult->getCode(), $soapResult->getDescription());
-            echo json_encode(array(
-                "state" => false,
-                "code" => $soapResult->getCode(),
-                "description" => $soapResult->getDescription()
-            ));
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+
+            echo json_encode($soapResult->getDescription());
         }
     }
 }

@@ -30,22 +30,12 @@
 
                 <li class="treeview" id="treeview-facturacion"><a class="app-menu__item" href="#" data-toggle="treeview"><i class="app-menu__icon fa fa-skyatlas" style="transform: rotate(180deg) translateX(12px);"></i><span class="app-menu__label">Facturación Electrónica</span><i class="treeview-indicator fa fa-angle-right"></i></a>
                         <ul class="treeview-menu">
-                                <li><a class="app-menu__item" id="tab-comprobantes" href="comprobantes.php"><i class="app-menu__icon fa fa-circle-o"></i><span class="app-menu__label">Boletas/Facturas</span></a></li>
-                                <li><a class="app-menu__item" id="tab-creditofactura" href="creditofactura.php"><i class="app-menu__icon fa fa-circle-o"></i><span class="app-menu__label">Nota de Crédito</span></a></li>
-                                <li><a class="app-menu__item" id="tab-debitofactura" href="#"><i class="app-menu__icon fa fa-circle-o"></i><span class="app-menu__label">Nota de Débito</span></a></li>
+                                <li><a class="app-menu__item" id="tab-cpeelectronicos" href="cpeelectronicos.php"><i class="app-menu__icon fa fa-circle-o"></i><span class="app-menu__label">CPE-Electrónicos</span></a></li>
                                 <li><a class="app-menu__item" id="tab-consultaindividual" href="consultaindividual.php"><i class="app-menu__icon fa fa-circle-o"></i><span class="app-menu__label">Consultar Estado</span></a></li>
                                 <li><a class="app-menu__item" id="tab-consultaglobal" href="consultaglobal.php"><i class="app-menu__icon fa fa-circle-o"></i><span class="app-menu__label">Consulta Global</span></a></li>
 
                         </ul>
                 </li>
-
-                <!-- <li class="treeview">
-                        <a class="app-menu__item" href="#" data-toggle="treeview">
-                                <i class="app-menu__icon fa fa-external-link-square"></i>
-                                <span class="app-menu__label">Gastos</span>
-                                <i class="treeview-indicator fa fa-angle-right"></i>
-                        </a>
-                </li> -->
 
                 <li class="treeview" id="treeview-contactos"><a class="app-menu__item" href="#" data-toggle="treeview"><i class="app-menu__icon fa fa-users"></i><span class="app-menu__label">Contactos</span><i class="treeview-indicator fa fa-angle-right"></i></a>
                         <ul class="treeview-menu">
@@ -63,23 +53,6 @@
                         </ul>
                 </li>
 
-
-                <!-- <li>
-                        <a class="app-menu__item" href="#">
-                                <i class="app-menu__icon fa fa-university"></i>
-                                <span class="app-menu__label">Bancos</span>
-                        </a>
-                </li>
-
-
-                <li class="treeview">
-                        <a class="app-menu__item" href="#" data-toggle="treeview">
-                                <i class="app-menu__icon fa fa-fax"></i>
-                                <span class="app-menu__label">Contabilidad</span>
-                                <i class="treeview-indicator fa fa-angle-right"></i>
-                        </a>
-                </li>-->
-
                 <li>
                         <a class="app-menu__item" id="tab-reporte" href="reporte.php">
                                 <i class="app-menu__icon fa fa-book"></i>
@@ -87,24 +60,49 @@
                         </a>
                 </li>
 
-                <!--<li>
-                        <a class="app-menu__item" id="tab-reportes" href="#">
-                                <i class="app-menu__icon fa fa-bar-chart"></i>
-                                <span class="app-menu__label">Gráficos</span>
+                <li class="treeview" id="treeview-configuracion">
+                        <a class="app-menu__item" href="#" data-toggle="treeview">
+                                <i class="app-menu__icon fa fa-cog"></i>
+                                <span class="app-menu__label">Configuración</span>
+                                <i class="treeview-indicator fa fa-angle-right"></i>
                         </a>
-                </li> 
-
-                <li>
-                        <a class="app-menu__item" id="tab-graficos" href="#">
-                                <i class="app-menu__icon fa fa-laptop"></i>
-                                <span class="app-menu__label">Tienda en Línea</span>
-                        </a>
-                </li> -->
-
-
-                <li class="treeview" id="treeview-configuracion"><a class="app-menu__item" href="#" data-toggle="treeview"><i class="app-menu__icon fa fa-cog"></i><span class="app-menu__label">Configuración</span><i class="treeview-indicator fa fa-angle-right"></i></a>
                         <ul class="treeview-menu">
-                                <li><a class="app-menu__item" id="tab-empresa" href="empresa.php"><i class="app-menu__icon fa fa-circle-o"></i><span class="app-menu__label">Empresa</span></a></li>
+                                <li>
+                                        <a class="app-menu__item" id="tab-empresa" href="empresa.php">
+                                                <i class="app-menu__icon fa fa-circle-o"></i>
+                                                <span class="app-menu__label">Empresa</span>
+                                        </a>
+                                </li>
+                                <li>
+                                        <a class="app-menu__item" id="tab-tablabasica" href="tablabasica.php">
+                                                <i class="app-menu__icon fa fa-circle-o"></i>
+                                                <span class="app-menu__label">Tabla básica</span>
+                                        </a>
+                                </li>
+                                <li>
+                                        <a class="app-menu__item" id="tab-moneda" href="moneda.php">
+                                                <i class="app-menu__icon fa fa-circle-o"></i>
+                                                <span class="app-menu__label">Moneda</span>
+                                        </a>
+                                </li>
+                                <li>
+                                        <a class="app-menu__item" id="tab-comprobante" href="comprobante.php">
+                                                <i class="app-menu__icon fa fa-circle-o"></i>
+                                                <span class="app-menu__label">Comprobante</span>
+                                        </a>
+                                </li>
+                                <li>
+                                        <a class="app-menu__item" id="tab-impuesto" href="impuesto.php">
+                                                <i class="app-menu__icon fa fa-circle-o"></i>
+                                                <span class="app-menu__label">Impuesto</span>
+                                        </a>
+                                </li>
+                                <li>
+                                        <a class="app-menu__item" id="tab-almacen" href="almacen.php">
+                                                <i class="app-menu__icon fa fa-circle-o"></i>
+                                                <span class="app-menu__label">Almacen</span>
+                                        </a>
+                                </li>
                         </ul>
                 </li>
 
@@ -125,9 +123,7 @@
                 "guiaremision",
                 "cotizacion",
 
-                "comprobantes",
-                "creditofactura",
-                "debitofactura",
+                "cpeelectronicos",
                 "consultaindividual",
                 "consultaglobal",
 
@@ -170,14 +166,10 @@
                         } else if (id == "tab-cotizacion") {
                                 document.getElementById("tab-cotizacion").setAttribute("class", "app-menu__item active");
                         }
-                } else if (id == "tab-comprobantes" || id == "tab-creditofactura" || id == "tab-debitofactura" || id == "tab-consultaindividual" || id == "tab-consultaglobal") {
+                } else if (id == "tab-cpeelectronicos" || id == "tab-consultaindividual" || id == "tab-consultaglobal") {
                         document.getElementById("treeview-facturacion").setAttribute("class", "treeview is-expanded");
-                        if (id == "tab-comprobantes") {
-                                document.getElementById("tab-comprobantes").setAttribute("class", "app-menu__item active");
-                        } else if (id == "tab-creditofactura") {
-                                document.getElementById("tab-creditofactura").setAttribute("class", "app-menu__item active");
-                        } else if (id == "tab-debitofactura") {
-                                document.getElementById("tab-debitofactura").setAttribute("class", "app-menu__item active");
+                        if (id == "tab-cpeelectronicos") {
+                                document.getElementById("tab-cpeelectronicos").setAttribute("class", "app-menu__item active");
                         } else if (id == "tab-consultaindividual") {
                                 document.getElementById("tab-consultaindividual").setAttribute("class", "app-menu__item active");
                         } else if (id == "tab-consultaglobal") {

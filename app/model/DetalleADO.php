@@ -26,9 +26,16 @@ class DetalleADO
             $comando->bindParam(2, $value[1], PDO::PARAM_STR);
             $comando->bindParam(3, $value[2], PDO::PARAM_STR);
             $comando->execute();
-            return array("estado" => 1, "data" => $comando->fetchAll(PDO::FETCH_OBJ));
+
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 200 . ' ' . "OK");
+
+            return  $comando->fetchAll(PDO::FETCH_OBJ);
         } catch (Exception $ex) {
-            return array("estado" => 0, "message" => $ex->getMessage(),);
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+
+            return $ex->getMessage();
         }
     }
 
@@ -38,9 +45,15 @@ class DetalleADO
             $comando = Database::getInstance()->getDb()->prepare("{CALL Sp_Get_Detalle_Id(?)}");
             $comando->bindParam(1, $value, PDO::PARAM_STR);
             $comando->execute();
-            return array("estado" => 1, "data" => $comando->fetchAll(PDO::FETCH_OBJ),);
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 200 . ' ' . "OK");
+
+            return  $comando->fetchAll(PDO::FETCH_OBJ);
         } catch (Exception $ex) {
-            return array("estado" => 0, "message" => $ex->getMessage());
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+
+            return $ex->getMessage();
         }
     }
 }

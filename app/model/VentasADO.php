@@ -57,8 +57,6 @@ class VentasADO
                     "TipoMoneda" => $row["TipoMoneda"],
                     "Total" => $row["Total"],
                     "Observaciones" => $row["Observaciones"],
-                    "Xmlsunat" => $row["Xmlsunat"],
-                    "Xmldescripcion" => $row["Xmldescripcion"],
                     "IdNotaCredito" => $row["IdNotaCredito"],
                     "SerieNotaCredito" => $row["SerieNotaCredito"],
                     "NumeracionNotaCredito" => $row["NumeracionNotaCredito"]
@@ -96,100 +94,64 @@ class VentasADO
                 $resultSuma = floatval(round($row["Total"], 2, PHP_ROUND_HALF_UP));
             }
 
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 200 . ' ' . "OK");
+
             return array(
-                "estado" => 1,
                 "data" => $arrayVenta,
                 "total" => $resultTotal,
                 "suma" => $resultSuma
             );
         } catch (Exception $ex) {
-            return array(
-                "estado" => 2,
-                "message" => $ex->getMessage(),
-            );
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+
+            return $ex->getMessage();
         }
     }
 
-    public static function ListComprobantes($fechaInicial, $fechaFinal)
+    public static function ListComprobantes($opcion, $busqueda, $fechaInicio, $fechaFinal, $comprobante, $estado, $posicionPagina, $filasPorPagina)
     {
         try {
-            $cmdEmpresa = Database::getInstance()->getDb()->prepare("SELECT TOP 1 
-            e.NumeroDocumento,
-            e.UsuarioSol,
-            e.ClaveSol 
-            FROM EmpresaTB AS e");
-            $cmdEmpresa->execute();
-            $resultEmpresa = $cmdEmpresa->fetchObject();
+            $cmdComprobantes = Database::getInstance()->getDb()->prepare("{CALL Sp_Lista_Cpe_Comprobantes(?,?,?,?,?,?,?,?)}");
+            $cmdComprobantes->bindParam(1, $opcion, PDO::PARAM_STR);
+            $cmdComprobantes->bindParam(2, $busqueda, PDO::PARAM_STR);
+            $cmdComprobantes->bindParam(3, $fechaInicio, PDO::PARAM_STR);
+            $cmdComprobantes->bindParam(4, $fechaFinal, PDO::PARAM_STR);
+            $cmdComprobantes->bindParam(5, $comprobante, PDO::PARAM_INT);
+            $cmdComprobantes->bindParam(6, $estado, PDO::PARAM_INT);
+            $cmdComprobantes->bindParam(7, $posicionPagina, PDO::PARAM_INT);
+            $cmdComprobantes->bindParam(8, $filasPorPagina, PDO::PARAM_INT);
+            $cmdComprobantes->execute();
 
-            $comandoVenta = Database::getInstance()->getDb()->prepare("SELECT 
-            v.FechaVenta as Fecha,
-			v.HoraVenta as Hora,
-            v.Serie,
-            v.Numeracion,
-            td.Nombre,
-			td.CodigoAlterno,
-			sum(dv.Cantidad*(dv.PrecioVenta-dv.Descuento)) as Total         
-            FROM VentaTB AS v 
-			INNER JOIN TipoDocumentoTB AS td ON td.IdTipoDocumento = v.Comprobante
-			LEFT JOIN NotaCreditoTB AS n ON n.IdVenta = v.IdVenta
-			INNER JOIN DetalleVentaTB as dv on dv.IdVenta = v.IdVenta
-            WHERE
-			td.Facturacion = 1 and v.FechaVenta between ?  and ?
-			group by 
-			v.FechaVenta,
-			v.HoraVenta,
-            v.Serie,
-            v.Numeracion,
-            td.Nombre,
-			td.CodigoAlterno
-			union
-			select
-			nc.FechaRegistro as Fecha,
-			nc.HoraRegistro as Hora,
-            nc.Serie,
-            nc.Numeracion,
-            td.Nombre,
-			td.CodigoAlterno,
-			sum(ncd.Cantidad*ncd.Precio-ncd.Descuento) as Total
-			FROM NotaCreditoTB AS nc
-			INNER JOIN TipoDocumentoTB AS td ON td.IdTipoDocumento = nc.Comprobante
-			INNER JOIN VentaTB AS v ON v.IdVenta = nc.IdVenta
-			INNER JOIN TipoDocumentoTB AS tv ON tv.IdTipoDocumento = v.Comprobante
-			inner join NotaCreditoDetalleTB as ncd on ncd.IdNotaCredito = nc.IdNotaCredito
-			WHERE
-			tv.Facturacion = 1 and nc.FechaRegistro between ?  and ? 
-			group by 
-			nc.FechaRegistro,
-			nc.HoraRegistro,
-            nc.Serie,
-            nc.Numeracion,
-            td.Nombre,
-			td.CodigoAlterno
-
-            order by Fecha desc,Hora desc");
-            $comandoVenta->bindParam(1, $fechaInicial, PDO::PARAM_STR);
-            $comandoVenta->bindParam(2, $fechaFinal, PDO::PARAM_STR);
-
-            $comandoVenta->bindParam(3, $fechaInicial, PDO::PARAM_STR);
-            $comandoVenta->bindParam(4, $fechaFinal, PDO::PARAM_STR);
-            $comandoVenta->execute();
-            $arrayVenta = array();
-
-            while ($row = $comandoVenta->fetch()) {
-                array_push($arrayVenta, array(
-                    "Fecha" => $row["Fecha"],
-                    "Hora" => $row["Hora"],
-                    "Serie" => $row["Serie"],
-                    "Numeracion" => $row["Numeracion"],
-                    "Nombre" => $row["Nombre"],
-                    "TipoComprobante" => $row["CodigoAlterno"],
-                    "Total" => floatval($row["Total"]),
-                    "Empresa" => $resultEmpresa
-                ));
+            $arrayComprobantes = array();
+            while ($row = $cmdComprobantes->fetch(PDO::FETCH_OBJ)) {
+                array_push($arrayComprobantes, $row);
             }
 
-            return $arrayVenta;
+            $cmdTotal = Database::getInstance()->getDb()->prepare("{CALL Sp_Lista_Cpe_Comprobantes_Count(?,?,?,?,?,?)}");
+            $cmdTotal->bindParam(1, $opcion, PDO::PARAM_STR);
+            $cmdTotal->bindParam(2, $busqueda, PDO::PARAM_STR);
+            $cmdTotal->bindParam(3, $fechaInicio, PDO::PARAM_STR);
+            $cmdTotal->bindParam(4, $fechaFinal, PDO::PARAM_STR);
+            $cmdTotal->bindParam(5, $comprobante, PDO::PARAM_INT);
+            $cmdTotal->bindParam(6, $estado, PDO::PARAM_INT);
+            $cmdTotal->execute();
+
+            $resulTotal = 0;
+            while ($row = $cmdTotal->fetch()) {
+                $resulTotal += $row['Total'];
+            }
+
+
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 200 . ' ' . "OK");
+
+            return array("data" => $arrayComprobantes, "total" =>  $resulTotal);
         } catch (Exception $ex) {
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+
             return $ex->getMessage();
         }
     }
@@ -234,9 +196,16 @@ class VentasADO
             }
 
             $cmdEmpresa = Database::getInstance()->getDb()->prepare("SELECT TOP 1 
-            d.IdAuxiliar,e.NumeroDocumento,e.RazonSocial,e.NombreComercial,e.Domicilio,
-            e.Telefono,e.Email,e.Image
-            FROM EmpresaTB AS e INNER JOIN DetalleTB AS d ON e.TipoDocumento = d.IdDetalle AND d.IdMantenimiento = '0003'");
+            d.IdAuxiliar,
+            e.NumeroDocumento,
+            e.RazonSocial,
+            e.NombreComercial,
+            e.Domicilio,
+            e.Telefono,
+            e.Email,
+            e.Image
+            FROM EmpresaTB AS e 
+            INNER JOIN DetalleTB AS d ON e.TipoDocumento = d.IdDetalle AND d.IdMantenimiento = '0003'");
             $cmdEmpresa->execute();
             $rowEmpresa = $cmdEmpresa->fetch();
             $empresa  = (object)array(
@@ -250,24 +219,26 @@ class VentasADO
                 "Image" => $rowEmpresa['Image'] == null ? "" : base64_encode($rowEmpresa['Image'])
             );
 
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 200 . ' ' . "OK");
+
             return array(
-                "estado" => 1,
                 "venta" => $venta,
                 "ventadetalle" => $ventadetalle,
                 "empresa" => $empresa
             );
         } catch (Exception $ex) {
-            return array(
-                "estado" => 2,
-                "message" => $ex->getMessage(),
-            );
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+
+            return $ex->getMessage();
         }
     }
 
     public static function  ListarDetalleNotaCredito($idNotaCredito)
     {
         try {
-            $array = array();
+
             $notacredito = null;
             $empresa = null;
             $notacreditodetalle = array();
@@ -309,17 +280,26 @@ class VentasADO
                     "Cantidad" => floatval($row["Cantidad"]),
                     "Precio" => floatval($row["Precio"]),
                     "Descuento" => floatval($row["Descuento"]),
+                    "NombreImpuesto" => $row["NombreImpuesto"],
                     "ValorImpuesto" => floatval($row["ValorImpuesto"]),
                     "Importe" => floatval($row["Cantidad"] * ($row["Precio"] - $row["Descuento"])),
                 ));
             }
-            array_push($array, $notacredito, $notacreditodetalle, $empresa);
-            return $array;
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 200 . ' ' . "OK");
+
+            return  array(
+                "nota" => $notacredito,
+                "notadetalle" => $notacreditodetalle,
+                "empresa" => $empresa
+            );
         } catch (Exception $ex) {
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+
             return $ex->getMessage();
         }
     }
-
 
     public static function ResumenIngresoPorFechas($fechaInicio, $fechaFinal)
     {
@@ -606,6 +586,132 @@ class VentasADO
         }
     }
 
+    public static function ListVentasMostrarLibres($opcion, $search, $posicionPagina, $filasPorPagina)
+    {
+        try {
+
+            $cmdVenta = Database::getInstance()->getDb()->prepare("{CALL Sp_Listar_Ventas_Mostrar(?,?,?,?)}");
+            $cmdVenta->bindParam(1, $opcion, PDO::PARAM_INT);
+            $cmdVenta->bindParam(2, $search, PDO::PARAM_STR);
+            $cmdVenta->bindParam(3, $posicionPagina, PDO::PARAM_INT);
+            $cmdVenta->bindParam(4, $filasPorPagina, PDO::PARAM_INT);
+            $cmdVenta->execute();
+
+            $count = 0;
+            $arrayVenta = array();
+            while ($row = $cmdVenta->fetch()) {
+                $count++;
+                array_push($arrayVenta, array(
+                    "Id" => $count + $posicionPagina,
+                    "Cliente" => $row["Cliente"],
+                    "IdVenta" => $row["IdVenta"],
+                    "FechaVenta" => $row["FechaVenta"],
+                    "HoraVenta" => $row["HoraVenta"],
+                    "Serie" => $row["Serie"],
+                    "Numeracion" => $row["Numeracion"],
+                    "Simbolo" => $row["Simbolo"],
+                    "Total" => floatval($row["Total"]),
+                    "IdNotaCredito" => $row["IdNotaCredito"],
+                    "SerieNotaCredito" => $row["SerieNotaCredito"],
+                    "NumeracionNotaCredito" => $row["NumeracionNotaCredito"]
+                ));
+            }
+
+            $cmdTotal = Database::getInstance()->getDb()->prepare("{CALL Sp_Listar_Ventas_Mostrar_Count(?,?)}");
+            $cmdTotal->bindParam(1, $opcion, PDO::PARAM_INT);
+            $cmdTotal->bindParam(2, $search, PDO::PARAM_STR);
+            $cmdTotal->execute();
+            $resultTotal = $cmdTotal->fetchColumn();
+
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 200 . ' ' . "OK");
+
+            return array(
+                "data" => $arrayVenta,
+                "total" => $resultTotal
+            );
+        } catch (Exception $ex) {
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+
+            return $ex->getMessage();
+        }
+    }
+
+    public static function VentaAgregarTerminar(string $idVenta)
+    {
+        try {
+
+            $cmdVenta = Database::getInstance()->getDb()->prepare("{CALL Sp_Obtener_Venta_ById(?)}");
+            $cmdVenta->bindParam(1, $idVenta, PDO::PARAM_STR);
+            $cmdVenta->execute();
+
+            $array = array();
+            if ($row = $cmdVenta->fetch()) {
+                array_push($array, array(
+                    "IdVenta" => $idVenta,
+                    "FechaVenta" => $row["FechaVenta"],
+                    "HoraVenta" => $row["HoraVenta"],
+                    "IdCliente" => $row["IdCliente"],
+                    "IdAuxiliar" => $row["IdAuxiliar"],
+                    "TipoDocumento" => $row["TipoDocumento"],
+                    "NombreDocumento" => $row["NombreDocumento"],
+                    "NumeroDocumento" => $row["NumeroDocumento"],
+                    "Informacion" => $row["Informacion"],
+                    "Telefono" => $row["Telefono"],
+                    "Celular" => $row["Celular"],
+                    "Email" => $row["Email"],
+                    "Direccion" => $row["Direccion"],
+                    "IdMoneda" => $row["IdMoneda"],
+                    "CodigoAlterno" => $row["CodigoAlterno"],
+                    "IdComprobante" => $row["IdComprobante"]
+                ));
+
+                $cmdDetalle = Database::getInstance()->getDb()->prepare("{CALL Sp_Listar_Ventas_Detalle_By_Id(?)}");
+                $cmdDetalle->bindParam(1, $idVenta, PDO::PARAM_STR);
+                $cmdDetalle->execute();
+                $arrayDetalle = array();
+                while ($rowd = $cmdDetalle->fetch()) {
+                    array_push($arrayDetalle, array(
+                        "IdSuministro" => $rowd["IdSuministro"],
+                        "Clave" => $rowd["Clave"],
+                        "NombreMarca" => $rowd["NombreMarca"],
+                        "Inventario" => $rowd["Inventario"],
+                        "ValorInventario" => $rowd["ValorInventario"],
+                        "UnidadCompra" => $rowd["UnidadCompra"],
+                        "Estado" => $rowd["Estado"],
+                        "PorLlevar" => $rowd["PorLlevar"],
+                        "Cantidad" => $rowd["Cantidad"],
+                        "Bonificacion" => $rowd["Bonificacion"],
+                        "CostoVenta" => $rowd["CostoVenta"],
+                        "Operacion" => $rowd["Operacion"],
+                        "NombreImpuesto" => $rowd["NombreImpuesto"],
+                        "IdImpuesto" => $rowd["IdImpuesto"],
+                        "ValorImpuesto" => $rowd["ValorImpuesto"],
+                        "PrecioVenta" => $rowd["PrecioVenta"],
+                        "Inventario" => $rowd["Inventario"],
+                        "UnidadVenta" => $rowd["UnidadVenta"],
+                        "ValorInventario" => $rowd["ValorInventario"],
+                    ));
+                }
+
+                array_push($array,  $arrayDetalle);
+
+                $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+                header($protocol . ' ' . 200 . ' ' . "OK");
+
+                return $array;
+            } else {
+                throw new Exception("No hay datos para mostrar.");
+            }
+        } catch (Exception $ex) {
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+
+            return $ex->getMessage();
+        }
+    }
+
     public static function TopProductoVendidos($fechaInicial, $fechaFinal)
     {
         try {
@@ -686,8 +792,8 @@ class VentasADO
             $comandoTotalVentas = Database::getInstance()->getDb()->prepare("SELECT 
             ISNULL(sum(dv.Cantidad*(dv.PrecioVenta-dv.Descuento)),0) AS Monto
             FROM VentaTB as v 
-            INNER JOIN DetalleVentaTB as dv on dv.IdVenta = v.IdVenta
             LEFT JOIN NotaCreditoTB as nc on nc.IdVenta = v.IdVenta
+            INNER JOIN DetalleVentaTB as dv on dv.IdVenta = v.IdVenta            
             WHERE 
             CAST(v.FechaVenta AS DATE) = ? AND v.Estado = 1 AND nc.IdNotaCredito IS NULL
             OR
@@ -764,7 +870,7 @@ class VentasADO
             $comandoVentasMesAnterior = Database::getInstance()->getDb()->prepare("SELECT 
             month(vt.FechaVenta) as Mes, 
             sum(vt.Total) AS Monto
-            FROM VentaTB AS vt left join NotaCreditoTB as nc on nc.IdVenta = vt.IdVenta
+            FROM VentaTB AS vt LEFT JOIN NotaCreditoTB as nc on nc.IdVenta = vt.IdVenta
             where vt.Estado <> 3 and nc.IdNotaCredito is null and year(vt.FechaVenta) = ?
             GROUP BY month(vt.FechaVenta)");
             $date->modify('-1 year');
@@ -1455,9 +1561,7 @@ class VentasADO
                     "Informacion" => $row["Informacion"],
                     "Estado" => $row["Estado"],
                     "Simbolo" => $row["Simbolo"],
-                    "Total" => floatval($row["Total"]),
-                    "Xmlsunat" => $row["Xmlsunat"],
-                    "Xmldescripcion" => $row["Xmldescripcion"]
+                    "Total" => floatval($row["Total"])
                 ));
             }
 
@@ -1483,6 +1587,9 @@ class VentasADO
                 $resultSuma = floatval(round($row["Total"], 2, PHP_ROUND_HALF_UP));
             }
 
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+
+            header($protocol . ' ' . 200 . ' ' . "OK");
             return array(
                 "estado" => 1,
                 "data" => $arrayNotaCredito,
@@ -1490,14 +1597,13 @@ class VentasADO
                 "suma" => $resultSuma
             );
         } catch (Exception $ex) {
-            return array(
-                "estado" => 2,
-                "message" => $ex->getMessage(),
-            );
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+            return $ex->getMessage();
         }
     }
 
-    public static function ObtenerNotaCreditoById($idNotaCredito)
+    private static function ObtenerNotaCreditoById($idNotaCredito)
     {
         try {
             $array = array();
@@ -1632,13 +1738,11 @@ class VentasADO
             else 'Por Declarar' end as Estado,
             count(v.Serie) AS Cantidad
             FROM VentaTB AS v 
-            INNER JOIN TipoDocumentoTB AS td ON td.IdTipoDocumento = v.Comprobante
-            LEFT JOIN NotaCreditoTB AS n ON n.IdVenta = v.IdVenta
+            INNER JOIN TipoDocumentoTB AS td ON td.IdTipoDocumento = v.Comprobante            
             WHERE
-            td.Facturacion = 1 AND v.IdVenta IS NOT NULL AND ISNULL(v.Xmlsunat,'') <> '0' AND ISNULL(v.Xmlsunat,'') <> '1032'
+            td.Facturacion = 1 AND ISNULL(v.Xmlsunat,'') <> '0' AND ISNULL(v.Xmlsunat,'') <> '1032'
             OR
-            td.Facturacion = 1 AND v.IdVenta IS NOT NULL AND ISNULL(v.Xmlsunat,'') = '0' AND v.Estado = 3 
-            AND n.IdNotaCredito is null
+            td.Facturacion = 1 AND ISNULL(v.Xmlsunat,'') = '0' AND v.Estado = 3
             GROUP BY v.Serie,td.Nombre,v.Estado");
             $cmdNotificaciones->execute();
             while ($row = $cmdNotificaciones->fetch()) {
@@ -1658,11 +1762,9 @@ class VentasADO
             else 'Por Declarar' end as Estado,
             count(nc.Serie) AS Cantidad
             FROM NotaCreditoTB AS nc
-            INNER JOIN TipoDocumentoTB AS td ON td.IdTipoDocumento = nc.Comprobante
-            INNER JOIN VentaTB AS v ON v.IdVenta = nc.IdVenta
-            INNER JOIN TipoDocumentoTB AS tv ON tv.IdTipoDocumento = v.Comprobante
+            INNER JOIN TipoDocumentoTB AS td ON td.IdTipoDocumento = nc.Comprobante            
             WHERE
-            tv.Facturacion = 1 AND nc.IdNotaCredito IS NOT NULL AND ISNULL(nc.Xmlsunat,'') <> '0' AND ISNULL(nc.Xmlsunat,'') <> '1032'
+            td.Facturacion = 1 AND ISNULL(nc.Xmlsunat,'') <> '0' AND ISNULL(nc.Xmlsunat,'') <> '1032'
             GROUP BY nc.Serie,td.Nombre,nc.Estado");
             $cmdNotificaciones->execute();
             while ($row =  $cmdNotificaciones->fetch()) {
@@ -1699,31 +1801,29 @@ class VentasADO
             when 3 then 'Dar de Baja'
             ELSE 'Por Declarar' end as Estado            
             FROM VentaTB AS v 
-			INNER JOIN TipoDocumentoTB AS td ON td.IdTipoDocumento = v.Comprobante
-			LEFT JOIN NotaCreditoTB AS n ON n.IdVenta = v.IdVenta
+			INNER JOIN TipoDocumentoTB AS td ON td.IdTipoDocumento = v.Comprobante			
             WHERE
-			td.Facturacion = 1 AND v.IdVenta IS NOT NULL AND ISNULL(v.Xmlsunat,'') <> '0' AND ISNULL(v.Xmlsunat,'') <> '1032'
+			td.Facturacion = 1 AND ISNULL(v.Xmlsunat,'') <> '0' AND ISNULL(v.Xmlsunat,'') <> '1032'
 			OR
-			td.Facturacion = 1 AND v.IdVenta IS NOT NULL AND ISNULL(v.Xmlsunat,'') = '0' AND v.Estado = 3 
-			AND n.IdNotaCredito is null	
-			union
-			select
-			nc.FechaRegistro as Fecha,
-			nc.HoraRegistro as Hora,
+			td.Facturacion = 1 AND ISNULL(v.Xmlsunat,'') = '0' AND v.Estado = 3 
+			
+            UNION
+
+			SELECT
+			nc.FechaRegistro AS Fecha,
+			nc.HoraRegistro AS Hora,
             nc.Serie,
             nc.Numeracion,
             td.Nombre,
-            case nc.Estado 
-            when 3 then 'Dar de Baja'
-            ELSE 'Por Declarar' end as Estado
+            CASE nc.Estado 
+            WHEN 3 THEN 'Dar de Baja'
+            ELSE 'Por Declarar' END AS Estado
 			FROM NotaCreditoTB AS nc
-			INNER JOIN TipoDocumentoTB AS td ON td.IdTipoDocumento = nc.Comprobante
-			INNER JOIN VentaTB AS v ON v.IdVenta = nc.IdVenta
-			INNER JOIN TipoDocumentoTB AS tv ON tv.IdTipoDocumento = v.Comprobante
+			INNER JOIN TipoDocumentoTB AS td ON td.IdTipoDocumento = nc.Comprobante			
 			WHERE
-			tv.Facturacion = 1 AND nc.IdNotaCredito IS NOT NULL AND ISNULL(nc.Xmlsunat,'') <> '0' AND ISNULL(nc.Xmlsunat,'') <> '1032'
-            order by Fecha desc,Hora desc
-            offset ? rows fetch next ? rows only");
+			td.Facturacion = 1 AND ISNULL(nc.Xmlsunat,'') <> '0' AND ISNULL(nc.Xmlsunat,'') <> '1032'
+            ORDER BY Fecha DESC,Hora DESC
+            offset ? ROWS FETCH NEXT ? ROWS only");
             $cmdNotificaciones->bindParam(1, $posicionPagina, PDO::PARAM_INT);
             $cmdNotificaciones->bindParam(2, $filasPorPagina, PDO::PARAM_INT);
             $cmdNotificaciones->execute();
@@ -1733,27 +1833,27 @@ class VentasADO
             $cmdNotificaciones = Database::getInstance()->getDb()->prepare("SELECT 
             count(v.IdVenta) as Total              
             FROM VentaTB AS v 
-			INNER JOIN TipoDocumentoTB AS td ON td.IdTipoDocumento = v.Comprobante
-			LEFT JOIN NotaCreditoTB AS n ON n.IdVenta = v.IdVenta
+			INNER JOIN TipoDocumentoTB AS td ON td.IdTipoDocumento = v.Comprobante			
             WHERE
-			td.Facturacion = 1 AND v.IdVenta IS NOT NULL AND ISNULL(v.Xmlsunat,'') <> '0' AND ISNULL(v.Xmlsunat,'') <> '1032'
+			td.Facturacion = 1 AND ISNULL(v.Xmlsunat,'') <> '0' AND ISNULL(v.Xmlsunat,'') <> '1032'
 			OR
-			td.Facturacion = 1 AND v.IdVenta IS NOT NULL AND ISNULL(v.Xmlsunat,'') = '0' AND v.Estado = 3 
-			AND n.IdNotaCredito is null	
-			union
+			td.Facturacion = 1 AND ISNULL(v.Xmlsunat,'') = '0' AND v.Estado = 3 
+			UNION
+
 			SELECT
 			count(nc.IdNotaCredito) as Total
 			FROM NotaCreditoTB AS nc
-			INNER JOIN TipoDocumentoTB AS td ON td.IdTipoDocumento = nc.Comprobante
-			INNER JOIN VentaTB AS v ON v.IdVenta = nc.IdVenta
-			INNER JOIN TipoDocumentoTB AS tv ON tv.IdTipoDocumento = v.Comprobante
+			INNER JOIN TipoDocumentoTB AS td ON td.IdTipoDocumento = nc.Comprobante			
 			WHERE
-			tv.Facturacion = 1 AND nc.IdNotaCredito IS NOT NULL AND ISNULL(nc.Xmlsunat,'') <> '0' AND ISNULL(nc.Xmlsunat,'') <> '1032'");
+			td.Facturacion = 1 AND ISNULL(nc.Xmlsunat,'') <> '0' AND ISNULL(nc.Xmlsunat,'') <> '1032'");
             $cmdNotificaciones->execute();
             $resultTotal = 0;
             while ($row = $cmdNotificaciones->fetch()) {
                 $resultTotal +=  $row["Total"];
             }
+
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 200 . ' ' . "OK");
 
             return array(
                 "estado" => 1,
@@ -1761,10 +1861,10 @@ class VentasADO
                 "total" => $resultTotal,
             );
         } catch (Exception $ex) {
-            return array(
-                "estado" => 2,
-                "message" => $ex->getMessage(),
-            );
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+
+            return $ex->getMessage();
         }
     }
 
@@ -2049,6 +2149,54 @@ class VentasADO
         } catch (Exception $ex) {
             Database::getInstance()->getDb()->rollback();
             return array("estado" => 0, "message" => $ex->getMessage());
+        }
+    }
+
+    public static function Sp_Reporte_General_Ventas($procedencia, $fechaInicial, $fechaFinal, $tipoComprobante, $cliente, $vendedor, $tipo, $metodo, $valormetodo)
+    {
+        try {
+
+            $cmdVenta = Database::getInstance()->getDb()->prepare("{CALL Sp_Reporte_General_Ventas(?,?,?,?,?,?,?,?,?)}");
+            $cmdVenta->bindParam(1, $procedencia, PDO::PARAM_INT);
+            $cmdVenta->bindParam(2, $fechaInicial, PDO::PARAM_STR);
+            $cmdVenta->bindParam(3, $fechaFinal, PDO::PARAM_STR);
+            $cmdVenta->bindParam(4, $tipoComprobante, PDO::PARAM_INT);
+            $cmdVenta->bindParam(5, $cliente, PDO::PARAM_STR);
+            $cmdVenta->bindParam(6, $vendedor, PDO::PARAM_STR);
+            $cmdVenta->bindParam(7, $tipo, PDO::PARAM_INT);
+            $cmdVenta->bindParam(8, $metodo, PDO::PARAM_BOOL);
+            $cmdVenta->bindParam(9, $valormetodo, PDO::PARAM_INT);
+            $cmdVenta->execute();
+
+            $count = 0;
+            $arrayVenta = array();
+            while ($row = $cmdVenta->fetch()) {
+                $count++;
+                array_push($arrayVenta, array(
+                    "Id" => $count,
+                    "FechaVenta" => $row["FechaVenta"],
+                    "NumeroDocumento" => $row["NumeroDocumento"],
+                    "Cliente" => $row["Cliente"],
+                    "Nombre" => $row["Nombre"],
+                    "Serie" => $row["Serie"],
+                    "Numeracion" => $row["Numeracion"],
+                    "Tipo" => intval($row["Tipo"]),
+                    "TipoName" => $row["TipoName"],
+                    "Estado" => intval($row["Estado"]),
+                    "EstadoName" => $row["EstadoName"],
+                    "FormaName" => $row["FormaName"],
+                    "Simbolo" => $row["Simbolo"],
+                    "Efectivo" => floatval($row["Efectivo"]),
+                    "Tarjeta" => floatval($row["Tarjeta"]),
+                    "Deposito" => floatval($row["Deposito"]),
+                    "Total" => floatval($row["Total"]),
+                    "IdNotaCredito" => $row["IdNotaCredito"],
+                ));
+            }
+
+            return $arrayVenta;
+        } catch (Exception $ex) {
+            return $ex->getMessage();
         }
     }
 }

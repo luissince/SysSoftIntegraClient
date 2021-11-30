@@ -11,19 +11,16 @@ function ModalProductos() {
     let lblPaginaSiguienteProducto = $("#lblPaginaSiguienteProducto");
 
     this.init = function () {
-        $('#modalProductos').on('shown.bs.modal', function () {
-            $('#txtSearchProducto').trigger('focus');
-        })
 
         $("#btnProductos").click(function () {
             loadInitVentas();
         });
 
-        $("#btnCloseModalProductos").click(function () {
-            clearModalProductos();
+        $('#modalProductos').on('shown.bs.modal', function () {
+            $('#txtSearchProducto').trigger('focus');
         });
 
-        $("#btnCancelModalProductos").click(function () {
+        $('#modalProductos').on('hide.bs.modal', function () {
             clearModalProductos();
         });
 
@@ -217,7 +214,6 @@ function ModalProductos() {
     }
 
     function clearModalProductos() {
-        $("#modalProductos").modal("hide");
         $("#tbListProductos").empty();
     }
 

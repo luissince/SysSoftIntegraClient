@@ -29,6 +29,14 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         <div class="tile">
                             <div class="table-responsive mailbox-messages">
                                 <table class="table table-hover">
+                                    <thead class="table-header-background">
+                                        <tr>
+                                            <th>#</th>
+                                            <th class="text-left">COMPROBANTE</th>
+                                            <th class="text-left">DETALLE</th>
+                                            <th>FECHA</th>
+                                        </tr>
+                                    </thead>
                                     <tbody id="divLineaTiempo">
 
                                     </tbody>
@@ -119,47 +127,37 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 }
             }
 
-            function fillNotificacionesTable() {
-                $.ajax({
-                    url: "../app/controller/VentaController.php",
-                    method: "GET",
-                    data: {
+            async function fillNotificacionesTable() {
+                try {
+                    let result = await tools.promiseFetchGet("../app/controller/VentaController.php", {
                         "type": "listarDetalleNotificaciones",
                         "posicionPagina": ((paginacion - 1) * filasPorPagina),
                         "filasPorPagina": filasPorPagina
-                    },
-                    beforeSend: function() {
+                    }, function() {
                         $("#divLineaTiempo").empty();
                         $("#lblPaginacion").html("Mostrando 0 - 0 de 0");
-                    },
-                    success: function(result) {
-                        if (result.estado == 1) {
-                            if (result.data.length == 0) {
-                                $("#lblPaginacion").html("Mostrando 0 - 0 de 0");
-                            } else {
-                                for (let value of result.data) {
-                                    $("#divLineaTiempo").append('<tr>' +
-                                        '<td class="mail-subject"><h5 class="text-primary p-0">' + value.Nombre + ' ' + value.Serie + '-' + value.Numeracion + '</h5><h6>' + value.Estado + '</h6></td>' +
-                                        '<td><h6>' + tools.getDateForma(value.Fecha) + '</h6></td>' +
-                                        '</tr>');
-                                }
-                                totalPaginacion = parseInt(Math.ceil((parseFloat(result.total) / filasPorPagina)));
-                                $("#lblPaginacion").html("Mostrando " + paginacion + " - " + totalPaginacion + " de " + filasPorPagina);
-                            }
-                        } else {
-                            $("#lblPaginacion").html("Mostrando 0 - 0 de 0");
+                    });
+
+                    if (result.data.length == 0) {
+                        $("#lblPaginacion").html("Mostrando 0 - 0 de 0");
+                    } else {
+                        let count = 0;
+                        for (let value of result.data) {
+                            count++;
                             $("#divLineaTiempo").append('<tr>' +
-                                '<td>' + result.message + '</td>' +
+                                '<td class="text-center">' + (count + (((paginacion - 1) * filasPorPagina))) + '</td>' +
+                                '<td class=""><h5 class="text-primary p-0">' + value.Nombre + ' ' + value.Serie + '-' + value.Numeracion + '</h5></td>' +
+                                '<td class=""><h5 class="text-primary p-0"><h6>' + value.Estado + '</h6></td>' +
+                                '<td class="text-center"><h6>' + tools.getDateForma(value.Fecha) + '</h6></td>' +
                                 '</tr>');
                         }
-                    },
-                    error: function(error) {
-                        $("#lblPaginacion").html("Mostrando 0 - 0 de 0");
-                        $("#divLineaTiempo").append('<tr>' +
-                            '<td class="mail-subject">' + error.responseText + '</td>' +
-                            '</tr>');
+                        totalPaginacion = parseInt(Math.ceil((parseFloat(result.total) / filasPorPagina)));
+                        $("#lblPaginacion").html("Mostrando " + paginacion + " - " + totalPaginacion + " de " + filasPorPagina);
                     }
-                });
+                } catch (error) {
+                    $("#lblPaginacion").html("Mostrando 0 - 0 de 0");
+                    $("#divLineaTiempo").append('<tr><td class="mail-subject">' + error.responseText + '</td></tr>');
+                }
             }
         </script>
     </body>

@@ -15,6 +15,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         print json_encode(ClienteADO::GetByIdCliente($_GET["idCliente"]));
     } else if ($_GET["type"] == "GetSearchClienteNumeroDocumento") {
         print json_encode(ClienteADO::GetSearchClienteNumeroDocumento($_GET["opcion"], $_GET["search"]));
+    } else if ($_GET["type"] == "GetListCliente") {
+        print json_encode(ClienteADO::GetListCliente());
     }
 } else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $body = json_decode(file_get_contents("php://input"), true);

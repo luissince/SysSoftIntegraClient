@@ -39,23 +39,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         }
         exit();
     } else if ($_GET["type"] == "predeterminate") {
-        $result = EmpleadoADO::GetClientePredetermined();
-        if (is_object($result)) {
-            echo json_encode(array(
-                "estado" => 1,
-                "cliente" => $result
-            ));
-        } else if ($result == false) {
-            echo json_encode(array(
-                "estado" => 2
-            ));
-        } else {
-            echo json_encode(array(
-                "estado" => 0,
-                "message" => $result
-            ));
-        }
+        echo json_encode(EmpleadoADO::GetClientePredetermined());
         exit();
+    } else if ($_GET["type"] == "GetListEmpleados") {
+        echo json_encode(EmpleadoADO::GetListEmpleados());
     }
 } else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }

@@ -1,5 +1,39 @@
 <?php
 
+// use SysSoftIntegra\Model\EmpresaADO;
+// use SysSoftIntegra\Controller\BaseController;
+
+// require __DIR__ . './../src/autoload.php';
+
+// class EmpresaController extends BaseController
+// {
+//     /**
+//      * "/empresa/get" Endpoint - Get list of users
+//      */
+//     public function getEmpresa()
+//     {
+//         if (strtoupper($this->getMethod()) == 'GET') {
+//             $result = EmpresaADO::ObtenerEmpresa();
+//             if (is_array($result)) {
+//                 $this->sendOutput(
+//                     $result,
+//                     array($this->getContentTypeJson(), $this->getStatus200())
+//                 );
+//             } else {
+//                 $this->sendOutput(
+//                     $result,
+//                     array($this->getContentTypeJson(), $this->getStatus500())
+//                 );
+//             }
+//         } else {
+//             $this->sendOutput(
+//                 "Method not supported",
+//                 array($this->getContentTypeJson(), $this->getStatus422())
+//             );
+//         }
+//     }
+// }
+
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
@@ -10,19 +44,7 @@ use SysSoftIntegra\Model\EmpresaADO;
 require __DIR__ . './../src/autoload.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-    $data = EmpresaADO::ObtenerEmpresa();
-
-    if (!is_object($data)) {
-        print json_encode(array(
-            "estado" => 2,
-            "message" => $data
-        ));
-    } else {
-        print json_encode(array(
-            "estado" => 1,
-            "result" => $data,
-        ));
-    }
+    print json_encode(EmpresaADO::ObtenerEmpresa());
     exit();
 } else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $body["idEmpresa"] = $_POST["idEmpresa"];
@@ -34,6 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     $body["txtCelular"] = $_POST["txtCelular"];
     $body["txtPaginWeb"] = $_POST["txtPaginWeb"];
     $body["txtEmail"] = $_POST["txtEmail"];
+    $body["cbUbigeo"] = $_POST["cbUbigeo"];
 
     $body["imageType"] = $_POST["imageType"];
     $body["image"] = $_POST["imageType"] != 0 ? fopen($_FILES['image']['tmp_name'], 'rb') : null;
@@ -48,17 +71,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
     $body["txtClaveCertificado"] = $_POST["txtClaveCertificado"];
 
-    $result = EmpresaADO::CrudEmpresa($body);
-    if ($result == "updated") {
-        echo json_encode(array(
-            "state" => 1,
-            "message" => "Se modificó correctamente los datos."
-        ));
-    } else {
-        echo json_encode(array(
-            "state" => 2,
-            "message" => $result
-        ));
-    }
+    echo json_encode(EmpresaADO::CrudEmpresa($body));
     exit();
 }

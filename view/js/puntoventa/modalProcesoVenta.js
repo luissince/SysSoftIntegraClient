@@ -11,6 +11,10 @@ function ModalProcesoVenta() {
             $('#txtEfectivo').trigger('focus');
         });
 
+        $('#modalProcesoVenta').on('hide.bs.modal', function () {
+            clearModalProcesoVenta();
+        });
+
         $("#txtEfectivo").keyup(function (event) {
             if ($("#txtEfectivo").val() == "") {
                 vueltoContado = total_venta;
@@ -117,10 +121,6 @@ function ModalProcesoVenta() {
             state_view_pago = 2;
         });
 
-        $("#btnCloseModalProcesoVenta").click(function () {
-            clearModalProcesoVenta();
-        });
-
         $("#btnCompletarVenta").click(function () {
             crudVenta();
         });
@@ -134,12 +134,11 @@ function ModalProcesoVenta() {
     }
 
     this.resetProcesoVenta = function () {
+        $("#modalProcesoVenta").modal("hide");
         clearModalProcesoVenta();
     }
 
     function clearModalProcesoVenta() {
-        $("#modalProcesoVenta").modal("hide");
-
         $("#btnContado").removeClass("btn-secondary");
         $("#btnContado").addClass("btn-primary");
 

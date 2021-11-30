@@ -11,31 +11,11 @@ require __DIR__ . './../src/autoload.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     if ($_GET["type"] == "getdocumentocomboboxventas") {
-        $result = TipoDocumentoADO::GetDocumentoCombBoxVentas();
-        if (is_array($result)) {
-            print json_encode(array(
-                "estado" => 1,
-                "data" => $result,
-            ));
-        } else {
-            print json_encode(array(
-                "estado" => 0,
-                "message" => $result
-            ));
-        }
+        print json_encode(TipoDocumentoADO::GetDocumentoCombBoxVentas());
     } else if ($_GET["type"] == "GetDocumentoCombBoxNotaCredito") {
-        $result = TipoDocumentoADO::GetDocumentoCombBoxNotaCredito();
-        if (is_array($result)) {
-            print json_encode(array(
-                "estado" => 1,
-                "data" => $result,
-            ));
-        } else {
-            print json_encode(array(
-                "estado" => 0,
-                "message" => $result
-            ));
-        }
+        print json_encode(TipoDocumentoADO::GetDocumentoCombBoxNotaCredito());
+    } else if ($_GET["type"] == "getdocumentofacturados") {
+        print json_encode(TipoDocumentoADO::GetDocumentoFacturados());
     }
 } else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $body = json_decode(file_get_contents("php://input"), true);
