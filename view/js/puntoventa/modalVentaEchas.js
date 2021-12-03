@@ -4,12 +4,11 @@ function ModalVentaEchas() {
     let paginacionVentasEchas = 0;
     let opcionVentasEchas = 0;
     let totalPaginacionVentasEchas = 0;
-    let filasPorPaginaVentasEchas = 5;
+    let filasPorPaginaVentasEchas = 10;
     let tbListVentasEchas = $("#tbListVentasEchas");
     let ulPaginationVentasEchas = $("#ulPaginationVentasEchas");
 
     this.init = function () {
-
         $("#btnVentas").click(function () {
             $("#modalVentasEchas").modal("show");
         });
@@ -28,6 +27,7 @@ function ModalVentaEchas() {
         $("#modalVentasEchas").on("hide.bs.modal", function () {
             tbListVentasEchas.empty();
             tbListVentasEchas.append('<tr><td class="text-center" colspan="8"><p>Iniciar la busqueda para cargar los datos.</p></td></tr>');
+            $("#txtSearchVentasEchas").val('');
         });
 
         $("#txtSearchVentasEchas").on("keyup", function (event) {
@@ -61,8 +61,12 @@ function ModalVentaEchas() {
                 event.preventDefault();
             }
         });
-
     }
+
+    this.openModalInit = function () {
+        $("#modalVentasEchas").modal("show");
+    }
+
     function onEventPaginacion() {
         switch (opcionVentasEchas) {
             case 0:
@@ -71,14 +75,6 @@ function ModalVentaEchas() {
             case 1:
                 fillTableVentasEchas(1, "");
                 break;
-        }
-    }
-
-    function loadInitVentasEchas() {
-        if (!stateVentasEchas) {
-            paginacionVentasEchas = 1;
-            fillTableVentasEchas(0, "");
-            opcionVentasEchas = 0;
         }
     }
 
@@ -95,7 +91,6 @@ function ModalVentaEchas() {
                 tbListVentasEchas.append('<tr><td class="text-center" colspan="8"><img src="./images/loading.gif" id="imgLoad" width="34" height="34" /> <p>Cargando información...</p></td></tr>');
                 stateVentasEchas = true;
                 totalPaginacionVentasEchas = 0;
-                arrayVentasEchas = [];
             });
 
             tbListVentasEchas.empty();
@@ -108,7 +103,7 @@ function ModalVentaEchas() {
                 <button class="btn btn-outline-secondary">
                     <i class="fa fa-angle-left"></i>
                 </button>
-                <span class="btn btn-outline-secondary disabled" id="lblPaginacion">0 - 0</span>
+                <span class="btn btn-outline-secondary disabled">0 - 0</span>
                 <button class="btn btn-outline-secondary">
                     <i class="fa fa-angle-right"></i>
                 </button>
@@ -143,17 +138,17 @@ function ModalVentaEchas() {
                 let max = Math.max.apply(null, range);
 
                 let paginacionHtml = `
-                    <button class="btn btn-outline-secondary" onclick="onEventPaginacionInicio(${min})">
+                    <button class="btn btn-outline-secondary" onclick="onEventPaginacionInicioVe(${min})">
                         <i class="fa fa-angle-double-left"></i>
                     </button>
-                    <button class="btn btn-outline-secondary" onclick="onEventAnteriorPaginacion()">
+                    <button class="btn btn-outline-secondary" onclick="onEventAnteriorPaginacionVe()">
                         <i class="fa fa-angle-left"></i>
                     </button>
-                    <span class="btn btn-outline-secondary disabled" id="lblPaginacion">${paginacionVentasEchas} - ${totalPaginacionVentasEchas}</span>
-                    <button class="btn btn-outline-secondary" onclick="onEventSiguientePaginacion()">
+                    <span class="btn btn-outline-secondary disabled">${paginacionVentasEchas} - ${totalPaginacionVentasEchas}</span>
+                    <button class="btn btn-outline-secondary" onclick="onEventSiguientePaginacionVe()">
                         <i class="fa fa-angle-right"></i>
                     </button>
-                    <button class="btn btn-outline-secondary" onclick="onEventPaginacionFinal(${max})">
+                    <button class="btn btn-outline-secondary" onclick="onEventPaginacionFinalVe(${max})">
                         <i class="fa fa-angle-double-right"></i>
                     </button>`;
 
@@ -163,6 +158,20 @@ function ModalVentaEchas() {
         } catch (error) {
             tbListVentasEchas.empty();
             tbListVentasEchas.append('<tr><td class="text-center" colspan="8"><p>' + error.responseText + '</p></td></tr>');
+            ulPaginationVentasEchas.html(`
+            <button class="btn btn-outline-secondary">
+                <i class="fa fa-angle-double-left"></i>
+            </button>
+            <button class="btn btn-outline-secondary">
+                <i class="fa fa-angle-left"></i>
+            </button>
+            <span class="btn btn-outline-secondary disabled">0 - 0</span>
+            <button class="btn btn-outline-secondary">
+                <i class="fa fa-angle-right"></i>
+            </button>
+            <button class="btn btn-outline-secondary">
+                <i class="fa fa-angle-double-right"></i>
+            </button>`);
             stateVentasEchas = false;
         }
     }
@@ -178,7 +187,7 @@ function ModalVentaEchas() {
             });
 
             let venta = result[0];
-            $("#cbComprobante").val(venta.IdComprobante);
+            // $("#cbComprobante").val(venta.IdComprobante);
             $("#cbTipoDocumento").val(venta.TipoDocumento);
             $("#cbMoneda").val(venta.IdMoneda);
             $("#txtNumero").val(venta.NumeroDocumento);
@@ -238,7 +247,7 @@ function ModalVentaEchas() {
         }
     }
 
-    onEventPaginacionInicio = function (value) {
+    onEventPaginacionInicioVe = function (value) {
         if (!stateVentasEchas) {
             if (value !== paginacionVentasEchas) {
                 paginacionVentasEchas = value;
@@ -247,7 +256,7 @@ function ModalVentaEchas() {
         }
     }
 
-    onEventPaginacionFinal = function (value) {
+    onEventPaginacionFinalVe = function (value) {
         if (!stateVentasEchas) {
             if (value !== paginacionVentasEchas) {
                 paginacionVentasEchas = value;
@@ -256,7 +265,7 @@ function ModalVentaEchas() {
         }
     }
 
-    onEventAnteriorPaginacion = function () {
+    onEventAnteriorPaginacionVe = function () {
         if (!stateVentasEchas) {
             if (paginacionVentasEchas > 1) {
                 paginacionVentasEchas--;
@@ -265,7 +274,7 @@ function ModalVentaEchas() {
         }
     }
 
-    onEventSiguientePaginacion = function () {
+    onEventSiguientePaginacionVe = function () {
         if (!stateVentasEchas) {
             if (paginacionVentasEchas < totalPaginacionVentasEchas) {
                 paginacionVentasEchas++;

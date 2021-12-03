@@ -1,7 +1,19 @@
 function Tools() {
+
     this.validateDate = function (date) {
         var regex = new RegExp("([0-9]{4}[-](0[1-9]|1[0-2])[-]([0-2]{1}[0-9]{1}|3[0-1]{1})|([0-2]{1}[0-9]{1}|3[0-1]{1})[-](0[1-9]|1[0-2])[-][0-9]{4})");
         return regex.test(date);
+    }
+
+    this.validateComboBox = function (comboBox) {
+        if (comboBox.children('option').length == 0) {
+            return true;
+        }
+        if (comboBox.children('option').length > 0 && comboBox.val() == "") {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     this.getDateYYMMDD = function (value) {

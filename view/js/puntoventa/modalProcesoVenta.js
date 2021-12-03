@@ -7,6 +7,13 @@ function ModalProcesoVenta() {
             modalVenta();
         });
 
+        $("#btnCobrar").keypress(function (event) {
+            if (event.keyCode === 13) {
+                modalVenta();
+                event.preventDefault();
+            }
+        });
+
         $('#modalProcesoVenta').on('shown.bs.modal', function () {
             $('#txtEfectivo').trigger('focus');
         });

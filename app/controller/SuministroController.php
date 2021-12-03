@@ -36,24 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         }
         exit();
     } else if ($_GET["type"] == "modalproductos") {
-        $tipo = $_GET["tipo"];
-        $value = $_GET["value"];
-        $posicionPagina = $_GET["posicionPagina"];
-        $filasPorPagina = $_GET["filasPorPagina"];
-        //$search = $_GET['search'];
-        $suministros = SuministrosADO::ListarSuministroView($tipo, $value, $posicionPagina, $filasPorPagina);
-        if (is_array($suministros)) {
-            print json_encode(array(
-                "estado" => 1,
-                "data" => $suministros[0],
-                "total" => $suministros[1]
-            ));
-        } else {
-            print json_encode(array(
-                "estado" => 2,
-                "mensaje" => $suministros
-            ));
-        }
+        print json_encode(SuministrosADO::ListarSuministroView($_GET["tipo"], $_GET["value"], $_GET["posicionPagina"], $_GET["filasPorPagina"]));
         exit();
     } else if ($_GET["type"] == "kardexlista") {
         $kardex = SuministrosADO::KardexSuministroById(0, $_GET["idSuministro"], $_GET["idAlmacen"]);
@@ -199,6 +182,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
                 "mensaje" => $suministro
             ));
         }
+        exit();
+    } else if ($_GET["type"] == "fillSuministro") {
+        print json_encode(SuministrosADO::Get_Suministro_By_Search($_GET["search"]));
         exit();
     }
 } else if ($_SERVER['REQUEST_METHOD'] == 'POST') {

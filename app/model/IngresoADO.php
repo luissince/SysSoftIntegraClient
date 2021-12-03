@@ -18,13 +18,17 @@ class IngresoADO
     {
     }
 
-    public static function ListarIngresos($posicionPagina, $filasPorPagina)
+    public static function ListarIngresos(int $opcion, string $buscar, string $fechaInico, string $fechaFinal, int $posicionPagina, int $filasPorPagina)
     {
         try {
 
-            $cmdIngreso = Database::getInstance()->getDb()->prepare("{CALL Sp_Listar_Ingresos(?,?)}");
-            $cmdIngreso->bindParam(1, $posicionPagina, PDO::PARAM_STR);
-            $cmdIngreso->bindParam(2, $filasPorPagina, PDO::PARAM_STR);
+            $cmdIngreso = Database::getInstance()->getDb()->prepare("{CALL Sp_Listar_Ingresos(?,?,?,?,?,?)}");
+            $cmdIngreso->bindParam(1, $opcion, PDO::PARAM_INT);
+            $cmdIngreso->bindParam(2, $buscar, PDO::PARAM_STR);
+            $cmdIngreso->bindParam(3, $fechaInico, PDO::PARAM_STR);
+            $cmdIngreso->bindParam(4, $fechaFinal, PDO::PARAM_STR);
+            $cmdIngreso->bindParam(5, $posicionPagina, PDO::PARAM_STR);
+            $cmdIngreso->bindParam(6, $filasPorPagina, PDO::PARAM_STR);
             $cmdIngreso->execute();
 
             $count = 0;
@@ -46,9 +50,65 @@ class IngresoADO
             }
 
 
-            $cmdIngreso = Database::getInstance()->getDb()->prepare("{CALL Sp_Listar_Ingresos_Count()}");
+            $cmdTotal = Database::getInstance()->getDb()->prepare("{CALL Sp_Listar_Ingresos_Count(?,?,?,?)}");
+            $cmdTotal->bindParam(1, $opcion, PDO::PARAM_INT);
+            $cmdTotal->bindParam(2, $buscar, PDO::PARAM_STR);
+            $cmdTotal->bindParam(3, $fechaInico, PDO::PARAM_STR);
+            $cmdTotal->bindParam(4, $fechaFinal, PDO::PARAM_STR);
+            $cmdTotal->execute();
+            $totalIngreso = $cmdTotal->fetchColumn();
+
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 200 . ' ' . "OK");
+
+            return array("estado" => 1, "data" => $resultIngreso, "total" => $totalIngreso);
+        } catch (Exception $ex) {
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+
+            return $ex->getMessage();
+        }
+    }
+
+    public static function ListarSalidas(int $opcion, string $buscar, string $fechaInico, string $fechaFinal, int $posicionPagina, int $filasPorPagina)
+    {
+        try {
+
+            $cmdIngreso = Database::getInstance()->getDb()->prepare("{CALL Sp_Listar_Salidas(?,?,?,?,?,?)}");
+            $cmdIngreso->bindParam(1, $opcion, PDO::PARAM_INT);
+            $cmdIngreso->bindParam(2, $buscar, PDO::PARAM_STR);
+            $cmdIngreso->bindParam(3, $fechaInico, PDO::PARAM_STR);
+            $cmdIngreso->bindParam(4, $fechaFinal, PDO::PARAM_STR);
+            $cmdIngreso->bindParam(5, $posicionPagina, PDO::PARAM_STR);
+            $cmdIngreso->bindParam(6, $filasPorPagina, PDO::PARAM_STR);
             $cmdIngreso->execute();
-            $totalIngreso = $cmdIngreso->fetchColumn();
+
+            $count = 0;
+            $resultIngreso = array();
+            while ($row = $cmdIngreso->fetch()) {
+                $count++;
+                array_push($resultIngreso, array(
+                    "Id" => $count + $posicionPagina,
+                    "IdIngreso" => $row['IdIngreso'],
+                    "Fecha" => $row['Fecha'],
+                    "Hora" => $row['Hora'],
+                    "Detalle" => $row['Detalle'],
+                    "NumeroDocumento" => $row['NumeroDocumento'],
+                    "Informacion" => $row['Informacion'],
+                    "Procedencia" => $row['Procedencia'],
+                    "Forma" => $row['Forma'],
+                    "Monto" => floatval($row['Monto']),
+                ));
+            }
+
+
+            $cmdTotal = Database::getInstance()->getDb()->prepare("{CALL Sp_Listar_Salidas_Count(?,?,?,?)}");
+            $cmdTotal->bindParam(1, $opcion, PDO::PARAM_INT);
+            $cmdTotal->bindParam(2, $buscar, PDO::PARAM_STR);
+            $cmdTotal->bindParam(3, $fechaInico, PDO::PARAM_STR);
+            $cmdTotal->bindParam(4, $fechaFinal, PDO::PARAM_STR);
+            $cmdTotal->execute();
+            $totalIngreso = $cmdTotal->fetchColumn();
 
             $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
             header($protocol . ' ' . 200 . ' ' . "OK");
@@ -71,7 +131,25 @@ class IngresoADO
             $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
             header($protocol . ' ' . 200 . ' ' . "OK");
 
-            return array("estado" => 1, "data" => $cmdCliente->fetchAll(PDO::FETCH_OBJ));
+            return $cmdCliente->fetchAll(PDO::FETCH_OBJ);
+        } catch (Exception $ex) {
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+
+            return  $ex->getMessage();
+        }
+    }
+
+    public static function ListarProveedor()
+    {
+        try {
+            $cmdCliente = Database::getInstance()->getDb()->prepare("SELECT IdProveedor,NumeroDocumento,RazonSocial FROM ProveedorTB");
+            $cmdCliente->execute();
+
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 200 . ' ' . "OK");
+
+            return $cmdCliente->fetchAll(PDO::FETCH_OBJ);
         } catch (Exception $ex) {
             $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
             header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
@@ -111,10 +189,18 @@ class IngresoADO
             ));
 
             Database::getInstance()->getDb()->commit();
-            return array("estado" => 1, "message" => "Se registró correctamente el Ingreso.");
+
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 201 . ' ' . "OK");
+
+            return  "Se registró correctamente el Ingreso.";
         } catch (Exception $ex) {
             Database::getInstance()->getDb()->rollback();
-            return array("estado" => 0, "message" => $ex->getMessage());
+
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+
+            return $ex->getMessage();
         }
     }
 }

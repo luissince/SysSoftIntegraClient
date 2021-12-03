@@ -25,7 +25,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
                         <div class="modal-header">
                             <h4 class="modal-title"><i class="fa fa-plus">
-                                </i> Nuevo Ingreso</h4>
+                                </i> Nueva Salida</h4>
                             <button type="button" class="close" data-dismiss="modal">
                                 <i class="fa fa-close"></i>
                             </button>
@@ -33,21 +33,21 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
                         <div class="modal-body">
                             <div class="tile">
-                                <div class="overlay p-5" id="divOverlayIngreso">
+                                <div class="overlay p-5" id="divOverlayEgreso">
                                     <div class="m-loader mr-4">
                                         <svg class="m-circular" viewBox="25 25 50 50">
                                             <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="4" stroke-miterlimit="10"></circle>
                                         </svg>
                                     </div>
-                                    <h4 class="l-text text-center text-white p-10" id="lblTextOverlayIngreso">Cargando información...</h4>
+                                    <h4 class="l-text text-center text-white p-10" id="lblTextOverlayEgreso">Cargando información...</h4>
                                 </div>
 
                                 <div class="row">
                                     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                                         <div class="form-group">
-                                            <label>Cliente</label>
+                                            <label>Proveedor</label>
                                             <div class="input-group">
-                                                <select id="cbCliente" class="form-control">
+                                                <select id="cbProveedor" class="form-control">
                                                     <option value="">- Seleccione -</option>
                                                 </select>
                                             </div>
@@ -129,7 +129,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
         <main class="app-content">
 
             <div class="app-title">
-                <h1><i class="fa fa-folder"></i> Pagos recibidos <small>Lista</small></h1>
+                <h1><i class="fa fa-folder"></i> Pagos echos <small>Lista</small></h1>
             </div>
 
             <div class="tile mb-4">
@@ -151,7 +151,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
                 <div class="row">
                     <div class="col-xl-6 col-lg-8 col-md-12 col-sm-12 col-12">
-                        <label><img src="./images/search.png" width="22" height="22"> Filtrar por cliente o procedencia:</label>
+                        <label><img src="./images/search.png" width="22" height="22"> Filtrar por proveedor o procedencia:</label>
                         <div class="form-group d-flex">
                             <div class="input-group">
                                 <input type="text" class="form-control" placeholder="Escribir para filtrar" id="txtSearch">
@@ -185,7 +185,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                         <th style="width:5%;">#</th>
                                         <th style="width:5%;">Pdf</th>
                                         <th style="width:10%;">Fecha</th>
-                                        <th style="width:15%;">Cliente</th>
+                                        <th style="width:15%;">Proveedor</th>
                                         <th style="width:15%;">Detalle</th>
                                         <th style="width:15%;">Procedencia</th>
                                         <th style="width:15%;">Forma Cobro</th>
@@ -194,7 +194,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 </thead>
                                 <tbody id="tbList">
                                     <tr>
-                                        <td colspan="8" class="text-center">!Aún no has registrado ingresos¡</td>
+                                        <td colspan="8" class="text-center">!Aún no has registrado salidas</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -267,12 +267,12 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 });
 
                 $("#btnRecargar").click(function(event) {
-                    loadInitIngreso();
+                    loadInitEgreso();
                 });
 
                 $("#btnRecargar").keypress(function(event) {
                     if (event.keyCode == 13) {
-                        loadInitIngreso();
+                        loadInitEgreso();
                         event.preventDefault();
                     }
                 });
@@ -283,7 +283,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             if ($("#txtSearch").val().trim() != "") {
                                 if (!state) {
                                     paginacion = 1;
-                                    fillIngreso(1, $("#txtSearch").val().trim(), "", "");
+                                    fillEgreso(1, $("#txtSearch").val().trim(), "", "");
                                     opcion = 1;
                                 }
                             }
@@ -296,7 +296,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     if ($("#txtSearch").val().trim() != "") {
                         if (!state) {
                             paginacion = 1;
-                            fillIngreso(1, $("#txtSearch").val().trim(), "", "");
+                            fillEgreso(1, $("#txtSearch").val().trim(), "", "");
                             opcion = 1;
                         }
                     }
@@ -307,7 +307,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         if ($("#txtSearch").val().trim() != "") {
                             if (!state) {
                                 paginacion = 1;
-                                fillIngreso(1, $("#txtSearch").val().trim(), "", "");
+                                fillEgreso(1, $("#txtSearch").val().trim(), "", "");
                                 opcion = 1;
                             }
                         }
@@ -318,7 +318,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 $("#txtFechaInicial").change(function() {
                     if (!state) {
                         paginacion = 1;
-                        fillIngreso(0, "", $("#txtFechaInicial").val(), $("#txtFechaFinal").val());
+                        fillEgreso(0, "", $("#txtFechaInicial").val(), $("#txtFechaFinal").val());
                         opcion = 0;
                     }
                 });
@@ -326,13 +326,13 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 $("#txtFechaFinal").change(function() {
                     if (!state) {
                         paginacion = 1;
-                        fillIngreso(0, "", $("#txtFechaInicial").val(), $("#txtFechaFinal").val());
+                        fillEgreso(0, "", $("#txtFechaInicial").val(), $("#txtFechaFinal").val());
                         opcion = 0;
                     }
                 });
 
 
-                loadInitIngreso();
+                loadInitEgreso();
 
                 modalIngreso();
             });
@@ -361,26 +361,26 @@ if (!isset($_SESSION['IdEmpleado'])) {
             function onEventPaginacion() {
                 switch (opcion) {
                     case 0:
-                        fillIngreso(0, "", $("#txtFechaInicial").val(), $("#txtFechaFinal").val());
+                        fillEgreso(0, "", $("#txtFechaInicial").val(), $("#txtFechaFinal").val());
                         break;
                     case 1:
-                        fillIngreso(1, $("#txtSearch").val().trim(), "", "");
+                        fillEgreso(1, $("#txtSearch").val().trim(), "", "");
                         break;
                 }
             }
 
-            function loadInitIngreso() {
+            function loadInitEgreso() {
                 if (!state) {
                     paginacion = 1;
-                    fillIngreso(0, "", $("#txtFechaInicial").val(), $("#txtFechaFinal").val());
+                    fillEgreso(0, "", $("#txtFechaInicial").val(), $("#txtFechaFinal").val());
                     opcion = 0;
                 }
             }
 
-            async function fillIngreso(opcion, buscar, fechaInicio, fechaFin) {
+            async function fillEgreso(opcion, buscar, fechaInicio, fechaFin) {
                 try {
                     let result = await tools.promiseFetchGet("../app/controller/IngresoController.php", {
-                        "type": "listaIngreso",
+                        "type": "listaSalidas",
                         "opcion": opcion,
                         "buscar": buscar,
                         "fechaInicio": fechaInicio,
@@ -396,7 +396,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
                     tbody.empty();
                     if (result.data.length == 0) {
-                        tbody.append('<tr><td class="text-center" colspan="8"><p>No hay ingresos para mostrar.</p></td></tr>');
+                        tbody.append('<tr><td class="text-center" colspan="8"><p>No hay salidas para mostrar.</p></td></tr>');
                         ulPagination.html(`
                             <button class="btn btn-outline-secondary">
                                 <i class="fa fa-angle-double-left"></i>
@@ -517,34 +517,34 @@ if (!isset($_SESSION['IdEmpleado'])) {
             async function NuevoPago() {
                 try {
                     let result = await tools.promiseFetchGet("../app/controller/IngresoController.php", {
-                        "type": "listaCliente"
+                        "type": "listaProveedor"
                     }, function() {
-                        $("#cbCliente").empty();
+                        $("#cbProveedor").empty();
                     });
 
-                    $("#cbCliente").append('<option value="">- Seleccione -</option>');
+                    $("#cbProveedor").append('<option value="">- Seleccione -</option>');
                     for (let value of result) {
-                        $("#cbCliente").append('<option value="' + value.IdCliente + '">' + value.NumeroDocumento + ' - ' + value.Informacion + '</option>');
+                        $("#cbProveedor").append('<option value="' + value.IdCliente + '">' + value.NumeroDocumento + ' - ' + value.Informacion + '</option>');
                     }
 
-                    $("#divOverlayIngreso").addClass("d-none");
+                    $("#divOverlayEgreso").addClass("d-none");
                 } catch (error) {
-                    $("#cbCliente").append('<option value="">- Seleccione -</option>');
-                    $("#divOverlayIngreso").addClass("d-none");
+                    $("#cbProveedor").append('<option value="">- Seleccione -</option>');
+                    $("#divOverlayEgreso").addClass("d-none");
                 }
             }
 
             function LimpiarModal() {
-                $("#cbCliente").val('');
+                $("#cbProveedor").val('');
                 $("#txtObservacion").val('');
                 $("#txtMonto").val('');
                 $("#rbEfectivo").prop("checked", true);
             }
 
             function CrudPago() {
-                if ($("#cbCliente").val() == '') {
+                if ($("#cbProveedor").val() == '') {
                     tools.AlertWarning("", "Seleccione un cliente.");
-                    $("#cbCliente").focus();
+                    $("#cbProveedor").focus();
                 } else if (!tools.isNumeric($("#txtMonto").val())) {
                     tools.AlertWarning("", "Ingrese el monto.");
                     $("#txtMonto").focus();
@@ -556,10 +556,10 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 let result = await tools.promiseFetchPost("../app/controller/IngresoController.php", {
                                     "type": "insert",
                                     "idProcedencia": "",
-                                    "idCliente": $("#cbCliente").val(),
+                                    "idCliente": $("#cbProveedor").val(),
                                     "detalle": $("#txtObservacion").val().toUpperCase(),
                                     "monto": $("#txtMonto").val(),
-                                    "procedencia": 3,
+                                    "procedencia": 4,
                                     "forma": $("#rbEfectivo").is(":checked") ? 1 : $("#rbTarjeta").is(":checked") ? 2 : 3,
                                     "fecha": tools.getCurrentDate(),
                                     "hora": tools.getCurrentTime(),

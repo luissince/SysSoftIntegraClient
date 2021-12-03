@@ -17,10 +17,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         $fechaFinal = $_GET['fechaFinal'];
         $comprobante = $_GET['comprobante'];
         $estado = $_GET['estado'];
-        $facturacion = $_GET['facturacion'];
         $posicionPagina = $_GET['posicionPagina'];
         $filasPorPagina = $_GET['filasPorPagina'];
-        print json_encode(VentasADO::ListVentas($opcion, $busqueda, $fechaInicial, $fechaFinal, intval($comprobante), intval($estado), boolval($facturacion), intval($posicionPagina), intval($filasPorPagina)));
+        print json_encode(VentasADO::ListVentas($opcion, $busqueda, $fechaInicial, $fechaFinal, $comprobante, $estado, $posicionPagina, $filasPorPagina));
         exit();
     } else if ($_GET["type"] == "ventadetalle") {
         print json_encode(VentasADO::ListVentaDetalle($_GET['idVenta']));

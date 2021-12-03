@@ -18,13 +18,31 @@
                         </a>
                 </li>
 
-                <li class="treeview" id="treeview-ingresos"><a class="app-menu__item" href="#" data-toggle="treeview"><i class="app-menu__icon fa fa-external-link-square" style="transform: rotate(180deg) translateX(12px);"></i><span class="app-menu__label">Ingresos</span><i class="treeview-indicator fa fa-angle-right"></i></a>
+                <li class="treeview" id="treeview-ingresos">
+                        <a class="app-menu__item" href="#" data-toggle="treeview">
+                                <i class="app-menu__icon fa fa-external-link-square" style="transform: rotate(180deg) translateX(12px);"></i>
+                                <span class="app-menu__label">Ingresos</span>
+                                <i class="treeview-indicator fa fa-angle-right"></i>
+                        </a>
                         <ul class="treeview-menu">
                                 <li><a class="app-menu__item" id="tab-ventas" href="ventas.php"><i class="app-menu__icon fa fa-circle-o"></i><span class="app-menu__label">Ventas</span></a></li>
                                 <li><a class="app-menu__item" id="tab-pago" href="pago.php"><i class="app-menu__icon fa fa-circle-o"></i><span class="app-menu__label">Pagos recibidos</span></a></li>
                                 <li><a class="app-menu__item" id="tab-notacredito" href="notacredito.php"><i class="app-menu__icon fa fa-circle-o"></i><span class="app-menu__label">Nota de crédito</span></a></li>
                                 <li><a class="app-menu__item" id="tab-guiaremision" href="#"><i class="app-menu__icon fa fa-circle-o"></i><span class="app-menu__label">Guía remisión</span></a></li>
                                 <li><a class="app-menu__item" id="tab-cotizacion" href="cotizacion.php"><i class="app-menu__icon fa fa-circle-o"></i><span class="app-menu__label">Cotización</span></a></li>
+                        </ul>
+                </li>
+
+                <li class="treeview" id="treeview-egresos">
+                        <a class="app-menu__item" href="#" data-toggle="treeview">
+                                <i class="app-menu__icon fa fa-external-link-square" style="transform: rotate(0deg) translateX(0px);"></i>
+                                <span class="app-menu__label">Gastos</span>
+                                <i class="treeview-indicator fa fa-angle-right"></i>
+                        </a>
+                        <ul class="treeview-menu">
+                                <li><a class="app-menu__item" id="tab-compras" href="compras.php"><i class="app-menu__icon fa fa-circle-o"></i><span class="app-menu__label">Compras</span></a></li>
+                                <li><a class="app-menu__item" id="tab-cobro" href="cobro.php"><i class="app-menu__icon fa fa-circle-o"></i><span class="app-menu__label">Pagos echos</span></a></li>
+                                <li><a class="app-menu__item" id="tab-ordencompra" href="ordencompra.php"><i class="app-menu__icon fa fa-circle-o"></i><span class="app-menu__label">Orden de compra</span></a></li>
                         </ul>
                 </li>
 
@@ -57,6 +75,13 @@
                         <a class="app-menu__item" id="tab-reporte" href="reporte.php">
                                 <i class="app-menu__icon fa fa-book"></i>
                                 <span class="app-menu__label">Reportes</span>
+                        </a>
+                </li>
+
+                <li>
+                        <a class="app-menu__item" id="tab-reporte" href="tiendavirtural.php">
+                                <i class="app-menu__icon fa fa-desktop"></i>
+                                <span class="app-menu__label">Tienda Virtual</span>
                         </a>
                 </li>
 
@@ -123,6 +148,10 @@
                 "guiaremision",
                 "cotizacion",
 
+                "compras",
+                "cobro",
+                "ordencompra",
+
                 "cpeelectronicos",
                 "consultaindividual",
                 "consultaglobal",
@@ -165,6 +194,15 @@
                                 document.getElementById("tab-guiaremision").setAttribute("class", "app-menu__item active");
                         } else if (id == "tab-cotizacion") {
                                 document.getElementById("tab-cotizacion").setAttribute("class", "app-menu__item active");
+                        }
+                } else if (id == "tab-compras" || id == "tab-cobro" || id == "tab-ordencompra") {
+                        document.getElementById("treeview-egresos").setAttribute("class", "treeview is-expanded");
+                        if (id == "tab-compras") {
+                                document.getElementById("tab-compras").setAttribute("class", "app-menu__item active");
+                        } else if (id == "tab-cobro") {
+                                document.getElementById("tab-cobro").setAttribute("class", "app-menu__item active");
+                        } else if (id == "tab-ordencompra") {
+                                document.getElementById("tab-ordencompra").setAttribute("class", "app-menu__item active");
                         }
                 } else if (id == "tab-cpeelectronicos" || id == "tab-consultaindividual" || id == "tab-consultaglobal") {
                         document.getElementById("treeview-facturacion").setAttribute("class", "treeview is-expanded");

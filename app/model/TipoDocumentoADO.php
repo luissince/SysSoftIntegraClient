@@ -20,7 +20,15 @@ class TipoDocumentoADO
     public static function GetDocumentoCombBoxVentas()
     {
         try {
-            $comando = Database::getInstance()->getDb()->prepare("SELECT IdTipoDocumento,Nombre,Serie, Predeterminado FROM TipoDocumentoTB WHERE Guia <> 1 AND NotaCredito <> 1");
+            $comando = Database::getInstance()->getDb()->prepare("SELECT 
+            IdTipoDocumento,
+            Nombre,
+            Serie, 
+            Predeterminado,
+            Campo,
+            NumeroCampo
+            FROM TipoDocumentoTB 
+            WHERE Guia <> 1 AND NotaCredito <> 1");
             $comando->execute();
 
             $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');

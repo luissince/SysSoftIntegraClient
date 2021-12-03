@@ -298,8 +298,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
             }
 
             function loadInitCotizacion() {
-                if (!state) {
-                    if (tools.validateDate($("#txtFechaInicial").val()) && tools.validateDate($("#txtFechaFinal").val())) {
+                if (tools.validateDate($("#txtFechaInicial").val()) && tools.validateDate($("#txtFechaFinal").val())) {
+                    if (!state) {
                         paginacion = 1;
                         fillTableCotizacion(0, "", $("#txtFechaInicial").val(), $("#txtFechaFinal").val());
                         opcion = 0;
@@ -327,74 +327,10 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     }
                 ).then(result => {
                     let object = result;
-                    if (object.estado === 1) {
-                        tbody.empty();
-                        if (object.data.length == 0) {
-                            tbody.append('<tr><td class="text-center" colspan="9"><p>No hay datos para mostrar.</p></td></tr>');
-                            ulPagination.html(`
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-double-left"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-left"></i>
-                            </button>
-                            <span class="btn btn-outline-secondary disabled" id="lblPaginacion">0 - 0</span>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-right"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-double-right"></i>
-                            </button>`);
-                            state = false;
-                        } else {
 
-                            for (let cotizacion of object.data) {
-
-                                tbody.append('<tr>' +
-                                    ' <td class="text-center">' + cotizacion.Id + '</td >' +
-                                    ' <td class="text-left">' + cotizacion.Apellidos + ", " + cotizacion.Nombres + '</td>' +
-                                    ' <td class="text-left">' + "COTIZACIÓN N° " + cotizacion.IdCotizacion + '</td>' +
-                                    ' <td class="text-left">' + tools.getDateForma(cotizacion.FechaCotizacion) + '</td>' +
-                                    ' <td class="text-left">' + cotizacion.Informacion + '</td>' +
-                                    ' <td class="text-right">' + cotizacion.SimboloMoneda + " " + tools.formatMoney(cotizacion.Total) + '</td>' +
-                                    ' <td class="text-center"><button type="button" class="btn btn-info"><i class="fa fa-eye"></i></button></td >' +
-                                    ' <td class="text-center"><button type="button" class="btn btn-warning"><i class="fa fa-edit"></i></button></td >' +
-                                    ' <td class="text-center"><button type="button" class="btn btn-danger"><i class="fa fa-trash"></i></button></td >' +
-                                    '</tr >');
-                            }
-
-                            totalPaginacion = parseInt(Math.ceil((parseFloat(object.total) / filasPorPagina)));
-
-                            let i = 1;
-                            let range = [];
-                            while (i <= totalPaginacion) {
-                                range.push(i);
-                                i++;
-                            }
-
-                            let min = Math.min.apply(null, range);
-                            let max = Math.max.apply(null, range);
-
-                            let paginacionHtml = `
-                            <button class="btn btn-outline-secondary" onclick="onEventPaginacionInicio(${min})">
-                                <i class="fa fa-angle-double-left"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary" onclick="onEventAnteriorPaginacion()">
-                                <i class="fa fa-angle-left"></i>
-                            </button>
-                            <span class="btn btn-outline-secondary disabled" id="lblPaginacion">${paginacion} - ${totalPaginacion}</span>
-                            <button class="btn btn-outline-secondary" onclick="onEventSiguientePaginacion()">
-                                <i class="fa fa-angle-right"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary" onclick="onEventPaginacionFinal(${max})">
-                                <i class="fa fa-angle-double-right"></i>
-                            </button>`;
-
-                            ulPagination.html(paginacionHtml);
-                            state = false;
-                        }
-                    } else {
-                        tbody.empty();
+                    tbody.empty();
+                    if (object.data.length == 0) {
+                        tbody.append('<tr><td class="text-center" colspan="9"><p>No hay datos para mostrar.</p></td></tr>');
                         ulPagination.html(`
                             <button class="btn btn-outline-secondary">
                                 <i class="fa fa-angle-double-left"></i>
@@ -409,9 +345,55 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             <button class="btn btn-outline-secondary">
                                 <i class="fa fa-angle-double-right"></i>
                             </button>`);
-                        tbody.append('<tr><td class="text-center" colspan="9"><p>' + object.message + '</p></td></tr>');
+                        state = false;
+                    } else {
+
+                        for (let cotizacion of object.data) {
+
+                            tbody.append('<tr>' +
+                                ' <td class="text-center">' + cotizacion.Id + '</td >' +
+                                ' <td class="text-left">' + cotizacion.Apellidos + ", " + cotizacion.Nombres + '</td>' +
+                                ' <td class="text-left">' + "COTIZACIÓN N° " + cotizacion.IdCotizacion + '</td>' +
+                                ' <td class="text-left">' + tools.getDateForma(cotizacion.FechaCotizacion) + '</td>' +
+                                ' <td class="text-left">' + cotizacion.Informacion + '</td>' +
+                                ' <td class="text-right">' + cotizacion.SimboloMoneda + " " + tools.formatMoney(cotizacion.Total) + '</td>' +
+                                ' <td class="text-center"><button type="button" class="btn btn-info"><i class="fa fa-eye"></i></button></td >' +
+                                ' <td class="text-center"><button type="button" class="btn btn-warning"><i class="fa fa-edit"></i></button></td >' +
+                                ' <td class="text-center"><button type="button" class="btn btn-danger"><i class="fa fa-trash"></i></button></td >' +
+                                '</tr >');
+                        }
+
+                        totalPaginacion = parseInt(Math.ceil((parseFloat(object.total) / filasPorPagina)));
+
+                        let i = 1;
+                        let range = [];
+                        while (i <= totalPaginacion) {
+                            range.push(i);
+                            i++;
+                        }
+
+                        let min = Math.min.apply(null, range);
+                        let max = Math.max.apply(null, range);
+
+                        let paginacionHtml = `
+                            <button class="btn btn-outline-secondary" onclick="onEventPaginacionInicio(${min})">
+                                <i class="fa fa-angle-double-left"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary" onclick="onEventAnteriorPaginacion()">
+                                <i class="fa fa-angle-left"></i>
+                            </button>
+                            <span class="btn btn-outline-secondary disabled" id="lblPaginacion">${paginacion} - ${totalPaginacion}</span>
+                            <button class="btn btn-outline-secondary" onclick="onEventSiguientePaginacion()">
+                                <i class="fa fa-angle-right"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary" onclick="onEventPaginacionFinal(${max})">
+                                <i class="fa fa-angle-double-right"></i>
+                            </button>`;
+
+                        ulPagination.html(paginacionHtml);
                         state = false;
                     }
+
                 }).catch(error => {
                     tbody.empty();
                     ulPagination.html(`

@@ -9,10 +9,14 @@ use SysSoftIntegra\Model\IngresoADO;
 require __DIR__ . './../src/autoload.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-    if ($_GET["type"] == "lista") {
-        echo json_encode(IngresoADO::ListarIngresos(intval($_GET["posicionPagina"]), intval($_GET["filasPorPagina"])));
+    if ($_GET["type"] == "listaIngreso") {
+        echo json_encode(IngresoADO::ListarIngresos($_GET["opcion"], $_GET["buscar"], $_GET["fechaInicio"], $_GET["fechaFin"], $_GET["posicionPagina"], $_GET["filasPorPagina"]));
+    } else if ($_GET["type"] == "listaSalidas") {
+        echo json_encode(IngresoADO::ListarSalidas($_GET["opcion"], $_GET["buscar"], $_GET["fechaInicio"], $_GET["fechaFin"], $_GET["posicionPagina"], $_GET["filasPorPagina"]));
     } else if ($_GET["type"] == "listaCliente") {
         echo json_encode(IngresoADO::ListarClientes());
+    } else if ($_GET["type"] == "listaProveedor") {
+        echo json_encode(IngresoADO::ListarProveedor());
     }
 } else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $body = json_decode(file_get_contents("php://input"), true);

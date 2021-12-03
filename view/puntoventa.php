@@ -408,6 +408,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
             let impuestoNeto = 0;
             let importeNeto = 0;
 
+            let listaComprobantes = [];
             let listaProductos = [];
 
             let state_view_pago = 0;
@@ -428,11 +429,11 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     event.preventDefault();
                 }
                 if (event.key === 'F2' || event.key === 'f2') {
-                    modalProductos.openModalInitVentas();
+                    modalProductos.openModalInit();
                     event.preventDefault();
                 }
                 if (event.key === 'F3' || event.key === 'f3') {
-
+                    modalMovimientoCaja.openModalInit();
                     event.preventDefault();
                 }
                 if (event.key === 'F4' || event.key === 'f4') {
@@ -440,22 +441,38 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     event.preventDefault();
                 }
                 if (event.key === 'F6' || event.key === 'f6') {
-
+                    modalVentaEchas.openModalInit();
                     event.preventDefault();
                 }
                 if (event.key === 'F7' || event.key === 'f7') {
-
+                    modalCotizacion.openModalInit();
                     event.preventDefault();
                 }
             });
 
             $(window).ready(function() {
-
                 modalProductos.init();
                 modalProcesoVenta.init();
                 modalMovimientoCaja.init();
                 modalVentaEchas.init();
                 modalCotizacion.init();
+
+                $("#txtNumero").keypress(function(event) {
+                    var key = window.Event ? event.which : event.keyCode;
+                    var c = String.fromCharCode(key);
+                    if ((c < '0' || c > '9') && (c != '\b')) {
+                        event.preventDefault();
+                    }
+                });
+
+                $("#txtCodigoBarra").keyup(function(event) {
+                    if (event.keyCode == 13) {
+                        if ($("#txtCodigoBarra").val().trim().length != 0) {
+                            filterSuministro($("#txtCodigoBarra").val().trim());
+                        }
+                        event.preventDefault();
+                    }
+                });
 
                 $("#cbComprobante").change(async function() {
                     if ($('#cbComprobante').children('option').length > 0 && $("#cbComprobante").val() != "") {
@@ -577,12 +594,12 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     }
 
 
-                    let comprobante = result[1];
+                    listaComprobantes = result[1];
 
-                    for (let value of comprobante) {
+                    for (let value of listaComprobantes) {
                         $("#cbComprobante").append('<option value="' + value.IdTipoDocumento + '">' + value.Nombre + '</option>');
                     }
-                    for (let value of comprobante) {
+                    for (let value of listaComprobantes) {
                         if (value.Predeterminado == "1") {
                             $("#cbComprobante").val(value.IdTipoDocumento);
                             break;
@@ -824,28 +841,130 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 });
             }
 
-            function resetVenta() {
-                $("#divOverlayPuntoVenta").removeClass("d-none");
-                $("#txtCodigoBarra").focus();
-                loadInit();
+            async function filterSuministro(search) {
+                try {
+                    let result = await tools.promiseFetchGet("../app/controller/SuministroController.php", {
+                        "type": "fillSuministro",
+                        "search": search
+                    }, function() {
+                        $("#divOverlayPuntoVenta").removeClass("d-none");
+                    });
 
-                importeBruto = 0;
-                descuentoBruto = 0;
-                subImporteNeto = 0;
-                impuestoNeto = 0;
-                importeNeto = 0;
+                    if (result == false) {
+                        $("#divOverlayPuntoVenta").addClass("d-none");
+                        $("#txtCodigoBarra").val('');
+                        $("#txtCodigoBarra").focus();
+                    } else {
+                        if (!validateDatelleVenta(result.IdSuministro)) {
+                            let suministro = result;
+                            let cantidad = 1;
 
-                listaProductos = [];
-                renderTableProductos();
+                            let valor_sin_impuesto = parseFloat(suministro.PrecioVentaGeneral) / ((parseFloat(suministro.Valor) / 100.00) + 1);
+                            let descuento = 0;
+                            let porcentajeRestante = valor_sin_impuesto * (descuento / 100.00);
+                            let preciocalculado = valor_sin_impuesto - porcentajeRestante;
 
-                state_view_pago = 0;
-                vueltoContado = 0;
-                total_venta = 0;
-                estadoCobroContado = false;
+                            let impuesto = tools.calculateTax(parseFloat(suministro.Valor), preciocalculado);
+
+                            listaProductos.push({
+                                "idSuministro": suministro.IdSuministro,
+                                "clave": suministro.Clave,
+                                "nombreMarca": suministro.NombreMarca,
+                                "cantidad": cantidad,
+                                "costoCompra": suministro.PrecioCompra,
+                                "bonificacion": 0,
+                                "descuento": 0,
+                                "descuentoCalculado": 0,
+                                "descuentoSumado": 0,
+
+                                "precioVentaGeneralUnico": valor_sin_impuesto,
+                                "precioVentaGeneralReal": preciocalculado,
+
+                                "impuestoOperacion": suministro.Operacion,
+                                "impuestoId": suministro.Impuesto,
+                                "impuestoNombre": suministro.ImpuestoNombre,
+                                "impuestoValor": suministro.Valor,
+
+                                "impuestoSumado": cantidad * impuesto,
+                                "precioVentaGeneral": preciocalculado + impuesto,
+                                "precioVentaGeneralAuxiliar": preciocalculado + impuesto,
+
+                                "importeBruto": cantidad * valor_sin_impuesto,
+                                "subImporteNeto": cantidad * preciocalculado,
+                                "importeNeto": cantidad * (preciocalculado + impuesto),
+
+                                "inventario": suministro.Inventario,
+                                "unidadVenta": suministro.UnidadVenta,
+                                "valorInventario": suministro.ValorInventario
+                            });
+                        } else {
+                            for (let i = 0; i < listaProductos.length; i++) {
+                                if (listaProductos[i].idSuministro == result.IdSuministro) {
+                                    let currenteObject = listaProductos[i];
+
+                                    currenteObject.cantidad = parseFloat(currenteObject.cantidad) + 1;
+
+                                    let porcentajeRestante = parseFloat(currenteObject.precioVentaGeneralUnico) * (parseFloat(currenteObject.descuento) / 100.00);
+                                    currenteObject.descuentoSumado = porcentajeRestante * currenteObject.cantidad;
+                                    currenteObject.impuestoSumado = currenteObject.cantidad * (parseFloat(currenteObject.precioVentaGeneralReal) * (parseFloat(currenteObject.impuestoValor) / 100.00));
+
+                                    currenteObject.importeBruto = currenteObject.cantidad * currenteObject.precioVentaGeneralUnico;
+                                    currenteObject.subImporteNeto = currenteObject.cantidad * currenteObject.precioVentaGeneralReal;
+                                    currenteObject.importeNeto = currenteObject.cantidad * currenteObject.precioVentaGeneral;
+                                    break;
+                                }
+                            }
+                        }
+                        renderTableProductos();
+                        $("#divOverlayPuntoVenta").addClass("d-none");
+                        $("#txtCodigoBarra").val('');
+                        $("#txtCodigoBarra").focus();
+                    }
+
+                } catch (error) {
+                    $("#divOverlayPuntoVenta").addClass("d-none");
+                    $("#txtCodigoBarra").val('');
+                    $("#txtCodigoBarra").focus();
+                }
+            }
+
+            function validateNumeroCampo() {
+                let valid = {
+                    isCampo: false,
+                    numero: 0
+                };
+                for (let value of listaComprobantes) {
+                    if ($('#cbComprobante').val() == value.IdTipoDocumento) {
+                        if (value.Campo == "1" && $("#txtNumero").val().trim().length != value.NumeroCampo) {
+                            valid.isCampo = true;
+                            valid.numero = value.NumeroCampo;
+                        }
+                        break;
+                    }
+                }
+                return valid;
             }
 
             function modalVenta() {
-                if (listaProductos.length !== 0) {
+                if (tools.validateComboBox($('#cbMoneda'))) {
+                    tools.AlertWarning("", "Seleccione la moneda ha usar.");
+                    $("#cbMoneda").focus();
+                } else if (tools.validateComboBox($('#cbComprobante'))) {
+                    tools.AlertWarning("", "Seleccione el tipo de comprobante.");
+                    $("#cbComprobante").focus();
+                } else if (tools.validateComboBox($('#cbTipoDocumento'))) {
+                    tools.AlertWarning("", "Seleccione el tipo de documento del cliente.");
+                    $("#cbTipoDocumento").focus();
+                } else if (!tools.isNumeric($('#txtNumero').val().trim())) {
+                    tools.AlertWarning("", "Ingrese el número del documento del cliente.");
+                    $("#txtNumero").focus();
+                } else if (validateNumeroCampo().isCampo) {
+                    tools.AlertWarning("", "El número de documento tiene que tener " + validateNumeroCampo().numero + " caracteres.");
+                    $("#txtNumero").focus();
+                } else if ($("#txtCliente").val().trim().length == 0) {
+                    tools.AlertWarning("", "Ingrese los datos del cliente.");
+                    $("#txtCliente").focus();
+                } else if (listaProductos.length !== 0) {
                     $("#modalProcesoVenta").modal("show");
                     $("#lblTotalModal").html(monedaSimbolo + " " + tools.formatMoney(importeNeto));
                     $("#lblVueltoNombre").html('Su cambio:');
@@ -959,6 +1078,27 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         });
                     }
                 });
+            }
+
+            function resetVenta() {
+                $("#divOverlayPuntoVenta").removeClass("d-none");
+                $("#txtCodigoBarra").focus();
+
+                importeBruto = 0;
+                descuentoBruto = 0;
+                subImporteNeto = 0;
+                impuestoNeto = 0;
+                importeNeto = 0;
+
+                listaComprobantes = [];
+                listaProductos = [];
+                renderTableProductos();
+                state_view_pago = 0;
+                vueltoContado = 0;
+                total_venta = 0;
+                estadoCobroContado = false;
+
+                loadInit();
             }
         </script>
     </body>

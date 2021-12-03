@@ -19,6 +19,10 @@ function ModalMovimientoCaja() {
         });
     }
 
+    this.openModalInit = function () {
+        $("#modalMovimientoCaja").modal("show");
+    }
+
     function clearModalMovimientoCaja() {
         $("#cbxMovimiento").val("");
         $("#txtMonto").val("");

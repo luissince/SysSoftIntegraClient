@@ -7,21 +7,28 @@ function ModalProductos() {
     let totalPaginacionProductos = 0;
     let filasPorPaginaProductos = 10;
     let tbListProductos = $("#tbListProductos");
-    let lblPaginaActualProducto = $("#lblPaginaActualProducto");
-    let lblPaginaSiguienteProducto = $("#lblPaginaSiguienteProducto");
+    let ulPaginationProductos = $("#ulPaginationProductos");
 
     this.init = function () {
 
         $("#btnProductos").click(function () {
-            loadInitVentas();
+            $("#modalProductos").modal("show");
+        });
+
+        $("#btnProductos").keypress(function (event) {
+            if (event.keyCode == 13) {
+                $("#modalProductos").modal("show");
+                event.preventDefault();
+            }
         });
 
         $('#modalProductos').on('shown.bs.modal', function () {
             $('#txtSearchProducto').trigger('focus');
+            loadInitVentas();
         });
 
         $('#modalProductos').on('hide.bs.modal', function () {
-            clearModalProductos();
+            $("#tbListProductos").empty();
         });
 
         $("#txtSearchProducto").keyup(function () {
@@ -57,8 +64,8 @@ function ModalProductos() {
         });
     }
 
-    this.openModalInitVentas = function () {
-        loadInitVentas();
+    this.openModalInit = function () {
+        $("#modalProductos").modal("show");
     }
 
     function onEventPaginacion() {
@@ -80,12 +87,9 @@ function ModalProductos() {
         }
     }
 
-    function fillProductosTable(tipo, value) {
-        $("#modalProductos").modal("show");
-        $.ajax({
-            url: "../app/controller/SuministroController.php",
-            method: "GET",
-            data: {
+    async function fillProductosTable(tipo, value) {
+        try {
+            let result = await tools.promiseFetchGet("../app/controller/SuministroController.php", {
                 "type": "modalproductos",
                 "tipo": tipo,
                 "value": value,
@@ -94,53 +98,96 @@ function ModalProductos() {
                 "insumo": 0,
                 "posicionPagina": ((paginacionProductos - 1) * filasPorPaginaProductos),
                 "filasPorPagina": filasPorPaginaProductos
-            },
-            beforeSend: function () {
+            }, function () {
                 tbListProductos.empty();
-                tbListProductos.append('<tr><td class="text-center" colspan="6"><img src="./images/loading.gif" id="imgLoad" width="34" height="34" /> <p>Cargando información...</p></td></tr>');
+                tbListProductos.append('<tr><td class="text-center" colspan="7"><img src="./images/loading.gif" id="imgLoad" width="34" height="34" /> <p>Cargando información...</p></td></tr>');
                 stateProductos = true;
                 totalPaginacionProductos = 0;
                 arrayProductos = [];
-            },
-            success: function (result) {
-                let object = result;
-                if (object.estado === 1) {
-                    tbListProductos.empty();
-                    arrayProductos = object.data;
-                    if (arrayProductos.length === 0) {
-                        tbListProductos.append('<tr><td class="text-center" colspan="6"><p>No hay datos para mostrar</p></td></tr>');
-                        totalPaginacionProductos = 0;
-                        lblPaginaActualProducto.html(0);
-                        lblPaginaSiguienteProducto.html(0);
-                        stateProductos = false;
-                    } else {
-                        for (let producto of arrayProductos) {
-                            tbListProductos.append('<tr ondblclick="onSelectProducto(\'' + producto.IdSuministro + '\')">' +
-                                '<td class="text-center">' + producto.Id + '</td>' +
-                                '<td>' + producto.Clave + '</br>' + producto.NombreMarca + '</td>' +
-                                '<td>' + producto.Categoria + '<br>' + producto.Marca + '</td>' +
-                                '<td class="' + (parseFloat(producto.Cantidad) > 0 ? "text-black" : "text-danger") + '">' + tools.formatMoney(parseFloat(producto.Cantidad)) + ' ' + producto.UnidadCompra + '</td>' +
-                                '<td>' + producto.ImpuestoNombre + '</td>' +
-                                '<td>' + tools.formatMoney(parseFloat(producto.PrecioVentaGeneral)) + '</td>' +
-                                '</tr>');
-                        }
-                        totalPaginacionProductos = parseInt(Math.ceil((parseFloat(object.total) / filasPorPaginaProductos)));
-                        lblPaginaActualProducto.html(paginacionProductos);
-                        lblPaginaSiguienteProducto.html(totalPaginacionProductos);
-                        stateProductos = false;
-                    }
-                } else {
-                    tbListProductos.empty();
-                    tbListProductos.append('<tr><td class="text-center" colspan="6"><p>' + object.message + '</p></td></tr>');
-                    stateProductos = false;
+            });
+
+            let object = result;
+            tbListProductos.empty();
+            arrayProductos = object.data;
+            if (arrayProductos.length === 0) {
+                tbListProductos.append('<tr><td class="text-center" colspan="7"><p>No hay datos para mostrar</p></td></tr>');
+                ulPaginationProductos.html(`
+                <button class="btn btn-outline-secondary">
+                    <i class="fa fa-angle-double-left"></i>
+                </button>
+                <button class="btn btn-outline-secondary">
+                    <i class="fa fa-angle-left"></i>
+                </button>
+                <span class="btn btn-outline-secondary disabled">0 - 0</span>
+                <button class="btn btn-outline-secondary">
+                    <i class="fa fa-angle-right"></i>
+                </button>
+                <button class="btn btn-outline-secondary">
+                    <i class="fa fa-angle-double-right"></i>
+                </button>`);
+                stateProductos = false;
+            } else {
+                for (let producto of arrayProductos) {
+                    tbListProductos.append(`<tr>
+                        <td class="text-center">${producto.Id}</td>
+                        <td>${producto.Clave + '</br>' + producto.NombreMarca}</td>
+                        <td>${producto.Categoria + '<br>' + producto.Marca}</td>
+                        <td class="${(parseFloat(producto.Cantidad) > 0 ? "text-black" : "text-danger")}">${tools.formatMoney(parseFloat(producto.Cantidad)) + '<br>' + producto.UnidadCompra}</td>
+                        <td>${producto.ImpuestoNombre}</td>
+                        <td>${tools.formatMoney(parseFloat(producto.PrecioVentaGeneral))}</td>
+                        <td><button class="btn btn-danger" onclick="onSelectProducto('${producto.IdSuministro}')"><image src="./images/accept.png" width="22" height="22" /></button></td>' +
+                        </tr>`);
                 }
-            },
-            error: function (error) {
-                tbListProductos.empty();
-                tbListProductos.append('<tr><td class="text-center" colspan="6"><p>Error en obtener los datos nuevamentes</p></td></tr>');
+                totalPaginacionProductos = parseInt(Math.ceil((parseFloat(object.total) / filasPorPaginaProductos)));
+
+                let i = 1;
+                let range = [];
+                while (i <= totalPaginacionProductos) {
+                    range.push(i);
+                    i++;
+                }
+
+                let min = Math.min.apply(null, range);
+                let max = Math.max.apply(null, range);
+
+                let paginacionHtml = `
+                    <button class="btn btn-outline-secondary" onclick="onEventPaginacionInicioPr(${min})">
+                        <i class="fa fa-angle-double-left"></i>
+                    </button>
+                    <button class="btn btn-outline-secondary" onclick="onEventAnteriorPaginacionPr()">
+                        <i class="fa fa-angle-left"></i>
+                    </button>
+                    <span class="btn btn-outline-secondary disabled">${paginacionProductos} - ${totalPaginacionProductos}</span>
+                    <button class="btn btn-outline-secondary" onclick="onEventSiguientePaginacionPr()">
+                        <i class="fa fa-angle-right"></i>
+                    </button>
+                    <button class="btn btn-outline-secondary" onclick="onEventPaginacionFinalPr(${max})">
+                        <i class="fa fa-angle-double-right"></i>
+                    </button>`;
+
+                ulPaginationProductos.html(paginacionHtml);
+
                 stateProductos = false;
             }
-        });
+        } catch (error) {
+            tbListProductos.empty();
+            tbListProductos.append('<tr><td class="text-center" colspan="7"><p>Error en obtener los datos nuevamentes</p></td></tr>');
+            ulPaginationProductos.html(`
+                <button class="btn btn-outline-secondary">
+                    <i class="fa fa-angle-double-left"></i>
+                </button>
+                <button class="btn btn-outline-secondary">
+                    <i class="fa fa-angle-left"></i>
+                </button>
+                <span class="btn btn-outline-secondary disabled">0 - 0</span>
+                <button class="btn btn-outline-secondary">
+                    <i class="fa fa-angle-right"></i>
+                </button>
+                <button class="btn btn-outline-secondary">
+                    <i class="fa fa-angle-double-right"></i>
+                </button>`);
+            stateProductos = false;
+        }
     }
 
     onSelectProducto = function (idSuministro) {
@@ -150,12 +197,12 @@ function ModalProductos() {
                     let suministro = arrayProductos[i];
                     let cantidad = 1;
 
-                    let valor_sin_impuesto = suministro.PrecioVentaGeneral / ((suministro.Valor / 100.00) + 1);
+                    let valor_sin_impuesto = parseFloat(suministro.PrecioVentaGeneral) / ((parseFloat(suministro.Valor) / 100.00) + 1);
                     let descuento = 0;
                     let porcentajeRestante = valor_sin_impuesto * (descuento / 100.00);
                     let preciocalculado = valor_sin_impuesto - porcentajeRestante;
 
-                    let impuesto = tools.calculateTax(suministro.Valor, preciocalculado);
+                    let impuesto = tools.calculateTax(parseFloat(suministro.Valor), preciocalculado);
 
                     listaProductos.push({
                         "idSuministro": suministro.IdSuministro,
@@ -196,9 +243,9 @@ function ModalProductos() {
 
                             currenteObject.cantidad = parseFloat(currenteObject.cantidad) + 1;
 
-                            let porcentajeRestante = currenteObject.precioVentaGeneralUnico * (currenteObject.descuento / 100.00);
+                            let porcentajeRestante = parseFloat(currenteObject.precioVentaGeneralUnico) * (parseFloat(currenteObject.descuento) / 100.00);
                             currenteObject.descuentoSumado = porcentajeRestante * currenteObject.cantidad;
-                            currenteObject.impuestoSumado = currenteObject.cantidad * (currenteObject.precioVentaGeneralReal * (currenteObject.impuestoValor / 100.00));
+                            currenteObject.impuestoSumado = currenteObject.cantidad * (parseFloat(currenteObject.precioVentaGeneralReal) * (parseFloat(currenteObject.impuestoValor) / 100.00));
 
                             currenteObject.importeBruto = currenteObject.cantidad * currenteObject.precioVentaGeneralUnico;
                             currenteObject.subImporteNeto = currenteObject.cantidad * currenteObject.precioVentaGeneralReal;
@@ -213,8 +260,40 @@ function ModalProductos() {
         $("#txtSearchProducto").focus();
     }
 
-    function clearModalProductos() {
-        $("#tbListProductos").empty();
+    onEventPaginacionInicioPr = function (value) {
+        if (!stateProductos) {
+            if (value !== paginacionProductos) {
+                paginacionProductos = value;
+                onEventPaginacion();
+            }
+        }
+    }
+
+    onEventPaginacionFinalPr = function (value) {
+        if (!stateProductos) {
+            if (value !== paginacionProductos) {
+                paginacionProductos = value;
+                onEventPaginacion();
+            }
+        }
+    }
+
+    onEventAnteriorPaginacionPr = function () {
+        if (!stateProductos) {
+            if (paginacionProductos > 1) {
+                paginacionProductos--;
+                onEventPaginacion();
+            }
+        }
+    }
+
+    onEventSiguientePaginacionPr = function () {
+        if (!stateProductos) {
+            if (paginacionProductos < totalPaginacionProductos) {
+                paginacionProductos++;
+                onEventPaginacion();
+            }
+        }
     }
 
 }

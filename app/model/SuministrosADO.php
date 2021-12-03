@@ -128,19 +128,17 @@ class SuministrosADO
         }
     }
 
-    public static function ListarSuministroView($tipo, $value, $posicionPaginacion, $filasPorPagina)
+    public static function ListarSuministroView(int $tipo, string $value, int $posicionPaginacion, int $filasPorPagina)
     {
         try {
-            $array = array();
-            // Preparar sentencia
             $arraySuministro = array();
             $cmdSuministro = Database::getInstance()->getDb()->prepare("{CALL Sp_Listar_Suministros_Lista_View(?,?,?,?)}");
             $cmdSuministro->bindValue(1, $tipo, PDO::PARAM_INT);
             $cmdSuministro->bindValue(2, $value, PDO::PARAM_STR);
             $cmdSuministro->bindValue(3, $posicionPaginacion, PDO::PARAM_INT);
             $cmdSuministro->bindValue(4, $filasPorPagina, PDO::PARAM_INT);
-            // Ejecutar sentencia preparada
             $cmdSuministro->execute();
+
             $count = 0;
             while ($row = $cmdSuministro->fetch()) {
                 $count++;
@@ -166,17 +164,24 @@ class SuministrosADO
                 ));
             }
 
-            // Preparar sentencia
             $cmdTotal = Database::getInstance()->getDb()->prepare("{CALL Sp_Listar_Suministros_Lista_View_Count(?,?)}");
             $cmdTotal->bindValue(1, $tipo, PDO::PARAM_INT);
             $cmdTotal->bindValue(2, $value, PDO::PARAM_STR);
             $cmdTotal->execute();
             $resultTotal = $cmdTotal->fetchColumn();
-            array_push($array, $arraySuministro, $resultTotal);
 
-            return $array;
-        } catch (PDOException $e) {
-            return $array;
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 200 . ' ' . "OK");
+
+            return array(
+                "data" => $arraySuministro,
+                "total" => $resultTotal
+            );
+        } catch (Exception $ex) {
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+
+            return $ex->getMessage();
         }
     }
 
@@ -792,6 +797,25 @@ class SuministrosADO
 
             return $array;
         } catch (Exception $ex) {
+            return $ex->getMessage();
+        }
+    }
+
+    public static function Get_Suministro_By_Search(string $value)
+    {
+        try {
+            $cmdSuministro = Database::getInstance()->getDb()->prepare("{CALL Sp_Listar_Suministro_By_Search(?)}");
+            $cmdSuministro->bindParam(1, $value, PDO::PARAM_STR);
+            $cmdSuministro->execute();
+
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 200 . ' ' . "OK");
+
+            return $cmdSuministro->fetch(PDO::FETCH_OBJ);
+        } catch (Exception $ex) {
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+
             return $ex->getMessage();
         }
     }

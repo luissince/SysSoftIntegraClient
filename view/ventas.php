@@ -420,7 +420,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
             async function fillVentasTable(opcion, busqueda, fechaInicial, fechaFinal, comprobante, estado) {
                 try {
-
                     let result = await tools.promiseFetchGet(
                         "../app/controller/VentaController.php", {
                             "type": "venta",
@@ -430,7 +429,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             "fechaFinal": fechaFinal,
                             "comprobante": comprobante,
                             "estado": estado,
-                            "facturacion": 0,
                             "posicionPagina": ((paginacion - 1) * filasPorPagina),
                             "filasPorPagina": filasPorPagina
                         },

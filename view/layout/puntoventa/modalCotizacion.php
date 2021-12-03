@@ -17,9 +17,9 @@
                         <div class="form-group">
                             <label>Buscar por N° de Cotización o Cliente </label>
                             <div class="input-group">
-                                <input type="text" class="form-control" placeholder="Buscar">
+                                <input id="txtSearchCotizacion" type="text" class="form-control" placeholder="Buscar">
                                 <div class="input-group-prepend">
-                                    <button class="btn btn-secondary" type="button" title="Recargar"><i class="fa fa-refresh"></i> Recargar</button>
+                                    <button id="btnRecargarCotizacion" class="btn btn-secondary" type="button" title="Recargar"><i class="fa fa-refresh"></i> Recargar</button>
                                 </div>
                             </div>
                         </div>
@@ -28,13 +28,13 @@
                     <div class="col-md-3 col-sm-12">
                         <div class="form-group">
                             <label>Fecha Inicio </label>
-                            <input type="date" class="form-control" placeholder="Fecha de Inicio">
+                            <input id="txtFechaInicialCotizacion" type="date" class="form-control" placeholder="Fecha de Inicio">
                         </div>
                     </div>
                     <div class="col-md-3 col-sm-12">
                         <div class="form-group">
                             <label>Fecha Fin </label>
-                            <input type="date" class="form-control" placeholder="Fecha de Fin">
+                            <input id="txtFechaFinalCotizacion" type="date" class="form-control" placeholder="Fecha de Fin">
                         </div>
                     </div>
                 </diw>
@@ -49,16 +49,38 @@
                                         <th class="text-center">Vendedor</th>
                                         <th class="text-center">Cotización</th>
                                         <th class="text-center">Fecha</th>
-                                        <th class="text-center">Cliente</th>
                                         <th class="text-center">Total</th>
+                                        <th class="text-center">Cliente</th>
+                                        <th class="text-center">Agregar</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tbListCotizacion">
                                     <tr>
-                                        <td colspan="8" align="center"> !No hay datos para mostrar¡</td>
+                                        <td colspan="7" align="center"> !No hay datos para mostrar¡</td>
                                     </tr>
                                 </tbody>
                             </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12 col-sm-12 col-12 text-center">
+                        <label>Paginación</label>
+                        <div class="form-group" id="ulPaginationCotizacion">
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-double-left"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-left"></i>
+                            </button>
+                            <span class="btn btn-outline-secondary disabled" id="lblPaginacion">0 - 0</span>
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-right"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-double-right"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
