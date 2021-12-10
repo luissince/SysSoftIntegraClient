@@ -19,7 +19,7 @@ class SuministrosADO
 
     public static function ListarInventario($producto, $tipoExistencia, $nameProduct, $opcion, $categoria, $marca, $almacen, $posicionPaginacion, $filasPorPagina)
     {
-        $array = array();
+
         try {
             // Preparar sentencia
             $comando = Database::getInstance()->getDb()->prepare("{CALL Sp_Listar_Inventario_Suministros(?,?,?,?,?,?,?,?,?)}");
@@ -72,9 +72,103 @@ class SuministrosADO
             $comando->execute();
             $totalResult = $comando->fetchColumn();
 
-            array_push($array, $arrayInventario, $totalResult);
-            return $array;
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 200 . ' ' . "OK");
+
+            return array(
+                "data" => $arrayInventario,
+                "total" => $totalResult
+            );
         } catch (Exception $ex) {
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+
+            return $ex->getMessage();
+        }
+    }
+
+    public static function ListarProductosDestacos(int $posicionPaginacion, int $filasPorPagina)
+    {
+        try {
+            $cmdSuministro = Database::getInstance()->getDb()->prepare("SELECT 
+            s.IdSuministro, 
+            s.Clave, 
+            s.ClaveAlterna, 
+            s.NombreMarca,  
+            s.Cantidad, 
+            ISNULL(dm.Nombre,'') AS Marca, 
+            ISNULL(dc.Nombre,'') AS Categoria, 
+            s.PrecioVentaGeneral, 
+            (s.PrecioVentaGeneral+(s.PrecioVentaGeneral*0.10)) AS PrecioVentaAlto, 
+            s.Estado,
+            ISNULL(s.Imagen,'') AS Imagen
+            FROM SuministroTB AS s
+            LEFT JOIN DetalleTB AS dm ON dm.IdDetalle = s.Marca AND dm.IdMantenimiento = '0007'
+            LEFT JOIN DetalleTB AS dc ON dc.IdDetalle = s.Categoria AND dc.IdMantenimiento = '0006'
+            ORDER BY s.IdSuministro ASC OFFSET ? ROWS FETCH NEXT ? ROWS");
+            $cmdSuministro->bindValue(1, $posicionPaginacion, PDO::PARAM_INT);
+            $cmdSuministro->bindValue(2, $filasPorPagina, PDO::PARAM_INT);
+            $cmdSuministro->execute();
+
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 200 . ' ' . "OK");
+
+            return $cmdSuministro->fetchAll(PDO::FETCH_OBJ);
+        } catch (Exception $ex) {
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+
+            return $ex->getMessage();
+        }
+    }
+
+    public static function ListarSuministroCatalogo(int $opcion, string $buscar, int $idCategoria, int $idMarca, int $posicionPaginacion, int $filasPorPagina)
+    {
+        try {
+            $cmdSuministro = Database::getInstance()->getDb()->prepare("{CALL Sp_Listar_Catalogo(?,?,?,?,?,?)}");
+            $cmdSuministro->bindValue(1, $opcion, PDO::PARAM_INT);
+            $cmdSuministro->bindValue(2, $buscar, PDO::PARAM_STR);
+            $cmdSuministro->bindValue(3, $idCategoria, PDO::PARAM_INT);
+            $cmdSuministro->bindValue(4, $idMarca, PDO::PARAM_INT);
+            $cmdSuministro->bindValue(5, $posicionPaginacion, PDO::PARAM_INT);
+            $cmdSuministro->bindValue(6, $filasPorPagina, PDO::PARAM_INT);
+            $cmdSuministro->execute();
+            $arraySuministro = array();
+            while ($row =  $cmdSuministro->fetch()) {
+                array_push($arraySuministro, array(
+                    "IdSuministro" => $row["IdSuministro"],
+                    "Clave" => $row["Clave"],
+                    "ClaveAlterna" => $row["ClaveAlterna"],
+                    "NombreMarca" => $row["NombreMarca"],
+                    "Cantidad" => floatval($row["Cantidad"]),
+                    "Marca" => $row["Marca"],
+                    "Categoria" => $row["Categoria"],
+                    "PrecioVentaGeneral" => floatval($row["PrecioVentaGeneral"]),
+                    "PrecioVentaAlto" => floatval($row["PrecioVentaAlto"]),
+                    "Estado" => $row["Estado"],
+                    "Imagen" => $row["Imagen"],
+                ));
+            }
+
+            $cmdTotal = Database::getInstance()->getDb()->prepare("{CALL Sp_Listar_Catalogo_Count(?,?,?,?)}");
+            $cmdTotal->bindValue(1, $opcion, PDO::PARAM_INT);
+            $cmdTotal->bindValue(2, $buscar, PDO::PARAM_STR);
+            $cmdTotal->bindValue(3, $idCategoria, PDO::PARAM_INT);
+            $cmdTotal->bindValue(4, $idMarca, PDO::PARAM_INT);
+            $cmdTotal->execute();
+            $totalResult = $cmdTotal->fetchColumn();
+
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 200 . ' ' . "OK");
+
+            return array(
+                "data" => $arraySuministro,
+                "total" => $totalResult
+            );
+        } catch (Exception $ex) {
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+
             return $ex->getMessage();
         }
     }

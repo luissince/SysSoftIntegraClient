@@ -20,20 +20,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         $idAlmacen = $_GET['idAlmacen'];
         $posicionPagina = $_GET['posicionPagina'];
         $filasPorPagina = $_GET['filasPorPagina'];
-        //$search = $_GET['search'];
-        $result = SuministrosADO::ListarInventario($producto, $existencia, $nombre, $opcion, $categoria, $marca, $idAlmacen, $posicionPagina, $filasPorPagina);
-        if (is_array($result)) {
-            print json_encode(array(
-                "estado" => 1,
-                "data" => $result[0],
-                "total" => $result[1]
-            ));
-        } else {
-            print json_encode(array(
-                "estado" => 2,
-                "mensaje" => $result
-            ));
-        }
+        //$search = $_GET['search'];     
+        print json_encode(SuministrosADO::ListarInventario($producto, $existencia, $nombre, $opcion, $categoria, $marca, $idAlmacen, $posicionPagina, $filasPorPagina));
+        exit();
+    } else if ($_GET["type"] == "destacados") {
+        print json_encode(SuministrosADO::ListarProductosDestacos($_GET['posicionPagina'], $_GET['filasPorPagina']));
+        exit();
+    } else if ($_GET["type"] == "catalogo") {
+        print json_encode(SuministrosADO::ListarSuministroCatalogo($_GET['opcion'], $_GET['buscar'], $_GET['categoria'], $_GET['marca'], $_GET['posicionPagina'], $_GET['filasPorPagina']));
         exit();
     } else if ($_GET["type"] == "modalproductos") {
         print json_encode(SuministrosADO::ListarSuministroView($_GET["tipo"], $_GET["value"], $_GET["posicionPagina"], $_GET["filasPorPagina"]));

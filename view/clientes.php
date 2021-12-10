@@ -412,76 +412,10 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     });
 
                     let object = result;
-                    if (object.estado === 1) {
-                        tbList.empty();
+                    tbList.empty();
 
-                        if (object.data.length == 0) {
-                            tbList.append('<tr><td class="text-center" colspan="10"><p>No hay datos para mostrar.</p></td></tr>');
-                            ulPagination.html(`
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-double-left"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-left"></i>
-                            </button>
-                            <span class="btn btn-outline-secondary disabled" id="lblPaginacion">0 - 0</span>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-right"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-double-right"></i>
-                            </button>`);
-                            state = false;
-                        } else {
-
-                            for (let cliente of object.data) {
-                                let predeterminado = cliente.Predeterminado == 1 ? './images/checked.png' : './images/unchecked.png';
-
-                                tbList.append('<tr>' +
-                                    '<td class="text-center">' + cliente.Id + '</td>' +
-                                    '<td class="text-left">' + cliente.TipoDocumento + '<br>' + cliente.NumeroDocumento + '</td>' +
-                                    '<td class="text-left">' + cliente.Informacion + '</td>' +
-                                    '<td class="text-left">' + cliente.Telefono + '<br>' + cliente.Celular + '</td>' +
-                                    '<td class="text-left">' + cliente.Direccion + '</td>' +
-                                    '<td class="text-left">' + cliente.Representante + '</td>' +
-                                    '<td class="text-center"><img width="32" height="32" src="' + predeterminado + '" alt="Producto"/></td>' +
-                                    '<td class="text-center"><button class="btn btn-warning" onclick="EditarCliente(\'' + cliente.IdCliente + '\')"><i class="fa fa-edit"></i><button</td>' +
-                                    '<td class="text-center"><button class="btn btn-danger" onclick="DeleteCliente(\'' + cliente.IdCliente + '\')"><i class="fa fa-trash"></i><button</td>' +
-                                    '<td class="text-center"><button class="btn btn-info" onClick="PredeterminadoCliente(\'' + cliente.IdCliente + '\')"><i class="fa fa-check-square-o"></i><button</td>' +
-                                    '</tr>');
-                            }
-                            totalPaginacion = parseInt(Math.ceil((parseFloat(object.total) / filasPorPagina)));
-
-                            let i = 1;
-                            let range = [];
-                            while (i <= totalPaginacion) {
-                                range.push(i);
-                                i++;
-                            }
-
-                            let min = Math.min.apply(null, range);
-                            let max = Math.max.apply(null, range);
-
-                            let paginacionHtml = `
-                            <button class="btn btn-outline-secondary" onclick="onEventPaginacionInicio(${min})">
-                                <i class="fa fa-angle-double-left"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary" onclick="onEventAnteriorPaginacion()">
-                                <i class="fa fa-angle-left"></i>
-                            </button>
-                            <span class="btn btn-outline-secondary disabled" id="lblPaginacion">${paginacion} - ${totalPaginacion}</span>
-                            <button class="btn btn-outline-secondary" onclick="onEventSiguientePaginacion()">
-                                <i class="fa fa-angle-right"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary" onclick="onEventPaginacionFinal(${max})">
-                                <i class="fa fa-angle-double-right"></i>
-                            </button>`;
-                            ulPagination.html(paginacionHtml);
-                            state = false;
-                        }
-                    } else {
-                        tbList.empty();
-                        tbList.append('<tr><td class="text-center" colspan="10"><p>' + object.message + '</p></td></tr>');
+                    if (object.data.length == 0) {
+                        tbList.append('<tr><td class="text-center" colspan="10"><p>No hay datos para mostrar.</p></td></tr>');
                         ulPagination.html(`
                             <button class="btn btn-outline-secondary">
                                 <i class="fa fa-angle-double-left"></i>
@@ -497,7 +431,54 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 <i class="fa fa-angle-double-right"></i>
                             </button>`);
                         state = false;
+                    } else {
+
+                        for (let cliente of object.data) {
+                            let predeterminado = cliente.Predeterminado == 1 ? './images/checked.png' : './images/unchecked.png';
+
+                            tbList.append('<tr>' +
+                                '<td class="text-center">' + cliente.Id + '</td>' +
+                                '<td class="text-left">' + cliente.TipoDocumento + '<br>' + cliente.NumeroDocumento + '</td>' +
+                                '<td class="text-left">' + cliente.Informacion + '</td>' +
+                                '<td class="text-left">' + cliente.Telefono + '<br>' + cliente.Celular + '</td>' +
+                                '<td class="text-left">' + cliente.Direccion + '</td>' +
+                                '<td class="text-left">' + cliente.Representante + '</td>' +
+                                '<td class="text-center"><img width="32" height="32" src="' + predeterminado + '" alt="Producto"/></td>' +
+                                '<td class="text-center"><button class="btn btn-warning" onclick="EditarCliente(\'' + cliente.IdCliente + '\')"><i class="fa fa-edit"></i><button</td>' +
+                                '<td class="text-center"><button class="btn btn-danger" onclick="DeleteCliente(\'' + cliente.IdCliente + '\')"><i class="fa fa-trash"></i><button</td>' +
+                                '<td class="text-center"><button class="btn btn-info" onClick="PredeterminadoCliente(\'' + cliente.IdCliente + '\')"><i class="fa fa-check-square-o"></i><button</td>' +
+                                '</tr>');
+                        }
+                        totalPaginacion = parseInt(Math.ceil((parseFloat(object.total) / filasPorPagina)));
+
+                        let i = 1;
+                        let range = [];
+                        while (i <= totalPaginacion) {
+                            range.push(i);
+                            i++;
+                        }
+
+                        let min = Math.min.apply(null, range);
+                        let max = Math.max.apply(null, range);
+
+                        let paginacionHtml = `
+                            <button class="btn btn-outline-secondary" onclick="onEventPaginacionInicio(${min})">
+                                <i class="fa fa-angle-double-left"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary" onclick="onEventAnteriorPaginacion()">
+                                <i class="fa fa-angle-left"></i>
+                            </button>
+                            <span class="btn btn-outline-secondary disabled" id="lblPaginacion">${paginacion} - ${totalPaginacion}</span>
+                            <button class="btn btn-outline-secondary" onclick="onEventSiguientePaginacion()">
+                                <i class="fa fa-angle-right"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary" onclick="onEventPaginacionFinal(${max})">
+                                <i class="fa fa-angle-double-right"></i>
+                            </button>`;
+                        ulPagination.html(paginacionHtml);
+                        state = false;
                     }
+
                 } catch (error) {
                     tbList.empty();
                     tbList.append('<tr><td class="text-center" colspan="10"><p>' + error.responseText + '</p></td></tr>');
@@ -565,22 +546,16 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 $("#lblTextOverlayCrudCliente").html("Cargando información...");
                 try {
 
-                    let result = await tools.promiseFetchGet("../app/controller/DetalleController.php", {
+                    let documento = await tools.promiseFetchGet("../app/controller/DetalleController.php", {
                         "type": "detailid",
                         "value": "0003"
                     });
 
-                    if (result.estado == 1) {
-                        $("#cbDocumentType").append('<option value="">- Seleccione -</option>');
-                        for (let value of result.data) {
-                            $("#cbDocumentType").append('<option value="' + value.IdDetalle + '">' + value.Nombre + '</option>');
-                        }
-                        $("#divOverlayCrudCliente").addClass('d-none');
-                    } else {
-                        $("#cbDocumentType").append('<option value="">- Seleccione -</option>');
-                        $("#lblTextOverlayCrudCliente").html(result.message);
+                    $("#cbDocumentType").append('<option value="">- Seleccione -</option>');
+                    for (let value of documento) {
+                        $("#cbDocumentType").append('<option value="' + value.IdDetalle + '">' + value.Nombre + '</option>');
                     }
-
+                    $("#divOverlayCrudCliente").addClass('d-none');
                 } catch (error) {
                     $("#cbDocumentType").append('<option value="">- Seleccione -</option>');
                     $("#lblTextOverlayCrudCliente").html("Se produjo un error interno intente nuevamente por favor.");
@@ -597,45 +572,36 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 $("#lblTextOverlayCrudCliente").html("Cargando información...");
                 try {
 
-                    let result = await tools.promiseFetchGet("../app/controller/DetalleController.php", {
+                    let documento = await tools.promiseFetchGet("../app/controller/DetalleController.php", {
                         "type": "detailid",
                         "value": "0003"
                     });
 
-                    if (result.estado == 1) {
-                        $("#cbDocumentType").append('<option value="">- Seleccione -</option>');
-                        for (let value of result.data) {
-                            $("#cbDocumentType").append('<option value="' + value.IdDetalle + '">' + value.Nombre + '</option>');
-                        }
-
-                        let cliente = await tools.promiseFetchGet("../app/controller/ClienteController.php", {
-                            "type": "GetByIdCliente",
-                            "idCliente": id
-                        });
-
-                        if (cliente.estado == 1) {
-                            idCliente = cliente.data.IdCliente;
-                            $("#cbDocumentType").val(cliente.data.TipoDocumento);
-                            $("#txtDocumentNumber").val(cliente.data.NumeroDocumento);
-                            $("#txtInformacion").val(cliente.data.Informacion);
-                            $("#txtTelefono").val(cliente.data.Telefono);
-                            $("#txtCelular").val(cliente.data.Celular);
-                            $("#txtEmail").val(cliente.data.Email);
-                            $("#txtDireccion").val(cliente.data.Direccion);
-                            $("#txtRepresentante").val(cliente.data.Representante);
-                            if (cliente.data.Estado == "1") {
-                                $("#rbActivo").prop("checked", true);
-                            } else {
-                                $("#rbInactivo").prop("checked", true);
-                            }
-                            $("#divOverlayCrudCliente").addClass('d-none');
-                        } else {
-                            $("#lblTextOverlayCrudCliente").html(result.message);
-                        }
-                    } else {
-                        $("#cbDocumentType").append('<option value="">- Seleccione -</option>');
-                        $("#lblTextOverlayCrudCliente").html(result.message);
+                    $("#cbDocumentType").append('<option value="">- Seleccione -</option>');
+                    for (let value of documento) {
+                        $("#cbDocumentType").append('<option value="' + value.IdDetalle + '">' + value.Nombre + '</option>');
                     }
+
+                    let cliente = await tools.promiseFetchGet("../app/controller/ClienteController.php", {
+                        "type": "GetByIdCliente",
+                        "idCliente": id
+                    });
+
+                    idCliente = cliente.IdCliente;
+                    $("#cbDocumentType").val(cliente.TipoDocumento);
+                    $("#txtDocumentNumber").val(cliente.NumeroDocumento);
+                    $("#txtInformacion").val(cliente.Informacion);
+                    $("#txtTelefono").val(cliente.Telefono);
+                    $("#txtCelular").val(cliente.Celular);
+                    $("#txtEmail").val(cliente.Email);
+                    $("#txtDireccion").val(cliente.Direccion);
+                    $("#txtRepresentante").val(cliente.Representante);
+                    if (cliente.Estado == "1") {
+                        $("#rbActivo").prop("checked", true);
+                    } else {
+                        $("#rbInactivo").prop("checked", true);
+                    }
+                    $("#divOverlayCrudCliente").addClass('d-none');
                 } catch (error) {
                     $("#cbDocumentType").append('<option value="">- Seleccione -</option>');
                     $("#lblTextOverlayCrudCliente").html("Se produjo un error interno intente nuevamente por favor.");

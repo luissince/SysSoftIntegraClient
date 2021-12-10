@@ -21,7 +21,6 @@ class ProveedorADO
     public static function ListProveedor($buscar, $posicionPagina, $filasPorPagina)
     {
         try {
-
             $comandoVenta = Database::getInstance()->getDb()->prepare("{CALL Sp_Listar_Proveedor(?,?,?)}");
             $comandoVenta->bindParam(1, $buscar, PDO::PARAM_STR);
             $comandoVenta->bindParam(2, $posicionPagina, PDO::PARAM_INT);
@@ -51,16 +50,18 @@ class ProveedorADO
             $comandoTotal->execute();
             $resultTotal = $comandoTotal->fetchColumn();
 
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 200 . ' ' . "OK");
+
             return array(
-                "estado" => 1,
                 "data" => $arrayVenta,
                 "total" => $resultTotal
             );
         } catch (Exception $ex) {
-            return array(
-                "estado" => 2,
-                "message" => $ex->getMessage(),
-            );
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+
+            return $ex->getMessage();
         }
     }
 
@@ -70,9 +71,16 @@ class ProveedorADO
             $cmdProveedor = Database::getInstance()->getDb()->prepare("{CALL Sp_Get_Proveedor_By_Id(?)}");
             $cmdProveedor->bindParam(1, $idProveedor, PDO::PARAM_STR);
             $cmdProveedor->execute();
-            return array("estado" => 1, "data" => $cmdProveedor->fetchObject(), "d" => $idProveedor);
+
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 200 . ' ' . "OK");
+
+            return  $cmdProveedor->fetchObject();
         } catch (Exception $ex) {
-            return array("estado" => 0, "message" => $ex->getMessage());
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+
+            return  $ex->getMessage();
         }
     }
 

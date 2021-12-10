@@ -421,73 +421,10 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     });
 
                     let object = result;
-                    if (object.estado === 1) {
-                        tbList.empty();
 
-                        if (object.data.length == 0) {
-                            tbList.append('<tr><td class="text-center" colspan="8"><p>No hay datos para mostrar.</p></td></tr>');
-                            ulPagination.html(`
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-double-left"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-left"></i>
-                            </button>
-                            <span class="btn btn-outline-secondary disabled" id="lblPaginacion">0 - 0</span>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-right"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-double-right"></i>
-                            </button>`);
-                            state = false;
-                        } else {
-
-                            for (let proveedor of object.data) {
-
-                                tbList.append('<tr>' +
-                                    '<td class="text-center">' + proveedor.Id + '</td>' +
-                                    '<td class="text-left">' + proveedor.Documento + '<br>' + proveedor.NumeroDocumento + '</td>' +
-                                    '<td class="text-left">' + proveedor.RazonSocial + '</td>' +
-                                    '<td class="text-left">' + proveedor.Telefono + '<br>' + proveedor.Celular + '</td>' +
-                                    '<td class="text-left">' + proveedor.Direccion + '</td>' +
-                                    '<td class="text-left">' + proveedor.Representante + '</td>' +
-                                    '<td class="text-center"><button class="btn btn-warning" onclick="EditarProveedor(\'' + proveedor.IdProveedor + '\')"><i class="fa fa-edit"></i><button</td>' +
-                                    '<td class="text-center"><button class="btn btn-danger" onclick="DeleteProveedor(\'' + proveedor.IdProveedor + '\')"><i class="fa fa-trash"></i><button</td>' +
-                                    '</tr>');
-                            }
-                            totalPaginacion = parseInt(Math.ceil((parseFloat(object.total) / filasPorPagina)));
-
-                            let i = 1;
-                            let range = [];
-                            while (i <= totalPaginacion) {
-                                range.push(i);
-                                i++;
-                            }
-
-                            let min = Math.min.apply(null, range);
-                            let max = Math.max.apply(null, range);
-
-                            let paginacionHtml = `
-                            <button class="btn btn-outline-secondary" onclick="onEventPaginacionInicio(${min})">
-                                <i class="fa fa-angle-double-left"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary" onclick="onEventAnteriorPaginacion()">
-                                <i class="fa fa-angle-left"></i>
-                            </button>
-                            <span class="btn btn-outline-secondary disabled" id="lblPaginacion">${paginacion} - ${totalPaginacion}</span>
-                            <button class="btn btn-outline-secondary" onclick="onEventSiguientePaginacion()">
-                                <i class="fa fa-angle-right"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary" onclick="onEventPaginacionFinal(${max})">
-                                <i class="fa fa-angle-double-right"></i>
-                            </button>`;
-                            ulPagination.html(paginacionHtml);
-                            state = false;
-                        }
-                    } else {
-                        tbList.empty();
-                        tbList.append('<tr><td class="text-center" colspan="8"><p>' + object.message + '</p></td></tr>');
+                    tbList.empty();
+                    if (object.data.length == 0) {
+                        tbList.append('<tr><td class="text-center" colspan="8"><p>No hay datos para mostrar.</p></td></tr>');
                         ulPagination.html(`
                             <button class="btn btn-outline-secondary">
                                 <i class="fa fa-angle-double-left"></i>
@@ -502,6 +439,49 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             <button class="btn btn-outline-secondary">
                                 <i class="fa fa-angle-double-right"></i>
                             </button>`);
+                        state = false;
+                    } else {
+
+                        for (let proveedor of object.data) {
+
+                            tbList.append('<tr>' +
+                                '<td class="text-center">' + proveedor.Id + '</td>' +
+                                '<td class="text-left">' + proveedor.Documento + '<br>' + proveedor.NumeroDocumento + '</td>' +
+                                '<td class="text-left">' + proveedor.RazonSocial + '</td>' +
+                                '<td class="text-left">' + proveedor.Telefono + '<br>' + proveedor.Celular + '</td>' +
+                                '<td class="text-left">' + proveedor.Direccion + '</td>' +
+                                '<td class="text-left">' + proveedor.Representante + '</td>' +
+                                '<td class="text-center"><button class="btn btn-warning" onclick="EditarProveedor(\'' + proveedor.IdProveedor + '\')"><i class="fa fa-edit"></i><button</td>' +
+                                '<td class="text-center"><button class="btn btn-danger" onclick="DeleteProveedor(\'' + proveedor.IdProveedor + '\')"><i class="fa fa-trash"></i><button</td>' +
+                                '</tr>');
+                        }
+                        totalPaginacion = parseInt(Math.ceil((parseFloat(object.total) / filasPorPagina)));
+
+                        let i = 1;
+                        let range = [];
+                        while (i <= totalPaginacion) {
+                            range.push(i);
+                            i++;
+                        }
+
+                        let min = Math.min.apply(null, range);
+                        let max = Math.max.apply(null, range);
+
+                        let paginacionHtml = `
+                            <button class="btn btn-outline-secondary" onclick="onEventPaginacionInicio(${min})">
+                                <i class="fa fa-angle-double-left"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary" onclick="onEventAnteriorPaginacion()">
+                                <i class="fa fa-angle-left"></i>
+                            </button>
+                            <span class="btn btn-outline-secondary disabled" id="lblPaginacion">${paginacion} - ${totalPaginacion}</span>
+                            <button class="btn btn-outline-secondary" onclick="onEventSiguientePaginacion()">
+                                <i class="fa fa-angle-right"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary" onclick="onEventPaginacionFinal(${max})">
+                                <i class="fa fa-angle-double-right"></i>
+                            </button>`;
+                        ulPagination.html(paginacionHtml);
                         state = false;
                     }
                 } catch (error) {
@@ -570,21 +550,17 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 $("#cbDocumentType").empty();
                 $("#lblTextOverlayCrudProveedor").html("Cargando información...");
                 try {
-                    let result = await tools.promiseFetchGet("../app/controller/DetalleController.php", {
+                    let documento = await tools.promiseFetchGet("../app/controller/DetalleController.php", {
                         "type": "detailid",
                         "value": "0003"
                     });
 
-                    if (result.estado == 1) {
-                        $("#cbDocumentType").append('<option value="">- Seleccione -</option>');
-                        for (let value of result.data) {
-                            $("#cbDocumentType").append('<option value="' + value.IdDetalle + '">' + value.Nombre + '</option>');
-                        }
-                        $("#divOverlayCrudProveedor").addClass('d-none');
-                    } else {
-                        $("#cbDocumentType").append('<option value="">- Seleccione -</option>');
-                        $("#lblTextOverlayCrudProveedor").html(result.message);
+                    $("#cbDocumentType").append('<option value="">- Seleccione -</option>');
+                    for (let value of documento) {
+                        $("#cbDocumentType").append('<option value="' + value.IdDetalle + '">' + value.Nombre + '</option>');
                     }
+                    $("#divOverlayCrudProveedor").addClass('d-none');
+
                 } catch (error) {
                     $("#cbDocumentType").append('<option value="">- Seleccione -</option>');
                     $("#lblTextOverlayCrudProveedor").html("Se produjo un error interno intente nuevamente por favor.");
@@ -600,47 +576,37 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 $("#cbDocumentType").empty();
                 $("#lblTextOverlayCrudProveedor").html("Cargando información...");
                 try {
-
-                    let result = await tools.promiseFetchGet("../app/controller/DetalleController.php", {
+                    let documento = await tools.promiseFetchGet("../app/controller/DetalleController.php", {
                         "type": "detailid",
                         "value": "0003"
                     });
 
-                    if (result.estado == 1) {
-                        $("#cbDocumentType").append('<option value="">- Seleccione -</option>');
-                        for (let value of result.data) {
-                            $("#cbDocumentType").append('<option value="' + value.IdDetalle + '">' + value.Nombre + '</option>');
-                        }
-
-                        let proveedor = await tools.promiseFetchGet("../app/controller/ProveedorController.php", {
-                            "type": "GetByIdProveedor",
-                            "idProveedor": id
-                        });
-
-                        if (proveedor.estado == 1) {
-                            idProveedor = proveedor.data.IdProveedor;
-                            $("#cbDocumentType").val(proveedor.data.TipoDocumento);
-                            $("#txtDocumentNumber").val(proveedor.data.NumeroDocumento);
-                            $("#txtInformacion").val(proveedor.data.RazonSocial);
-                            $("#txtTelefono").val(proveedor.data.Telefono);
-                            $("#txtCelular").val(proveedor.data.Celular);
-                            $("#txtEmail").val(proveedor.data.Email);
-                            $("#txtPage").val(proveedor.data.PaginaWeb);
-                            $("#txtDireccion").val(proveedor.data.Direccion);
-                            $("#txtRepresentante").val(proveedor.data.Representante);
-                            if (proveedor.data.Estado == "1") {
-                                $("#rbActivo").prop("checked", true);
-                            } else {
-                                $("#rbInactivo").prop("checked", true);
-                            }
-                            $("#divOverlayCrudProveedor").addClass('d-none');
-                        } else {
-                            $("#lblTextOverlayCrudProveedor").html(result.message);
-                        }
-                    } else {
-                        $("#cbDocumentType").append('<option value="">- Seleccione -</option>');
-                        $("#lblTextOverlayCrudProveedor").html(result.message);
+                    $("#cbDocumentType").append('<option value="">- Seleccione -</option>');
+                    for (let value of documento) {
+                        $("#cbDocumentType").append('<option value="' + value.IdDetalle + '">' + value.Nombre + '</option>');
                     }
+
+                    let proveedor = await tools.promiseFetchGet("../app/controller/ProveedorController.php", {
+                        "type": "GetByIdProveedor",
+                        "idProveedor": id
+                    });
+
+                    idProveedor = proveedor.IdProveedor;
+                    $("#cbDocumentType").val(proveedor.TipoDocumento);
+                    $("#txtDocumentNumber").val(proveedor.NumeroDocumento);
+                    $("#txtInformacion").val(proveedor.RazonSocial);
+                    $("#txtTelefono").val(proveedor.Telefono);
+                    $("#txtCelular").val(proveedor.Celular);
+                    $("#txtEmail").val(proveedor.Email);
+                    $("#txtPage").val(proveedor.PaginaWeb);
+                    $("#txtDireccion").val(proveedor.Direccion);
+                    $("#txtRepresentante").val(proveedor.Representante);
+                    if (proveedor.Estado == "1") {
+                        $("#rbActivo").prop("checked", true);
+                    } else {
+                        $("#rbInactivo").prop("checked", true);
+                    }
+                    $("#divOverlayCrudProveedor").addClass('d-none');
                 } catch (error) {
                     $("#cbDocumentType").append('<option value="">- Seleccione -</option>');
                     $("#lblTextOverlayCrudProveedor").html("Se produjo un error interno intente nuevamente por favor.");

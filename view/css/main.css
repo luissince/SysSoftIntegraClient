@@ -1,7 +1,17 @@
 @charset "UTF-8";
 @font-face {
+  font-family: "Roboto Black";
+  src: url("../fonts/Roboto-Black.ttf");
+}
+
+@font-face {
   font-family: "Roboto Bold";
   src: url("../fonts/Roboto-Bold.ttf");
+}
+
+@font-face {
+  font-family: "Roboto Light";
+  src: url("../fonts/Roboto-Light.ttf");
 }
 
 @font-face {
@@ -10,21 +20,19 @@
 }
 
 @font-face {
-  font-family: "Roboto Black";
-  src: url("../fonts/Roboto-Black.ttf");
+  font-family: "muli-regular";
+  src: url("../fonts/Muli-Regular.ttf");
 }
 
 @font-face {
-  font-family: "Roboto Light";
-  src: url("../fonts/Roboto-Light.ttf");
+  font-family: "Muli-Bold";
+  src: url("../fonts/Muli-Bold.ttf");
 }
 
-/*!
- * Bootstrap v4.3.1 (https://getbootstrap.com/)
- * Copyright 2011-2019 The Bootstrap Authors
- * Copyright 2011-2019 Twitter, Inc.
- * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
- */
+@font-face {
+  font-family: "muli-semibold";
+  src: url("../fonts/Muli-SemiBold.ttf");
+}
 
 :root {
   --principal: #0072eb;
@@ -685,7 +693,7 @@ pre code {
 
 @media (min-width: 1200px) {
   .container {
-    max-width: 1140px;
+    max-width: 1220px;
   }
 }
 

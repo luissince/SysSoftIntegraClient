@@ -50,9 +50,15 @@ class ClienteADO
             $comandoTotal->execute();
             $resultTotal = $comandoTotal->fetchColumn();
 
-            return array("estado" => 1, "data" =>  $arrayVenta, "total" => $resultTotal);
-        } catch (PDOException $ex) {
-            return array("estado" => 2,  "mensaje" => $ex->getMessage());
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 200 . ' ' . "OK");
+
+            return array("data" =>  $arrayVenta, "total" => $resultTotal);
+        } catch (Exception $ex) {
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+
+            return  $ex->getMessage();
         }
     }
 
@@ -62,9 +68,16 @@ class ClienteADO
             $cmdCliente = Database::getInstance()->getDb()->prepare("{call Sp_Get_Cliente_By_Id(?)}");
             $cmdCliente->bindParam(1, $idCliente, PDO::PARAM_STR);
             $cmdCliente->execute();
-            return array("estado" => 1, "data" => $cmdCliente->fetchObject());
+
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 200 . ' ' . "OK");
+
+            return $cmdCliente->fetchObject();
         } catch (Exception $ex) {
-            return array("estado" => 0, $ex->getMessage());
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+
+            return  $ex->getMessage();
         }
     }
 

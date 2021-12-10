@@ -13,6 +13,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         print json_encode(DetalleADO::GetDetailIdName(array($_GET["value1"], $_GET["value2"], $_GET["value3"])));
     } else if ($_GET["type"] == "detailid") {
         print json_encode(DetalleADO::GetDetailId($_GET["value"]));
+    } else if ($_GET["type"] == "categoriaproducto") {
+        print json_encode(DetalleADO::CategoriasParaProductos());
+    } else if ($_GET["type"] == "marcaproducto") {
+        print json_encode(DetalleADO::MarcasParaProductos());
     }
 } else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }

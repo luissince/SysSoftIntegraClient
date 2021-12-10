@@ -56,4 +56,54 @@ class DetalleADO
             return $ex->getMessage();
         }
     }
+
+    public static function CategoriasParaProductos()
+    {
+        try {
+            $cmdDatalle = Database::getInstance()->getDb()->prepare("SELECT 
+            d.IdDetalle,
+            d.Nombre,
+            count(d.IdDetalle) AS Cantidad 
+            FROM DetalleTB AS d 
+            INNER JOIN SuministroTB AS s ON s.Categoria = d.IdDetalle
+            WHERE d.IdMantenimiento = '0006'
+            GROUP BY d.IdDetalle,d.Nombre");
+            $cmdDatalle->execute();
+
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 200 . ' ' . "OK");
+
+            return  $cmdDatalle->fetchAll(PDO::FETCH_OBJ);
+        } catch (Exception $ex) {
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+
+            return $ex->getMessage();
+        }
+    }
+
+    public static function MarcasParaProductos()
+    {
+        try {
+            $cmdDatalle = Database::getInstance()->getDb()->prepare("SELECT 
+            d.IdDetalle,
+            d.Nombre,
+            count(d.IdDetalle) AS Cantidad 
+            FROM DetalleTB AS d 
+            INNER JOIN SuministroTB AS s ON s.Marca = d.IdDetalle
+            WHERE d.IdMantenimiento = '0007'
+            GROUP BY d.IdDetalle,d.Nombre");
+            $cmdDatalle->execute();
+
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 200 . ' ' . "OK");
+
+            return  $cmdDatalle->fetchAll(PDO::FETCH_OBJ);
+        } catch (Exception $ex) {
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+
+            return $ex->getMessage();
+        }
+    }
 }

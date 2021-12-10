@@ -425,34 +425,28 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     },
                     success: function(result) {
                         let object = result;
-                        if (object.estado === 1) {
-                            tbProductos.empty();
-                            let productos = object.data;
-                            if (productos.length === 0) {
-                                tbProductos.append('<tr><td class="text-center" colspan="6"><p>No hay datos para mostrar</p></td></tr>');
-                                totalPaginacion = 0;
-                                lblPaginaActual.html(0);
-                                lblPaginaSiguiente.html(0);
-                                state = false;
-                            } else {
-                                for (let producto of productos) {
-                                    tbProductos.append('<tr ondblclick=onSelectProducto(\'' + producto.IdSuministro + '\')>' +
-                                        '<td>' + producto.Id + '</td>' +
-                                        '<td>' + producto.Clave + '</br>' + producto.NombreMarca + '</td>' +
-                                        '<td>' + producto.Categoria + '<br>' + producto.Marca + '</td>' +
-                                        '<td>' + tools.formatMoney(parseFloat(producto.Cantidad)) + '</td>' +
-                                        '<td>' + producto.ImpuestoNombre + '</td>' +
-                                        '<td>' + tools.formatMoney(parseFloat(producto.PrecioVentaGeneral)) + '</td>' +
-                                        '</tr>');
-                                }
-                                totalPaginacion = parseInt(Math.ceil((parseFloat(object.total) / filasPorPagina)));
-                                lblPaginaActual.html(paginacion);
-                                lblPaginaSiguiente.html(totalPaginacion);
-                                state = false;
-                            }
+                        tbProductos.empty();
+                        let productos = object.data;
+                        if (productos.length === 0) {
+                            tbProductos.append('<tr><td class="text-center" colspan="6"><p>No hay datos para mostrar</p></td></tr>');
+                            totalPaginacion = 0;
+                            lblPaginaActual.html(0);
+                            lblPaginaSiguiente.html(0);
+                            state = false;
                         } else {
-                            tbProductos.empty();
-                            tbProductos.append('<tr><td class="text-center" colspan="6"><p>' + object.message + '</p></td></tr>');
+                            for (let producto of productos) {
+                                tbProductos.append('<tr ondblclick=onSelectProducto(\'' + producto.IdSuministro + '\')>' +
+                                    '<td>' + producto.Id + '</td>' +
+                                    '<td>' + producto.Clave + '</br>' + producto.NombreMarca + '</td>' +
+                                    '<td>' + producto.Categoria + '<br>' + producto.Marca + '</td>' +
+                                    '<td>' + tools.formatMoney(parseFloat(producto.Cantidad)) + '</td>' +
+                                    '<td>' + producto.ImpuestoNombre + '</td>' +
+                                    '<td>' + tools.formatMoney(parseFloat(producto.PrecioVentaGeneral)) + '</td>' +
+                                    '</tr>');
+                            }
+                            totalPaginacion = parseInt(Math.ceil((parseFloat(object.total) / filasPorPagina)));
+                            lblPaginaActual.html(paginacion);
+                            lblPaginaSiguiente.html(totalPaginacion);
                             state = false;
                         }
                     },
