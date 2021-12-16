@@ -18,7 +18,7 @@
                             <label>Buscar por N° de Cotización o Cliente </label>
                             <div class="input-group">
                                 <input id="txtSearchCotizacion" type="text" class="form-control" placeholder="Buscar">
-                                <div class="input-group-prepend">
+                                <div class="input-group-append">
                                     <button id="btnRecargarCotizacion" class="btn btn-secondary" type="button" title="Recargar"><i class="fa fa-refresh"></i> Recargar</button>
                                 </div>
                             </div>
@@ -49,8 +49,8 @@
                                         <th class="text-center">Vendedor</th>
                                         <th class="text-center">Cotización</th>
                                         <th class="text-center">Fecha</th>
-                                        <th class="text-center">Total</th>
                                         <th class="text-center">Cliente</th>
+                                        <th class="text-center">Total</th>
                                         <th class="text-center">Agregar</th>
                                     </tr>
                                 </thead>

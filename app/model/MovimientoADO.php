@@ -17,33 +17,77 @@ class MovimientoADO
     {
     }
 
-    public static function ListarInventario($ajuste, $all)
+    public static function ListarTipoMovimiento(bool $ajuste, $all)
     {
-        $consulta = "SELECT IdTipoMovimiento,Nombre,Predeterminado,Sistema,Ajuste FROM TipoMovimientoTB";
-        $query = $all === "true" ? $consulta : $consulta . " WHERE Ajuste = ?";
-        $array = array();
         try {
-            // Preparar sentencia
+            $consulta = "SELECT IdTipoMovimiento,Nombre,Predeterminado,Sistema,Ajuste FROM TipoMovimientoTB";
+            $query = $all === "true" ? $consulta : $consulta . " WHERE Ajuste = ?";
             $comando = Database::getInstance()->getDb()->prepare($query);
             if ($all === "false") {
                 $comando->bindParam(1, $ajuste, PDO::PARAM_BOOL);
             }
-            // Ejecutar sentencia preparada
             $comando->execute();
+
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 200 . ' ' . "OK");
+
+            return $comando->fetchAll(PDO::FETCH_OBJ);
+        } catch (Exception $ex) {
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+
+            return $ex->getMessage();
+        }
+    }
+
+    public static function ListarMoviminentos(string $opcion, int $movimiento, string $fechaInicial, string $fechaFinal, int $posicionPagina, int $filasPorPagina)
+    {
+        try {
+            $arrayMovimiento = array();
+            $cmdMovimiento = Database::getInstance()->getDb()->prepare("{CALL Sp_Listar_Movimiento_Inventario(?,?,?,?,?,?)}");
+            $cmdMovimiento->bindValue(1, $opcion, PDO::PARAM_INT);
+            $cmdMovimiento->bindValue(2, $movimiento, PDO::PARAM_INT);
+            $cmdMovimiento->bindValue(3, $fechaInicial, PDO::PARAM_STR);
+            $cmdMovimiento->bindValue(4, $fechaFinal, PDO::PARAM_STR);
+            $cmdMovimiento->bindValue(5, $posicionPagina, PDO::PARAM_INT);
+            $cmdMovimiento->bindValue(6, $filasPorPagina, PDO::PARAM_INT);
+            $cmdMovimiento->execute();
             $count = 0;
-            while ($row = $comando->fetch()) {
+            while ($row = $cmdMovimiento->fetch()) {
                 $count++;
-                array_push($array, array(
-                    "IdTipoMovimiento" => $row["IdTipoMovimiento"],
-                    "Nombre" => $row["Nombre"],
-                    "Predeterminado" => $row["Predeterminado"],
-                    "Sistema" => $row["Sistema"],
-                    "Ajuste" => $row["Ajuste"]
+                array_push($arrayMovimiento, array(
+                    "count" => $count + $posicionPagina,
+                    "IdMovimientoInventario" => $row["IdMovimientoInventario"],
+                    "Fecha" => $row["Fecha"],
+                    "Hora" => $row["Hora"],
+                    "TipoAjuste" => $row["TipoAjuste"],
+                    "TipoMovimiento" => $row["TipoMovimiento"],
+                    "Observacion" => $row["Observacion"],
+                    "Informacion" => $row["Informacion"],
+                    "Estado" => $row["Estado"]
                 ));
             }
-            return $array;
-        } catch (PDOException $e) {
-            return $e->getMessage();
+
+            $cmdMovimientoCount = Database::getInstance()->getDb()->prepare("{CALL Sp_Listar_Movimiento_Inventario_Count(?,?,?,?)}");
+            $cmdMovimientoCount->bindValue(1, $opcion, PDO::PARAM_INT);
+            $cmdMovimientoCount->bindValue(2, $movimiento, PDO::PARAM_INT);
+            $cmdMovimientoCount->bindValue(3, $fechaInicial, PDO::PARAM_STR);
+            $cmdMovimientoCount->bindValue(4, $fechaFinal, PDO::PARAM_STR);
+            $cmdMovimientoCount->execute();
+            $resultTotal = $cmdMovimientoCount->fetchColumn();
+
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 200 . ' ' . "OK");
+
+            return array(
+                "data" => $arrayMovimiento,
+                "total" => $resultTotal
+            );
+        } catch (Exception $ex) {
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+
+            return $ex->getMessage();
         }
     }
 
@@ -136,9 +180,15 @@ class MovimientoADO
             }
 
             Database::getInstance()->getDb()->commit();
-            return "inserted";
-        } catch (PDOException $e) {
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 201 . ' ' . "Created");
+
+            return "Registrado correctamente el movimiento.";
+        } catch (Exception $e) {
             Database::getInstance()->getDb()->rollback();
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+
             return $e->getMessage();
         }
     }
@@ -165,9 +215,7 @@ class MovimientoADO
             foreach ($body["lista"] as $result) {
 
                 $cmdKardex = Database::getInstance()->getDb()->prepare("{CALL Sp_Listar_Kardex_Suministro_By_Id(0,?,0)}");
-                // $cmdKardex->bindParam(1, 0, PDO::PARAM_INT);
                 $cmdKardex->bindParam(1, $result["IdSuministro"], PDO::PARAM_STR);
-                // $cmdKardex->bindParam(3, 0, PDO::PARAM_STR);
                 $cmdKardex->execute();
 
                 $cantidad = 0;
@@ -210,10 +258,16 @@ class MovimientoADO
             }
 
             Database::getInstance()->getDb()->commit();
-            return "inserted";
-        } catch (PDOException $e) {
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 201 . ' ' . "Created");
+
+            return "Se completo el proceso correctamente.";
+        } catch (Exception $ex) {
             Database::getInstance()->getDb()->rollback();
-            return $e->getMessage();
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+
+            return $ex->getMessage();
         }
     }
 
@@ -245,11 +299,19 @@ class MovimientoADO
                     "Precio" => $row["Precio"]
                 ));
             }
-            array_push($array, $resultMovimiento, $resultMovimientoDetalle);
 
-            return $array;
-        } catch (PDOException $e) {
-            return $e->getMessage();
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 200 . ' ' . "OK");
+
+            return array(
+                "movimiento" =>  $resultMovimiento,
+                "detalle" => $resultMovimientoDetalle
+            );
+        } catch (Exception $ex) {
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+
+            return $ex->getMessage();
         }
     }
 
@@ -262,7 +324,10 @@ class MovimientoADO
             $comando->execute();
             if ($comando->fetch()) {
                 Database::getInstance()->getDb()->rollback();
-                return "exists";
+                $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+                header($protocol . ' ' . 400 . ' ' . "Bad Request");
+
+                return "El Ajuste ya está anulado.";
             } else {
                 $cmdMovimiento = Database::getInstance()->getDb()->prepare("SELECT TipoAjuste FROM MovimientoInventarioTB WHERE IdMovimientoInventario = ?");
                 $cmdMovimiento->bindParam(1, $idMovimiento, PDO::PARAM_STR);
@@ -271,7 +336,12 @@ class MovimientoADO
 
                 if ($tipoMovimiento == 0) {
 
-                    $cmdDetalleMovimiento = Database::getInstance()->getDb()->prepare("SELECT IdSuministro,Cantidad,Costo FROM MovimientoInventarioDetalleTB WHERE IdMovimientoInventario = ?");
+                    $cmdDetalleMovimiento = Database::getInstance()->getDb()->prepare("SELECT 
+                    IdSuministro,
+                    Cantidad,
+                    Costo 
+                    FROM MovimientoInventarioDetalleTB 
+                    WHERE IdMovimientoInventario = ?");
                     $cmdDetalleMovimiento->bindParam(1, $idMovimiento, PDO::PARAM_STR);
                     $cmdDetalleMovimiento->execute();
                     $arrayDetalleMovimiento = array();
@@ -297,7 +367,9 @@ class MovimientoADO
                     IdAlmacen) 
                     VALUES(?,CAST(GETDATE() AS DATE),CAST(GETDATE() AS TIME),?,?,?,?,?,?,?)");
 
-                    $cmdSuministro = Database::getInstance()->getDb()->prepare("UPDATE SuministroTB SET Cantidad = Cantidad + ? WHERE IdSuministro = ?");
+                    $cmdSuministro = Database::getInstance()->getDb()->prepare("UPDATE 
+                    SuministroTB SET Cantidad = Cantidad + ? 
+                    WHERE IdSuministro = ?");
                     foreach ($arrayDetalleMovimiento as $value) {
                         $cmdKardex->execute(array(
                             $value["IdSuministro"],
@@ -319,9 +391,17 @@ class MovimientoADO
                     $cmdMovimiento->bindParam(1, $idMovimiento, PDO::PARAM_STR);
                     $cmdMovimiento->execute();
                     Database::getInstance()->getDb()->commit();
-                    return "deleted";
+                    $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+                    header($protocol . ' ' . 201 . ' ' . "Created");
+
+                    return "Se anuló correctamente el Ajuste.";
                 } else {
-                    $cmdDetalleMovimiento = Database::getInstance()->getDb()->prepare("SELECT IdSuministro,Cantidad,Costo FROM MovimientoInventarioDetalleTB WHERE IdMovimientoInventario = ?");
+                    $cmdDetalleMovimiento = Database::getInstance()->getDb()->prepare("SELECT 
+                    IdSuministro,
+                    Cantidad,
+                    Costo 
+                    FROM MovimientoInventarioDetalleTB 
+                    WHERE IdMovimientoInventario = ?");
                     $cmdDetalleMovimiento->bindParam(1, $idMovimiento, PDO::PARAM_STR);
                     $cmdDetalleMovimiento->execute();
                     $arrayDetalleMovimiento = array();
@@ -369,12 +449,18 @@ class MovimientoADO
                     $cmdMovimiento->bindParam(1, $idMovimiento, PDO::PARAM_STR);
                     $cmdMovimiento->execute();
                     Database::getInstance()->getDb()->commit();
-                    return "deleted";
+                    $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+                    header($protocol . ' ' . 201 . ' ' . "Created");
+
+                    return "Se anuló correctamente el Ajuste.";
                 }
             }
-        } catch (PDOException $e) {
+        } catch (Exception $ex) {
             Database::getInstance()->getDb()->rollback();
-            return $e->getMessage();
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+
+            return $ex->getMessage();
         }
     }
 }

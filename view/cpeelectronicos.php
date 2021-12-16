@@ -879,7 +879,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
             function openPdf(tipo, idComprobante) {
                 if (tipo == "v") {
-                    window.open("../app/sunat/pdfventas.php?idVenta=" + idComprobante, "_blank");
+                    window.open("../app/sunat/pdfventaA4.php?idVenta=" + idComprobante, "_blank");
 
                 } else {
                     window.open("../app/sunat/pdfnotacredito.php?idNotaCredito=" + idComprobante, "_blank");

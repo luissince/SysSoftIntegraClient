@@ -95,7 +95,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         <div class="col-md-6">
                             <label class="form-text"> Ubigeo:</label>
                             <div class="form-group">
-                                <select class="form-control" id="cbUbigeo">
+                                <select class="select2-selection__rendered form-control" id="cbUbigeo">
                                     <option value="">- Seleccionar -</option>
                                 </select>
                             </div>
@@ -125,9 +125,24 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-text">Email: <i class="fa fa-fw fa-asterisk text-danger"></i></label>
+                            <label class="form-text">Email:</label>
                             <div class="form-group">
                                 <input id="txtEmail" class="form-control" type="text" placeholder="Email" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="form-text">Terminos:</label>
+                            <div class="form-group">
+                                <input id="txtTerminos" class="form-control" type="text" placeholder="Terminos">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-text">Condiciones:</label>
+                            <div class="form-group">
+                                <input id="txtCodiciones" class="form-control" type="text" placeholder="Condiciones" />
                             </div>
                         </div>
                     </div>
@@ -205,6 +220,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
             let txtCelular = $("#txtCelular");
             let txtPaginWeb = $("#txtPaginWeb");
             let txtEmail = $("#txtEmail");
+            let txtTerminos = $("#txtTerminos");
+            let txtCodiciones = $("#txtCodiciones");
             let cbUbigeo = $("#cbUbigeo");
             let txtUsuarioSol = $("#txtUsuarioSol");
             let txtClaveSol = $("#txtClaveSol");
@@ -212,6 +229,12 @@ if (!isset($_SESSION['IdEmpleado'])) {
             let fileCertificado = $("#fileCertificado");
             let txtClaveCertificado = $("#txtClaveCertificado");
             $(document).ready(function() {
+
+                cbUbigeo.select2({
+                    width: '100%',
+                    placeholder: "Buscar Ubigeo"
+
+                });
 
                 $("#fileImage").on('change', function(event) {
                     lblImagen.attr("src", URL.createObjectURL(event.target.files[0]));
@@ -248,7 +271,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         $("#divOverlayEmpresa").removeClass("d-none");
                     });
 
-                    let empresa = result.empresa;
+                    let empresa = result;
                     idEmpresa = empresa.IdEmpresa;
                     txtNumDocumento.val(empresa.NumeroDocumento);
                     txtRazonSocial.val(empresa.RazonSocial);
@@ -263,17 +286,56 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     txtCelular.val(empresa.Celular);
                     txtPaginWeb.val(empresa.PaginaWeb);
                     txtEmail.val(empresa.Email);
+                    txtTerminos.val(empresa.Terminos);
+                    txtCodiciones.val(empresa.Condiciones);
                     txtUsuarioSol.val(empresa.UsuarioSol);
                     txtClaveSol.val(empresa.ClaveSol);
                     lblNameCertificado.html(empresa.CertificadoRuta);
                     txtClaveCertificado.val(empresa.CertificadoClave);
 
-                    let ubigeo = result.ubigeo;
-                    for (let value of ubigeo) {
-                        cbUbigeo.append('<option value="' + value.IdUbigeo + '">' + value.Departamento + ' - ' + value.Provincia + ' - ' + value.Distrito + '(' + value.Ubigeo + ')</option>');
-                    }
+                    var data = [{
+                            id: 0,
+                            text: '- Seleccione -'
+                        },
+                        {
+                            id: result.IdUbigeo,
+                            text: result.Departamento + ' - ' + result.Provincia + ' - ' + result.Distrito + '(' + result.Ubigeo + ')'
+                        }
+                    ];
 
-                    cbUbigeo.val(empresa.Ubigeo);
+                    cbUbigeo.select2({
+                        width: '100%',
+                        placeholder: "Buscar Ubigeo",
+                        data: data,
+                        ajax: {
+                            url: "../app/controller/EmpresaController.php",
+                            type: "GET",
+                            dataType: 'json',
+                            delay: 250,
+                            data: function(params) {
+                                return {
+                                    type: "fillubigeo",
+                                    search: params.term
+                                };
+                            },
+                            processResults: function(response) {
+                                let datafill = response.map((item, index) => {
+                                    return {
+                                        id: item.IdUbigeo,
+                                        text: item.Departamento + ' - ' + item.Provincia + ' - ' + item.Distrito + '(' + item.Ubigeo + ')'
+                                    };
+                                });
+                                return {
+                                    results: datafill
+                                };
+                            },
+                            cache: true
+                        }
+                    });
+
+                    if (result.IdUbigeo != 0) {
+                        cbUbigeo.val(result.IdUbigeo).trigger('change.select2');
+                    }
 
                     $("#divOverlayEmpresa").addClass("d-none");
                 } catch (error) {
@@ -282,7 +344,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
             }
 
             function crudEmpresa() {
-
                 var formData = new FormData();
                 formData.append("idEmpresa", idEmpresa);
                 formData.append("txtNumDocumento", txtNumDocumento.val());
@@ -293,6 +354,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 formData.append("txtCelular", txtCelular.val());
                 formData.append("txtPaginWeb", txtPaginWeb.val());
                 formData.append("txtEmail", txtEmail.val());
+                formData.append("txtTerminos", txtTerminos.val());
+                formData.append("txtCodiciones", txtCodiciones.val());
                 formData.append("cbUbigeo", cbUbigeo.val());
 
                 formData.append("imageType", fileImage[0].files.length);
@@ -308,6 +371,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 // console.log(fileCertificado[0].files.length)
                 // console.log(fileCertificado[0].files[0])
                 // console.log(txtClaveCertificado.val())
+                // console.log(cbUbigeo.val() == 0 && tools.validateComboBox(cbUbigeo))
+                // console.log(cbUbigeo.val())
 
                 tools.ModalDialog("Mi Empresa", "¿Está seguro de continuar?", function(value) {
                     if (value == true) {

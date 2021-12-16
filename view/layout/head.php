@@ -7,5 +7,6 @@
 <link rel="stylesheet" type="text/css" href="css/main.css">
 <link rel="stylesheet" type="text/css" href="css/font-awesome.min.css">
 <link rel="stylesheet" type="text/css" href="css/sweetalert.min.css">
+<link rel="stylesheet" type="text/css" href="css/select2.min.css">
 
 <title>SysSoft Integra</title>

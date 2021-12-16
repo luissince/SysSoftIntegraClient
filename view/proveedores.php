@@ -188,15 +188,15 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 </div>
                             </div>
 
-                            <div class="modal-footer">
-                                <div class="row">
-                                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                                        <button class="btn btn-success" type="button" id="btnSaveCrudProveedor"><i class="fa fa-save"></i> Guardar</button>
-                                        <button class="btn btn-danger" type="button" id="btnCancelCrudProveedor"><i class="fa fa-close"></i> Cancelar</button>
-                                    </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <div class="row">
+                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                    <button class="btn btn-success" type="button" id="btnSaveCrudProveedor"><i class="fa fa-save"></i> Guardar</button>
+                                    <button class="btn btn-danger" type="button" id="btnCancelCrudProveedor"><i class="fa fa-close"></i> Cancelar</button>
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </div>

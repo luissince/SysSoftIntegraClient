@@ -115,8 +115,8 @@ function ModalVentaEchas() {
                 for (let value of result.data) {
                     tbListVentasEchas.append(`<tr>
                     <td>${value.Id}</td>
-                    <td>${value.Cliente}</td>
-                    <td>${value.Serie + '-' + value.Numeracion}</td>
+                    <td>${value.NumeroDocumento + '<br>' + value.Cliente}</td>
+                    <td>${value.Comprobante + '<br>' + value.Serie + '-' + value.Numeracion}</td>
                     <td>${tools.getDateForma(value.FechaVenta)}<br>${tools.getTimeForma24(value.HoraVenta)}</td>
                     <td>${value.Simbolo + ' ' + tools.formatMoney(value.Total)}</td>
                     <td class="text-center"><button class="btn btn-danger"><image src="./images/print.png" width="22" height="22" /></button></td>

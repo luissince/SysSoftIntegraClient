@@ -305,8 +305,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 break;
                             }
                         }
-                        // console.log($(tr)[0]);
-                        // console.log($(tr).find("td:eq(2)").find("input").val());
                     });
                     registrarMovimiento(newArrayProductos);
                 }
@@ -404,204 +402,165 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 }
             }
 
-            function ListarProductos(tipo, value) {
-                $.ajax({
-                    url: "../app/controller/SuministroController.php",
-                    method: "GET",
-                    data: {
+            async function ListarProductos(tipo, value) {
+                try {
+                    let result = await tools.promiseFetchGet("../app/controller/SuministroController.php", {
                         "type": "modalproductos",
                         "tipo": tipo,
                         "value": value,
-                        "libre": 1,
-                        "venta": 1,
-                        "insumo": 1,
                         "posicionPagina": ((paginacion - 1) * filasPorPagina),
                         "filasPorPagina": filasPorPagina
-                    },
-                    beforeSend: function() {
+                    }, function() {
                         tbProductos.empty();
                         tbProductos.append('<tr><td class="text-center" colspan="6"><img src="./images/loading.gif" id="imgLoad" width="34" height="34" /> <p>Cargando información...</p></td></tr>');
                         state = true;
-                    },
-                    success: function(result) {
-                        let object = result;
-                        tbProductos.empty();
-                        let productos = object.data;
-                        if (productos.length === 0) {
-                            tbProductos.append('<tr><td class="text-center" colspan="6"><p>No hay datos para mostrar</p></td></tr>');
-                            totalPaginacion = 0;
-                            lblPaginaActual.html(0);
-                            lblPaginaSiguiente.html(0);
-                            state = false;
-                        } else {
-                            for (let producto of productos) {
-                                tbProductos.append('<tr ondblclick=onSelectProducto(\'' + producto.IdSuministro + '\')>' +
-                                    '<td>' + producto.Id + '</td>' +
-                                    '<td>' + producto.Clave + '</br>' + producto.NombreMarca + '</td>' +
-                                    '<td>' + producto.Categoria + '<br>' + producto.Marca + '</td>' +
-                                    '<td>' + tools.formatMoney(parseFloat(producto.Cantidad)) + '</td>' +
-                                    '<td>' + producto.ImpuestoNombre + '</td>' +
-                                    '<td>' + tools.formatMoney(parseFloat(producto.PrecioVentaGeneral)) + '</td>' +
-                                    '</tr>');
-                            }
-                            totalPaginacion = parseInt(Math.ceil((parseFloat(object.total) / filasPorPagina)));
-                            lblPaginaActual.html(paginacion);
-                            lblPaginaSiguiente.html(totalPaginacion);
-                            state = false;
+                    });
+
+                    let object = result;
+                    tbProductos.empty();
+                    let productos = object.data;
+                    if (productos.length === 0) {
+                        tbProductos.append('<tr><td class="text-center" colspan="6"><p>No hay datos para mostrar</p></td></tr>');
+                        totalPaginacion = 0;
+                        lblPaginaActual.html(0);
+                        lblPaginaSiguiente.html(0);
+                        state = false;
+                    } else {
+                        for (let producto of productos) {
+                            let cantidad = producto.Cantidad <= 0 ? "<span class='text-danger'>" + tools.formatMoney(parseFloat(producto.Cantidad)) + '<br>' + producto.UnidadCompra + "</span>" : "<span class='text-success'>" + tools.formatMoney(parseFloat(producto.Cantidad)) + '<br>' + producto.UnidadCompra + "</span>";
+                            tbProductos.append('<tr ondblclick="onSelectProducto(\'' + producto.IdSuministro + '\',\'' + producto.NombreMarca + '\')">' +
+                                '<td>' + producto.Id + '</td>' +
+                                '<td>' + producto.Clave + '</br>' + producto.NombreMarca + '</td>' +
+                                '<td>' + producto.Categoria + '<br>' + producto.Marca + '</td>' +
+                                '<td>' + cantidad + '</td>' +
+                                '<td>' + producto.ImpuestoNombre + '</td>' +
+                                '<td>' + tools.formatMoney(parseFloat(producto.PrecioVentaGeneral)) + '</td>' +
+                                '</tr>');
                         }
-                    },
-                    error: function(error) {
-                        tbProductos.empty();
-                        tbProductos.append('<tr><td class="text-center" colspan="6"><p>' + error.responseText + '</p></td></tr>');
+                        totalPaginacion = parseInt(Math.ceil((parseFloat(object.total) / filasPorPagina)));
+                        lblPaginaActual.html(paginacion);
+                        lblPaginaSiguiente.html(totalPaginacion);
                         state = false;
                     }
-                });
+                } catch (error) {
+                    tbProductos.empty();
+                    tbProductos.append('<tr><td class="text-center" colspan="6"><p>' + error.responseText + '</p></td></tr>');
+                    state = false;
+                }
             }
 
-            function loadTipoMovimiento(ajuste) {
-                $.get("../app/controller/MovimientoController.php", {
-                    "type": "listipomovimiento",
-                    "ajuste": ajuste,
-                    "all": "false"
-                }, function(data, status) {
-                    if (status === "success") {
-                        let result = data;
-                        if (result.estado === 1) {
-                            cbTipoMovimiento.empty();
-                            cbTipoMovimiento.append('<option value="0">--TODOS--</option>');
-                            for (let tipos of result.data) {
-                                cbTipoMovimiento.append('<option value="' + tipos.IdTipoMovimiento + '">' + tipos.Nombre + '</option>');
-                            }
-                        } else {
-                            cbTipoMovimiento.empty();
-                        }
+            async function loadTipoMovimiento(ajuste) {
+                try {
+                    let result = await tools.promiseFetchGet("../app/controller/MovimientoController.php", {
+                        "type": "listipomovimiento",
+                        "ajuste": ajuste,
+                        "all": "false"
+                    });
+
+                    cbTipoMovimiento.empty();
+                    cbTipoMovimiento.append('<option value="0">--TODOS--</option>');
+                    for (let tipos of result) {
+                        cbTipoMovimiento.append('<option value="' + tipos.IdTipoMovimiento + '">' + tipos.Nombre + '</option>');
                     }
-                });
+                } catch (error) {
+
+                }
             }
 
-            function onSelectProducto(idSuministro) {
+            async function onSelectProducto(idSuministro) {
                 $("#id-modal-productos").modal("hide");
                 if (!validateDuplicate(idSuministro)) {
-                    $.ajax({
-                        url: "../app/controller/SuministroController.php",
-                        method: "GET",
-                        data: {
+                    try {
+                        let result = await tools.promiseFetchGet("../app/controller/SuministroController.php", {
                             "type": "getsuministroformovimiento",
                             "idSuministro": idSuministro
-                        },
-                        beforeSend: function() {
+                        }, function() {
                             tools.AlertInfo("Movimiento", "Agregando producto.");
                             if (arrayProductos.length === 0) {
                                 tbList.empty();
                             }
-                        },
-                        success: function(result) {
-                            if (result.estado === 1) {
-                                let suministro = result.data;
-                                arrayProductos.push(suministro);
-                                tbList.append('<tr id="' + suministro.IdSuministro + '">' +
-                                    '<td><button class="btn btn-default" onclick="removeTableTr(\'' + suministro.IdSuministro + '\')"><img src="./images/remove.png" width="24" /></button></td>' +
-                                    '<td>' + suministro.Clave + '</br>' + suministro.NombreMarca + '</td>' +
-                                    '<td>' + suministro.MarcaNombre + '</td>' +
-                                    '<td><input type="number" class="form-control" placeholder="0.00" /></td>' +
-                                    '<td>' + suministro.Cantidad + " " + suministro.UnidadCompraNombre + '</td>' +
-                                    '<td>0.00</td>' +
-                                    '</tr>');
-                                tools.AlertSuccess("Movimiento", "Se agregó correctamente a la lista.");
-                            } else {
-                                tools.AlertWarning("Movimiento", "Problemas en agregar el producto, intente nuevamente.");
-                            }
-                        },
-                        error: function(error) {
-                            tools.AlertError("Movimiento", "Error al agregar el producto, comuníquese con su proveedor.");
-                        }
-                    });
+                        });
+
+                        let suministro = result;
+                        arrayProductos.push(suministro);
+                        tbList.append('<tr id="' + suministro.IdSuministro + '">' +
+                            '<td><button class="btn btn-default" onclick="removeTableTr(\'' + suministro.IdSuministro + '\')"><img src="./images/remove.png" width="24" /></button></td>' +
+                            '<td>' + suministro.Clave + '</br>' + suministro.NombreMarca + '</td>' +
+                            '<td>' + suministro.MarcaNombre + '</td>' +
+                            '<td><input type="number" class="form-control" placeholder="0.00" /></td>' +
+                            '<td>' + suministro.Cantidad + " " + suministro.UnidadCompraNombre + '</td>' +
+                            '<td>0.00</td>' +
+                            '</tr>');
+
+                        tools.AlertSuccess("Movimiento", "Se agregó correctamente a la lista.");
+
+                    } catch (error) {
+                        tools.AlertError("Movimiento", "Error al agregar el producto, comuníquese con su proveedor.");
+                    }
                 } else {
                     tools.AlertWarning("Movimiento", "Hay producto con las mismas características.");
                 }
             }
 
-            function listarProductosNegativos() {
-                $.ajax({
-                    url: "../app/controller/SuministroController.php",
-                    method: "GET",
-                    data: {
+            async function listarProductosNegativos() {
+                try {
+                    let result = await tools.promiseFetchGet("../app/controller/SuministroController.php", {
                         "type": "listallnegativo"
-                    },
-                    beforeSend: function() {
+                    }, function() {
                         tbList.empty();
                         arrayProductos = [];
                         tools.AlertInfo("Movimiento", "Agregando lista de productos.");
-                    },
-                    success: function(result) {
-                        if (result.estado === 1) {
-                            for (let suministro of result.suministros) {
-                                arrayProductos.push(suministro);
-                                tbList.append('<tr id="' + suministro.IdSuministro + '">' +
-                                    '<td><button class="btn btn-default" onclick="removeTableTr(\'' + suministro.IdSuministro + '\')"><img src="./images/remove.png" width="24" /></button></td>' +
-                                    '<td>' + suministro.Clave + '</br>' + suministro.NombreMarca + '</td>' +
-                                    '<td>' + suministro.MarcaNombre + '</td>' +
-                                    '<td><input type="number" class="form-control" placeholder="0.00" /></td>' +
-                                    '<td>' + suministro.Cantidad + " " + suministro.UnidadCompraNombre + '</td>' +
-                                    '<td>0.00</td>' +
-                                    '</tr>');
-                            }
-                            tools.AlertSuccess("Movimiento", "Se agregó correctamente a la lista.");
-                        } else {
-                            tools.AlertWarning("Movimiento", "Problemas en agregar el producto, intente nuevamente.");
-                        }
-                    },
-                    error: function(error) {
-                        tools.AlertError("Movimiento", "Error al agregar el producto, comuníquese con su proveedor.");
+                    });
+
+                    for (let suministro of result) {
+                        arrayProductos.push(suministro);
+                        tbList.append('<tr id="' + suministro.IdSuministro + '">' +
+                            '<td><button class="btn btn-default" onclick="removeTableTr(\'' + suministro.IdSuministro + '\')"><img src="./images/remove.png" width="24" /></button></td>' +
+                            '<td>' + suministro.Clave + '</br>' + suministro.NombreMarca + '</td>' +
+                            '<td>' + suministro.MarcaNombre + '</td>' +
+                            '<td><input type="number" class="form-control" placeholder="0.00" /></td>' +
+                            '<td>' + suministro.Cantidad + " " + suministro.UnidadCompraNombre + '</td>' +
+                            '<td>0.00</td>' +
+                            '</tr>');
                     }
-                });
+                    tools.AlertSuccess("Movimiento", "Se agregó correctamente a la lista.");
+                } catch (error) {
+                    tools.AlertError("Movimiento", "Error al agregar el producto, comuníquese con su proveedor.");
+                }
             }
 
-            function listarTodosLosProductos() {
-                $.ajax({
-                    url: "../app/controller/SuministroController.php",
-                    method: "GET",
-                    data: {
+            async function listarTodosLosProductos() {
+                try {
+                    let result = await tools.promiseFetchGet("../app/controller/SuministroController.php", {
                         "type": "listallsuministro"
-                    },
-                    beforeSend: function() {
+                    }, function() {
                         tbList.empty();
                         arrayProductos = [];
                         tools.AlertInfo("Movimiento", "Agregando lista de productos.");
-                    },
-                    success: function(result) {
-                        if (result.estado === 1) {
-                            for (let suministro of result.suministros) {
-                                arrayProductos.push(suministro);
-                                tbList.append('<tr id="' + suministro.IdSuministro + '">' +
-                                    '<td><button class="btn btn-default" onclick="removeTableTr(\'' + suministro.IdSuministro + '\')"><img src="./images/remove.png" width="24" /></button></td>' +
-                                    '<td>' + suministro.Clave + '</br>' + suministro.NombreMarca + '</td>' +
-                                    '<td>' + suministro.MarcaNombre + '</td>' +
-                                    '<td><input type="number" class="form-control" placeholder="0.00" /></td>' +
-                                    '<td>' + suministro.Cantidad + " " + suministro.UnidadCompraNombre + '</td>' +
-                                    '<td>0.00</td>' +
-                                    '</tr>');
-                            }
-                            tools.AlertSuccess("Movimiento", "Se agregó correctamente a la lista.");
-                        } else {
-                            tools.AlertWarning("Movimiento", "Problemas en agregar el producto, intente nuevamente.");
-                        }
-                    },
-                    error: function(error) {
-                        tools.AlertError("Movimiento", "Error al agregar el producto, comuníquese con su proveedor.");
+                    });
+
+                    for (let suministro of result) {
+                        arrayProductos.push(suministro);
+                        tbList.append('<tr id="' + suministro.IdSuministro + '">' +
+                            '<td><button class="btn btn-default" onclick="removeTableTr(\'' + suministro.IdSuministro + '\')"><img src="./images/remove.png" width="24" /></button></td>' +
+                            '<td>' + suministro.Clave + '</br>' + suministro.NombreMarca + '</td>' +
+                            '<td>' + suministro.MarcaNombre + '</td>' +
+                            '<td><input type="number" class="form-control" placeholder="0.00" /></td>' +
+                            '<td>' + suministro.Cantidad + " " + suministro.UnidadCompraNombre + '</td>' +
+                            '<td>0.00</td>' +
+                            '</tr>');
                     }
-                });
+                    tools.AlertSuccess("Movimiento", "Se agregó correctamente a la lista.");
+                } catch (error) {
+                    tools.AlertError("Movimiento", "Error al agregar el producto, comuníquese con su proveedor.");
+                }
             }
 
             function registrarMovimiento(newArrayProductos) {
-                tools.ModalDialog("Movimiento", '¿Está seguro de continuar?', function(value) {
+                tools.ModalDialog("Movimiento", '¿Está seguro de continuar?', async function(value) {
                     if (value == true) {
-                        $.ajax({
-                            url: "../app/controller/MovimientoController.php",
-                            method: "POST",
-                            accepts: "application/json",
-                            contentType: "application/json",
-                            data: JSON.stringify({
+                        try {
+                            let result = await tools.promiseFetchPost("../app/controller/MovimientoController.php", {
                                 "type": "insertmovimiento",
                                 "fecha": tools.getCurrentDate(),
                                 "hora": tools.getCurrentTime(),
@@ -612,27 +571,25 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 "estado": $("#cbEstadoMivimiento")[0].checked,
                                 "codigoVerificacion": $("#txtCodigoVerificacion").val().trim(),
                                 "lista": newArrayProductos
-                            }),
-                            beforeSend: function() {
+                            }, function() {
                                 tools.ModalAlertInfo("Movimiento", "Se está procesando la información.");
-                            },
-                            success: function(result) {
-                                if (result.estado === 1) {
-                                    tools.ModalAlertSuccess("Movimiento", "Se completo correctamente el movimiento de inventario.");
-                                    arrayProductos.splice(0, arrayProductos.length);
-                                    tbList.empty();
-                                    $("#rbIncremento")[0].checked = true;
-                                    loadTipoMovimiento($("#rbIncremento")[0].checked);
-                                    $("#txtObservacion").val("N/D");
-                                    $("#cbEstadoMivimiento")[0].checked = true;
-                                } else {
-                                    tools.ModalAlertWarning("Movimiento", result.mensaje);
-                                }
-                            },
-                            error: function(error) {
-                                tools.ModalAlertError("Movimiento", "Se produjo un error: " + error.responseText);
+                            });
+
+                            tools.ModalAlertSuccess("Movimiento", "Se completo correctamente el movimiento de inventario.");
+
+                            arrayProductos.splice(0, arrayProductos.length);
+                            tbList.empty();
+                            $("#rbIncremento")[0].checked = true;
+                            loadTipoMovimiento($("#rbIncremento")[0].checked);
+                            $("#txtObservacion").val("N/D");
+                            $("#cbEstadoMivimiento")[0].checked = true;
+                        } catch (error) {
+                            if (error.responseText == '' || error.responseText == null) {
+                                tools.ModalAlertError("Producto", "Se produjo un interno intente nuevamente, por favor.");
+                            } else {
+                                tools.ModalAlertWarning("Producto", error.responseText);
                             }
-                        });
+                        }
                     }
                 });
             }

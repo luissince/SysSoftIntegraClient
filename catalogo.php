@@ -368,8 +368,13 @@
                     totalPaginacion = 0;
                     state = true;
                 });
-
                 divCatalogo.empty();
+
+                if (result.data.length == 0) {
+                    divCatalogo.append(messageNoData());
+                    return;
+                }
+
                 $("#lblTotalRows").html(`Se encontraron ${result.data.length} resultados.`);
 
                 for (let value of result.data) {
@@ -503,7 +508,7 @@
         function messageLoading() {
             return `<div class="col-md-12 col-sm-12 col-12">
                                 <div class="d-flex flex-column justify-content-center align-items-center p-5">
-                                    <img width="96" height="96" class="d-block animate-image " src="resource/images/noproducto.png" />
+                                    <img width="96" height="96" class="d-block animate-image" src="resource/images/noproducto.png" />
                                     <h4>Cargando lista de productos...</h4>
                                 </div>
                             </div>`

@@ -80,7 +80,6 @@ function Tools() {
         return h + value.substr(hourEnd, 3) + ":" + value.substr(6, 2) + " " + ampm;
     };
 
-
     this.getCurrentDate = function () {
         let today = new Date();
         let formatted_date = today.getFullYear() + "-" + ((today.getMonth() + 1) > 9 ? (today.getMonth() + 1) : '0' + (
@@ -129,6 +128,22 @@ function Tools() {
         }
     };
 
+    this.getExtension = function (filename) {
+        return filename.split("?")[0].split("#")[0].split('.').pop();
+    }
+
+    this.ErrorMessageServer = function (title, message) {
+        if (message.responseText == "" || message.responseText == null || message.responseText == "undefined" || message.responseText == undefined) {
+            this.ModalAlertError(title, "Se produjo un error interno, intente nuevamente por favor.")
+        } else {
+            if (message.responseJSON == "" || message.responseJSON == null || message.responseJSON == "undefined" || message.responseJSON == undefined) {
+                this.ModalAlertWarning(title, message.responseText);
+            } else {
+                this.ModalAlertWarning(title, message.responseJSON);
+            }
+        }
+    }
+
     this.ModalDialog = function (title, mensaje, callback) {
         swal({
             title: title,
@@ -161,16 +176,18 @@ function Tools() {
             callback()
         });;
     }
+
     this.ModalAlertWarning = function (title, message) {
         swal({ title: title, text: message, type: "warning", showConfirmButton: true, allowOutsideClick: false });
     }
+
     this.ModalAlertError = function (title, message) {
         swal({ title: title, text: message, type: "error", showConfirmButton: true, allowOutsideClick: false });
     }
+
     this.ModalAlertInfo = function (title, message) {
         swal({ title: title, text: message, type: "info", showConfirmButton: false, allowOutsideClick: false, allowEscapeKey: false, });
     }
-
 
     this.AlertSuccess = function (title = "", message, position = "top", align = "right") {
         $.notify({

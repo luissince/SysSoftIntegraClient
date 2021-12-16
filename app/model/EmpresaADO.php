@@ -20,7 +20,15 @@ class EmpresaADO
     public static function ObtenerEmpresa()
     {
         try {
-            $comando = Database::getInstance()->getDb()->prepare("SELECT TOP 1 * FROM EmpresaTB");
+            $comando = Database::getInstance()->getDb()->prepare("SELECT 
+            TOP 1 
+            e.*,
+            u.IdUbigeo,
+            u.Departamento,
+            u.Provincia,
+            u.Distrito
+            FROM EmpresaTB AS e
+            LEFT JOIN UbigeoTB AS u ON u.IdUbigeo = e.Ubigeo");
             $comando->execute();
             $row = $comando->fetch();
             $resultEmpresa  = (object)array(
@@ -31,37 +39,47 @@ class EmpresaADO
                 "Celular" => $row['Celular'],
                 "PaginaWeb" => $row['PaginaWeb'],
                 "Email" => $row['Email'],
+                "Terminos" => $row['Terminos'],
+                "Condiciones" => $row['Condiciones'],
                 "Domicilio" => $row['Domicilio'],
                 "TipoDocumento" => $row['TipoDocumento'],
                 "NumeroDocumento" => $row['NumeroDocumento'],
                 "RazonSocial" => $row['RazonSocial'],
                 "NombreComercial" => $row['NombreComercial'],
                 "Image" => $row['Image'] == null ? "" : base64_encode($row['Image']),
-                "Ubigeo" => $row['Ubigeo'] == null ?  0 : $row['Ubigeo'],
+                "IdUbigeo" => $row['IdUbigeo'] == null ?  0 : $row['IdUbigeo'],
+                "Ubigeo" => $row['Ubigeo'] == null ?  '' : $row['Ubigeo'],
+                "Departamento" => $row['Departamento'] == null ?  '' : $row['Departamento'],
+                "Provincia" => $row['Provincia'] == null ?  '' : $row['Provincia'],
+                "Distrito" => $row['Distrito'] == null ? '' : $row['Distrito'],
                 "UsuarioSol" => $row['UsuarioSol'],
                 "ClaveSol" => $row['ClaveSol'],
                 "CertificadoRuta" => $row['CertificadoRuta'],
                 "CertificadoClave" => $row['CertificadoClave']
             );
 
-            $cmdUbigeo = Database::getInstance()->getDb()->prepare("SELECT 
-            IdUbigeo,
-            Ubigeo,
-            Departamento,
-            Provincia,
-            Distrito
-            FROM UbigeoTB");
-            $cmdUbigeo->execute();
-            $resultUbigeo = $cmdUbigeo->fetchAll(PDO::FETCH_OBJ);
-
             $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
             header($protocol . ' ' . 200 . ' ' . "OK");
 
-            return array(
-                "estado" => 1,
-                "empresa" => $resultEmpresa,
-                "ubigeo" => $resultUbigeo
-            );
+            return $resultEmpresa;
+        } catch (Exception $ex) {
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+
+            return $ex->getMessage();
+        }
+    }
+
+    public static function FiltrarUbigeo(string $search)
+    {
+        try {
+            $cmdUbigeo = Database::getInstance()->getDb()->prepare("{CALL Sp_Obtener_Ubigeo_BySearch(?)}");
+            $cmdUbigeo->bindParam(1, $search, PDO::PARAM_STR);
+            $cmdUbigeo->execute();
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 200 . ' ' . "OK");
+
+            return $cmdUbigeo->fetchAll(PDO::FETCH_OBJ);
         } catch (Exception $ex) {
             $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
             header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
@@ -114,6 +132,8 @@ class EmpresaADO
                 Celular=?,
                 PaginaWeb=?,
                 Email=?,
+                Terminos=?,
+                Condiciones=?,
                 Image=?,
                 Ubigeo=?,
                 UsuarioSol=?,
@@ -129,13 +149,15 @@ class EmpresaADO
                 $comando->bindParam(6, $body['txtCelular'], PDO::PARAM_STR);
                 $comando->bindParam(7, $body['txtPaginWeb'], PDO::PARAM_STR);
                 $comando->bindParam(8, $body['txtEmail'], PDO::PARAM_STR);
-                $comando->bindParam(9, $body['image'],  PDO::PARAM_LOB, 0, PDO::SQLSRV_ENCODING_BINARY);
-                $comando->bindParam(10, $body['cbUbigeo'], PDO::PARAM_INT);
-                $comando->bindParam(11, $body['txtUsuarioSol'], PDO::PARAM_STR);
-                $comando->bindParam(12, $body['txtClaveSol'], PDO::PARAM_STR);
-                $comando->bindParam(13, $path, PDO::PARAM_STR);
-                $comando->bindParam(14, $body['txtClaveCertificado'], PDO::PARAM_STR);
-                $comando->bindParam(15, $body['idEmpresa'], PDO::PARAM_INT);
+                $comando->bindParam(9, $body['txtTerminos'], PDO::PARAM_STR);
+                $comando->bindParam(10, $body['txtCodiciones'], PDO::PARAM_STR);
+                $comando->bindParam(11, $body['image'],  PDO::PARAM_LOB, 0, PDO::SQLSRV_ENCODING_BINARY);
+                $comando->bindParam(12, $body['cbUbigeo'], PDO::PARAM_INT);
+                $comando->bindParam(13, $body['txtUsuarioSol'], PDO::PARAM_STR);
+                $comando->bindParam(14, $body['txtClaveSol'], PDO::PARAM_STR);
+                $comando->bindParam(15, $path, PDO::PARAM_STR);
+                $comando->bindParam(16, $body['txtClaveCertificado'], PDO::PARAM_STR);
+                $comando->bindParam(17, $body['idEmpresa'], PDO::PARAM_INT);
                 $comando->execute();
             } else {
                 $comando = Database::getInstance()->getDb()->prepare("UPDATE EmpresaTB SET 
@@ -147,6 +169,8 @@ class EmpresaADO
                 Celular=?,
                 PaginaWeb=?,
                 Email=?,
+                Terminos=?,
+                Condiciones=?,
                 Ubigeo=?,
                 UsuarioSol=?,
                 ClaveSol=?,
@@ -161,12 +185,14 @@ class EmpresaADO
                 $comando->bindParam(6, $body['txtCelular'], PDO::PARAM_STR);
                 $comando->bindParam(7, $body['txtPaginWeb'], PDO::PARAM_STR);
                 $comando->bindParam(8, $body['txtEmail'], PDO::PARAM_STR);
-                $comando->bindParam(9, $body['cbUbigeo'], PDO::PARAM_INT);
-                $comando->bindParam(10, $body['txtUsuarioSol'], PDO::PARAM_STR);
-                $comando->bindParam(11, $body['txtClaveSol'], PDO::PARAM_STR);
-                $comando->bindParam(12, $path, PDO::PARAM_STR);
-                $comando->bindParam(13, $body['txtClaveCertificado'], PDO::PARAM_STR);
-                $comando->bindParam(14, $body['idEmpresa'], PDO::PARAM_INT);
+                $comando->bindParam(9, $body['txtTerminos'], PDO::PARAM_STR);
+                $comando->bindParam(10, $body['txtCodiciones'], PDO::PARAM_STR);
+                $comando->bindParam(11, $body['cbUbigeo'], PDO::PARAM_INT);
+                $comando->bindParam(12, $body['txtUsuarioSol'], PDO::PARAM_STR);
+                $comando->bindParam(13, $body['txtClaveSol'], PDO::PARAM_STR);
+                $comando->bindParam(14, $path, PDO::PARAM_STR);
+                $comando->bindParam(15, $body['txtClaveCertificado'], PDO::PARAM_STR);
+                $comando->bindParam(16, $body['idEmpresa'], PDO::PARAM_INT);
                 $comando->execute();
             }
 

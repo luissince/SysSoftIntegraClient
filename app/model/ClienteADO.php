@@ -202,38 +202,38 @@ class ClienteADO
             $cmdValidate->execute();
             if ($cmdValidate->fetch()) {
                 Database::getInstance()->getDb()->rollback();
-                return array(
-                    "estado" => 2,
-                    "message" => "No se puede eliminar al cliente porque tiene asociado ventas."
-                );
+                $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+                header($protocol . ' ' . 400 . ' ' . "Bad Request");
+
+                return "No se puede eliminar al cliente porque tiene asociado ventas.";
             } else {
                 $cmdValidate = Database::getInstance()->getDb()->prepare("SELECT * FROM ClienteTB WHERE IdCliente = ? AND Sistema = 1");
                 $cmdValidate->bindParam(1, $body["IdCliente"], PDO::PARAM_STR);
                 $cmdValidate->execute();
                 if ($cmdValidate->fetch()) {
                     Database::getInstance()->getDb()->rollback();
-                    return array(
-                        "estado" => 3,
-                        "message" => "No se puede eliminar el cliente porque es propio del sistema."
-                    );
+                    $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+                    header($protocol . ' ' . 400 . ' ' . "Bad Request");
+
+                    return "No se puede eliminar el cliente porque es propio del sistema.";
                 } else {
                     $cmdCliente = Database::getInstance()->getDb()->prepare("DELETE FROM ClienteTB WHERE IdCliente = ?");
                     $cmdCliente->bindParam(1, $body["IdCliente"], PDO::PARAM_STR);
                     $cmdCliente->execute();
 
                     Database::getInstance()->getDb()->commit();
-                    return array(
-                        "estado" => 1,
-                        "message" => "Se elimino correctamente el cliente."
-                    );
+                    $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+                    header($protocol . ' ' . 201 . ' ' . "Created");
+
+                    return "Se elimino correctamente el cliente.";
                 }
             }
         } catch (Exception $ex) {
             Database::getInstance()->getDb()->rollback();
-            return array(
-                "estado" => 0,
-                "message" => $ex->getMessage(),
-            );
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+
+            return $ex->getMessage();
         }
     }
 
@@ -250,16 +250,16 @@ class ClienteADO
             $cmdPredeterminate->execute();
 
             Database::getInstance()->getDb()->commit();
-            return array(
-                "estado" => 1,
-                "message" => "Se puso al cliente como predeterminado correctamente."
-            );
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 201 . ' ' . "Created");
+
+            return  "Se puso al cliente como predeterminado correctamente.";
         } catch (Exception $ex) {
             Database::getInstance()->getDb()->rollback();
-            return array(
-                "estado" => 0,
-                "message" => $ex->getMessage(),
-            );
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+
+            return  $ex->getMessage();
         }
     }
 
@@ -290,6 +290,35 @@ class ClienteADO
             $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
             header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
 
+            return $ex->getMessage();
+        }
+    }
+
+    public static function FillCliente(string $search)
+    {
+        try {
+            $cmdCliente = Database::getInstance()->getDb()->prepare("SELECT 
+            IdCliente,
+            NumeroDocumento,
+            Informacion
+            FROM ClienteTB
+            WHERE 
+            ? <> '' AND NumeroDocumento LIKE CONCAT(?,'%') 
+            OR 
+            ? <> '' AND Informacion LIKE CONCAT(?,'%')");
+            $cmdCliente->bindParam(1, $search, PDO::PARAM_STR);
+            $cmdCliente->bindParam(2, $search, PDO::PARAM_STR);
+            $cmdCliente->bindParam(3, $search, PDO::PARAM_STR);
+            $cmdCliente->bindParam(4, $search, PDO::PARAM_STR);
+            $cmdCliente->execute();
+
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 200 . ' ' . "OK");
+
+            return $cmdCliente->fetchAll(PDO::FETCH_OBJ);
+        } catch (Exception $ex) {
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
             return $ex->getMessage();
         }
     }

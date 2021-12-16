@@ -16,7 +16,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
         <?php include "./layout/header.php"; ?>
         <!-- Sidebar menu-->
         <?php include "./layout/menu.php"; ?>
-
+        <!-- modal cliente -->
         <div class="row">
             <div class="modal fade" id="modalCrudCliente" data-backdrop="static">
                 <div class="modal-dialog modal-md">
@@ -179,16 +179,15 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                     </div>
                                 </div>
                             </div>
+                        </div>
 
-                            <div class="modal-footer">
-                                <div class="row">
-                                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                                        <button class="btn btn-success" type="button" id="btnSaveCrudCliente"><i class="fa fa-save"></i> Guardar</button>
-                                        <button class="btn btn-danger" type="button" id="btnCancelCrudCliente"><i class="fa fa-close"></i> Cancelar</button>
-                                    </div>
+                        <div class="modal-footer">
+                            <div class="row">
+                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                    <button class="btn btn-success" type="button" id="btnSaveCrudCliente"><i class="fa fa-save"></i> Guardar</button>
+                                    <button class="btn btn-danger" type="button" id="btnCancelCrudCliente"><i class="fa fa-close"></i> Cancelar</button>
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -686,21 +685,16 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     if (value == true) {
                         try {
                             let result = await tools.promiseFetchPost("../app/controller/ClienteController.php", {
-                                    "type": "deleteCliente",
-                                    "IdCliente": id,
-                                },
-                                function() {
-                                    tools.ModalAlertInfo("Cliente", "Se está procesando la información.");
-                                });
+                                "type": "deleteCliente",
+                                "IdCliente": id,
+                            }, function() {
+                                tools.ModalAlertInfo("Cliente", "Se está procesando la información.");
+                            });
 
-                            if (result.estado == 1) {
-                                tools.ModalAlertSuccess("Cliente", result.message);
-                                loadInitClientes();
-                            } else {
-                                tools.ModalAlertWarning("Cliente", result.message);
-                            }
+                            tools.ModalAlertSuccess("Cliente", result);
+                            loadInitClientes();
                         } catch (error) {
-                            tools.ModalAlertError("Cliente", "Se produjo un error interno intente nuevamente.");
+                            tools.ErrorMessageServer("Cotización", error);
                         }
                     }
                 });
@@ -711,21 +705,15 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     if (value == true) {
                         try {
                             let result = await tools.promiseFetchPost("../app/controller/ClienteController.php", {
-                                    "type": "predeterminateCliente",
-                                    "IdCliente": id,
-                                },
-                                function() {
-                                    tools.ModalAlertInfo("Cliente", "Se está procesando la información.");
-                                });
-
-                            if (result.estado == 1) {
-                                tools.ModalAlertSuccess("Cliente", result.message);
-                                loadInitClientes();
-                            } else {
-                                tools.ModalAlertWarning("Cliente", result.message);
-                            }
+                                "type": "predeterminateCliente",
+                                "IdCliente": id,
+                            }, function() {
+                                tools.ModalAlertInfo("Cliente", "Se está procesando la información.");
+                            });
+                            tools.ModalAlertSuccess("Cliente", result);
+                            loadInitClientes();
                         } catch (error) {
-                            tools.ModalAlertError("Cliente", "Se produjo un error interno intente nuevamente.");
+                            tools.ErrorMessageServer("Cotización", error);
                         }
                     }
                 });

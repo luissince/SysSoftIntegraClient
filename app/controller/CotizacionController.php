@@ -16,5 +16,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     } else if ($_GET["type"] == "cotizacionventa") {
         print json_encode(CotizacionADO::CargarCotizacionVenta($_GET["idCotizacion"]));
         exit();
+    } else if ($_GET["type"] == "cotizaciondetalle") {
+        print json_encode(CotizacionADO::ListDetalleCotizacion($_GET["idCotizacion"]));
+        exit();
+    }
+} else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $body = json_decode(file_get_contents("php://input"), true);
+    if ($body["type"] == "crud") {
+        print json_encode(CotizacionADO::CrudCotizacion($body));
+        exit();
+    } else if ($body["type"] == "delete") {
+        print json_encode(CotizacionADO::DeleteCotizacionById($body));
+        exit();
     }
 }

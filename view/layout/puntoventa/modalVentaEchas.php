@@ -19,7 +19,7 @@
                             <div class="input-group">
                                 <input id="txtSearchVentasEchas" type="search" class="form-control" placeholder="Buscar" aria-controls="sampleTable">
 
-                                <div class="input-group-prepend">
+                                <div class="input-group-append">
                                     <button id="btnUltimasVentas" class="btn btn-secondary" type="button" title="Recargar"><i class="fa fa-refresh"></i> Ulimas Ventas</button>
                                 </div>
                             </div>

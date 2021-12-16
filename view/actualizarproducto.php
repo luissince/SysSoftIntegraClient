@@ -534,18 +534,31 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 });
 
                 $("#fileImage").on('change', function(event) {
-                    $("#lblImagen").attr("src", URL.createObjectURL(event.target.files[0]));
+                    if (event.target.files.length !== 0) {
+                        $("#lblImagen").attr("src", URL.createObjectURL(event.target.files[0]));
+                    } else {
+                        if (imageByte != null) {
+                            $("#lblImagen").attr("src", "./../resource/catalogo/" + suministro.Imagen);
+                            $("#fileImage").val(null);
+                            // $("#lblImagen").attr("src", "data:image/png;base64," + imageByte);
+                        } else {
+                            $("#lblImagen").attr("src", "./images/noimage.jpg");
+                            $("#fileImage").val(null);
+                        }
+                    }
                 });
 
                 $("#btnRemove").click(function() {
                     $("#lblImagen").attr("src", "./images/noimage.jpg");
                     $("#fileImage").val(null);
+                    imageByte = null;
                 });
 
                 $("#btnRemove").keypress(function(event) {
                     if (event.keyCode === 13) {
                         $("#lblImagen").attr("src", "./images/noimage.jpg");
                         $("#fileImage").val(null);
+                        imageByte = null;
                         event.preventDefault();
                     }
                 });
@@ -897,117 +910,120 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
                     let impuestos = result[0];
 
-                    if (impuestos.estado === 1) {
-                        $("#cbImpuesto").append('<option value="">--TODOS--</option>');
-                        for (let impuesto of impuestos.data) {
-                            $("#cbImpuesto").append('<option value="' + impuesto.IdImpuesto + '">' + impuesto.Nombre + '</option>');
-                        }
+                    $("#cbImpuesto").append('<option value="">--TODOS--</option>');
+                    for (let impuesto of impuestos) {
+                        $("#cbImpuesto").append('<option value="' + impuesto.IdImpuesto + '">' + impuesto.Nombre + '</option>');
                     }
 
                     let producto = result[1];
-                    if (producto.estado == 1) {
-                        let suministro = producto.suministro;
-                        $("#txtClave").val(suministro.Clave);
-                        $("#txtClaveAlterna").val(suministro.ClaveAlterna);
-                        $("#txtDescripcion").val(suministro.NombreMarca);
 
-                        if (suministro.NuevaImagen == "") {
-                            $("#lblImagen").attr("src", "./images/noimage.jpg");
-                            imageByte = null;
-                        } else {
-                            $("#lblImagen").attr("src", "data:image/png;base64," + suministro.NuevaImagen);
-                            imageByte = suministro.NuevaImagen;
-                        }
+                    let suministro = producto.suministro;
+                    $("#txtClave").val(suministro.Clave);
+                    $("#txtClaveAlterna").val(suministro.ClaveAlterna);
+                    $("#txtDescripcion").val(suministro.NombreMarca);
 
-                        idUnidadMedida = suministro.UnidadCompra;
-                        $("#txtUnidadMedida").val(suministro.UnidadCompraNombre);
-
-                        idCategoria = suministro.Categoria;
-                        $("#txtCategoria").val(suministro.CategoriaNombre);
-
-                        if (suministro.UnidadVenta == 3) {
-                            $("#rbGranel").prop("checked", true);
-                        } else if (suministro.UnidadVenta == 2) {
-                            $("#rbMoneda").prop("checked", true);
-                        } else {
-                            $("#rbUnidad").prop("checked", true);
-                        }
-
-                        $("#txtCosto").val(suministro.PrecioCompra);
-                        $("#txtStockMinimo").val(suministro.StockMinimo);
-                        $("#txtStockMaximo").val(suministro.StockMaximo);
-
-                        if (suministro.ValorInventario == 3) {
-                            $("#rbGranelSalida").prop("checked", true);
-                        } else if (suministro.ValorInventario == 2) {
-                            $("#rbMonedaSalida").prop("checked", true);
-                        } else {
-                            $("#rbUnidadSalida").prop("checked", true);
-                        }
-
-                        $("#cbImpuesto").val(suministro.Impuesto);
-
-                        if (suministro.TipoPrecio == 1) {
-                            $("#rbPrecioNormal").prop("checked", true);
-                            $("#txtPrecioGeneral").val(suministro.PrecioVentaGeneral);
-                            if (producto.precios.length != 0) {
-                                let precio2 = producto.precios[0].Valor != null || producto.precios[0].Valor != undefined ? producto.precios[0].Valor : 0;
-                                let precio3 = producto.precios[1].Valor != null || producto.precios[1].Valor != undefined ? producto.precios[1].Valor : 0;
-                                $("#txtPrecio2").val(precio2);
-                                $("#txtPrecio3").val(precio3);
-                                $("#divPrecioPersonalizado").css("display", "none");
-                                $("#divPrecioNormal").css("display", "block");
-                            }
-                        } else {
-                            $("#rbPrecioPersonalizado").prop("checked", true);
-                            $("#txtPrecioGeneralPersonalizado").val(suministro.PrecioVentaGeneral);
-                            $("#divPrecioNormal").css("display", "none");
-                            $("#divPrecioPersonalizado").css("display", "block");
-                            tbPrecios.empty();
-                            for (let precio of producto.precios) {
-                                tbPrecios.append('<tr id="' + $("#tbPrecios tr").length + '">' +
-                                    '   <td><input type="text" class="form-control" value="' + precio.Nombre + '"></td>' +
-                                    '   <td><input type="number" class="form-control" value="' + precio.Valor + '"></td>' +
-                                    '   <td><input type="number" class="form-control" value="' + precio.Factor + '"></td>' +
-                                    '   <td class="td-center">' +
-                                    '    <button class="btn btn-default" onclick="removePrecio(\'' + $("#tbPrecios tr").length + '\')"><img src="./image/remove.png" width="18" /></button>' +
-                                    '   </td>' +
-                                    ' </tr>');
-                            }
-                        }
-
-                        $("#txtDescripcionAlterna").val(suministro.NombreGenerico);
-                        if (suministro.Estado == 1) {
-                            $("#rbActivo").prop("checked", true);
-                        } else {
-                            $("#tbDesactivo").prop("checked", true);
-                        }
-
-                        idMarca = suministro.Marca;
-                        $("#txtMarca").val(suministro.MarcaNombre);
-                        idPresentacion = suministro.Presentacion;
-                        $("#txtPresentacion").val(suministro.PresentacionNombre);
-                        $("#txtClaveUnica").val(suministro.ClaveSat);
-                        $("#cbLote").prop("checked", suministro.Lote == 0 ? false : true);
-                        $("#cbCosto").prop("checked", suministro.Inventario == 0 ? false : true);
-                        if ($("#cbCosto").is(":checked")) {
-                            $("#divCosto").removeClass("disabled");
-                        } else {
-                            $("#divCosto").addClass("disabled");
-                        }
-
-                        if (suministro.Origen == "1") {
-                            $("#rbTodoModulos").prop("checked", true);
-                        } else if (suministro.Origen == "2") {
-                            $("#rbModuloVentas").prop("checked", true);
-                        } else {
-                            $("#rbModuloProduccion").prop("checked", true);
-                        }
-
-                        $("#divOverlayProducto").addClass("d-none");
+                    if (suministro.Imagen !== "") {
+                        $("#lblImagen").attr("src", "./../resource/catalogo/" + suministro.Imagen);
+                        imageByte = suministro.Imagen;
                     } else {
-                        $("#lblTextOverlayProducto").html(producto.message);
+                        $("#lblImagen").attr("src", "./images/noimage.jpg");
+                        imageByte = null;
+                        // if (suministro.NuevaImagen == "") {
+                        //     $("#lblImagen").attr("src", "./images/noimage.jpg");
+                        //     imageByte = null;
+                        // } else {
+                        //     $("#lblImagen").attr("src", "data:image/png;base64," + suministro.NuevaImagen);
+                        //     imageByte = suministro.NuevaImagen;
+                        // }
                     }
+
+                    idUnidadMedida = suministro.UnidadCompra;
+                    $("#txtUnidadMedida").val(suministro.UnidadCompraNombre);
+
+                    idCategoria = suministro.Categoria;
+                    $("#txtCategoria").val(suministro.CategoriaNombre);
+
+                    if (suministro.UnidadVenta == 3) {
+                        $("#rbGranel").prop("checked", true);
+                    } else if (suministro.UnidadVenta == 2) {
+                        $("#rbMoneda").prop("checked", true);
+                    } else {
+                        $("#rbUnidad").prop("checked", true);
+                    }
+
+                    $("#txtCosto").val(suministro.PrecioCompra);
+                    $("#txtStockMinimo").val(suministro.StockMinimo);
+                    $("#txtStockMaximo").val(suministro.StockMaximo);
+
+                    if (suministro.ValorInventario == 3) {
+                        $("#rbGranelSalida").prop("checked", true);
+                    } else if (suministro.ValorInventario == 2) {
+                        $("#rbMonedaSalida").prop("checked", true);
+                    } else {
+                        $("#rbUnidadSalida").prop("checked", true);
+                    }
+
+                    $("#cbImpuesto").val(suministro.Impuesto);
+
+                    if (suministro.TipoPrecio == 1) {
+                        $("#rbPrecioNormal").prop("checked", true);
+                        $("#txtPrecioGeneral").val(suministro.PrecioVentaGeneral);
+                        if (producto.precios.length != 0) {
+                            let precio2 = producto.precios[0].Valor != null || producto.precios[0].Valor != undefined ? producto.precios[0].Valor : 0;
+                            let precio3 = producto.precios[1].Valor != null || producto.precios[1].Valor != undefined ? producto.precios[1].Valor : 0;
+                            $("#txtPrecio2").val(precio2);
+                            $("#txtPrecio3").val(precio3);
+                            $("#divPrecioPersonalizado").css("display", "none");
+                            $("#divPrecioNormal").css("display", "block");
+                        }
+                    } else {
+                        $("#rbPrecioPersonalizado").prop("checked", true);
+                        $("#txtPrecioGeneralPersonalizado").val(suministro.PrecioVentaGeneral);
+                        $("#divPrecioNormal").css("display", "none");
+                        $("#divPrecioPersonalizado").css("display", "block");
+                        tbPrecios.empty();
+                        for (let precio of producto.precios) {
+                            tbPrecios.append('<tr id="' + $("#tbPrecios tr").length + '">' +
+                                '   <td><input type="text" class="form-control" value="' + precio.Nombre + '"></td>' +
+                                '   <td><input type="number" class="form-control" value="' + precio.Valor + '"></td>' +
+                                '   <td><input type="number" class="form-control" value="' + precio.Factor + '"></td>' +
+                                '   <td class="td-center">' +
+                                '    <button class="btn btn-default" onclick="removePrecio(\'' + $("#tbPrecios tr").length + '\')"><img src="./image/remove.png" width="18" /></button>' +
+                                '   </td>' +
+                                ' </tr>');
+                        }
+                    }
+
+                    $("#txtDescripcionAlterna").val(suministro.NombreGenerico);
+                    if (suministro.Estado == 1) {
+                        $("#rbActivo").prop("checked", true);
+                    } else {
+                        $("#tbDesactivo").prop("checked", true);
+                    }
+
+                    idMarca = suministro.Marca;
+                    $("#txtMarca").val(suministro.MarcaNombre);
+                    idPresentacion = suministro.Presentacion;
+                    $("#txtPresentacion").val(suministro.PresentacionNombre);
+                    $("#txtClaveUnica").val(suministro.ClaveSat);
+                    $("#cbLote").prop("checked", suministro.Lote == 0 ? false : true);
+                    $("#cbCosto").prop("checked", suministro.Inventario == 0 ? false : true);
+                    if ($("#cbCosto").is(":checked")) {
+                        $("#divCosto").removeClass("disabled");
+                    } else {
+                        $("#divCosto").addClass("disabled");
+                    }
+
+                    if (suministro.Origen == "1") {
+                        $("#rbTodoModulos").prop("checked", true);
+                    } else if (suministro.Origen == "2") {
+                        $("#rbModuloVentas").prop("checked", true);
+                    } else {
+                        $("#rbModuloProduccion").prop("checked", true);
+                    }
+
+                    $("#divOverlayProducto").addClass("d-none");
+
                 } catch (error) {
                     $("#lblTextOverlayProducto").html("Se producto un problema en:" + error.message);
                 }
@@ -1031,20 +1047,18 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         $("#tbLista").empty();
                     });
 
-                    if (result.estado == 1) {
-                        if (result.data.length == 0) {
-                            $("#tbLista").append(`<tr> <td>No hay datos para mostrar.</td></tr>`);
-                        } else {
-                            for (let value of result.data) {
-                                $("#tbLista").append(`<tr id="${ value.IdDetalle }" name="${ value.Nombre }" ondblclick="selectModal('${ idMantenimiento }','${  value.IdDetalle }','${  value.Nombre }')">
+                    $("#tbLista").empty();
+                    if (result.length == 0) {
+                        $("#tbLista").append(`<tr> <td>No hay datos para mostrar.</td></tr>`);
+                    } else {
+                        for (let value of result) {
+                            $("#tbLista").append(`<tr id="${ value.IdDetalle }" name="${ value.Nombre }" ondblclick="selectModal('${ idMantenimiento }','${  value.IdDetalle }','${  value.Nombre }')">
                                     <td tabindex="-1">${value.Nombre}</td>                        
                                 </tr>`);
-                            }
                         }
-                    } else {
-                        $("#tbLista").append(`<tr> <td>No hay datos para mostrar.</td></tr>`);
                     }
                 } catch (error) {
+                    $("#tbLista").empty();
                     $("#tbLista").append(`<tr> <td>No hay datos para mostrar.</td></tr>`);
                 }
             }
@@ -1095,8 +1109,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 });
 
                 $('#idOpciones').on('shown.bs.modal', function() {
-                    $('#txtBuscar').trigger('focus')
-                    // document.getElementById('tbLista').scrollIntoView(false);
+                    $('#txtBuscar').trigger('focus');
                 });
 
                 $("#tbLista").keydown(function(event) {
@@ -1198,30 +1211,30 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         });
                     }
 
-                    if (imageByte != null) {
+                    let files = document.getElementById('fileImage').files;
+                    if (files.length !== 0) {
+                        let file = files[0];
+                        let blob = file.slice();
+                        let reader = new FileReader();
+
+                        reader.onloadend = function(evt) {
+                            if (evt.target.readyState == FileReader.DONE) {
+                                let base64String = evt.target.result.replace(/^data:.+;base64,/, '');
+                                let ext = tools.getExtension(file.name);
+                                enviarRegistro(base64String, listaPrecios, ext);
+                            }
+                        };
+                        reader.readAsDataURL(blob);
+                    } else if (imageByte != null) {
                         enviarRegistro(imageByte, listaPrecios);
                     } else {
-                        let files = document.getElementById('fileImage').files;
-                        if (files.length == 0) {
-                            enviarRegistro(null, listaPrecios);
-                        } else {
-                            let file = files[0];
-                            let blob = file.slice();
-                            let reader = new FileReader();
-
-                            reader.onloadend = function(evt) {
-                                if (evt.target.readyState == FileReader.DONE) {
-                                    let base64String = evt.target.result.replace(/^data:.+;base64,/, '');
-                                    enviarRegistro(base64String, listaPrecios);
-                                }
-                            };
-                            reader.readAsDataURL(blob);
-                        }
+                        enviarRegistro(null, listaPrecios);
                     }
+
                 }
             }
 
-            function enviarRegistro(image, listaPrecios) {
+            function enviarRegistro(image, listaPrecios, ext = "") {
                 tools.ModalDialog("Producto", "¿Está seguro de continuar?", async function(value) {
                     if (value == true) {
                         try {
@@ -1254,26 +1267,20 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 "ValorInventario": $("#rbGranelSalida").is(":checked") ? 3 : $("#rbMonedaSalida").is(":checked") ? 2 : 1,
                                 "ClaveUnica": $("#txtClaveUnica").val(),
                                 "Imagen": image,
+                                "Ext": ext,
                                 "ListaPrecios": listaPrecios,
                             }, function() {
                                 tools.ModalAlertInfo("Producto", "Se está procesando la información.");
                             });
-
-                            if (result.estado == 1) {
-                                tools.ModalAlertSuccess("Producto", result.message, function() {
-                                    location.href = "productos.php";
-                                });
-                            } else if (result.estado == 2) {
-                                tools.ModalAlertWarning("Producto", result.message);
-                            } else if (result.estado == 3) {
-                                tools.ModalAlertWarning("Producto", result.message);
-                            } else if (result.estado == 4) {
-                                tools.ModalAlertWarning("Producto", result.message);
-                            } else {
-                                tools.ModalAlertWarning("Producto", result.message);
-                            }
+                            tools.ModalAlertSuccess("Producto", result, function() {
+                                // location.href = "productos.php";
+                            });
                         } catch (error) {
-                            tools.ModalAlertError("Producto", "Se produjo un error: " + error.responseText);
+                            if (error.responseText == '' || error.responseText == null) {
+                                tools.ModalAlertError("Producto", "Se produjo un interno intente nuevamente, por favor.");
+                            } else {
+                                tools.ModalAlertWarning("Producto", error.responseText);
+                            }
                         }
                     }
                 });

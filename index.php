@@ -68,43 +68,43 @@
             <div class="glider-contain">
                 <div class="glider-category">
                     <div class="item-slider-category">
-                        <a href="https://tiendamia.com/pe/search?amzs=watches" title="Relojes">
+                        <a href="#" title=" Relojes">
                             <span class="img-slider-category" style="background: url(https://tiendamia.com/newsletter/materiales/categorias/sprite-categorias-home-2020-octubre-min.png) 0px 0px;background-color:<?php echo 'rgb(' . rand(0, 255) . ', ' . rand(0, 255) . ', ' . rand(0, 255) . ')';  ?>"></span>
                             <span>Relojes</span>
                         </a>
                     </div>
                     <div class="item-slider-category">
-                        <a href="https://tiendamia.com/pe/search?amzs=watches" title="Relojes">
+                        <a href="#" title="Relojes">
                             <span class="img-slider-category" style="background: url(https://tiendamia.com/newsletter/materiales/categorias/sprite-categorias-home-2020-octubre-min.png) -130px 0px;background-color:<?php echo 'rgb(' . rand(0, 255) . ', ' . rand(0, 255) . ', ' . rand(0, 255) . ')';  ?>"></span>
                             <span>Relojes</span>
                         </a>
                     </div>
                     <div class="item-slider-category">
-                        <a href="https://tiendamia.com/pe/search?amzs=watches" title="Relojes">
+                        <a href="#" title="Relojes">
                             <span class="img-slider-category" style="background: url(https://tiendamia.com/newsletter/materiales/categorias/sprite-categorias-home-2020-octubre-min.png) -520px 0px;background-color:<?php echo 'rgb(' . rand(0, 255) . ', ' . rand(0, 255) . ', ' . rand(0, 255) . ')';  ?>"></span>
                             <span>Relojes</span>
                         </a>
                     </div>
                     <div class="item-slider-category">
-                        <a href="https://tiendamia.com/pe/search?amzs=watches" title="Relojes">
+                        <a href="#" title="Relojes">
                             <span class="img-slider-category" style="background: url(https://tiendamia.com/newsletter/materiales/categorias/sprite-categorias-home-2020-octubre-min.png) 0px -130px;background-color:<?php echo 'rgb(' . rand(0, 255) . ', ' . rand(0, 255) . ', ' . rand(0, 255) . ')';  ?>"></span>
                             <span>Relojes</span>
                         </a>
                     </div>
                     <div class="item-slider-category">
-                        <a href="https://tiendamia.com/pe/search?amzs=watches" title="Relojes">
+                        <a href="#" title="Relojes">
                             <span class="img-slider-category" style="background: url(https://tiendamia.com/newsletter/materiales/categorias/sprite-categorias-home-2020-octubre-min.png) -260px -520px;background-color:<?php echo 'rgb(' . rand(0, 255) . ', ' . rand(0, 255) . ', ' . rand(0, 255) . ')';  ?>"></span>
                             <span>Relojes</span>
                         </a>
                     </div>
                     <div class="item-slider-category">
-                        <a href="https://tiendamia.com/pe/search?amzs=watches" title="Relojes">
+                        <a href="#" title="Relojes">
                             <span class="img-slider-category" style="background: url(https://tiendamia.com/newsletter/materiales/categorias/sprite-categorias-home-2020-octubre-min.png) -130px -130px;background-color:<?php echo 'rgb(' . rand(0, 255) . ', ' . rand(0, 255) . ', ' . rand(0, 255) . ')';  ?>"></span>
                             <span>Relojes</span>
                         </a>
                     </div>
                     <div class="item-slider-category">
-                        <a href="https://tiendamia.com/pe/search?amzs=watches" title="Relojes">
+                        <a href="#" title="Relojes">
                             <span class="img-slider-category" style="background: url(https://tiendamia.com/newsletter/materiales/categorias/sprite-categorias-home-2020-octubre-min.png) -130px -260px;background-color:<?php echo 'rgb(' . rand(0, 255) . ', ' . rand(0, 255) . ', ' . rand(0, 255) . ')';  ?>"></span>
                             <span>Relojes</span>
                         </a>
@@ -117,7 +117,7 @@
     <div class="products-content">
         <div class="container">
             <div class="page-title">
-                <a href="https://tiendamia.com/pe/productos-destacados">
+                <a href="#">
                     <h3>Productos destacados <span>Ver más</span></h3>
                 </a>
             </div>
@@ -126,355 +126,7 @@
         <div class="container">
             <div class="glider-contain">
                 <div class="glider-products1">
-                    <div class="item">
-                        <span class="img_oferta">
-                            <img alt="oferta" src="https://images.tiendamia.com/materiales/peru/2021/Noviembre/Cybermonday/vinietas/pe_cybermonday-vinieta-64x64.png">
-                        </span>
-                        <span class="img_oferta sin_impuestos">
-                            <img alt="sin impuestos" src="https://tiendamia.com/newsletter/materiales/argentina/vineta-productos-libre-impuestos.png">
-                        </span>
-                        <span class="product-image">
-                            <img alt="Introducing Fire TV Stick 4K Max streaming device, Wi-Fi..." src="https://m.media-amazon.com/images/I/41jF40w3pSL._SX500_SY500_CR,0,0,500,500_.jpg">
-                        </span>
-                        <div class="block_holder">
-                            <h2 class="product-name ">
-                                <span>Introducing Fire TV Stick 4K Max streaming device, Wi-Fi...</span>
-                            </h2>
-                            <div class="price-desde">
-                                <span class="list-price currency_price">S/ 319</span>
-                                <span class="discount_blackfriday">33% OFF</span>
-                            </div>
-                            <div class="price-box">
-                                <span class="price_blackfriday currency_price">S/ 209</span>
-                                <span class="express"><img alt="express" src="https://tiendamia.com/skin/frontend/traigo/traigo/images/express_item.png"></span>
-                            </div>
-                            <div class="rating-fav">
-                                <div class="rating-box">
-                                    <div id="rating_producto_ajax" class="rating a-icon a-icon-star a-star-4-5"></div>
-                                </div>
-                            </div>
-                            <span class="regular-price">
-                                <p>
-                                    Oferta del día
-                                </p>
-                                <span>Solo 7 disponibles</span>
-                            </span>
-                            <div class="csiFormatText">
-                                <p>
-                                    <span class="csiGreenText">Envío Gratis hasta 0.75kg pagando con </span>
-                                    <strong>Visa Mastercard y Amex a través de PayPal</strong>
-                                    <br class="showInCart">
-                                    <span class="showInCart"> *Desde S/299 en productos</span>
-                                </p>
-                            </div>
-                            <div class="csiFormatText">
-                                <p>
-                                    <span class="csiGreenText">Hasta 6 cuotas sin interés con </span>
-                                    <strong>tarjetas de crédito Visa BBVA</strong>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
 
-                    <div class="item">
-                        <span class="img_oferta">
-                            <img alt="oferta" src="https://images.tiendamia.com/materiales/peru/2021/Noviembre/Cybermonday/vinietas/pe_cybermonday-vinieta-64x64.png">
-                        </span>
-                        <span class="img_oferta sin_impuestos">
-                            <img alt="sin impuestos" src="https://tiendamia.com/newsletter/materiales/argentina/vineta-productos-libre-impuestos.png">
-                        </span>
-                        <span class="product-image">
-                            <img alt="Introducing Fire TV Stick 4K Max streaming device, Wi-Fi..." src="https://m.media-amazon.com/images/I/41jF40w3pSL._SX500_SY500_CR,0,0,500,500_.jpg">
-                        </span>
-                        <div class="block_holder">
-                            <h2 class="product-name ">
-                                <span>Introducing Fire TV Stick 4K Max streaming device, Wi-Fi...</span>
-                            </h2>
-                            <div class="price-desde">
-                                <span class="list-price currency_price">S/ 319</span>
-                                <span class="discount_blackfriday">33% OFF</span>
-                            </div>
-                            <div class="price-box">
-                                <span class="price_blackfriday currency_price">S/ 209</span>
-                                <span class="express"><img alt="express" src="https://tiendamia.com/skin/frontend/traigo/traigo/images/express_item.png"></span>
-                            </div>
-                            <div class="rating-fav">
-                                <div class="rating-box">
-                                    <div id="rating_producto_ajax" class="rating a-icon a-icon-star a-star-4-5"></div>
-                                </div>
-                            </div>
-                            <span class="regular-price">
-                                <p>
-                                    Oferta del día
-                                </p>
-                                <span>Solo 7 disponibles</span>
-                            </span>
-                            <div class="csiFormatText">
-                                <p>
-                                    <span class="csiGreenText">Envío Gratis hasta 0.75kg pagando con </span>
-                                    <strong>Visa Mastercard y Amex a través de PayPal</strong>
-                                    <br class="showInCart">
-                                    <span class="showInCart"> *Desde S/299 en productos</span>
-                                </p>
-                            </div>
-                            <div class="csiFormatText">
-                                <p>
-                                    <span class="csiGreenText">Hasta 6 cuotas sin interés con </span>
-                                    <strong>tarjetas de crédito Visa BBVA</strong>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="item">
-                        <span class="img_oferta">
-                            <img alt="oferta" src="https://images.tiendamia.com/materiales/peru/2021/Noviembre/Cybermonday/vinietas/pe_cybermonday-vinieta-64x64.png">
-                        </span>
-                        <span class="img_oferta sin_impuestos">
-                            <img alt="sin impuestos" src="https://tiendamia.com/newsletter/materiales/argentina/vineta-productos-libre-impuestos.png">
-                        </span>
-                        <span class="product-image">
-                            <img alt="Introducing Fire TV Stick 4K Max streaming device, Wi-Fi..." src="https://m.media-amazon.com/images/I/41jF40w3pSL._SX500_SY500_CR,0,0,500,500_.jpg">
-                        </span>
-                        <div class="block_holder">
-                            <h2 class="product-name ">
-                                <span>Introducing Fire TV Stick 4K Max streaming device, Wi-Fi...</span>
-                            </h2>
-                            <div class="price-desde">
-                                <span class="list-price currency_price">S/ 319</span>
-                                <span class="discount_blackfriday">33% OFF</span>
-                            </div>
-                            <div class="price-box">
-                                <span class="price_blackfriday currency_price">S/ 209</span>
-                                <span class="express"><img alt="express" src="https://tiendamia.com/skin/frontend/traigo/traigo/images/express_item.png"></span>
-                            </div>
-                            <div class="rating-fav">
-                                <div class="rating-box">
-                                    <div id="rating_producto_ajax" class="rating a-icon a-icon-star a-star-4-5"></div>
-                                </div>
-                            </div>
-                            <span class="regular-price">
-                                <p>
-                                    Oferta del día
-                                </p>
-                                <span>Solo 7 disponibles</span>
-                            </span>
-                            <div class="csiFormatText">
-                                <p>
-                                    <span class="csiGreenText">Envío Gratis hasta 0.75kg pagando con </span>
-                                    <strong>Visa Mastercard y Amex a través de PayPal</strong>
-                                    <br class="showInCart">
-                                    <span class="showInCart"> *Desde S/299 en productos</span>
-                                </p>
-                            </div>
-                            <div class="csiFormatText">
-                                <p>
-                                    <span class="csiGreenText">Hasta 6 cuotas sin interés con </span>
-                                    <strong>tarjetas de crédito Visa BBVA</strong>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="item">
-                        <span class="img_oferta">
-                            <img alt="oferta" src="https://images.tiendamia.com/materiales/peru/2021/Noviembre/Cybermonday/vinietas/pe_cybermonday-vinieta-64x64.png">
-                        </span>
-                        <span class="img_oferta sin_impuestos">
-                            <img alt="sin impuestos" src="https://tiendamia.com/newsletter/materiales/argentina/vineta-productos-libre-impuestos.png">
-                        </span>
-                        <span class="product-image">
-                            <img alt="Introducing Fire TV Stick 4K Max streaming device, Wi-Fi..." src="https://m.media-amazon.com/images/I/41jF40w3pSL._SX500_SY500_CR,0,0,500,500_.jpg">
-                        </span>
-                        <div class="block_holder">
-                            <h2 class="product-name ">
-                                <span>Introducing Fire TV Stick 4K Max streaming device, Wi-Fi...</span>
-                            </h2>
-                            <div class="price-desde">
-                                <span class="list-price currency_price">S/ 319</span>
-                                <span class="discount_blackfriday">33% OFF</span>
-                            </div>
-                            <div class="price-box">
-                                <span class="price_blackfriday currency_price">S/ 209</span>
-                                <span class="express"><img alt="express" src="https://tiendamia.com/skin/frontend/traigo/traigo/images/express_item.png"></span>
-                            </div>
-                            <div class="rating-fav">
-                                <div class="rating-box">
-                                    <div id="rating_producto_ajax" class="rating a-icon a-icon-star a-star-4-5"></div>
-                                </div>
-                            </div>
-                            <span class="regular-price">
-                                <p>
-                                    Oferta del día
-                                </p>
-                                <span>Solo 7 disponibles</span>
-                            </span>
-                            <div class="csiFormatText">
-                                <p>
-                                    <span class="csiGreenText">Envío Gratis hasta 0.75kg pagando con </span>
-                                    <strong>Visa Mastercard y Amex a través de PayPal</strong>
-                                    <br class="showInCart">
-                                    <span class="showInCart"> *Desde S/299 en productos</span>
-                                </p>
-                            </div>
-                            <div class="csiFormatText">
-                                <p>
-                                    <span class="csiGreenText">Hasta 6 cuotas sin interés con </span>
-                                    <strong>tarjetas de crédito Visa BBVA</strong>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="item">
-                        <span class="img_oferta">
-                            <img alt="oferta" src="https://images.tiendamia.com/materiales/peru/2021/Noviembre/Cybermonday/vinietas/pe_cybermonday-vinieta-64x64.png">
-                        </span>
-                        <span class="img_oferta sin_impuestos">
-                            <img alt="sin impuestos" src="https://tiendamia.com/newsletter/materiales/argentina/vineta-productos-libre-impuestos.png">
-                        </span>
-                        <span class="product-image">
-                            <img alt="Introducing Fire TV Stick 4K Max streaming device, Wi-Fi..." src="https://m.media-amazon.com/images/I/41jF40w3pSL._SX500_SY500_CR,0,0,500,500_.jpg">
-                        </span>
-                        <div class="block_holder">
-                            <h2 class="product-name ">
-                                <span>Introducing Fire TV Stick 4K Max streaming device, Wi-Fi...</span>
-                            </h2>
-                            <div class="price-desde">
-                                <span class="list-price currency_price">S/ 319</span>
-                                <span class="discount_blackfriday">33% OFF</span>
-                            </div>
-                            <div class="price-box">
-                                <span class="price_blackfriday currency_price">S/ 209</span>
-                                <span class="express"><img alt="express" src="https://tiendamia.com/skin/frontend/traigo/traigo/images/express_item.png"></span>
-                            </div>
-                            <div class="rating-fav">
-                                <div class="rating-box">
-                                    <div id="rating_producto_ajax" class="rating a-icon a-icon-star a-star-4-5"></div>
-                                </div>
-                            </div>
-                            <span class="regular-price">
-                                <p>
-                                    Oferta del día
-                                </p>
-                                <span>Solo 7 disponibles</span>
-                            </span>
-                            <div class="csiFormatText">
-                                <p>
-                                    <span class="csiGreenText">Envío Gratis hasta 0.75kg pagando con </span>
-                                    <strong>Visa Mastercard y Amex a través de PayPal</strong>
-                                    <br class="showInCart">
-                                    <span class="showInCart"> *Desde S/299 en productos</span>
-                                </p>
-                            </div>
-                            <div class="csiFormatText">
-                                <p>
-                                    <span class="csiGreenText">Hasta 6 cuotas sin interés con </span>
-                                    <strong>tarjetas de crédito Visa BBVA</strong>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="item">
-                        <span class="img_oferta">
-                            <img alt="oferta" src="https://images.tiendamia.com/materiales/peru/2021/Noviembre/Cybermonday/vinietas/pe_cybermonday-vinieta-64x64.png">
-                        </span>
-                        <span class="img_oferta sin_impuestos">
-                            <img alt="sin impuestos" src="https://tiendamia.com/newsletter/materiales/argentina/vineta-productos-libre-impuestos.png">
-                        </span>
-                        <span class="product-image">
-                            <img alt="Introducing Fire TV Stick 4K Max streaming device, Wi-Fi..." src="https://m.media-amazon.com/images/I/41jF40w3pSL._SX500_SY500_CR,0,0,500,500_.jpg">
-                        </span>
-                        <div class="block_holder">
-                            <h2 class="product-name ">
-                                <span>Introducing Fire TV Stick 4K Max streaming device, Wi-Fi...</span>
-                            </h2>
-                            <div class="price-desde">
-                                <span class="list-price currency_price">S/ 319</span>
-                                <span class="discount_blackfriday">33% OFF</span>
-                            </div>
-                            <div class="price-box">
-                                <span class="price_blackfriday currency_price">S/ 209</span>
-                                <span class="express"><img alt="express" src="https://tiendamia.com/skin/frontend/traigo/traigo/images/express_item.png"></span>
-                            </div>
-                            <div class="rating-fav">
-                                <div class="rating-box">
-                                    <div id="rating_producto_ajax" class="rating a-icon a-icon-star a-star-4-5"></div>
-                                </div>
-                            </div>
-                            <span class="regular-price">
-                                <p>
-                                    Oferta del día
-                                </p>
-                                <span>Solo 7 disponibles</span>
-                            </span>
-                            <div class="csiFormatText">
-                                <p>
-                                    <span class="csiGreenText">Envío Gratis hasta 0.75kg pagando con </span>
-                                    <strong>Visa Mastercard y Amex a través de PayPal</strong>
-                                    <br class="showInCart">
-                                    <span class="showInCart"> *Desde S/299 en productos</span>
-                                </p>
-                            </div>
-                            <div class="csiFormatText">
-                                <p>
-                                    <span class="csiGreenText">Hasta 6 cuotas sin interés con </span>
-                                    <strong>tarjetas de crédito Visa BBVA</strong>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="item">
-                        <span class="img_oferta">
-                            <img alt="oferta" src="https://images.tiendamia.com/materiales/peru/2021/Noviembre/Cybermonday/vinietas/pe_cybermonday-vinieta-64x64.png">
-                        </span>
-                        <span class="img_oferta sin_impuestos">
-                            <img alt="sin impuestos" src="https://tiendamia.com/newsletter/materiales/argentina/vineta-productos-libre-impuestos.png">
-                        </span>
-                        <span class="product-image">
-                            <img alt="Introducing Fire TV Stick 4K Max streaming device, Wi-Fi..." src="https://m.media-amazon.com/images/I/41jF40w3pSL._SX500_SY500_CR,0,0,500,500_.jpg">
-                        </span>
-                        <div class="block_holder">
-                            <h2 class="product-name ">
-                                <span>Introducing Fire TV Stick 4K Max streaming device, Wi-Fi...</span>
-                            </h2>
-                            <div class="price-desde">
-                                <span class="list-price currency_price">S/ 319</span>
-                                <span class="discount_blackfriday">33% OFF</span>
-                            </div>
-                            <div class="price-box">
-                                <span class="price_blackfriday currency_price">S/ 209</span>
-                                <span class="express"><img alt="express" src="https://tiendamia.com/skin/frontend/traigo/traigo/images/express_item.png"></span>
-                            </div>
-                            <div class="rating-fav">
-                                <div class="rating-box">
-                                    <div id="rating_producto_ajax" class="rating a-icon a-icon-star a-star-4-5"></div>
-                                </div>
-                            </div>
-                            <span class="regular-price">
-                                <p>
-                                    Oferta del día
-                                </p>
-                                <span>Solo 7 disponibles</span>
-                            </span>
-                            <div class="csiFormatText">
-                                <p>
-                                    <span class="csiGreenText">Envío Gratis hasta 0.75kg pagando con </span>
-                                    <strong>Visa Mastercard y Amex a través de PayPal</strong>
-                                    <br class="showInCart">
-                                    <span class="showInCart"> *Desde S/299 en productos</span>
-                                </p>
-                            </div>
-                            <div class="csiFormatText">
-                                <p>
-                                    <span class="csiGreenText">Hasta 6 cuotas sin interés con </span>
-                                    <strong>tarjetas de crédito Visa BBVA</strong>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
                 </div>
                 <button aria-label="Previous" class="products1-prev control-prev"></button>
                 <button aria-label="Next" class="products1-next control-next"></button>
@@ -499,7 +151,7 @@
     <div class="products-content">
         <div class="container">
             <div class="page-title">
-                <a href="https://tiendamia.com/pe/productos-destacados">
+                <a href="#">
                     <h3>Productos destacados <span>Ver más</span></h3>
                 </a>
             </div>
@@ -508,355 +160,7 @@
         <div class="container">
             <div class="glider-contain">
                 <div class="glider-products2">
-                    <div class="item">
-                        <span class="img_oferta">
-                            <img alt="oferta" src="https://images.tiendamia.com/materiales/peru/2021/Noviembre/Cybermonday/vinietas/pe_cybermonday-vinieta-64x64.png">
-                        </span>
-                        <span class="img_oferta sin_impuestos">
-                            <img alt="sin impuestos" src="https://tiendamia.com/newsletter/materiales/argentina/vineta-productos-libre-impuestos.png">
-                        </span>
-                        <span class="product-image">
-                            <img alt="Introducing Fire TV Stick 4K Max streaming device, Wi-Fi..." src="https://m.media-amazon.com/images/I/41jF40w3pSL._SX500_SY500_CR,0,0,500,500_.jpg">
-                        </span>
-                        <div class="block_holder">
-                            <h2 class="product-name ">
-                                <span>Introducing Fire TV Stick 4K Max streaming device, Wi-Fi...</span>
-                            </h2>
-                            <div class="price-desde">
-                                <span class="list-price currency_price">S/ 319</span>
-                                <span class="discount_blackfriday">33% OFF</span>
-                            </div>
-                            <div class="price-box">
-                                <span class="price_blackfriday currency_price">S/ 209</span>
-                                <span class="express"><img alt="express" src="https://tiendamia.com/skin/frontend/traigo/traigo/images/express_item.png"></span>
-                            </div>
-                            <div class="rating-fav">
-                                <div class="rating-box">
-                                    <div id="rating_producto_ajax" class="rating a-icon a-icon-star a-star-4-5"></div>
-                                </div>
-                            </div>
-                            <span class="regular-price">
-                                <p>
-                                    Oferta del día
-                                </p>
-                                <span>Solo 7 disponibles</span>
-                            </span>
-                            <div class="csiFormatText">
-                                <p>
-                                    <span class="csiGreenText">Envío Gratis hasta 0.75kg pagando con </span>
-                                    <strong>Visa Mastercard y Amex a través de PayPal</strong>
-                                    <br class="showInCart">
-                                    <span class="showInCart"> *Desde S/299 en productos</span>
-                                </p>
-                            </div>
-                            <div class="csiFormatText">
-                                <p>
-                                    <span class="csiGreenText">Hasta 6 cuotas sin interés con </span>
-                                    <strong>tarjetas de crédito Visa BBVA</strong>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
 
-                    <div class="item">
-                        <span class="img_oferta">
-                            <img alt="oferta" src="https://images.tiendamia.com/materiales/peru/2021/Noviembre/Cybermonday/vinietas/pe_cybermonday-vinieta-64x64.png">
-                        </span>
-                        <span class="img_oferta sin_impuestos">
-                            <img alt="sin impuestos" src="https://tiendamia.com/newsletter/materiales/argentina/vineta-productos-libre-impuestos.png">
-                        </span>
-                        <span class="product-image">
-                            <img alt="Introducing Fire TV Stick 4K Max streaming device, Wi-Fi..." src="https://m.media-amazon.com/images/I/41jF40w3pSL._SX500_SY500_CR,0,0,500,500_.jpg">
-                        </span>
-                        <div class="block_holder">
-                            <h2 class="product-name ">
-                                <span>Introducing Fire TV Stick 4K Max streaming device, Wi-Fi...</span>
-                            </h2>
-                            <div class="price-desde">
-                                <span class="list-price currency_price">S/ 319</span>
-                                <span class="discount_blackfriday">33% OFF</span>
-                            </div>
-                            <div class="price-box">
-                                <span class="price_blackfriday currency_price">S/ 209</span>
-                                <span class="express"><img alt="express" src="https://tiendamia.com/skin/frontend/traigo/traigo/images/express_item.png"></span>
-                            </div>
-                            <div class="rating-fav">
-                                <div class="rating-box">
-                                    <div id="rating_producto_ajax" class="rating a-icon a-icon-star a-star-4-5"></div>
-                                </div>
-                            </div>
-                            <span class="regular-price">
-                                <p>
-                                    Oferta del día
-                                </p>
-                                <span>Solo 7 disponibles</span>
-                            </span>
-                            <div class="csiFormatText">
-                                <p>
-                                    <span class="csiGreenText">Envío Gratis hasta 0.75kg pagando con </span>
-                                    <strong>Visa Mastercard y Amex a través de PayPal</strong>
-                                    <br class="showInCart">
-                                    <span class="showInCart"> *Desde S/299 en productos</span>
-                                </p>
-                            </div>
-                            <div class="csiFormatText">
-                                <p>
-                                    <span class="csiGreenText">Hasta 6 cuotas sin interés con </span>
-                                    <strong>tarjetas de crédito Visa BBVA</strong>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="item">
-                        <span class="img_oferta">
-                            <img alt="oferta" src="https://images.tiendamia.com/materiales/peru/2021/Noviembre/Cybermonday/vinietas/pe_cybermonday-vinieta-64x64.png">
-                        </span>
-                        <span class="img_oferta sin_impuestos">
-                            <img alt="sin impuestos" src="https://tiendamia.com/newsletter/materiales/argentina/vineta-productos-libre-impuestos.png">
-                        </span>
-                        <span class="product-image">
-                            <img alt="Introducing Fire TV Stick 4K Max streaming device, Wi-Fi..." src="https://m.media-amazon.com/images/I/41jF40w3pSL._SX500_SY500_CR,0,0,500,500_.jpg">
-                        </span>
-                        <div class="block_holder">
-                            <h2 class="product-name ">
-                                <span>Introducing Fire TV Stick 4K Max streaming device, Wi-Fi...</span>
-                            </h2>
-                            <div class="price-desde">
-                                <span class="list-price currency_price">S/ 319</span>
-                                <span class="discount_blackfriday">33% OFF</span>
-                            </div>
-                            <div class="price-box">
-                                <span class="price_blackfriday currency_price">S/ 209</span>
-                                <span class="express"><img alt="express" src="https://tiendamia.com/skin/frontend/traigo/traigo/images/express_item.png"></span>
-                            </div>
-                            <div class="rating-fav">
-                                <div class="rating-box">
-                                    <div id="rating_producto_ajax" class="rating a-icon a-icon-star a-star-4-5"></div>
-                                </div>
-                            </div>
-                            <span class="regular-price">
-                                <p>
-                                    Oferta del día
-                                </p>
-                                <span>Solo 7 disponibles</span>
-                            </span>
-                            <div class="csiFormatText">
-                                <p>
-                                    <span class="csiGreenText">Envío Gratis hasta 0.75kg pagando con </span>
-                                    <strong>Visa Mastercard y Amex a través de PayPal</strong>
-                                    <br class="showInCart">
-                                    <span class="showInCart"> *Desde S/299 en productos</span>
-                                </p>
-                            </div>
-                            <div class="csiFormatText">
-                                <p>
-                                    <span class="csiGreenText">Hasta 6 cuotas sin interés con </span>
-                                    <strong>tarjetas de crédito Visa BBVA</strong>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="item">
-                        <span class="img_oferta">
-                            <img alt="oferta" src="https://images.tiendamia.com/materiales/peru/2021/Noviembre/Cybermonday/vinietas/pe_cybermonday-vinieta-64x64.png">
-                        </span>
-                        <span class="img_oferta sin_impuestos">
-                            <img alt="sin impuestos" src="https://tiendamia.com/newsletter/materiales/argentina/vineta-productos-libre-impuestos.png">
-                        </span>
-                        <span class="product-image">
-                            <img alt="Introducing Fire TV Stick 4K Max streaming device, Wi-Fi..." src="https://m.media-amazon.com/images/I/41jF40w3pSL._SX500_SY500_CR,0,0,500,500_.jpg">
-                        </span>
-                        <div class="block_holder">
-                            <h2 class="product-name ">
-                                <span>Introducing Fire TV Stick 4K Max streaming device, Wi-Fi...</span>
-                            </h2>
-                            <div class="price-desde">
-                                <span class="list-price currency_price">S/ 319</span>
-                                <span class="discount_blackfriday">33% OFF</span>
-                            </div>
-                            <div class="price-box">
-                                <span class="price_blackfriday currency_price">S/ 209</span>
-                                <span class="express"><img alt="express" src="https://tiendamia.com/skin/frontend/traigo/traigo/images/express_item.png"></span>
-                            </div>
-                            <div class="rating-fav">
-                                <div class="rating-box">
-                                    <div id="rating_producto_ajax" class="rating a-icon a-icon-star a-star-4-5"></div>
-                                </div>
-                            </div>
-                            <span class="regular-price">
-                                <p>
-                                    Oferta del día
-                                </p>
-                                <span>Solo 7 disponibles</span>
-                            </span>
-                            <div class="csiFormatText">
-                                <p>
-                                    <span class="csiGreenText">Envío Gratis hasta 0.75kg pagando con </span>
-                                    <strong>Visa Mastercard y Amex a través de PayPal</strong>
-                                    <br class="showInCart">
-                                    <span class="showInCart"> *Desde S/299 en productos</span>
-                                </p>
-                            </div>
-                            <div class="csiFormatText">
-                                <p>
-                                    <span class="csiGreenText">Hasta 6 cuotas sin interés con </span>
-                                    <strong>tarjetas de crédito Visa BBVA</strong>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="item">
-                        <span class="img_oferta">
-                            <img alt="oferta" src="https://images.tiendamia.com/materiales/peru/2021/Noviembre/Cybermonday/vinietas/pe_cybermonday-vinieta-64x64.png">
-                        </span>
-                        <span class="img_oferta sin_impuestos">
-                            <img alt="sin impuestos" src="https://tiendamia.com/newsletter/materiales/argentina/vineta-productos-libre-impuestos.png">
-                        </span>
-                        <span class="product-image">
-                            <img alt="Introducing Fire TV Stick 4K Max streaming device, Wi-Fi..." src="https://m.media-amazon.com/images/I/41jF40w3pSL._SX500_SY500_CR,0,0,500,500_.jpg">
-                        </span>
-                        <div class="block_holder">
-                            <h2 class="product-name ">
-                                <span>Introducing Fire TV Stick 4K Max streaming device, Wi-Fi...</span>
-                            </h2>
-                            <div class="price-desde">
-                                <span class="list-price currency_price">S/ 319</span>
-                                <span class="discount_blackfriday">33% OFF</span>
-                            </div>
-                            <div class="price-box">
-                                <span class="price_blackfriday currency_price">S/ 209</span>
-                                <span class="express"><img alt="express" src="https://tiendamia.com/skin/frontend/traigo/traigo/images/express_item.png"></span>
-                            </div>
-                            <div class="rating-fav">
-                                <div class="rating-box">
-                                    <div id="rating_producto_ajax" class="rating a-icon a-icon-star a-star-4-5"></div>
-                                </div>
-                            </div>
-                            <span class="regular-price">
-                                <p>
-                                    Oferta del día
-                                </p>
-                                <span>Solo 7 disponibles</span>
-                            </span>
-                            <div class="csiFormatText">
-                                <p>
-                                    <span class="csiGreenText">Envío Gratis hasta 0.75kg pagando con </span>
-                                    <strong>Visa Mastercard y Amex a través de PayPal</strong>
-                                    <br class="showInCart">
-                                    <span class="showInCart"> *Desde S/299 en productos</span>
-                                </p>
-                            </div>
-                            <div class="csiFormatText">
-                                <p>
-                                    <span class="csiGreenText">Hasta 6 cuotas sin interés con </span>
-                                    <strong>tarjetas de crédito Visa BBVA</strong>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="item">
-                        <span class="img_oferta">
-                            <img alt="oferta" src="https://images.tiendamia.com/materiales/peru/2021/Noviembre/Cybermonday/vinietas/pe_cybermonday-vinieta-64x64.png">
-                        </span>
-                        <span class="img_oferta sin_impuestos">
-                            <img alt="sin impuestos" src="https://tiendamia.com/newsletter/materiales/argentina/vineta-productos-libre-impuestos.png">
-                        </span>
-                        <span class="product-image">
-                            <img alt="Introducing Fire TV Stick 4K Max streaming device, Wi-Fi..." src="https://m.media-amazon.com/images/I/41jF40w3pSL._SX500_SY500_CR,0,0,500,500_.jpg">
-                        </span>
-                        <div class="block_holder">
-                            <h2 class="product-name ">
-                                <span>Introducing Fire TV Stick 4K Max streaming device, Wi-Fi...</span>
-                            </h2>
-                            <div class="price-desde">
-                                <span class="list-price currency_price">S/ 319</span>
-                                <span class="discount_blackfriday">33% OFF</span>
-                            </div>
-                            <div class="price-box">
-                                <span class="price_blackfriday currency_price">S/ 209</span>
-                                <span class="express"><img alt="express" src="https://tiendamia.com/skin/frontend/traigo/traigo/images/express_item.png"></span>
-                            </div>
-                            <div class="rating-fav">
-                                <div class="rating-box">
-                                    <div id="rating_producto_ajax" class="rating a-icon a-icon-star a-star-4-5"></div>
-                                </div>
-                            </div>
-                            <span class="regular-price">
-                                <p>
-                                    Oferta del día
-                                </p>
-                                <span>Solo 7 disponibles</span>
-                            </span>
-                            <div class="csiFormatText">
-                                <p>
-                                    <span class="csiGreenText">Envío Gratis hasta 0.75kg pagando con </span>
-                                    <strong>Visa Mastercard y Amex a través de PayPal</strong>
-                                    <br class="showInCart">
-                                    <span class="showInCart"> *Desde S/299 en productos</span>
-                                </p>
-                            </div>
-                            <div class="csiFormatText">
-                                <p>
-                                    <span class="csiGreenText">Hasta 6 cuotas sin interés con </span>
-                                    <strong>tarjetas de crédito Visa BBVA</strong>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="item">
-                        <span class="img_oferta">
-                            <img alt="oferta" src="https://images.tiendamia.com/materiales/peru/2021/Noviembre/Cybermonday/vinietas/pe_cybermonday-vinieta-64x64.png">
-                        </span>
-                        <span class="img_oferta sin_impuestos">
-                            <img alt="sin impuestos" src="https://tiendamia.com/newsletter/materiales/argentina/vineta-productos-libre-impuestos.png">
-                        </span>
-                        <span class="product-image">
-                            <img alt="Introducing Fire TV Stick 4K Max streaming device, Wi-Fi..." src="https://m.media-amazon.com/images/I/41jF40w3pSL._SX500_SY500_CR,0,0,500,500_.jpg">
-                        </span>
-                        <div class="block_holder">
-                            <h2 class="product-name ">
-                                <span>Introducing Fire TV Stick 4K Max streaming device, Wi-Fi...</span>
-                            </h2>
-                            <div class="price-desde">
-                                <span class="list-price currency_price">S/ 319</span>
-                                <span class="discount_blackfriday">33% OFF</span>
-                            </div>
-                            <div class="price-box">
-                                <span class="price_blackfriday currency_price">S/ 209</span>
-                                <span class="express"><img alt="express" src="https://tiendamia.com/skin/frontend/traigo/traigo/images/express_item.png"></span>
-                            </div>
-                            <div class="rating-fav">
-                                <div class="rating-box">
-                                    <div id="rating_producto_ajax" class="rating a-icon a-icon-star a-star-4-5"></div>
-                                </div>
-                            </div>
-                            <span class="regular-price">
-                                <p>
-                                    Oferta del día
-                                </p>
-                                <span>Solo 7 disponibles</span>
-                            </span>
-                            <div class="csiFormatText">
-                                <p>
-                                    <span class="csiGreenText">Envío Gratis hasta 0.75kg pagando con </span>
-                                    <strong>Visa Mastercard y Amex a través de PayPal</strong>
-                                    <br class="showInCart">
-                                    <span class="showInCart"> *Desde S/299 en productos</span>
-                                </p>
-                            </div>
-                            <div class="csiFormatText">
-                                <p>
-                                    <span class="csiGreenText">Hasta 6 cuotas sin interés con </span>
-                                    <strong>tarjetas de crédito Visa BBVA</strong>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
                 </div>
                 <button aria-label="Previous" class="products2-prev control-prev"></button>
                 <button aria-label="Next" class="products2-next control-next"></button>
@@ -932,7 +236,10 @@
     <script src="view/js/bootstrap.min.js"></script>
     <script src="view/js/main.js"></script>
     <script src="view/js/glider.min.js"></script>
+    <script src="view/js/tools.js"></script>
     <script>
+        let tools = new Tools();
+
         $(document).ready(function() {
 
             $("#txtSearch").keypress(function(event) {
@@ -949,7 +256,6 @@
                     window.location.href = "./catalogo.php?search=" + $("#txtSearch").val().trim();
                 }
             });
-
 
             $("#btnSearch").keypress(function(event) {
                 if (event.which == 13) {
@@ -974,6 +280,7 @@
 
             slideAutoPaly(gliderSlider, '.glider-slider');
 
+
             let gliderCategory = new Glider(document.querySelector('.glider-category'), {
                 slidesToShow: 5,
                 slidesToScroll: 5,
@@ -981,36 +288,168 @@
                 draggable: true,
             });
 
-            let gliderProducts1 = new Glider(document.querySelector('.glider-products1'), {
-                slidesToShow: 5,
-                slidesToScroll: 5,
-                itemWidth: 220,
-                draggable: true,
-                arrows: {
-                    prev: '.products1-prev',
-                    next: '.products1-next'
+            fillProductosDestacados();
+
+        });
+
+        async function fillProductosDestacados() {
+            try {
+                let result1 = await tools.promiseFetchGet("./app/controller/SuministroController.php", {
+                    "type": "destacados",
+                    "posicionPagina": 0,
+                    "filasPorPagina": 10
+                }, function() {
+                    $(".glider-products1").empty();
+                    $(".glider-products1").append(messageLoading());
+                    $(".products1-prev").css("display", "none");
+                    $(".products1-next").css("display", "none");
+                });
+                $(".glider-products1").empty();
+
+                if (result1.length == 0) {
+                    $(".glider-products1").append(messageNoData());
+                } else {
+                    for (let value of result1) {
+                        let image = '<img src="./resource/images/noimage.png" alt="">';
+                        $(".glider-products1").append(item(
+                            image,
+                            value.NombreMarca,
+                            tools.formatMoney(value.PrecioVentaAlto),
+                            tools.formatMoney(value.PrecioVentaGeneral)
+                        ));
+                    }
+                    $(".products1-prev").css("display", "block");
+                    $(".products1-next").css("display", "block");
+
+                    let gliderProducts1 = new Glider(document.querySelector('.glider-products1'), {
+                        slidesToShow: 5,
+                        slidesToScroll: 5,
+                        itemWidth: 220,
+                        draggable: true,
+                        arrows: {
+                            prev: '.products1-prev',
+                            next: '.products1-next'
+                        }
+                    });
                 }
-            });
 
-            // slideAutoPaly(gliderProducts1, '.glider-products1');
+                let result2 = await tools.promiseFetchGet("./app/controller/SuministroController.php", {
+                    "type": "destacados",
+                    "posicionPagina": 10,
+                    "filasPorPagina": 10
+                }, function() {
+                    $(".glider-products2").empty();
+                    $(".glider-products2").append(messageLoading());
+                    $(".products2-prev").css("display", "none");
+                    $(".products2-next").css("display", "none");
+                });
+                $(".glider-products2").empty();
 
-            let gliderProducts2 = new Glider(document.querySelector('.glider-products2'), {
-                slidesToShow: 5,
-                slidesToScroll: 5,
-                itemWidth: 220,
-                draggable: true,
-                arrows: {
-                    prev: '.products2-prev',
-                    next: '.products2-next'
+                if (result2.length == 0) {
+                    $(".glider-products2").append(messageNoData());
+                } else {
+                    for (let value of result2) {
+                        let image = '<img src="./resource/images/noimage.png" alt="">';
+                        $(".glider-products2").append(item(
+                            image,
+                            value.NombreMarca,
+                            tools.formatMoney(value.PrecioVentaAlto),
+                            tools.formatMoney(value.PrecioVentaGeneral)
+                        ));
+                    }
+                    $(".products2-prev").css("display", "block");
+                    $(".products2-next").css("display", "block");
+
+                    let gliderProducts2 = new Glider(document.querySelector('.glider-products2'), {
+                        slidesToShow: 5,
+                        slidesToScroll: 5,
+                        itemWidth: 220,
+                        draggable: true,
+                        arrows: {
+                            prev: '.products2-prev',
+                            next: '.products2-next'
+                        }
+                    });
                 }
-            });
+            } catch (error) {
+                $(".glider-products1").empty();
+                $(".glider-products1").append(messageNoData());
 
-            // slideAutoPaly(gliderProducts2, '.glider-products2');
-
+                $(".glider-products2").empty();
+                $(".glider-products2").append(messageNoData());
+            }
             $('#preloader').fadeOut(1000, function() {
                 $(this).remove();
             });
-        });
+        }
+
+        function item(image, name, priceold, pricenew) {
+            return `    
+            <div class="item">
+                        <span class="img_oferta">
+                            <img alt="oferta" src="https://images.tiendamia.com/materiales/peru/2021/Noviembre/Cybermonday/vinietas/pe_cybermonday-vinieta-64x64.png">
+                        </span>
+                        <span class="img_oferta sin_impuestos">
+                            <img alt="sin impuestos" src="https://tiendamia.com/newsletter/materiales/argentina/vineta-productos-libre-impuestos.png">
+                        </span>
+                        <span class="product-image">
+                           ${image}
+                        </span>
+                        <div class="block_holder">
+                            <h2 class="product-name ">
+                                <span>${name}</span>
+                            </h2>
+                            <div class="price-desde">
+                                <span class="list-price currency_price">S/ ${priceold}</span>
+                                <span class="discount_blackfriday">10% OFF</span>
+                            </div>
+                            <div class="price-box">
+                                <span class="price_blackfriday currency_price">S/ ${pricenew}</span>
+                                <span class="express"><img alt="express" src="https://tiendamia.com/skin/frontend/traigo/traigo/images/express_item.png"></span>
+                            </div>
+                            <div class="rating-fav">
+                                <div class="rating-box">
+                                    <div id="rating_producto_ajax" class="rating a-icon a-icon-star a-star-4-5"></div>
+                                </div>
+                            </div>
+                            <span class="regular-price">
+                                <p>
+                                    Oferta del día
+                                </p>
+                                <span>Solo 7 disponibles</span>
+                            </span>
+                            <div class="csiFormatText">
+                                <p>
+                                    <span class="csiGreenText">Envío Gratis hasta 0.75kg pagando con </span>
+                                    <strong>Visa Mastercard y Amex a través de PayPal</strong>
+                                    <br class="showInCart">
+                                    <span class="showInCart"> *Desde S/299 en productos</span>
+                                </p>
+                            </div>
+                            <div class="csiFormatText">
+                                <p>
+                                    <span class="csiGreenText">Hasta 6 cuotas sin interés con </span>
+                                    <strong>tarjetas de crédito Visa BBVA</strong>
+                                </p>
+                            </div>
+                        </div>
+                    </div>`;
+        }
+
+        function messageLoading() {
+            return `<div class="d-flex flex-column justify-content-center align-items-center p-5">
+                                    <img width="96" height="96" class="d-block animate-image" src="resource/images/noproducto.png" />
+                                    <h4>Cargando lista de productos...</h4>
+                                </div>`;
+        }
+
+        function messageNoData() {
+            return `<div class="d-flex flex-column justify-content-center align-items-center p-5">
+                                    <img width="96" height="96" class="d-block" src="resource/images/noproducto.png" />
+                                    <h4>No se encontraron productos que coincidan con la busqueda.</h4>
+                                </div>
+                            `;
+        }
 
         function slideAutoPaly(glider, selector, delay = 3000, repeat = true) {
             let autoplay = null;

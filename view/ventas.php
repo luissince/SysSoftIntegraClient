@@ -145,7 +145,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         </div>
                     </div>
                     <div class="col-xl-3 col-lg-4 col-md-12 col-sm-12 col-12">
-                        <label><img src="./images/information.png" width="22" height="22"> Estado:</label>
+                        <label><img src="./images/information.svg" width="22" height="22"> Estado:</label>
                         <div class="form-group">
                             <select id="cbEstado" class="form-control">
                                 <option value="0">TODOS</option>
@@ -156,7 +156,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
                 <div class="row">
                     <div class="col-xl-6 col-lg-8 col-md-12 col-sm-12 col-12">
-                        <label>Buscar:</label>
+                        <label><img src="./images/search.png" width="22" height="22"> Buscar:</label>
                         <div class="form-group d-flex">
                             <div class="input-group">
                                 <input type="text" class="form-control" placeholder="Escribir para filtrar" id="txtSearch">
@@ -168,7 +168,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     </div>
 
                     <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
-                        <label>Total de Ventas:</label>
+                        <label><img src="./images/cantidad.png" width="22" height="22"> Total de Ventas:</label>
                         <div class="form-group">
                             <div class="input-group">
                                 <div class="input-group-prepend"><span class="input-group-text">S/</span></div>
@@ -633,7 +633,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
             }
 
             function openPdf(idVenta) {
-                window.open("../app/sunat/pdfventas.php?idVenta=" + idVenta, "_blank");
+                window.open("../app/sunat/pdfventaA4.php?idVenta=" + idVenta, "_blank");
             }
 
             function onEventPaginacionInicio(value) {

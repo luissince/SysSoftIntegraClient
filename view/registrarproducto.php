@@ -531,7 +531,12 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 });
 
                 $("#fileImage").on('change', function(event) {
-                    $("#lblImagen").attr("src", URL.createObjectURL(event.target.files[0]));
+                    if (event.target.files.length !== 0) {
+                        $("#lblImagen").attr("src", URL.createObjectURL(event.target.files[0]));
+                    } else {
+                        $("#lblImagen").attr("src", "./images/noimage.jpg");
+                        $("#fileImage").val(null);
+                    }
                 });
 
                 $("#btnRemove").click(function() {
@@ -1043,7 +1048,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         reader.onloadend = function(evt) {
                             if (evt.target.readyState == FileReader.DONE) {
                                 let base64String = evt.target.result.replace(/^data:.+;base64,/, '');
-                                enviarRegistro(base64String, listaPrecios);
+                                let ext = tools.getExtension(file.name);
+                                enviarRegistro(base64String, listaPrecios, ext);
                             }
                         };
                         reader.readAsDataURL(blob);
@@ -1051,15 +1057,11 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 }
             }
 
-            function enviarRegistro(image, listaPrecios) {
-                tools.ModalDialog("Producto", "¿Está seguro de continuar?", function(value) {
+            function enviarRegistro(image, listaPrecios, ext = "") {
+                tools.ModalDialog("Producto", "¿Está seguro de continuar?", async function(value) {
                     if (value == true) {
-                        $.ajax({
-                            url: "../app/controller/SuministroController.php",
-                            type: 'POST',
-                            accepts: "application/json",
-                            contentType: "application/json; charset=utf-8",
-                            data: JSON.stringify({
+                        try {
+                            let result = await tools.promiseFetchPost("../app/controller/SuministroController.php", {
                                 "type": "insertsuministro",
                                 "Origen": $("#rbTodoModulos").is(":checked") ? 1 : $("#rbModuloVentas").is(":checked") ? 2 : 3,
                                 "Clave": $("#txtClave").val().trim(),
@@ -1088,27 +1090,22 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 "ValorInventario": $("#rbGranelSalida").is(":checked") ? 3 : $("#rbMonedaSalida").is(":checked") ? 2 : 1,
                                 "ClaveUnica": $("#txtClaveUnica").val(),
                                 "Imagen": image,
+                                "Ext": ext,
                                 "ListaPrecios": listaPrecios,
-                            }),
-                            beforeSend: function() {
+                            }, function() {
                                 tools.ModalAlertInfo("Producto", "Se está procesando la información.");
-                            },
-                            success: function(result) {
-                                if (result.estado == 1) {
-                                    tools.ModalAlertSuccess("Producto", result.message);
-                                    clearComponents();
-                                } else if (result.estado == 2) {
-                                    tools.ModalAlertWarning("Producto", result.message);
-                                } else if (result.estado == 3) {
-                                    tools.ModalAlertWarning("Producto", result.message);
-                                } else {
-                                    tools.ModalAlertWarning("Producto", result.message);
-                                }
-                            },
-                            error: function(error) {
-                                tools.ModalAlertError("Producto", "Se produjo un error: " + error.responseText);
+                            });
+
+                            tools.ModalAlertSuccess("Producto", result, function() {
+                                location.reload();
+                            });
+                        } catch (error) {
+                            if (error.responseText == '' || error.responseText == null) {
+                                tools.ModalAlertError("Producto", "Se produjo un interno intente nuevamente, por favor.");
+                            } else {
+                                tools.ModalAlertWarning("Producto", error.responseText);
                             }
-                        });
+                        }
                     }
                 });
             }
@@ -1123,15 +1120,10 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         type: "impuestos"
                     });
 
-                    if (result.estado === 1) {
-                        $("#cbImpuesto").empty();
-                        $("#cbImpuesto").append('<option value="">--TODOS--</option>');
-                        for (let impuesto of result.data) {
-                            $("#cbImpuesto").append('<option value="' + impuesto.IdImpuesto + '">' + impuesto.Nombre + '</option>');
-                        }
-                    } else {
-                        $("#cbImpuesto").empty();
-                        $("#cbImpuesto").append('<option value="">--TODOS--</option>');
+                    $("#cbImpuesto").empty();
+                    $("#cbImpuesto").append('<option value="">--TODOS--</option>');
+                    for (let impuesto of result) {
+                        $("#cbImpuesto").append('<option value="' + impuesto.IdImpuesto + '">' + impuesto.Nombre + '</option>');
                     }
                     $("#divOverlayProducto").addClass('d-none');
                 } catch (error) {
@@ -1151,20 +1143,18 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         $("#tbLista").empty();
                     });
 
-                    if (result.estado == 1) {
-                        if (result.data.length == 0) {
-                            $("#tbLista").append(`<tr> <td>No hay datos para mostrar.</td></tr>`);
-                        } else {
-                            for (let value of result.data) {
-                                $("#tbLista").append(`<tr id="${ value.IdDetalle }" name="${ value.Nombre }" ondblclick="selectModal('${  idMantenimiento }','${  value.IdDetalle }','${  value.Nombre }')">
+                    $("#tbLista").empty();
+                    if (result.length == 0) {
+                        $("#tbLista").append(`<tr> <td>No hay datos para mostrar.</td></tr>`);
+                    } else {
+                        for (let value of result) {
+                            $("#tbLista").append(`<tr id="${ value.IdDetalle }" name="${ value.Nombre }" ondblclick="selectModal('${  idMantenimiento }','${  value.IdDetalle }','${  value.Nombre }')">
                                     <td tabindex="-1">${value.Nombre}</td>                        
                                 </tr>`);
-                            }
                         }
-                    } else {
-                        $("#tbLista").append(`<tr> <td>No hay datos para mostrar.</td></tr>`);
                     }
                 } catch (error) {
+                    $("#tbLista").empty();
                     $("#tbLista").append(`<tr> <td>No hay datos para mostrar.</td></tr>`);
                 }
             }

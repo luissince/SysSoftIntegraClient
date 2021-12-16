@@ -34,18 +34,18 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
                         <div class="modal-body">
                             <div class="row">
-                                <div class="col-md-9 col-sm-12 col-xs-12">
-                                    <label>Buscar:</label>
+                                <div class="col-md-12 col-sm-12 col-xs-12">
+                                    <label>Buscar por Nombre del Producto o Clave/Clave Alterna:</label>
                                     <div class="form-group">
-                                        <input type="text" class="form-control" placeholder="Buscar producto..." id="txtBuscarProducto" />
-                                    </div>
-                                </div>
-                                <div class="col-md-3 col-sm-12 col-xs-12">
-                                    <label>Opción:</label>
-                                    <div class="form-group">
-                                        <button class="btn btn-secondary" id="btnRecargarProductos">
-                                            <img src="./images/reload.png" width="18" /> Recargar
-                                        </button>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" placeholder="Buscar producto..." id="txtBuscarProducto" />
+                                            <div class="input-group-append">
+                                                <button class="btn btn-secondary" id="btnRecargarProductos">
+                                                    <img src="./images/reload.png" width="18"> Recargar
+                                                </button>
+                                            </div>
+                                        </div>
+
                                     </div>
                                 </div>
                             </div>
@@ -277,140 +277,119 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 }
             }
 
-            function ListarProductos(tipo, value) {
-                $.ajax({
-                    url: "../app/controller/SuministroController.php",
-                    method: "GET",
-                    data: {
+            async function ListarProductos(tipo, value) {
+                try {
+                    let result = await tools.promiseFetchGet("../app/controller/SuministroController.php", {
                         "type": "modalproductos",
                         "tipo": tipo,
                         "value": value,
-                        "libre": 0,
-                        "venta": 1,
-                        "insumo": 0,
                         "posicionPagina": ((paginacion - 1) * filasPorPagina),
                         "filasPorPagina": filasPorPagina
-                    },
-                    beforeSend: function() {
+                    }, function() {
                         tbProductos.empty();
                         tbProductos.append('<tr><td class="text-center" colspan="6"><img src="./images/loading.gif" id="imgLoad" width="34" height="34" /> <p>Cargando información...</p></td></tr>');
                         state = true;
-                    },
-                    success: function(result) {
-                        let object = result;
-                        if (object.estado === 1) {
-                            tbProductos.empty();
-                            let productos = object.data;
-                            if (productos.length === 0) {
-                                tbProductos.append('<tr><td class="text-center" colspan="6"><p>No hay datos para mostrar</p></td></tr>');
-                                totalPaginacion = 0;
-                                lblPaginaActual.html(0);
-                                lblPaginaSiguiente.html(0);
-                                state = false;
-                            } else {
-                                for (let producto of productos) {
-                                    tbProductos.append('<tr ondblclick=onSelectProducto(\'' + producto.IdSuministro + '\')>' +
-                                        '<td>' + producto.Id + '</td>' +
-                                        '<td>' + producto.Clave + '</br>' + producto.NombreMarca + '</td>' +
-                                        '<td>' + producto.Categoria + '<br>' + producto.Marca + '</td>' +
-                                        '<td>' + tools.formatMoney(parseFloat(producto.Cantidad)) + '</td>' +
-                                        '<td>' + producto.ImpuestoNombre + '</td>' +
-                                        '<td>' + tools.formatMoney(parseFloat(producto.PrecioVentaGeneral)) + '</td>' +
-                                        '</tr>');
-                                }
-                                totalPaginacion = parseInt(Math.ceil((parseFloat(object.total) / filasPorPagina)));
-                                lblPaginaActual.html(paginacion);
-                                lblPaginaSiguiente.html(totalPaginacion);
-                                state = false;
-                            }
-                        } else {
-                            tbProductos.empty();
-                            tbProductos.append('<tr><td class="text-center" colspan="6"><p>' + object.message + '</p></td></tr>');
-                            state = false;
+                    });
+
+                    let object = result;
+
+                    tbProductos.empty();
+                    let productos = object.data;
+                    if (productos.length === 0) {
+                        tbProductos.append('<tr><td class="text-center" colspan="6"><p>No hay datos para mostrar</p></td></tr>');
+                        totalPaginacion = 0;
+                        lblPaginaActual.html(0);
+                        lblPaginaSiguiente.html(0);
+                        state = false;
+                    } else {
+                        for (let producto of productos) {
+                            tbProductos.append('<tr ondblclick=onSelectProducto(\'' + producto.IdSuministro + '\')>' +
+                                '<td>' + producto.Id + '</td>' +
+                                '<td>' + producto.Clave + '</br>' + producto.NombreMarca + '</td>' +
+                                '<td>' + producto.Categoria + '<br>' + producto.Marca + '</td>' +
+                                '<td>' + tools.formatMoney(parseFloat(producto.Cantidad)) + '</td>' +
+                                '<td>' + producto.ImpuestoNombre + '</td>' +
+                                '<td>' + tools.formatMoney(parseFloat(producto.PrecioVentaGeneral)) + '</td>' +
+                                '</tr>');
                         }
-                    },
-                    error: function(error) {
-                        tbProductos.empty();
-                        tbProductos.append('<tr><td class="text-center" colspan="6"><p>' + error.responseText + '</p></td></tr>');
+                        totalPaginacion = parseInt(Math.ceil((parseFloat(object.total) / filasPorPagina)));
+                        lblPaginaActual.html(paginacion);
+                        lblPaginaSiguiente.html(totalPaginacion);
                         state = false;
                     }
-                });
+
+                } catch (error) {
+                    tbProductos.empty();
+                    tbProductos.append('<tr><td class="text-center" colspan="6"><p>' + error.responseText + '</p></td></tr>');
+                    state = false;
+                }
             }
 
-            function onSelectProducto(idSuministro) {
+            async function onSelectProducto(idSuministro) {
                 $("#id-modal-productos").modal("hide");
                 if (!validateDuplicate(idSuministro)) {
-                    $.ajax({
-                        url: "../app/controller/SuministroController.php",
-                        method: "GET",
-                        data: {
+                    try {
+                        let result = await tools.promiseFetchGet("../app/controller/SuministroController.php", {
                             "type": "getsuministroformovimiento",
                             "idSuministro": idSuministro
-                        },
-                        beforeSend: function() {
+                        }, function() {
                             tools.AlertInfo("Kardex", "Agregando producto.");
                             if (arrayProductos.length === 0) {
                                 tbList.empty();
                             }
-                        },
-                        success: function(result) {
-                            if (result.estado === 1) {
-                                let suministro = result.data;
-                                arrayProductos.push(suministro);
-                                tbList.append('<tr id="' + suministro.IdSuministro + '">' +
-                                    '<td><button class="btn btn-secondary" onclick="removeTableTr(\'' + suministro.IdSuministro + '\')"><img src="./images/remove.png" width="24" /></button></td>' +
-                                    '<td>' + suministro.Clave + '</br>' + suministro.NombreMarca + '</td>' +
-                                    '<td>' + suministro.MarcaNombre + '</td>' +
-                                    '<td><input type="number" class="form-control" placeholder="0.00" /></td>' +
-                                    '<td>' + suministro.Cantidad + " " + suministro.UnidadCompraNombre + '</td>' +
-                                    '</tr>');
-                                tools.AlertSuccess("Kardex", "Se agregó correctamente a la lista.");
-                            } else {
-                                tools.AlertWarning("Kardex", "Problemas en agregar el producto, intente nuevamente.");
-                            }
-                        },
-                        error: function(error) {
+                        })
+
+                        let suministro = result;
+                        arrayProductos.push(suministro);
+                        tbList.append('<tr id="' + suministro.IdSuministro + '">' +
+                            '<td><button class="btn btn-secondary" onclick="removeTableTr(\'' + suministro.IdSuministro + '\')"><img src="./images/remove.png" width="24" /></button></td>' +
+                            '<td>' + suministro.Clave + '</br>' + suministro.NombreMarca + '</td>' +
+                            '<td>' + suministro.MarcaNombre + '</td>' +
+                            '<td><input type="number" class="form-control" placeholder="0.00" /></td>' +
+                            '<td>' + suministro.Cantidad + " " + suministro.UnidadCompraNombre + '</td>' +
+                            '</tr>');
+
+                        tools.AlertSuccess("Kardex", "Se agregó correctamente a la lista.");
+                    } catch (error) {
+                        if (error.responseText == "" || error.responseText == null) {
                             tools.AlertError("Kardex", "Error al agregar el producto, comuníquese con su proveedor.");
+                        } else {
+                            tools.AlertWarning("Kardex", error.responseText);
                         }
-                    });
+                    }
                 } else {
                     tools.AlertWarning("Kardex", "Hay producto con las mismas características.");
                 }
             }
 
-            function listarTodosLosProductos() {
-                $.ajax({
-                    url: "../app/controller/SuministroController.php",
-                    method: "GET",
-                    data: {
+            async function listarTodosLosProductos() {
+                try {
+                    let result = await tools.promiseFetchGet("../app/controller/SuministroController.php", {
                         "type": "listallsuministro"
-                    },
-                    beforeSend: function() {
+                    }, function() {
                         tbList.empty();
                         arrayProductos = [];
                         tools.AlertInfo("Kardex", "Agregando lista de productos.");
-                    },
-                    success: function(result) {
-                        if (result.estado === 1) {
-                            for (let suministro of result.suministros) {
-                                arrayProductos.push(suministro);
-                                tbList.append('<tr id="' + suministro.IdSuministro + '">' +
-                                    '<td><button class="btn btn-secondary" onclick="removeTableTr(\'' + suministro.IdSuministro + '\')"><img src="./images/remove.png" width="24" /></button></td>' +
-                                    '<td>' + suministro.Clave + '</br>' + suministro.NombreMarca + '</td>' +
-                                    '<td>' + suministro.MarcaNombre + '</td>' +
-                                    '<td><input type="number" class="form-control" placeholder="0.00" /></td>' +
-                                    '<td>' + suministro.Cantidad + " " + suministro.UnidadCompraNombre + '</td>' +
-                                    '</tr>');
-                            }
-                            tools.AlertSuccess("Kardex", "Se agregó correctamente a la lista.");
-                        } else {
-                            tools.AlertWarning("Kardex", "Problemas en agregar el producto, intente nuevamente.");
-                        }
-                    },
-                    error: function(error) {
-                        tools.AlertError("Kardex", "Error al agregar el producto, comuníquese con su proveedor.");
+                    });
+
+                    for (let suministro of result) {
+                        arrayProductos.push(suministro);
+                        tbList.append('<tr id="' + suministro.IdSuministro + '">' +
+                            '<td><button class="btn btn-secondary" onclick="removeTableTr(\'' + suministro.IdSuministro + '\')"><img src="./images/remove.png" width="24" /></button></td>' +
+                            '<td>' + suministro.Clave + '</br>' + suministro.NombreMarca + '</td>' +
+                            '<td>' + suministro.MarcaNombre + '</td>' +
+                            '<td><input type="number" class="form-control" placeholder="0.00" /></td>' +
+                            '<td>' + suministro.Cantidad + " " + suministro.UnidadCompraNombre + '</td>' +
+                            '</tr>');
                     }
-                });
+                    tools.AlertSuccess("Kardex", "Se agregó correctamente a la lista.");
+                } catch (error) {
+                    if (error.responseText == "" || error.responseText == null) {
+                        tools.AlertError("Kardex", "Error al agregar el producto, comuníquese con su proveedor.");
+                    } else {
+                        tools.AlertWarning("Kardex", error.responseText);
+                    }
+                }
             }
 
             function validateIngreso() {
@@ -449,14 +428,10 @@ if (!isset($_SESSION['IdEmpleado'])) {
             }
 
             function registrarMovimiento(newArrayProductos) {
-                tools.ModalDialog("Movimiento", '¿Está seguro de continuar?', function(value) {
+                tools.ModalDialog("Movimiento", '¿Está seguro de continuar?', async function(value) {
                     if (value == true) {
-                        $.ajax({
-                            url: "../app/controller/MovimientoController.php",
-                            method: "POST",
-                            accepts: "application/json",
-                            contentType: "application/json",
-                            data: JSON.stringify({
+                        try {
+                            let result = await tools.promiseFetchPost("../app/controller/MovimientoController.php", {
                                 "type": "restarkardex",
                                 "fecha": tools.getCurrentDate(),
                                 "hora": tools.getCurrentTime(),
@@ -464,23 +439,20 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 "tipoMovimiento": 4,
                                 "observacion": "RESTABLECER KARDEX",
                                 "lista": newArrayProductos
-                            }),
-                            beforeSend: function() {
+                            }, function() {
                                 tools.ModalAlertInfo("Kardex", "Se está procesando la petición.");
-                            },
-                            success: function(result) {
-                                if (result.estado === 1) {
-                                    tools.ModalAlertSuccess("Movimiento", result.mensaje);
-                                    arrayProductos.splice(0, arrayProductos.length);
-                                    tbList.empty();
-                                } else {
-                                    tools.ModalAlertWarning("Kardex", result.mensaje);
-                                }
-                            },
-                            error: function(error) {
-                                tools.ModalAlertError("Kardex", "Se produjo un error: " + error.responseText);
+                            });
+
+                            tools.ModalAlertSuccess("Movimiento", result);
+                            arrayProductos.splice(0, arrayProductos.length);
+                            tbList.empty();
+                        } catch (error) {
+                            if (error.responseText == "" || error.responseText == null) {
+                                tools.AlertError("Kardex", "Se produjo un error interno, intente nuevamente por favor");
+                            } else {
+                                tools.AlertWarning("Kardex", error.responseText);
                             }
-                        });
+                        }
                     }
                 });
             }

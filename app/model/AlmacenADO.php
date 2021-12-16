@@ -21,18 +21,17 @@ class AlmacenADO
     public static function GetSearchComboBoxAlmacen()
     {
         try {
-            $array = array();
-
             $cmdDetalle = Database::getInstance()->getDb()->prepare("SELECT IdAlmacen,Nombre FROM AlmacenTB");
             $cmdDetalle->execute();
-            while ($row = $cmdDetalle->fetch()) {
-                array_push($array, array(
-                    "IdAlmacen" => $row["IdAlmacen"],
-                    "Nombre" => $row["Nombre"]
-                ));
-            }
-            return $array;
+
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 200 . ' ' . "OK");
+
+            return $cmdDetalle->fetchAll(PDO::FETCH_OBJ);
         } catch (Exception $ex) {
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+
             return $ex->getMessage();
         }
     }

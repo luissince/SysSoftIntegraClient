@@ -109,11 +109,11 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 <div class="row">
                     <div class="col-md 12 col-sm-12 col-xs-12">
                         <div class="form-group">
-                            <a href="ajusteproceso.php" class="btn btn-success">
+                            <a href="ajusteproceso.php" class="btn btn-primary">
                                 <i class="fa fa-plus"></i>
                                 Realizar Ajuste
                             </a>
-                            <button class="btn btn-danger" id="btnReload">
+                            <button class="btn btn-success" id="btnReload">
                                 <i class="fa fa-refresh"></i>
                                 Recargar
                             </button>
@@ -123,7 +123,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
                 <div class="row ">
                     <div class="col-md-3 col-sm-12 col-xs-12">
-                        <label>Moviminento:</label>
+                        <label><img src="./images/igual.png" width="22" height="22"> Moviminento:</label>
                         <div class="form-group">
                             <select class="form-control" id="cbTipoMovimiento">
                                 <option value="0">--TODOS--</option>
@@ -132,14 +132,14 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     </div>
 
                     <div class="col-md-3 col-sm-12 col-xs-12">
-                        <label>Inicio:</label>
+                        <label><img src="./images/calendar.png" width="22" height="22"> Fecha Inicio:</label>
                         <div class="form-group">
                             <input type="date" class="form-control" id="txtFechaInicio">
                         </div>
                     </div>
 
                     <div class="col-md-3 col-sm-12 col-xs-12">
-                        <label>Termino:</label>
+                        <label><img src="./images/calendar.png" width="22" height="22"> Fecha Termino:</label>
                         <div class="form-group">
                             <input type="date" class="form-control" id="txtFechaTermino">
                         </div>
@@ -243,7 +243,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     if (txtFechaInicio.val() !== "" && txtFechaTermino.val() !== "") {
                         if (!state) {
                             paginacion = 1;
-                            fillInventarioTable(true, parseInt(cbTipoMovimiento.val()), txtFechaInicio.val(), txtFechaTermino.val());
+                            fillInventarioTable(1, cbTipoMovimiento.val(), txtFechaInicio.val(), txtFechaTermino.val());
                             opcion = 1;
                         }
                     }
@@ -253,7 +253,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     if (txtFechaInicio.val() !== "" && txtFechaTermino.val() !== "") {
                         if (!state) {
                             paginacion = 1;
-                            fillInventarioTable(true, parseInt(cbTipoMovimiento.val()), txtFechaInicio.val(), txtFechaTermino.val());
+                            fillInventarioTable(1, cbTipoMovimiento.val(), txtFechaInicio.val(), txtFechaTermino.val());
                             opcion = 1;
                         }
                     }
@@ -263,7 +263,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     if (txtFechaInicio.val() !== "" && txtFechaTermino.val() !== "") {
                         if (!state) {
                             paginacion = 1;
-                            fillInventarioTable(true, parseInt($(this).children("option:selected").val()), txtFechaInicio.val(), txtFechaTermino.val());
+                            fillInventarioTable(1, $(this).children("option:selected").val(), txtFechaInicio.val(), txtFechaTermino.val());
                             opcion = 1;
                         }
                     }
@@ -288,153 +288,61 @@ if (!isset($_SESSION['IdEmpleado'])) {
             function onEventPaginacion() {
                 switch (opcion) {
                     case 0:
-                        fillInventarioTable(false, parseInt(cbTipoMovimiento.val()), "", "");
+                        fillInventarioTable(0, 0, "", "");
                         break;
                     case 1:
-                        fillInventarioTable(true, parseInt(cbTipoMovimiento.val()), txtFechaInicio.val(), txtFechaTermino.val());
+                        fillInventarioTable(1, cbTipoMovimiento.val(), txtFechaInicio.val(), txtFechaTermino.val());
                         break;
                 }
             }
 
-            function loadComponents() {
-                $.get("../app/controller/MovimientoController.php", {
-                    "type": "listipomovimiento",
-                    "ajuste": true,
-                    "all": "true"
-                }, function(data, status) {
-                    if (status === "success") {
-                        let cbTipoMovimiento = $("#cbTipoMovimiento");
-                        let result = data;
-                        if (result.estado === 1) {
-                            cbTipoMovimiento.empty();
-                            cbTipoMovimiento.append('<option value="0">--TODOS--</option>');
-                            for (let tipos of result.data) {
-                                cbTipoMovimiento.append('<option value="' + tipos.IdTipoMovimiento + '">' + tipos.Nombre + '</option>');
-                            }
-                            loadInitTable();
-                        } else {
-                            cbTipoMovimiento.empty();
-                        }
+            async function loadComponents() {
+                try {
+                    let result = await tools.promiseFetchGet("../app/controller/MovimientoController.php", {
+                        "type": "listipomovimiento",
+                        "ajuste": true,
+                        "all": "true"
+                    });
+
+                    $("#cbTipoMovimiento").empty();
+                    $("#cbTipoMovimiento").append('<option value="0">--TODOS--</option>');
+                    for (let tipos of result) {
+                        $("#cbTipoMovimiento").append('<option value="' + tipos.IdTipoMovimiento + '">' + tipos.Nombre + '</option>');
                     }
-                });
+                    loadInitTable();
+
+                } catch (error) {}
             }
 
             function loadInitTable() {
                 if (!state) {
                     paginacion = 1;
-                    fillInventarioTable(false, parseInt(cbTipoMovimiento.val()), "", "");
+                    fillInventarioTable(0, 0, "", "");
                     opcion = 0;
                 }
             }
 
-            function fillInventarioTable(init, movimiento, fechaInicial, fechaFinal) {
-                $.ajax({
-                    url: "../app/controller/SuministroController.php",
-                    method: "GET",
-                    data: {
+            async function fillInventarioTable(opcion, movimiento, fechaInicial, fechaFinal) {
+                try {
+                    let result = await tools.promiseFetchGet("../app/controller/MovimientoController.php", {
                         "type": "listmovimiento",
-                        "init": init,
-                        "opcion": 1,
+                        "opcion": opcion,
                         "movimiento": movimiento,
                         "fechaInicial": fechaInicial,
                         "fechaFinal": fechaFinal,
                         "posicionPagina": ((paginacion - 1) * filasPorPagina),
                         "filasPorPagina": filasPorPagina
-                    },
-                    beforeSend: function() {
+                    }, function() {
                         tbody.empty();
                         tbody.append('<tr><td class="text-center" colspan="8"><img src="./images/loading.gif" id="imgLoad" width="34" height="34" /> <p>Cargando información...</p></td></tr>');
                         state = true;
-                    },
-                    success: function(result) {
-                        let object = result;
-                        if (object.estado === 1) {
-                            let movimientos = object.data;
-                            if (movimientos.length == 0) {
-                                tbody.empty();
-                                tbody.append('<tr><td class="text-center" colspan="8"><p>No hay datos para mostrar</p></td></tr>');
-                                ulPagination.html(`
-                                <button class="btn btn-outline-secondary">
-                                    <i class="fa fa-angle-double-left"></i>
-                                </button>
-                                <button class="btn btn-outline-secondary">
-                                    <i class="fa fa-angle-left"></i>
-                                </button>
-                                <span class="btn btn-outline-secondary disabled" id="lblPaginacion">0 - 0</span>
-                                <button class="btn btn-outline-secondary">
-                                    <i class="fa fa-angle-right"></i>
-                                </button>
-                                <button class="btn btn-outline-secondary">
-                                    <i class="fa fa-angle-double-right"></i>
-                                </button>`);
-                                state = false;
-                            } else {
-                                tbody.empty();
-                                for (let moviminento of movimientos) {
-                                    let estadoStyle = moviminento.Estado === "CANCELADO" ? "text-danger" : moviminento.Estado === "EN PROCESO" ? "text-warning" : "text-success";
-                                    tbody.append('<tr>' +
-                                        '<td>' + moviminento.count + '</td>' +
-                                        '<td>' + (moviminento.TipoAjuste == 0 ? "DECREMENTO" : "INCREMENTO") + '<br>' + moviminento.TipoMovimiento + '</td>' +
-                                        '<td>' + tools.getDateForma(moviminento.Fecha) + "</br>" + tools.getTimeForma24(moviminento.Hora) + '</td>' +
-                                        '<td>' + moviminento.Observacion + '</td>' +
-                                        '<td>' + moviminento.Informacion + '</td>' +
-                                        '<td>' + '<div class="' + estadoStyle + '">' + moviminento.Estado + '</div>' + '</td>' +
-                                        '<td><button class="btn btn-warning btn-sm" onclick="loadDetalleMovimiento(\'' + moviminento.IdMovimientoInventario + '\')"><img src="./images/search.png" width="18" /><span> Ver</span></button></td>' +
-                                        '<td><button class="btn btn-success btn-sm" onclick="generarExcel(\'' + moviminento.IdMovimientoInventario + '\')"><i class="fa fa-file-excel-o"></i><span> Excel</span></button></td>' +
-                                        '</tr>');
-                                }
-                                totalPaginacion = parseInt(Math.ceil((parseFloat(object.total) / filasPorPagina)));
+                    });
 
-                                let i = 1;
-                                let range = [];
-                                while (i <= totalPaginacion) {
-                                    range.push(i);
-                                    i++;
-                                }
-
-                                let min = Math.min.apply(null, range);
-                                let max = Math.max.apply(null, range);
-
-                                let paginacionHtml = `
-                                <button class="btn btn-outline-secondary" onclick="onEventPaginacionInicio(${min})">
-                                    <i class="fa fa-angle-double-left"></i>
-                                </button>
-                                <button class="btn btn-outline-secondary" onclick="onEventAnteriorPaginacion()">
-                                    <i class="fa fa-angle-left"></i>
-                                </button>
-                                <span class="btn btn-outline-secondary disabled" id="lblPaginacion">${paginacion} - ${totalPaginacion}</span>
-                                <button class="btn btn-outline-secondary" onclick="onEventSiguientePaginacion()">
-                                    <i class="fa fa-angle-right"></i>
-                                </button>
-                                <button class="btn btn-outline-secondary" onclick="onEventPaginacionFinal(${max})">
-                                    <i class="fa fa-angle-double-right"></i>
-                                </button>`;
-                                ulPagination.html(paginacionHtml);
-                                state = false;
-                            }
-                        } else {
-                            tbody.empty();
-                            tbody.append('<tr><td class="text-center" colspan="8"><p>' + object.mensaje + '</p></td></tr>');
-                            ulPagination.html(`
-                                <button class="btn btn-outline-secondary">
-                                    <i class="fa fa-angle-double-left"></i>
-                                </button>
-                                <button class="btn btn-outline-secondary">
-                                    <i class="fa fa-angle-left"></i>
-                                </button>
-                                <span class="btn btn-outline-secondary disabled" id="lblPaginacion">0 - 0</span>
-                                <button class="btn btn-outline-secondary">
-                                    <i class="fa fa-angle-right"></i>
-                                </button>
-                                <button class="btn btn-outline-secondary">
-                                    <i class="fa fa-angle-double-right"></i>
-                                </button>`);
-                            state = false;
-                        }
-                    },
-                    error: function(error) {
+                    let object = result;
+                    let movimientos = object.data;
+                    if (movimientos.length == 0) {
                         tbody.empty();
-                        tbody.append('<tr><td class="text-center" colspan="8"><p>Error en: ' + error.responseText + '</p></td></tr>');
+                        tbody.append('<tr><td class="text-center" colspan="8"><p>No hay datos para mostrar</p></td></tr>');
                         ulPagination.html(`
                                 <button class="btn btn-outline-secondary">
                                     <i class="fa fa-angle-double-left"></i>
@@ -450,96 +358,144 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                     <i class="fa fa-angle-double-right"></i>
                                 </button>`);
                         state = false;
+                    } else {
+                        tbody.empty();
+                        for (let moviminento of movimientos) {
+                            let estadoStyle = moviminento.Estado === "CANCELADO" ? "text-danger" : moviminento.Estado === "EN PROCESO" ? "text-warning" : "text-success";
+                            tbody.append('<tr>' +
+                                '<td>' + moviminento.count + '</td>' +
+                                '<td>' + (moviminento.TipoAjuste == 0 ? "DECREMENTO" : "INCREMENTO") + '<br>' + moviminento.TipoMovimiento + '</td>' +
+                                '<td>' + tools.getDateForma(moviminento.Fecha) + "</br>" + tools.getTimeForma24(moviminento.Hora) + '</td>' +
+                                '<td>' + moviminento.Observacion + '</td>' +
+                                '<td>' + moviminento.Informacion + '</td>' +
+                                '<td>' + '<div class="' + estadoStyle + '">' + moviminento.Estado + '</div>' + '</td>' +
+                                '<td><button class="btn btn-warning btn-sm" onclick="loadDetalleMovimiento(\'' + moviminento.IdMovimientoInventario + '\')"><img src="./images/search.png" width="18" /><span> Ver</span></button></td>' +
+                                '<td><button class="btn btn-success btn-sm" onclick="generarExcel(\'' + moviminento.IdMovimientoInventario + '\')"><i class="fa fa-file-excel-o"></i><span> Excel</span></button></td>' +
+                                '</tr>');
+                        }
+                        totalPaginacion = parseInt(Math.ceil((parseFloat(object.total) / filasPorPagina)));
+
+                        let i = 1;
+                        let range = [];
+                        while (i <= totalPaginacion) {
+                            range.push(i);
+                            i++;
+                        }
+
+                        let min = Math.min.apply(null, range);
+                        let max = Math.max.apply(null, range);
+
+                        let paginacionHtml = `
+                                <button class="btn btn-outline-secondary" onclick="onEventPaginacionInicio(${min})">
+                                    <i class="fa fa-angle-double-left"></i>
+                                </button>
+                                <button class="btn btn-outline-secondary" onclick="onEventAnteriorPaginacion()">
+                                    <i class="fa fa-angle-left"></i>
+                                </button>
+                                <span class="btn btn-outline-secondary disabled" id="lblPaginacion">${paginacion} - ${totalPaginacion}</span>
+                                <button class="btn btn-outline-secondary" onclick="onEventSiguientePaginacion()">
+                                    <i class="fa fa-angle-right"></i>
+                                </button>
+                                <button class="btn btn-outline-secondary" onclick="onEventPaginacionFinal(${max})">
+                                    <i class="fa fa-angle-double-right"></i>
+                                </button>`;
+                        ulPagination.html(paginacionHtml);
+                        state = false;
                     }
-                });
+
+                } catch (error) {
+                    console.log(error)
+                    tbody.empty();
+                    tbody.append('<tr><td class="text-center" colspan="8"><p>Error en: ' + error.responseText + '</p></td></tr>');
+                    ulPagination.html(`
+                                <button class="btn btn-outline-secondary">
+                                    <i class="fa fa-angle-double-left"></i>
+                                </button>
+                                <button class="btn btn-outline-secondary">
+                                    <i class="fa fa-angle-left"></i>
+                                </button>
+                                <span class="btn btn-outline-secondary disabled" id="lblPaginacion">0 - 0</span>
+                                <button class="btn btn-outline-secondary">
+                                    <i class="fa fa-angle-right"></i>
+                                </button>
+                                <button class="btn btn-outline-secondary">
+                                    <i class="fa fa-angle-double-right"></i>
+                                </button>`);
+                    state = false;
+                }
             }
 
-            function loadDetalleMovimiento(idMovimiento) {
-                $("#id-modal-productos").modal("show");
-                $.ajax({
-                    url: "../app/controller/MovimientoController.php",
-                    method: "GET",
-                    data: {
+            async function loadDetalleMovimiento(idMovimiento) {
+                try {
+                    $("#id-modal-productos").modal("show");
+                    let result = await tools.promiseFetchGet("../app/controller/MovimientoController.php", {
                         "type": "listforidmovimiento",
                         "idMovimiento": idMovimiento
-                    },
-                    beforeSend: function() {
+                    }, function() {
                         tbMovimientos.empty();
                         tbMovimientos.append('<tr><td class="td-center" colspan="3">Cargando información...</td></tr>');
-                    },
-                    success: function(result) {
-                        if (result.estado === 1) {
-                            tbMovimientos.empty();
-                            let movimiento = result.data[0];
-                            let movimientoDetalle = result.data[1];
 
-                            lblTipoMovimiento.html(movimiento.TipoMovimiento);
-                            lblFechaHora.html(tools.getDateForma(movimiento.Fecha) + " " + tools.getTimeForma24(movimiento.Hora));
-                            lblObservacion.html(movimiento.Observacion);
-                            //lblEstadoMovimiento.removeClass("block-detail-right");
-                            lblEstadoMovimiento.addClass("label-asignacion");
-                            lblEstadoMovimiento.html(movimiento.Estado);
-                            lblCodigoVerificacion.html(movimiento.CodigoVerificacion);
+                    });
+                    tbMovimientos.empty();
 
-                            $("#btnCancelarMovimiento").unbind();
+                    let movimiento = result.movimiento;
+                    let movimientoDetalle = result.detalle;
 
-                            $("#btnCancelarMovimiento").bind("click", function() {
-                                cancelarMovimiento(idMovimiento);
-                            });
+                    lblTipoMovimiento.html(movimiento.TipoMovimiento);
+                    lblFechaHora.html(tools.getDateForma(movimiento.Fecha) + " " + tools.getTimeForma24(movimiento.Hora));
+                    lblObservacion.html(movimiento.Observacion);
+                    //lblEstadoMovimiento.removeClass("block-detail-right");
+                    lblEstadoMovimiento.addClass("label-asignacion");
+                    lblEstadoMovimiento.html(movimiento.Estado);
+                    lblCodigoVerificacion.html(movimiento.CodigoVerificacion);
 
-                            $("#btnCancelarMovimiento").bind("keydown", function(event) {
-                                if (event.keyCode === 13) {
-                                    cancelarMovimiento(idMovimiento);
-                                    event.preventDefault();
-                                }
-                            });
+                    $("#btnCancelarMovimiento").unbind();
 
-                            for (let md of movimientoDetalle) {
-                                tbMovimientos.append('<tr>' +
-                                    '<td class="td-center">' + md.Id + '</td>' +
-                                    '<td class="td-left">' + md.Clave + '</br>' + md.NombreMarca + '</td>' +
-                                    '<td class="td-right">' + tools.formatMoney(md.Cantidad) + '</td>' +
-                                    +'</tr>');
-                            }
-                        } else {
-                            tbMovimientos.empty();
-                            tbMovimientos.append('<tr><td class="td-center" colspan="3">' + result.mensaje + '</td></tr>');
+                    $("#btnCancelarMovimiento").bind("click", function() {
+                        cancelarMovimiento(idMovimiento);
+                    });
+
+                    $("#btnCancelarMovimiento").bind("keydown", function(event) {
+                        if (event.keyCode === 13) {
+                            cancelarMovimiento(idMovimiento);
+                            event.preventDefault();
                         }
-                    },
-                    error: function(error) {
-                        tbMovimientos.empty();
-                        tbMovimientos.append('<tr><td class="td-center" colspan="3">Error en cargar la información.</td></tr>');
+                    });
+
+                    for (let md of movimientoDetalle) {
+                        tbMovimientos.append('<tr>' +
+                            '<td class="td-center">' + md.Id + '</td>' +
+                            '<td class="td-left">' + md.Clave + '</br>' + md.NombreMarca + '</td>' +
+                            '<td class="td-right">' + tools.formatMoney(md.Cantidad) + '</td>' +
+                            +'</tr>');
                     }
-                });
+
+                } catch (error) {
+                    tbMovimientos.empty();
+                    tbMovimientos.append('<tr><td class="td-center" colspan="3">Error en cargar la información.</td></tr>');
+                }
             }
 
             function cancelarMovimiento(idMovimiento) {
-                tools.ModalDialog("Ajuste", "¿Está seguro de anular el Ajuste?", function(value) {
+                tools.ModalDialog("Ajuste", "¿Está seguro de anular el Ajuste?", async function(value) {
                     if (value == true) {
-                        $.ajax({
-                            url: "../app/controller/MovimientoController.php",
-                            method: "GET",
-                            data: {
+                        try {
+                            let result = await tools.promiseFetchPost("../app/controller/MovimientoController.php", {
                                 "type": "cancelarmovimiento",
                                 "idMovimiento": idMovimiento
-                            },
-                            beforeSend: function() {
+                            }, function() {
                                 $("#id-modal-productos").modal("hide");
                                 tools.ModalAlertInfo("Ajuste", "Se está procesando la información.");
-                            },
-                            success: function(result) {
-                                if (result.estado === 1) {
-                                    tools.ModalAlertSuccess("Ajuste", result.mensaje);
-                                } else if (result.estado === 2) {
-                                    tools.ModalAlertWarning("Ajuste", result.mensaje);
-                                } else {
-                                    tools.ModalAlertWarning("Ajuste", result.mensaje);
-                                }
-                            },
-                            error: function(error) {
-                                tools.ModalAlertError("Ajuste", "Se produjo un error: " + error.responseText);
+                            });
+
+                            tools.ModalAlertSuccess("Ajuste", result);
+                        } catch (error) {
+                            if (error.responseText == "" || error.responseText == null) {
+                                tools.ModalAlertError("Ajuste", "Se produjo un error interno, intente nuevamente por favor.");
+                            } else {
+                                tools.ModalAlertWarning("Ajuste", error.responseJSON);
                             }
-                        });
+                        }
                     }
                 });
             }

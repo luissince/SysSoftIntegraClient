@@ -28,7 +28,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 <i class="fa fa-indent">
                                 </i> Lista de Productos
                             </h4>
-                            <button type="button" class="close" id="btnCloseModal">
+                            <button type="button" class="close" data-dismiss="modal">
                                 <i class="fa fa-close"></i>
                             </button>
                         </div>
@@ -36,7 +36,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         <div class="modal-body">
                             <div class="row">
                                 <div class="col-md-12 col-sm-12 col-xs-12">
-                                    <label>Buscar:</label>
+                                    <label>Buscar por Nombre del Producto o Clave/Clave Alterna:</label>
                                     <div class="form-group">
                                         <div class="input-group">
                                             <input type="text" class="form-control" placeholder="Buscar producto..." id="txtBuscarProducto" />
@@ -65,7 +65,11 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                                 </tr>
                                             </thead>
                                             <tbody id="tbProductos">
-
+                                                <tr>
+                                                    <td class="text-center" colspan="6">
+                                                        <p>Inicia la busqueda.</p>
+                                                    </td>
+                                                </tr>
                                             </tbody>
                                         </table>
                                     </div>
@@ -105,13 +109,16 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 <div class="row">
                     <div class="col-md-12 col-sm-12 col-xs-12">
                         <div class="form-group">
-                            <button class="btn btn-danger" id="btnReload">
-                                <i class="fa fa-refresh"></i> Recargar
+                            <button class="btn btn-primary" id="btnProductos">
+                                <i class="fa fa-archive"></i> Productos
                             </button>
                             <a href="restablecerkardex.php" class="btn btn-info" id="btnRestablecer">
                                 <i class="fa fa-eraser"></i>
                                 Restablecer Kardex
                             </a>
+                            <button class="btn btn-secondary" id="btnReload">
+                                <i class="fa fa-refresh"></i> Recargar
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -119,18 +126,18 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label>Buscar por clave o clave alterna:</label>
+                            <label><img src="./images/barcode.png" width="22" height="22"> Buscar por clave o clave alterna:</label>
                             <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <button type="button" class="btn btn-success" id="btnProductos"><i class="fa fa-search"></i> Buscar</button>
-                                </div>
                                 <input type="text" class="form-control" placeholder="Escribir para filtrar" id="txtSearch">
+                                <div class="input-group-append">
+                                    <button type="button" class="btn btn-success" id="btnBuscar"><i class="fa fa-search"></i> Buscar</button>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
-                            <label>Almacen:</label>
+                            <label><img src="./images/almacen.png" width="22" height="22"> Almacen:</label>
                             <div class="input-group">
                                 <select class="form-control" id="cbAlmacen">
                                     <option value="">Cargando información...</option>
@@ -138,20 +145,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             </div>
                         </div>
                     </div>
-                    <!-- <div class="col-md-3">
-                        <label>Paginación:</label>
-                        <div class="form-group">
-                            <button class="btn btn-primary" id="btnAnterior">
-                                <i class="fa fa-arrow-circle-left"></i>
-                            </button>
-                            <span class="m-2" id="lblPaginaActual">0</span>
-                            <span class="m-2">de</span>
-                            <span class="m-2" id="lblPaginaSiguiente">0</span>
-                            <button class="btn btn-primary" id="btnSiguiente">
-                                <i class="fa fa-arrow-circle-right"></i>
-                            </button>
-                        </div>
-                    </div> -->
                 </div>
 
                 <div class="row">
@@ -233,7 +226,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
             let totalPaginacion = 0;
             let filasPorPagina = 10;
 
-            let txtBuscarProducto = $("#txtBuscarProducto");
             let tbProductos = $("#tbProductos");
             let lblPaginaActual = $("#lblPaginaActual");
             let lblPaginaSiguiente = $("#lblPaginaSiguiente");
@@ -245,23 +237,36 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
                 $("#btnProductos").on("click", function(event) {
                     $("#id-modal-productos").modal("show");
-                    loadInitProductos();
                 });
 
                 $("#btnProductos").keyup(function(event) {
                     if (event.keyCode === 13) {
                         $("#id-modal-productos").modal("show");
-                        loadInitProductos();
                         event.preventDefault();
                     }
                 });
 
                 $("#txtSearch").keydown(function(event) {
                     if (event.keyCode === 13) {
-                        if (cbAlmacen.children('option').length > 0 && cbAlmacen.val() != "") {
+                        if (!tools.validateComboBox(cbAlmacen)) {
                             GetSuministroById($("#txtSearch").val());
-                            event.preventDefault();
                         }
+                        event.preventDefault();
+                    }
+                });
+
+                $("#btnBuscar").click(function(event) {
+                    if (!tools.validateComboBox(cbAlmacen)) {
+                        GetSuministroById($("#txtSearch").val());
+                    }
+                });
+
+                $("#btnBuscar").keypress(function(event) {
+                    if (event.keyCode === 13) {
+                        if (!tools.validateComboBox(cbAlmacen)) {
+                            GetSuministroById($("#txtSearch").val());
+                        }
+                        event.preventDefault();
                     }
                 });
 
@@ -279,35 +284,25 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 loadComponentsModal();
             });
 
-            function clearElements() {
-                tbList.empty();
-                tbList.append('<tr><td class="text-center" colspan="10"><p>Tabla sin contenido.</p> </td></tr>');
-                $("#lblProducto").html("Producto");
-                $("#lblCantidadActual").html("0.00");
-                $("#lblValorActual").html("0.00");
-                $("#txtSearch").val("");
-                $("#txtSearch").focus();
-            }
-
             function loadComponentsModal() {
-                txtBuscarProducto.on("keyup", function(event) {
-                    if (txtBuscarProducto.val().trim().length != 0) {
+
+                $('#id-modal-productos').on('shown.bs.modal', function(e) {
+                    $("#txtBuscarProducto").focus();
+                    loadInitProductos();
+                });
+
+                $('#id-modal-productos').on('hide.bs.modal', function(e) {
+                    tbProductos.empty();
+                    tbProductos.append('<tr><td class="text-center" colspan="6"><p>Inicia la busqueda.</p></td></tr>');
+                });
+
+                $("#txtBuscarProducto").keyup(function(event) {
+                    if ($(this).val().trim().length != 0) {
                         if (!state) {
                             paginacion = 1;
-                            ListarProductos(1, txtBuscarProducto.val().trim());
+                            ListarProductos(1, $(this).val().trim());
                             opcion = 1;
                         }
-                    }
-                    event.preventDefault();
-                });
-
-                $("#btnCloseModal").on("click", function(event) {
-                    $("#id-modal-productos").modal("hide");
-                });
-
-                $("#btnCloseModal").on("keyup", function(event) {
-                    if (event.keyCode === 13) {
-                        $("#id-modal-productos").modal("hide");
                     }
                     event.preventDefault();
                 });
@@ -334,32 +329,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     loadInitProductos();
                 });
 
-                $('#id-modal-productos').on('shown.bs.modal', function(e) {
-                    txtBuscarProducto.focus();
-                });
-
-                $("#btnProductosNegativos").click(function() {
-                    listarProductosNegativos();
-                });
-
-                $("#btnProductosNegativos").keypress(function(event) {
-                    if (event.keyCode === 13) {
-                        listarProductosNegativos();
-                    }
-                    event.preventDefault();
-                });
-
-                $("#btnTodosProductos").click(function() {
-                    listarTodosLosProductos();
-                });
-
-                $("#btnTodosProductos").keypress(function(event) {
-                    if (event.keyCode === 13) {
-                        listarTodosLosProductos();
-                    }
-                    event.preventDefault();
-                });
-
             }
 
             function onEventPaginacion() {
@@ -368,7 +337,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         ListarProductos(0, "");
                         break;
                     case 1:
-                        ListarProductos(1, txtBuscarProducto.val().trim());
+                        ListarProductos(1, $("#txtBuscarProducto").val().trim());
                         break;
                 }
             }
@@ -381,63 +350,53 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 }
             }
 
-            function ListarProductos(tipo, value) {
-                $.ajax({
-                    url: "../app/controller/SuministroController.php",
-                    method: "GET",
-                    data: {
+            async function ListarProductos(tipo, value) {
+                try {
+                    let result = await tools.promiseFetchGet("../app/controller/SuministroController.php", {
                         "type": "modalproductos",
                         "tipo": tipo,
                         "value": value,
                         "posicionPagina": ((paginacion - 1) * filasPorPagina),
                         "filasPorPagina": filasPorPagina
-                    },
-                    beforeSend: function() {
+                    }, function() {
                         tbProductos.empty();
                         tbProductos.append('<tr><td class="text-center" colspan="6"><img src="./images/loading.gif" id="imgLoad" width="34" height="34" /> <p>Cargando información...</p></td></tr>');
                         state = true;
                         totalPaginacionProductos = 0;
-                    },
-                    success: function(result) {
-                        let object = result;
-                        if (object.estado === 1) {
-                            tbProductos.empty();
-                            let productos = object.data;
-                            if (productos.length === 0) {
-                                tbProductos.append('<tr><td class="text-center" colspan="6"><p>No hay datos para mostrar</p></td></tr>');
-                                totalPaginacion = 0;
-                                lblPaginaActual.html(0);
-                                lblPaginaSiguiente.html(0);
-                                state = false;
-                            } else {
-                                for (let producto of productos) {
-                                    let cantidad = producto.Cantidad <= 0 ? "<span class='text-danger'>" + tools.formatMoney(parseFloat(producto.Cantidad)) + "</span>" : "<span class='text-success'>" + tools.formatMoney(parseFloat(producto.Cantidad)) + "</span>";
-                                    tbProductos.append('<tr ondblclick="onSelectProducto(\'' + producto.IdSuministro + '\',\'' + producto.NombreMarca + '\')">' +
-                                        '<td>' + producto.Id + '</td>' +
-                                        '<td>' + producto.Clave + '</br>' + producto.NombreMarca + '</td>' +
-                                        '<td>' + producto.Categoria + '<br>' + producto.Marca + '</td>' +
-                                        '<td>' + cantidad + '</td>' +
-                                        '<td>' + producto.ImpuestoNombre + '</td>' +
-                                        '<td>' + tools.formatMoney(parseFloat(producto.PrecioVentaGeneral)) + '</td>' +
-                                        '</tr>');
-                                }
-                                totalPaginacion = parseInt(Math.ceil((parseFloat(object.total) / filasPorPagina)));
-                                lblPaginaActual.html(paginacion);
-                                lblPaginaSiguiente.html(totalPaginacion);
-                                state = false;
-                            }
-                        } else {
-                            tbProductos.empty();
-                            tbProductos.append('<tr><td class="text-center" colspan="6"><p>' + object.message + '</p></td></tr>');
-                            state = false;
+                    });
+
+                    let object = result;
+                    tbProductos.empty();
+
+                    let productos = object.data;
+                    if (productos.length === 0) {
+                        tbProductos.append('<tr><td class="text-center" colspan="6"><p>No hay datos para mostrar</p></td></tr>');
+                        totalPaginacion = 0;
+                        lblPaginaActual.html(0);
+                        lblPaginaSiguiente.html(0);
+                        state = false;
+                    } else {
+                        for (let producto of productos) {
+                            let cantidad = producto.Cantidad <= 0 ? "<span class='text-danger'>" + tools.formatMoney(parseFloat(producto.Cantidad)) + '<br>' + producto.UnidadCompra + "</span>" : "<span class='text-success'>" + tools.formatMoney(parseFloat(producto.Cantidad)) + '<br>' + producto.UnidadCompra + "</span>";
+                            tbProductos.append('<tr ondblclick="onSelectProducto(\'' + producto.IdSuministro + '\',\'' + producto.NombreMarca + '\')">' +
+                                '<td>' + producto.Id + '</td>' +
+                                '<td>' + producto.Clave + '</br>' + producto.NombreMarca + '</td>' +
+                                '<td>' + producto.Categoria + '<br>' + producto.Marca + '</td>' +
+                                '<td>' + cantidad + '</td>' +
+                                '<td>' + producto.ImpuestoNombre + '</td>' +
+                                '<td>' + tools.formatMoney(parseFloat(producto.PrecioVentaGeneral)) + '</td>' +
+                                '</tr>');
                         }
-                    },
-                    error: function(error) {
-                        tbProductos.empty();
-                        tbProductos.append('<tr><td class="text-center" colspan="6"><p>' + error.responseText + '</p></td></tr>');
+                        totalPaginacion = parseInt(Math.ceil((parseFloat(object.total) / filasPorPagina)));
+                        lblPaginaActual.html(paginacion);
+                        lblPaginaSiguiente.html(totalPaginacion);
                         state = false;
                     }
-                });
+                } catch (error) {
+                    tbProductos.empty();
+                    tbProductos.append('<tr><td class="text-center" colspan="6"><p>' + error.responseText + '</p></td></tr>');
+                    state = false;
+                }
             }
 
             function onSelectProducto(idSuministro, nombreMarca) {
@@ -445,94 +404,87 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 fillKardexTable(idSuministro, nombreMarca);
             }
 
-            function fillKardexTable(idSuministro, nombreMarca) {
-                $.ajax({
-                    url: "../app/controller/SuministroController.php",
-                    method: "GET",
-                    data: {
+            async function fillKardexTable(idSuministro, nombreMarca) {
+                try {
+                    let result = await tools.promiseFetchGet("../app/controller/SuministroController.php", {
                         "type": "kardexlista",
                         "idSuministro": idSuministro,
                         "idAlmacen": cbAlmacen.val() == "" ? 0 : cbAlmacen.val()
-                    },
-                    beforeSend: function() {
+                    }, function() {
                         $("#lblProducto").html(nombreMarca);
                         $("#lblCantidadActual").html("0.00");
                         $("#lblValorActual").html("0.00");
                         tbList.empty();
                         tbList.append('<tr><td class="text-center" colspan="10"><img src="./images/loading.gif" id="imgLoad" width="34" height="34" /> <p>Cargando información...</p></td></tr>');
 
-                    },
-                    success: function(result) {
-                        if (result.estado == 1) {
-                            if (result.kardex.length == 0) {
-                                tbList.empty();
-                                tbList.append('<tr><td class="text-center" colspan="10"><p>No hay datos para mostrar.</p></td></tr>');
-                            } else {
-                                tbList.empty();
-                                for (let value of result.kardex) {
-                                    tbList.append('<tr>' +
-                                        '<td class="text-left">' + value.Id + '</td>' +
-                                        '<td class="text-left">' + tools.getDateForma(value.Fecha) + '<br>' + tools.getTimeForma24(value.Hora) + '</td>' +
-                                        '<td class="text-left">' + value.Nombre + '<br>' + value.Detalle + '</td>' +
-                                        '<td class="text-right text-bold" style="background-color:#c6efd0;color:#297521;">' + (value.Tipo == "1" ? tools.formatMoney(value.Cantidad) : "") + '</td>' +
-                                        '<td class="text-right text-bold" style="background-color:#ffc6d1;color:#890d15;">' + (value.Tipo == "2" ? "-" + tools.formatMoney(value.Cantidad) : "") + '</td>' +
-                                        '<td class="text-right">' + tools.formatMoney(value.Existencia) + '</td>' +
-                                        '<td class="text-right">' + tools.formatMoney(value.Costo) + '</td>' +
-                                        '<td class="text-right">' + (value.Tipo == "1" ? tools.formatMoney(value.Total) : "") + '</td>' +
-                                        '<td class="text-right">' + (value.Tipo == "2" ? "-" + tools.formatMoney(value.Total) : "") + '</td>' +
-                                        '<td class="text-right">' + tools.formatMoney(value.Saldo) + '</td>' +
-                                        '</tr>');
-                                }
+                    });
 
-                                $("#lblCantidadActual").html(tools.formatMoney(result.cantidad));
-                                $("#lblValorActual").html(tools.formatMoney(result.saldo));
-                            }
-                        } else {
-                            tbList.empty();
-                            tbList.append('<tr><td class="text-center" colspan="10"><p>' + result.message + '</p></td></tr>');
-                        }
-                    },
-                    error: function(error) {
+                    if (result.kardex.length == 0) {
                         tbList.empty();
-                        tbList.append('<tr><td class="text-center" colspan="10"> <p>' + error.responseText + '</p></td></tr>');
+                        tbList.append('<tr><td class="text-center" colspan="10"><p>No hay datos para mostrar.</p></td></tr>');
+                    } else {
+                        tbList.empty();
+                        for (let value of result.kardex) {
+                            tbList.append('<tr>' +
+                                '<td class="text-left">' + value.Id + '</td>' +
+                                '<td class="text-left">' + tools.getDateForma(value.Fecha) + '<br>' + tools.getTimeForma24(value.Hora) + '</td>' +
+                                '<td class="text-left">' + value.Nombre + '<br>' + value.Detalle + '</td>' +
+                                '<td class="text-right text-bold" style="background-color:#c6efd0;color:#297521;">' + (value.Tipo == "1" ? tools.formatMoney(value.Cantidad) : "") + '</td>' +
+                                '<td class="text-right text-bold" style="background-color:#ffc6d1;color:#890d15;">' + (value.Tipo == "2" ? "-" + tools.formatMoney(value.Cantidad) : "") + '</td>' +
+                                '<td class="text-right">' + tools.formatMoney(value.Existencia) + '</td>' +
+                                '<td class="text-right">' + tools.formatMoney(value.Costo) + '</td>' +
+                                '<td class="text-right">' + (value.Tipo == "1" ? tools.formatMoney(value.Total) : "") + '</td>' +
+                                '<td class="text-right">' + (value.Tipo == "2" ? "-" + tools.formatMoney(value.Total) : "") + '</td>' +
+                                '<td class="text-right">' + tools.formatMoney(value.Saldo) + '</td>' +
+                                '</tr>');
+                        }
+
+                        $("#lblCantidadActual").html(tools.formatMoney(result.cantidad));
+                        $("#lblValorActual").html(tools.formatMoney(result.saldo));
                     }
-                });
+
+                } catch (error) {
+                    tbList.empty();
+                    tbList.append('<tr><td class="text-center" colspan="10"> <p>' + error.responseText + '</p></td></tr>');
+                }
             }
 
-            function loadAlmacen() {
-                $.ajax({
-                    url: "../app/controller/AlmacenController.php",
-                    method: "GET",
-                    data: {
-                        "type": "GetSearchComboBoxAlmacen"
-                    },
-                    beforeSend: function() {
+            async function loadAlmacen() {
+                try {
+                    let result = await tools.promiseFetchGet("../app/controller/AlmacenController.php", {
+                        "type": "almacencombobox"
+                    }, function() {
                         cbAlmacen.empty();
-                    },
-                    success: function(result) {
-                        for (let value of result.data) {
-                            cbAlmacen.append('<option value="' + value.IdAlmacen + '">' + value.Nombre + '</option> ');
-                        }
-                    },
-                    error: function(error) {
+                    });
 
+                    for (let value of result) {
+                        cbAlmacen.append('<option value="' + value.IdAlmacen + '">' + value.Nombre + '</option> ');
                     }
-                });
+                } catch (error) {
+
+                }
             }
 
-            function GetSuministroById(idSuministro) {
-                $.get("../app/controller/SuministroController.php", {
-                    "type": "getproducto",
-                    "idSuministro": idSuministro
-                }, function(result, status) {
-                    if (status == "success") {
-                        if (result.estado === 1) {
-                            if (result.suministro != null) {
-                                fillKardexTable(result.suministro.IdSuministro, result.suministro.NombreGenerico);
-                            }
-                        }
-                    }
-                });
+            async function GetSuministroById(idSuministro) {
+                try {
+                    let result = await tools.promiseFetchGet("../app/controller/SuministroController.php", {
+                        "type": "getproducto",
+                        "idSuministro": idSuministro
+                    });
+                    fillKardexTable(result.suministro.IdSuministro, result.suministro.NombreGenerico);
+                } catch (error) {
+
+                }
+            }
+
+            function clearElements() {
+                tbList.empty();
+                tbList.append('<tr><td class="text-center" colspan="10"><p>Tabla sin contenido.</p> </td></tr>');
+                $("#lblProducto").html("Producto");
+                $("#lblCantidadActual").html("0.00");
+                $("#lblValorActual").html("0.00");
+                $("#txtSearch").val("");
+                $("#txtSearch").focus();
             }
         </script>
     </body>

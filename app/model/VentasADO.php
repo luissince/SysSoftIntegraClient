@@ -193,37 +193,13 @@ class VentasADO
                 ));
             }
 
-            $cmdEmpresa = Database::getInstance()->getDb()->prepare("SELECT TOP 1 
-            d.IdAuxiliar,
-            e.NumeroDocumento,
-            e.RazonSocial,
-            e.NombreComercial,
-            e.Domicilio,
-            e.Telefono,
-            e.Email,
-            e.Image
-            FROM EmpresaTB AS e 
-            INNER JOIN DetalleTB AS d ON e.TipoDocumento = d.IdDetalle AND d.IdMantenimiento = '0003'");
-            $cmdEmpresa->execute();
-            $rowEmpresa = $cmdEmpresa->fetch();
-            $empresa  = (object)array(
-                "IdAuxiliar" => $rowEmpresa['IdAuxiliar'],
-                "NumeroDocumento" => $rowEmpresa['NumeroDocumento'],
-                "RazonSocial" => $rowEmpresa['RazonSocial'],
-                "NombreComercial" => $rowEmpresa['NombreComercial'],
-                "Domicilio" => $rowEmpresa['Domicilio'],
-                "Telefono" => $rowEmpresa['Telefono'],
-                "Email" => $rowEmpresa['Email'],
-                "Image" => $rowEmpresa['Image'] == null ? "" : base64_encode($rowEmpresa['Image'])
-            );
 
             $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
             header($protocol . ' ' . 200 . ' ' . "OK");
 
             return array(
                 "venta" => $venta,
-                "ventadetalle" => $ventadetalle,
-                "empresa" => $empresa
+                "ventadetalle" => $ventadetalle
             );
         } catch (Exception $ex) {
             $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
@@ -232,6 +208,7 @@ class VentasADO
             return $ex->getMessage();
         }
     }
+
 
     public static function  ListarDetalleNotaCredito($idNotaCredito)
     {
@@ -295,6 +272,96 @@ class VentasADO
             $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
             header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
 
+            return $ex->getMessage();
+        }
+    }
+
+    public static function ReporteVentaDetalle($idventa)
+    {
+        try {
+
+            $venta = null;
+            $ventadetalle = array();
+
+            $comandoVenta = Database::getInstance()->getDb()->prepare("{CALL Sp_Obtener_Venta_ById(?)}");
+            $comandoVenta->bindParam(1, $idventa, PDO::PARAM_STR);
+            $comandoVenta->execute();
+            $venta = $comandoVenta->fetchObject();
+
+            $comandoVentaDetalle = Database::getInstance()->getDb()->prepare("{CALL Sp_Listar_Ventas_Detalle_By_Id(?)}");
+            $comandoVentaDetalle->bindParam(1, $idventa, PDO::PARAM_STR);
+            $comandoVentaDetalle->execute();
+            $count = 0;
+            while ($row = $comandoVentaDetalle->fetch()) {
+                $count++;
+                array_push($ventadetalle, array(
+                    "id" => $count,
+                    "IdSuministro" => $row["IdSuministro"],
+                    "Clave" => $row["Clave"],
+                    "NombreMarca" => $row["NombreMarca"],
+                    "Inventario" => $row["Inventario"],
+                    "ValorInventario" => $row["ValorInventario"],
+                    "ClaveSat" => $row["ClaveSat"],
+                    "CodigoUnidad" => $row["CodigoUnidad"],
+                    "UnidadCompra" => $row["UnidadCompra"],
+                    "Cantidad" => floatval($row["Cantidad"]),
+                    "CostoVenta" => floatval($row["CostoVenta"]),
+                    "PrecioVenta" => floatval($row["PrecioVenta"]),
+                    "Descuento" => floatval($row["Descuento"]),
+                    "IdImpuesto" => $row["IdImpuesto"],
+                    "NombreImpuesto" => $row["NombreImpuesto"],
+                    "ValorImpuesto" => floatval($row["ValorImpuesto"]),
+                    "Codigo" => $row["Codigo"]
+                ));
+            }
+
+            $cmdEmpresa = Database::getInstance()->getDb()->prepare("SELECT TOP 1 
+            d.IdAuxiliar,
+            e.NumeroDocumento,
+            e.RazonSocial,
+            e.NombreComercial,
+            e.Domicilio,
+            e.Telefono,
+            e.Email,
+            e.Terminos,
+            e.Condiciones,
+            e.PaginaWeb,
+            e.Image
+            FROM EmpresaTB AS e 
+            INNER JOIN DetalleTB AS d ON e.TipoDocumento = d.IdDetalle AND d.IdMantenimiento = '0003'");
+            $cmdEmpresa->execute();
+            $rowEmpresa = $cmdEmpresa->fetch();
+            $empresa  = (object)array(
+                "IdAuxiliar" => $rowEmpresa['IdAuxiliar'],
+                "NumeroDocumento" => $rowEmpresa['NumeroDocumento'],
+                "RazonSocial" => $rowEmpresa['RazonSocial'],
+                "NombreComercial" => $rowEmpresa['NombreComercial'],
+                "Domicilio" => $rowEmpresa['Domicilio'],
+                "Telefono" => $rowEmpresa['Telefono'],
+                "PaginaWeb" => $rowEmpresa['PaginaWeb'],
+                "Email" => $rowEmpresa['Email'],
+                "Terminos" => $rowEmpresa['Terminos'],
+                "Condiciones" => $rowEmpresa['Condiciones'],
+                "Image" => $rowEmpresa['Image'] == null ? "" : base64_encode($rowEmpresa['Image'])
+            );
+
+            $cmdBanco = Database::getInstance()->getDb()->prepare("SELECT 
+            b.NombreCuenta,
+            b.NumeroCuenta,
+            m.Nombre as Moneda,
+            b.FormaPago
+            FROM Banco as b
+            INNER JOIN MonedaTB AS m ON m.IdMoneda = b.IdMoneda 
+            WHERE Mostrar = 1");
+            $cmdBanco->execute();
+
+            return array(
+                "venta" => $venta,
+                "ventadetalle" => $ventadetalle,
+                "empresa" => $empresa,
+                "banco" => $cmdBanco->fetchAll(PDO::FETCH_OBJ)
+            );
+        } catch (Exception $ex) {
             return $ex->getMessage();
         }
     }
@@ -601,10 +668,12 @@ class VentasADO
                 $count++;
                 array_push($arrayVenta, array(
                     "Id" => $count + $posicionPagina,
+                    "NumeroDocumento" => $row["NumeroDocumento"],
                     "Cliente" => $row["Cliente"],
                     "IdVenta" => $row["IdVenta"],
                     "FechaVenta" => $row["FechaVenta"],
                     "HoraVenta" => $row["HoraVenta"],
+                    "Comprobante" => $row["Comprobante"],
                     "Serie" => $row["Serie"],
                     "Numeracion" => $row["Numeracion"],
                     "Simbolo" => $row["Simbolo"],
@@ -779,12 +848,9 @@ class VentasADO
         return $ret;
     }
 
-
     public static function LoadDashboard($fecha)
     {
-
         $array = array();
-
         try {
 
             $comandoTotalVentas = Database::getInstance()->getDb()->prepare("SELECT 
@@ -917,7 +983,6 @@ class VentasADO
         }
     }
 
-
     public static function LoadProductosAgotados($posicionPaginaAgotados, $filasPorPaginaAgotados)
     {
         try {
@@ -996,7 +1061,6 @@ class VentasADO
             );
         }
     }
-
 
     public static function ListarDetalleVentPorId($idVenta)
     {
@@ -1313,7 +1377,6 @@ class VentasADO
             return $ex->getMessage();
         }
     }
-
 
     public static function ListarComprobanteParaNotaCredito($comprobante)
     {
@@ -1891,6 +1954,7 @@ class VentasADO
         try {
             Database::getInstance()->getDb()->beginTransaction();
             $idCliente = "";
+            $dig5 = rand(10000, 90000);
 
             $cmdValidate = Database::getInstance()->getDb()->prepare("SELECT IdCliente FROM ClienteTB WHERE NumeroDocumento = ?");
             $cmdValidate->bindParam(1, $body["NumeroDocumento"], PDO::PARAM_STR);
@@ -1996,7 +2060,7 @@ class VentasADO
                 $body["Efectivo"],
                 $body["Vuelto"],
                 $body["Tarjeta"],
-                "",
+                $dig5 + $id_comprabante[1],
                 $body["Deposito"],
                 $body["NumeroOperacion"]
             ));
@@ -2136,16 +2200,21 @@ class VentasADO
             }
 
             Database::getInstance()->getDb()->commit();
-            return array(
-                "estado" => 1,
-                "message" => "Se registro correctamente la venta.",
-                "data" => $body
-            );
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 201 . ' ' . "Created");
+
+            return "Se registro correctamente la venta.";
         } catch (PDOException $ex) {
             Database::getInstance()->getDb()->rollback();
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+
             return array("estado" => 0, "message" => $ex->getMessage());
         } catch (Exception $ex) {
             Database::getInstance()->getDb()->rollback();
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+
             return array("estado" => 0, "message" => $ex->getMessage());
         }
     }

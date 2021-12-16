@@ -391,7 +391,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
         <script src="js/puntoventa/modalMovimientoCaja.js"></script>
         <script src="js/puntoventa/modalVentaEchas.js"></script>
         <script src="js/puntoventa/modalCotizacion.js"></script>
-
         <script src="./js/notificaciones.js"></script>
         <script>
             let tools = new Tools();
@@ -582,9 +581,11 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
                     let moneda = result[0];
 
+                    $("#cbMoneda").append('<option value="">- Seleccione -</option>')
                     for (let value of moneda) {
                         $("#cbMoneda").append('<option value="' + value.IdMoneda + '">' + value.Nombre + '</option>');
                     }
+
                     for (let value of moneda) {
                         if (value.Predeterminado == "1") {
                             $("#cbMoneda").val(value.IdMoneda);
@@ -592,7 +593,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             break;
                         }
                     }
-
 
                     listaComprobantes = result[1];
 
@@ -635,10 +635,11 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     }
 
                     $("#lblTotal").html(monedaSimbolo + " " + tools.formatMoney(importeNeto));
-                    $("#lblImporteBruto").html(monedaSimbolo + " " + tools.formatMoney(importeNeto));
-                    $("#lblDescuentoBruto").html(monedaSimbolo + " " + tools.formatMoney(importeNeto));
-                    $("#lblSubImporteNeto").html(monedaSimbolo + " " + tools.formatMoney(importeNeto));
-                    $("#lblImpuestoNeto").html(monedaSimbolo + " " + tools.formatMoney(importeNeto));
+
+                    $("#lblImporteBruto").html(monedaSimbolo + " " + tools.formatMoney(importeBruto));
+                    $("#lblDescuentoBruto").html(monedaSimbolo + " " + tools.formatMoney(descuentoBruto));
+                    $("#lblSubImporteNeto").html(monedaSimbolo + " " + tools.formatMoney(subImporteNeto));
+                    $("#lblImpuestoNeto").html(monedaSimbolo + " " + tools.formatMoney(impuestoNeto));
                     $("#lblImporteNeto").html(monedaSimbolo + " " + tools.formatMoney(importeNeto));
 
                     $("#divOverlayPuntoVenta").addClass("d-none");
@@ -967,9 +968,16 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 } else if (listaProductos.length !== 0) {
                     $("#modalProcesoVenta").modal("show");
                     $("#lblTotalModal").html(monedaSimbolo + " " + tools.formatMoney(importeNeto));
+
                     $("#lblVueltoNombre").html('Su cambio:');
                     $("#lblVuelto").html(monedaSimbolo + ' 0.00');
+
+                    $("#lblVueltoAdelantoNombre").html('Su cambio:');
+                    $("#lblVueltoAdelanto").html(monedaSimbolo + ' 0.00');
+
                     total_venta = parseFloat(tools.formatMoney(importeNeto));
+                    $("#txtDeposito").val(tools.formatMoney(total_venta));
+                    $("#txtDepositoAdelantado").val(tools.formatMoney(total_venta));
                 } else {
                     tools.AlertWarning("", "No hay productos en la lista para continuar.");
                 }
@@ -977,17 +985,31 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
             function crudVenta() {
                 if (state_view_pago == 0) {
-                    if (!estadoCobroContado) {
+                    if (!estadoCobroContado && $("#cbDeposito").is("checked")) {
                         $("#txtEfectivo").focus();
                         tools.AlertWarning("", "El monto es menor que el total.");
                     } else {
+                        let tipo = 1;
+                        let estado = 1;
                         let efectivo = 0;
                         let vuelto = vueltoContado;
                         let tarjeta = 0;
                         let deposito = 0;
+                        let numeroOperacion = "";
 
-                        if (false) {
-
+                        if ($("#cbDeposito").is("checked")) {
+                            if (tools.isNumeric($("#txtDeposito").val())) {
+                                Tools.AlertMessageWarning(window, "Venta", "El monto del deposito tiene que ser numérico.");
+                                $("#txtDeposito").focus();
+                                return;
+                            } else if ($("#txtNumOperacion").val().trim() === "") {
+                                Tools.AlertMessageWarning(window, "Venta", "Ingrese el número de Operación");
+                                $("#txtNumOperacion").requestFocus();
+                                return;
+                            } else {
+                                deposito = parseFloat($("#txtDeposito").val());
+                                numeroOperacion = $("#txtNumOperacion").val().trim();
+                            }
                         } else {
                             if (tools.isNumeric($("#txtEfectivo").val()) && parseFloat($("#txtEfectivo").val()) > 0) {
                                 efectivo = parseFloat($("#txtEfectivo").val());
@@ -1018,7 +1040,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             }
                         }
 
-                        completeVenta(1, 1, efectivo, vuelto, tarjeta, deposito);
+                        completeVenta(tipo, estado, efectivo, vuelto, tarjeta, deposito, numeroOperacion);
                     }
                 } else if (state_view_pago == 1) {
                     completeVenta();
@@ -1027,7 +1049,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 }
             }
 
-            function completeVenta(tipo, estado, efectivo, vuelto, tarjeta, deposito) {
+            function completeVenta(tipo, estado, efectivo, vuelto, tarjeta, deposito, numeroOperacion) {
                 tools.ModalDialog("Venta", '¿Está seguro de continuar?', function(value) {
                     if (value == true) {
                         tools.promiseFetchPost("../app/controller/VentaController.php", {
@@ -1058,7 +1080,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             "Vuelto": vuelto,
                             "Tarjeta": tarjeta,
                             "Deposito": deposito,
-                            "NumeroOperacion": "",
+                            "NumeroOperacion": numeroOperacion,
                             "Lista": listaProductos
 
                         }, function() {
@@ -1066,15 +1088,10 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             resetVenta();
                             tools.ModalAlertInfo("Venta", "Se está procesando la información.");
                         }).then(function(result) {
-                            if (result.estado == 1) {
-                                tools.ModalAlertSuccess("Venta", result.message);
-                            } else {
-                                tools.ModalAlertWarning("Venta", result.message);
-                            }
+                            tools.ModalAlertSuccess("Venta", result);
                             console.log(result);
                         }).catch(function(error) {
-                            console.log(error)
-                            tools.ModalAlertError("Venta", "Se produjo un error interno intente nuevamente.");
+                            tools.ErrorMessageServer("Venta", error);
                         });
                     }
                 });

@@ -71,38 +71,67 @@
                     </div>
                     <hr class="mt-3 mb-2" />
 
+                    <!-- OPCION VENTA CONTADO -->
                     <div id="boxContado">
-                        <div class="row d-flex justify-content-center">
-                            <div class="col-md-6 col-sm-12">
-                                <div class="form-group">
-                                    <label for="txtEfectivo">Efectivo: </label>
-                                    <input id="txtEfectivo" type="text" class="form-control" placeholder="0.0">
+                        <div class="row d-flex justify-content-center mt-3">
+                            <div class="col-md-6 col-sm-12" style="display: contents;">
+                                <label><input id="cbDeposito" type="checkbox" /> Deposito</label>
+                            </div>
+                        </div>
+
+                        <div id="divEfectivo">
+                            <div class="row d-flex justify-content-center">
+                                <div class="col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label for="txtEfectivo">Efectivo: </label>
+                                        <input id="txtEfectivo" type="text" class="form-control" placeholder="0.0">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row d-flex justify-content-center">
+                                <div class="col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label for="txtTarjeta">Tarjeta: </label>
+                                        <input id="txtTarjeta" type="text" class="form-control" placeholder="0.0">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row d-flex justify-content-center">
+                                <div class="col-md-12 col-sm-12">
+                                    <div class="form-group">
+                                        <div class="text-center d-flex justify-content-center">
+                                            <h3 class="mr-1" id="lblVueltoNombre">N.V.</h3>
+                                            <h3 class="text-primary" id="lblVuelto"> 0.00</h3>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="row d-flex justify-content-center">
-                            <div class="col-md-6 col-sm-12">
-                                <div class="form-group">
-                                    <label for="txtTarjeta">Tarjeta: </label>
-                                    <input id="txtTarjeta" type="text" class="form-control" placeholder="0.0">
+
+                        <div id="divEfectivoDeposito">
+                            <div class="row d-flex justify-content-center">
+                                <div class="col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label for="txtDeposito">Efectivo: </label>
+                                        <input id="txtDeposito" type="text" class="form-control" placeholder="0.0" disabled>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row d-flex justify-content-center">
-                            <div class="col-md-12 col-sm-12">
-                                <div class="form-group">
-                                    <div class="text-center d-flex justify-content-center">
-                                        <h3 class="mr-1" id="lblVueltoNombre">N.V.</h3>
-                                        <h3 class="text-primary" id="lblVuelto"> 0.00</h3>
+                            <div class="row d-flex justify-content-center">
+                                <div class="col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label for="txtNumOperacion">Número de Operación: </label>
+                                        <input id="txtNumOperacion" type="text" class="form-control" placeholder="0.0">
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
+                    <!-- OPCION VENTA CREDITO -->
                     <div id="boxCredito" class="d-none">
-                        <div class="row">
-                            <div class="col-md-12 col-sm-12">
+                        <div class="row d-flex justify-content-center">
+                            <div class="col-md-6 col-sm-12">
                                 <div class="form-group">
                                     <label for="txtFechaVencimiento">Fecha de venciminto: </label>
                                     <input id="txtFechaVencimiento" type="date" class="form-control" placeholder="0.0">
@@ -111,35 +140,65 @@
                         </div>
                     </div>
 
+                    <!-- OPCION VENTA ADELANTADO -->
                     <div id="boxAdelantado" class="d-none">
-                        <div class="row">
+                        <div class="row d-flex justify-content-center mt-3">
+                            <div class="col-md-6 col-sm-12" style="display: contents;">
+                                <label><input id="cbDepositoAdelantado" type="checkbox" /> Deposito</label>
+                            </div>
+                        </div>
+
+                        <div class="row d-flex justify-content-center">
                             <div class="col-md-12 col-sm-12">
                                 <div class="form-group">
-                                    <label><i class="fa fa-info text-info"></i> El proceso de pago adelantado consiste en registrar el monto/dinero sin modificar la cantidad de los productos agregados en el detalle de venta.</label>
+                                    <label class="text-center"><i class="fa fa-info text-info"></i> El proceso de pago adelantado consiste en registrar el monto/dinero sin modificar la cantidad de los productos agregados en el detalle de venta.</label>
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-12 col-sm-12">
-                                <div class="form-group">
-                                    <label for="txtEfectivoAdelanto">Efectivo: </label>
-                                    <input id="txtEfectivoAdelanto" type="text" class="form-control" placeholder="0.0">
+
+                        <div id="divAdelantado">
+                            <div class="row d-flex justify-content-center">
+                                <div class="col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label for="txtEfectivoAdelanto">Efectivo: </label>
+                                        <input id="txtEfectivoAdelanto" type="text" class="form-control" placeholder="0.0">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row d-flex justify-content-center">
+                                <div class="col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label for="txtTarjetaAdelanto">Tarjeta: </label>
+                                        <input id="txtTarjetaAdelanto" type="text" class="form-control" placeholder="0.0">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row d-flex justify-content-center">
+                                <div class="col-md-12 col-sm-12">
+                                    <div class="form-group">
+                                        <div class="text-center d-flex justify-content-center">
+                                            <h3 class="mr-1" id="lblVueltoAdelantoNombre">N.V.</h3>
+                                            <h3 class="text-primary" id="lblVueltoAdelanto"> 0.00</h3>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-12 col-sm-12">
-                                <div class="form-group">
-                                    <label for="txtTarjetaAdelanto">Tarjeta: </label>
-                                    <input id="txtTarjetaAdelanto" type="text" class="form-control" placeholder="0.0">
+
+                        <div id="divAdelantadoDeposito">
+                            <div class="row d-flex justify-content-center">
+                                <div class="col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label for="txtDepositoAdelantado">Efectivo: </label>
+                                        <input id="txtDepositoAdelantado" type="text" class="form-control" placeholder="0.0" disabled>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12 col-sm-12">
-                                <div class="form-group">
-                                    <div class="text-center">
-                                        <h6>Por pagar: <span id="lblVueltoAdelanto" class="text-primary">S/ 00.00</span></h6>
+                            <div class="row d-flex justify-content-center">
+                                <div class="col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label for="txtNumOperacionAdelantado">Número de Operación: </label>
+                                        <input id="txtNumOperacionAdelantado" type="text" class="form-control" placeholder="0.0">
                                     </div>
                                 </div>
                             </div>

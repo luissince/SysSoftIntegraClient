@@ -2,7 +2,7 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12 col-sm-12 col-12 text-center p-2">
-                <a href="https://tiendamia.com/pe/cyber-monday-eeuu">
+                <a href="#">
                     <span class="text-white band_text">¡EXTENDIMOS CYBER MONDAY de EE.UU! ENVÍO GRATIS con PAYPAL</span>
                     <span class="band_button">Ver ofertas</span>
                 </a>
@@ -46,14 +46,14 @@
                         </div>
                     </div>
 
-                    <a class="text-white text-options" href="https://tiendamia.com/pe/registro" title="Regístrate">Regístrate</a>
+                    <a class="text-white text-options" href="#" title="Regístrate">Regístrate</a>
 
-                    <a class="text-white text-options" href="https://tiendamia.com/pe/registro" title="Regístrate">Mi Cuenta</a>
+                    <a class="text-white text-options" href="#" title="Regístrate">Mi Cuenta</a>
 
                     <div class="block-cart-header">
                         <div class="block-content">
                             <div class="empty imagen_sprite">
-                                <a href="https://tiendamia.com/pe/checkout/cart/" title="Mi Carrito">
+                                <a href="#" title="Mi Carrito">
                                     <span class="empty_0">0</span>
                                 </a>
                             </div>
@@ -83,7 +83,7 @@
             </div>
             <div class="col-md-3 col-sm-12 col-12 p-2 ">
                 <div class="d-flex align-items-lg-center h-100">
-                    <a class="text-white lead" href="https://tiendamia.com/pe/cyber-monday-eeuu">Ofertas todos los días</a>
+                    <a class="text-white lead" href="#">Ofertas todos los días</a>
                 </div>
             </div>
         </div>

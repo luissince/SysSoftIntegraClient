@@ -159,9 +159,9 @@ function ModalCotizacion() {
                     tbListCotizacion.append(`<tr>
                     <td>${value.Id}</td>
                     <td>${value.Apellidos + '<br>' + value.Nombres}</td>
-                    <td>${'COTIZACIÓN N° ' + value.IdCotizacion}</td>
+                    <td>${'COTIZACIÓN <br>N° - ' + value.IdCotizacion}</td>
                     <td>${tools.getDateForma(value.FechaCotizacion) + '<br>' + tools.getTimeForma24(value.HoraCotizacion)}</td>
-                    <td>${value.Informacion}</td>
+                    <td>${value.NumeroDocumento + '<br>' + value.Informacion}</td>
                     <td>${value.SimboloMoneda + ' ' + tools.formatMoney(value.Total)}</td>
                     <td class="text-center"><button class="btn btn-danger" onclick="loadAddCotizacion('${value.IdCotizacion}')"><image src="./images/accept.png" width="22" height="22" /></button></td>
                     </tr>

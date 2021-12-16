@@ -19,6 +19,7 @@ class Autoload_Static
             'SysSoftIntegra\\Model\\ProveedorADO' => __DIR__  . '/../model/ProveedorADO.php',
             'SysSoftIntegra\\Model\\CotizacionADO' => __DIR__  . '/../model/CotizacionADO.php',
             'SysSoftIntegra\\Model\\IngresoADO' => __DIR__  . '/../model/IngresoADO.php',
+            'SysSoftIntegra\\Model\\BancoADO' => __DIR__  . '/../model/BancoADO.php',
             'SysSoftIntegra\\Controller\\BaseController' => __DIR__  . '/../controller/BaseController.php',
             'SysSoftIntegra\\Src\\Sunat' => __DIR__  . '/Sunat.php',
             'SysSoftIntegra\\Src\\SoapResult' => __DIR__  . '/SoapResult.php',

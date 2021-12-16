@@ -44,8 +44,13 @@ use SysSoftIntegra\Model\EmpresaADO;
 require __DIR__ . './../src/autoload.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-    print json_encode(EmpresaADO::ObtenerEmpresa());
-    exit();
+    if ($_GET["type"] == "getempresa") {
+        print json_encode(EmpresaADO::ObtenerEmpresa());
+        exit();
+    } else if ($_GET["type"] == "fillubigeo") {
+        print json_encode(EmpresaADO::FiltrarUbigeo($_GET["search"]));
+        exit();
+    }
 } else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $body["idEmpresa"] = $_POST["idEmpresa"];
     $body["txtNumDocumento"] = $_POST["txtNumDocumento"];
@@ -56,6 +61,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     $body["txtCelular"] = $_POST["txtCelular"];
     $body["txtPaginWeb"] = $_POST["txtPaginWeb"];
     $body["txtEmail"] = $_POST["txtEmail"];
+    $body["txtTerminos"] = $_POST["txtTerminos"];
+    $body["txtCodiciones"] = $_POST["txtCodiciones"];
     $body["cbUbigeo"] = $_POST["cbUbigeo"];
 
     $body["imageType"] = $_POST["imageType"];

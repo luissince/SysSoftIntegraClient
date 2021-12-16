@@ -128,6 +128,12 @@
                                                 <span class="app-menu__label">Almacen</span>
                                         </a>
                                 </li>
+                                <li>
+                                        <a class="app-menu__item" id="tab-almacen" href="bancos.php">
+                                                <i class="app-menu__icon fa fa-circle-o"></i>
+                                                <span class="app-menu__label">Bancos</span>
+                                        </a>
+                                </li>
                         </ul>
                 </li>
 

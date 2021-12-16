@@ -25,8 +25,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
                         <div class="modal-header">
                             <h4 class="modal-title"><i class="fa fa-indent">
-                                </i> Detalle de la cotización</h4>
-                            <button type="button" class="close" id="btnCloseModal">
+                                </i> Detalle de la Cotización</h4>
+                            <button type="button" class="close" data-dismiss="modal">
                                 <i class="fa fa-close"></i>
                             </button>
                         </div>
@@ -38,8 +38,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                         <table class="table border-0">
                                             <thead>
                                                 <tr>
-                                                    <th class="text-left border-0 p-1">Comprobante</th>
-                                                    <th class="text-left border-0 p-1" id="thComprobante">--</th>
+                                                    <th class="text-left border-0 p-1">Cotización:</th>
+                                                    <th class="text-left border-0 p-1" id="thCotizacion">--</th>
                                                 </tr>
                                                 <tr>
                                                     <th class="text-left border-0 p-1">Cliente</th>
@@ -48,10 +48,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                                 <tr>
                                                     <th class="text-left border-0 p-1">Fecha y Hora:</th>
                                                     <th class="text-left border-0 p-1" id="thFechaHora">--</th>
-                                                </tr>
-                                                <tr>
-                                                    <th class="text-left border-0 p-1">Estado:</th>
-                                                    <th id="thEstado">--</th>
                                                 </tr>
                                                 <tr>
                                                     <th class="text-left border-0 p-1">Total:</th>
@@ -77,8 +73,10 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                                     <th style="width:15%;">Importe</th>
                                                 </tr>
                                             </thead>
-                                            <tbody id="tbIngresosDetalle">
-
+                                            <tbody id="tbCotizacionDetalle">
+                                                <tr>
+                                                    <td colspan="7" class="text-center">No hay datos para mostrar</td>
+                                                </tr>
                                             </tbody>
                                         </table>
                                     </div>
@@ -103,10 +101,10 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 <div class="row">
                     <div class="col-md 12 col-sm-12 col-xs-12">
                         <div class="form-group">
-                            <button href="#" class="btn btn-primary">
+                            <a href="./cotizacionproceso.php" class="btn btn-primary">
                                 <i class="fa fa-plus"></i>
                                 Nuevo
-                            </button>
+                            </a>
                             <button class="btn btn-secondary" id="btnRecargar">
                                 <i class="fa fa-refresh"></i>
                                 Recargar
@@ -150,19 +148,19 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 <thead class="table-header-background">
                                     <tr>
                                         <th scope="col" class="th-porcent-5">N°</th>
+                                        <th scope="col" class="th-porcent-5">Pdf</th>
                                         <th scope="col" class="th-porcent-15">Vendedor</th>
                                         <th scope="col" class="th-porcent-10">Cotización</th>
                                         <th scope="col" class="th-porcent-15">Fecha</th>
                                         <th scope="col" class="th-porcent-25">Cliente</th>
                                         <th scope="col" class="th-porcent-10">Total</th>
                                         <th scope="col" class="th-porcent-5">Detalle</th>
-                                        <th scope="col" class="th-porcent-5">Editar</th>
                                         <th scope="col" class="th-porcent-5">Eliminar</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tbList">
                                     <tr>
-                                        <td class="text-center" colspan="9">No hay datos para mostrar</td>
+                                        <td class="text-center" colspan="10">No hay datos para mostrar</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -213,15 +211,12 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 $("#txtFechaFinal").val(tools.getCurrentDate());
 
                 $("#txtBuscar").keyup(function(event) {
-                    let value = $("#txtBuscar").val();
                     if (event.keyCode !== 9 && event.keyCode !== 18) {
-                        if (value.trim().length != 0) {
-                            if (event.keyCode === 13) {
-                                if (!state) {
-                                    paginacion = 1;
-                                    fillTableCotizacion(1, value.trim(), "", "");
-                                    opcion = 1;
-                                }
+                        if ($(this).val().trim() !== '') {
+                            if (!state) {
+                                paginacion = 1;
+                                fillTableCotizacion(1, $(this).val().trim(), "", "");
+                                opcion = 1;
                             }
                         }
                     }
@@ -238,7 +233,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     }
                 });
 
-                $("#btnBuscar").keypress(function(event) {
+                $("#btnBuscar").keyup(function(event) {
                     let value = $("#txtBuscar").val();
                     if (event.keyCode == 13) {
                         if (value.trim().length != 0) {
@@ -283,6 +278,15 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     }
                 });
 
+                $("#idModalCotizacion").on("hide.bs.modal", function() {
+                    $("#thCotizacion").html("");
+                    $("#thCliente").html("");
+                    $("#thFechaHora").html("");
+                    $("#thTotal").html("0.00");
+                    $("#tbCotizacionDetalle").empty();
+                    $("#tbCotizacionDetalle").append(`<tr><td colspan="7" class="text-center">No hay datos para mostrar</td></tr>`);
+                });
+
                 loadInitCotizacion();
             });
 
@@ -307,60 +311,61 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 }
             }
 
-            function fillTableCotizacion(opcion, buscar, fechaInicial, fechaFinal) {
-                tools.promiseFetchGet(
-                    "../app/controller/CotizacionController.php", {
-                        "type": "all",
-                        "opcion": opcion,
-                        "buscar": buscar,
-                        "fechaInicial": fechaInicial,
-                        "fechaFinal": fechaFinal,
-                        "posicionPagina": ((paginacion - 1) * filasPorPagina),
-                        "filasPorPagina": filasPorPagina
-                    },
-                    function() {
-                        tbody.empty();
-                        tbody.append('<tr><td class="text-center" colspan="9"><img src="./images/loading.gif" id="imgLoad" width="34" height="34" /> <p>Cargando información...</p></td></tr>');
-                        state = true;
-                        totalPaginacion = 0;
-                        arrayVentas = [];
-                    }
-                ).then(result => {
+            async function fillTableCotizacion(opcion, buscar, fechaInicial, fechaFinal) {
+                try {
+                    let result = await tools.promiseFetchGet("../app/controller/CotizacionController.php", {
+                            "type": "all",
+                            "opcion": opcion,
+                            "buscar": buscar,
+                            "fechaInicial": fechaInicial,
+                            "fechaFinal": fechaFinal,
+                            "posicionPagina": ((paginacion - 1) * filasPorPagina),
+                            "filasPorPagina": filasPorPagina
+                        },
+                        function() {
+                            tbody.empty();
+                            tbody.append('<tr><td class="text-center" colspan="10"><img src="./images/loading.gif" id="imgLoad" width="34" height="34" /> <p>Cargando información...</p></td></tr>');
+                            state = true;
+                            totalPaginacion = 0;
+                            arrayVentas = [];
+                        }
+                    );
+
                     let object = result;
 
                     tbody.empty();
                     if (object.data.length == 0) {
-                        tbody.append('<tr><td class="text-center" colspan="9"><p>No hay datos para mostrar.</p></td></tr>');
+                        tbody.append('<tr><td class="text-center" colspan="10"><p>No hay datos para mostrar.</p></td></tr>');
                         ulPagination.html(`
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-double-left"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-left"></i>
-                            </button>
-                            <span class="btn btn-outline-secondary disabled" id="lblPaginacion">0 - 0</span>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-right"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-double-right"></i>
-                            </button>`);
+                        <button class="btn btn-outline-secondary">
+                            <i class="fa fa-angle-double-left"></i>
+                        </button>
+                        <button class="btn btn-outline-secondary">
+                            <i class="fa fa-angle-left"></i>
+                        </button>
+                        <span class="btn btn-outline-secondary disabled" id="lblPaginacion">0 - 0</span>
+                        <button class="btn btn-outline-secondary">
+                            <i class="fa fa-angle-right"></i>
+                        </button>
+                        <button class="btn btn-outline-secondary">
+                            <i class="fa fa-angle-double-right"></i>
+                        </button>`);
                         state = false;
                     } else {
 
                         for (let cotizacion of object.data) {
-
-                            tbody.append('<tr>' +
-                                ' <td class="text-center">' + cotizacion.Id + '</td >' +
-                                ' <td class="text-left">' + cotizacion.Apellidos + ", " + cotizacion.Nombres + '</td>' +
-                                ' <td class="text-left">' + "COTIZACIÓN N° " + cotizacion.IdCotizacion + '</td>' +
-                                ' <td class="text-left">' + tools.getDateForma(cotizacion.FechaCotizacion) + '</td>' +
-                                ' <td class="text-left">' + cotizacion.Informacion + '</td>' +
-                                ' <td class="text-right">' + cotizacion.SimboloMoneda + " " + tools.formatMoney(cotizacion.Total) + '</td>' +
-                                ' <td class="text-center"><button type="button" class="btn btn-info"><i class="fa fa-eye"></i></button></td >' +
-                                ' <td class="text-center"><button type="button" class="btn btn-warning"><i class="fa fa-edit"></i></button></td >' +
-                                ' <td class="text-center"><button type="button" class="btn btn-danger"><i class="fa fa-trash"></i></button></td >' +
-                                '</tr >');
+                            let pdf = '<button class="btn btn-secondary btn-sm"  onclick="openPdf(\'' + cotizacion.IdCotizacion + '\')"><img src="./images/pdf.svg" width="26" /> </button>';
+                            tbody.append(`<tr>
+                                <td class="text-center"> ${ cotizacion.Id }</td >
+                                <td class="text-center"> ${ pdf }</td >
+                                <td class="text-left"> ${ cotizacion.Apellidos + "<br>" + cotizacion.Nombres }</td>
+                                <td class="text-left"> ${ "COTIZACIÓN <br>N° " + cotizacion.IdCotizacion }</td>
+                                <td class="text-left"> ${ tools.getDateForma(cotizacion.FechaCotizacion)+'<br>'+tools.getTimeForma24(cotizacion.HoraCotizacion) }</td>
+                                <td class="text-left"> ${ cotizacion.NumeroDocumento+'<br>'+cotizacion.Informacion }</td>
+                                <td class="text-right">${ cotizacion.SimboloMoneda + " " + tools.formatMoney(cotizacion.Total) }</td>
+                                <td class="text-center"><button type="button" class="btn btn-info" onclick="modalDetalle('${cotizacion.IdCotizacion}')"><i class="fa fa-eye"></i></button></td >
+                                <td class="text-center"><button type="button" class="btn btn-danger" onclick="quitarCotizacion('${cotizacion.IdCotizacion}')"><i class="fa fa-trash"></i></button></td >
+                                </tr >`);
                         }
 
                         totalPaginacion = parseInt(Math.ceil((parseFloat(object.total) / filasPorPagina)));
@@ -376,25 +381,24 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         let max = Math.max.apply(null, range);
 
                         let paginacionHtml = `
-                            <button class="btn btn-outline-secondary" onclick="onEventPaginacionInicio(${min})">
-                                <i class="fa fa-angle-double-left"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary" onclick="onEventAnteriorPaginacion()">
-                                <i class="fa fa-angle-left"></i>
-                            </button>
-                            <span class="btn btn-outline-secondary disabled" id="lblPaginacion">${paginacion} - ${totalPaginacion}</span>
-                            <button class="btn btn-outline-secondary" onclick="onEventSiguientePaginacion()">
-                                <i class="fa fa-angle-right"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary" onclick="onEventPaginacionFinal(${max})">
-                                <i class="fa fa-angle-double-right"></i>
-                            </button>`;
+                        <button class="btn btn-outline-secondary" onclick="onEventPaginacionInicio(${min})">
+                            <i class="fa fa-angle-double-left"></i>
+                        </button>
+                        <button class="btn btn-outline-secondary" onclick="onEventAnteriorPaginacion()">
+                            <i class="fa fa-angle-left"></i>
+                        </button>
+                        <span class="btn btn-outline-secondary disabled" id="lblPaginacion">${paginacion} - ${totalPaginacion}</span>
+                        <button class="btn btn-outline-secondary" onclick="onEventSiguientePaginacion()">
+                            <i class="fa fa-angle-right"></i>
+                        </button>
+                        <button class="btn btn-outline-secondary" onclick="onEventPaginacionFinal(${max})">
+                            <i class="fa fa-angle-double-right"></i>
+                        </button>`;
 
                         ulPagination.html(paginacionHtml);
                         state = false;
                     }
-
-                }).catch(error => {
+                } catch (error) {
                     tbody.empty();
                     ulPagination.html(`
                             <button class="btn btn-outline-secondary">
@@ -410,8 +414,75 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             <button class="btn btn-outline-secondary">
                                 <i class="fa fa-angle-double-right"></i>
                             </button>`);
-                    tbody.append('<tr><td class="text-center" colspan="9"><p>' + error.responseText + '</p></td></tr>');
+                    tbody.append('<tr><td class="text-center" colspan="10"><p>' + error.responseText + '</p></td></tr>');
                     state = false;
+                }
+            }
+
+            function openPdf(idCotizacion) {
+                window.open("../app/sunat/pdfcotizacionA4.php?idCotizacion=" + idCotizacion, "_blank");
+            }
+
+            async function modalDetalle(idCotizacion) {
+                try {
+                    $("#idModalCotizacion").modal("show");
+
+                    let result = await tools.promiseFetchGet("../app/controller/CotizacionController.php", {
+                        "type": "cotizaciondetalle",
+                        "idCotizacion": idCotizacion
+                    }, function() {
+                        $("#tbCotizacionDetalle").empty();
+                        $("#tbCotizacionDetalle").append(`<tr><td class="text-center" colspan="7"><img src="./images/loading.gif" id="imgLoad" width="34" height="34" /> <p>Cargando información...</p></td></tr>`);
+                    });
+                    $("#tbCotizacionDetalle").empty();
+
+                    let cotizacion = result.data;
+
+                    $("#thCotizacion").html("N°-" + cotizacion.IdCotizacion);
+                    $("#thCliente").html(cotizacion.Informacion);
+                    $("#thFechaHora").html(tools.getDateForma(cotizacion.FechaCotizacion));
+
+                    let count = 0;
+                    let total = 0;
+                    for (let value of result.detalle) {
+                        count++;
+                        total += parseFloat(value.Cantidad) * parseFloat(value.Precio);
+                        $("#tbCotizacionDetalle").append(`
+                        <tr>
+                            <td>${count}</td>
+                            <td>${value.Clave+"<br>"+value.NombreMarca}</td>
+                            <td>${tools.formatMoney(value.Cantidad)}</td>
+                            <td>${value.ImpuestoNombre}</td>
+                            <td>${tools.formatMoney(value.Precio)}</td>
+                            <td>${tools.formatMoney(value. Descuento)}</td>
+                            <td>${tools.formatMoney(total)}</td>
+                        </tr>
+                        `);
+                    }
+
+                    $("#thTotal").html(cotizacion.Simbolo + " " + tools.formatMoney(total));
+                } catch (error) {
+                    $("#tbCotizacionDetalle").append(`<tr><td class="text-center" colspan="7">Se produjo un error interno, intente nuevamente por favor.</td></tr>`);
+                }
+            }
+
+            function quitarCotizacion(idCotizacion) {
+                tools.ModalDialog("Cotización", "¿Está seguro de eliminar la cotización?", async function(value) {
+                    if (value == true) {
+                        try {
+                            let result = await tools.promiseFetchPost("../app/controller/CotizacionController.php", {
+                                "type": "delete",
+                                "idCotizacion": idCotizacion,
+                            }, function() {
+                                tools.ModalAlertInfo("Cotización", "Se está procesando la información.");
+                            });
+
+                            tools.ModalAlertSuccess("Cotización", result);
+                            loadInitCotizacion();
+                        } catch (error) {
+                            tools.ErrorMessageServer("Cotización", error);
+                        }
+                    }
                 });
             }
 
