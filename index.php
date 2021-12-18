@@ -280,7 +280,6 @@
 
             slideAutoPaly(gliderSlider, '.glider-slider');
 
-
             let gliderCategory = new Glider(document.querySelector('.glider-category'), {
                 slidesToShow: 5,
                 slidesToScroll: 5,
@@ -310,7 +309,11 @@
                     $(".glider-products1").append(messageNoData());
                 } else {
                     for (let value of result1) {
-                        let image = '<img src="./resource/images/noimage.png" alt="">';
+                        console.log(value)
+                        let image = '<img src ="./resource/images/noimage.png" alt="' + value.NombreMarca + '"/>';
+                        if (value.Imagen != "") {
+                            image = '<img class="img-size-70" src ="' + ("./resource/catalogo/" + value.Imagen) + '" alt="' + value.NombreMarca + '"/>';
+                        }
                         $(".glider-products1").append(item(
                             image,
                             value.NombreMarca,

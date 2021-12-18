@@ -85,7 +85,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                         <th width="30%">Descripción</th>
                                         <th width="15%">Impuesto</th>
                                         <th width="15%">Precio</th>
-                                        <!-- <th width="15%">Descuento</th> -->
+                                        <th width="15%">Medida</th>
                                         <th width="20%">Importe</th>
                                     </tr>
                                 </thead>
@@ -349,6 +349,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             '<td>' + value.clave + '<br>' + value.nombreMarca + '</td>' +
                             '<td class="text-center">' + value.impuestoNombre + '</td>' +
                             '<td><input readonly id="p-' + value.idSuministro + '" type="text" class="form-control" placeholder="0" onkeypress="onKeyPressTable(this)"  onkeydown="onKeyDownTablePrecio(this,\'' + value.idSuministro + '\')" value="' + tools.formatMoney(value.precioVentaGeneral) + '" onfocusout="onFocusOutTable()" ondblclick="onClickTable(\'' + "p-" + value.idSuministro + '\')" autocomplete="off" /></td>' +
+                            '<td><select class="form-control"><option>'+value.unidadCompra+'</option><select></td>'+
                             '<td class="text-center">' + tools.formatMoney(value.cantidad * value.precioVentaGeneral) + '</td>' +
                             '</tr>');
 

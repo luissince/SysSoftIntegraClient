@@ -93,9 +93,6 @@ function ModalProductos() {
                 "type": "modalproductos",
                 "tipo": tipo,
                 "value": value,
-                "libre": 0,
-                "venta": 1,
-                "insumo": 0,
                 "posicionPagina": ((paginacionProductos - 1) * filasPorPaginaProductos),
                 "filasPorPagina": filasPorPaginaProductos
             }, function () {

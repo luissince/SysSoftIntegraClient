@@ -309,7 +309,10 @@ function ModalCotizacion() {
 
                     "importeBruto": cantidad * valor_sin_impuesto,
                     "subImporteNeto": cantidad * preciocalculado,
-                    "importeNeto": cantidad * (preciocalculado + impuesto)
+                    "importeNeto": cantidad * (preciocalculado + impuesto),
+
+                    "unidadCompraId": suministro.UnidadCompra,
+                    "unidadCompra": suministro.Medida
                 });
             }
             renderTableProductos();

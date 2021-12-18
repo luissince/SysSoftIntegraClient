@@ -93,9 +93,6 @@ function ModalProductos() {
                 "type": "modalproductos",
                 "tipo": tipo,
                 "value": value,
-                "libre": 0,
-                "venta": 1,
-                "insumo": 0,
                 "posicionPagina": ((paginacionProductos - 1) * filasPorPaginaProductos),
                 "filasPorPagina": filasPorPaginaProductos
             }, function () {
@@ -127,7 +124,7 @@ function ModalProductos() {
                 </button>`);
                 stateProductos = false;
             } else {
-                for (let producto of arrayProductos) {
+                for (let producto of arrayProductos) {                    
                     tbListProductos.append(`<tr>
                         <td class="text-center">${producto.Id}</td>
                         <td>${producto.Clave + '</br>' + producto.NombreMarca}</td>
@@ -193,7 +190,7 @@ function ModalProductos() {
     onSelectProducto = function (idSuministro) {
         for (let i = 0; i < arrayProductos.length; i++) {
             if (arrayProductos[i].IdSuministro == idSuministro) {
-                if (!validateDatelleVenta(idSuministro)) {
+                if (!validateDatelleVenta(idSuministro)) {                    
                     let suministro = arrayProductos[i];
                     let cantidad = 1;
 
@@ -229,7 +226,10 @@ function ModalProductos() {
 
                         "importeBruto": cantidad * valor_sin_impuesto,
                         "subImporteNeto": cantidad * preciocalculado,
-                        "importeNeto": cantidad * (preciocalculado + impuesto)
+                        "importeNeto": cantidad * (preciocalculado + impuesto),
+
+                        "unidadCompraId": suministro.IdUnidadCompra,
+                        "unidadCompra": suministro.UnidadCompra
                     });
                     break;
                 } else {

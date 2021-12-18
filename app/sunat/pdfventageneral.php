@@ -1,7 +1,6 @@
 <?php
 
 require __DIR__ . './lib/mpdf/vendor/autoload.php';
-require __DIR__ . './lib/phpqrcode/qrlib.php';
 require __DIR__ . './../src/autoload.php';
 
 use SysSoftIntegra\Model\VentasADO;

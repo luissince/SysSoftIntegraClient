@@ -361,6 +361,7 @@ ul {
 
 .products-content .item .product-image img,
 .item .product-image img {
+  width: auto;
   height: 160px;
 }
 
