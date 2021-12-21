@@ -387,7 +387,10 @@ $empresa = EmpresaADO::Index();
                 $("#lblTotalRows").html(`Se encontraron ${result.data.length} resultados.`);
 
                 for (let value of result.data) {
-                    let image = '<img src="./resource/images/noimage.png" alt="">';
+                    let image = '<img src ="./resource/images/noimage.png" alt="' + value.NombreMarca + '"/>';
+                    if (value.Imagen != "") {
+                        image = '<img class="img-size-70" src ="' + ("./resource/catalogo/" + value.Imagen) + '" alt="' + value.NombreMarca + '"/>';
+                    }
                     divCatalogo.append(
                         item(
                             image,

@@ -361,7 +361,10 @@ $empresa = EmpresaADO::Index();
                     $(".glider-products2").append(messageNoData());
                 } else {
                     for (let value of result2) {
-                        let image = '<img src="./resource/images/noimage.png" alt="">';
+                        let image = '<img src ="./resource/images/noimage.png" alt="' + value.NombreMarca + '"/>';
+                        if (value.Imagen != "") {
+                            image = '<img class="img-size-70" src ="' + ("./resource/catalogo/" + value.Imagen) + '" alt="' + value.NombreMarca + '"/>';
+                        }
                         $(".glider-products2").append(item(
                             image,
                             limitar_cadena(value.NombreMarca, 60, '...'),
