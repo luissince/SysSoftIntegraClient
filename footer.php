@@ -57,14 +57,14 @@
                 <div class="footer-bottom-section-content">
                     <span>Información del contacto</span>
                     <div class="items">
-                        <a href="https://api.whatsapp.com/send?phone=922317719" target="_blank">
-                            <i class="fa fa-whatsapp pr-2" style="color:#7d9f0e;"></i> 922317719
+                        <a href="https://api.whatsapp.com/send?phone=+51<?= $empresa->Celular ?>" target="_blank">
+                            <i class="fa fa-whatsapp pr-2" style="color:#7d9f0e;"></i> <?= $empresa->Celular ?>
                         </a>
-                        <a href="mailto:leat_sac@hotmail.com" target="_blank">
-                            <i class="fa fa-envelope-o pr-2" style="color:#d31957;"></i> leat_sac@hotmail.com
+                        <a href="mailto:<?= $empresa->Email ?>" target="_blank">
+                            <i class="fa fa-envelope-o pr-2" style="color:#d31957;"></i> <?= $empresa->Email ?>
                         </a>
                         <a href="https://goo.gl/maps/qQ4iyjyR57Wosr4f6" target="_blank">
-                            <i class="fa fa-map-marker pr-2" style="color:#f34925;"></i> JR. PROLONGACION FRANCIA NRO. 1726 URB. SAN GERMAN LIMA - LIMA - LA VICTORIA
+                            <i class="fa fa-map-marker pr-2" style="color:#f34925;"></i> <?= $empresa->Domicilio ?>
                         </a>
                     </div>
                 </div>

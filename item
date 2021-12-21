@@ -1,0 +1,49 @@
+<div class="item">
+                        <span class="img_oferta">
+                            <img alt="oferta" src="https://images.tiendamia.com/materiales/peru/2021/Noviembre/Cybermonday/vinietas/pe_cybermonday-vinieta-64x64.png">
+                        </span>
+                        <span class="img_oferta sin_impuestos">
+                            <img alt="sin impuestos" src="https://tiendamia.com/newsletter/materiales/argentina/vineta-productos-libre-impuestos.png">
+                        </span>
+                        <span class="product-image">
+                           ${image}
+                        </span>
+                        <div class="block_holder">
+                            <h2 class="product-name ">
+                                <span>${name}</span>
+                            </h2>
+                            <div class="price-desde">
+                                <span class="list-price currency_price">S/ ${priceold}</span>
+                                <span class="discount_blackfriday">10% OFF</span>
+                            </div>
+                            <div class="price-box">
+                                <span class="price_blackfriday currency_price">S/ ${pricenew}</span>
+                                <span class="express"><img alt="express" src="https://tiendamia.com/skin/frontend/traigo/traigo/images/express_item.png"></span>
+                            </div>
+                            <div class="rating-fav">
+                                <div class="rating-box">
+                                    <div id="rating_producto_ajax" class="rating a-icon a-icon-star a-star-4-5"></div>
+                                </div>
+                            </div>
+                            <span class="regular-price">
+                                <p>
+                                    Oferta del día
+                                </p>
+                                <span>Solo 7 disponibles</span>
+                            </span>
+                            <div class="csiFormatText">
+                                <p>
+                                    <span class="csiGreenText">Envío Gratis hasta 0.75kg pagando con </span>
+                                    <strong>Visa Mastercard y Amex a través de PayPal</strong>
+                                    <br class="showInCart">
+                                    <span class="showInCart"> *Desde S/299 en productos</span>
+                                </p>
+                            </div>
+                            <div class="csiFormatText">
+                                <p>
+                                    <span class="csiGreenText">Hasta 6 cuotas sin interés con </span>
+                                    <strong>tarjetas de crédito Visa BBVA</strong>
+                                </p>
+                            </div>
+                        </div>
+                    </div>

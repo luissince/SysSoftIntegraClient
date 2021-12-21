@@ -50,6 +50,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     } else if ($_GET["type"] == "fillubigeo") {
         print json_encode(EmpresaADO::FiltrarUbigeo($_GET["search"]));
         exit();
+    } else if ($_GET["type"] == "indexempresa") {
+        print json_encode(EmpresaADO::Index());
+        exit();
     }
 } else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $body["idEmpresa"] = $_POST["idEmpresa"];

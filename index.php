@@ -1,3 +1,12 @@
+<?php
+
+use SysSoftIntegra\Model\EmpresaADO;
+
+require __DIR__ . '/app/src/autoload.php';
+
+$empresa = EmpresaADO::Index();
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -10,9 +19,9 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" href="view/images/icon.ico">
+    <link rel="icon" href="./resource/images/icono.png">
 
-    <title>SysSoft Integra</title>
+    <title><?= $empresa->NombreComercial ?></title>
 
     <link rel="shortcut icon" href="#" />
 
@@ -67,7 +76,7 @@
         <div class="container">
             <div class="glider-contain">
                 <div class="glider-category">
-                    <div class="item-slider-category">
+                    <!-- <div class="item-slider-category">
                         <a href="#" title=" Relojes">
                             <span class="img-slider-category" style="background: url(https://tiendamia.com/newsletter/materiales/categorias/sprite-categorias-home-2020-octubre-min.png) 0px 0px;background-color:<?php echo 'rgb(' . rand(0, 255) . ', ' . rand(0, 255) . ', ' . rand(0, 255) . ')';  ?>"></span>
                             <span>Relojes</span>
@@ -108,7 +117,7 @@
                             <span class="img-slider-category" style="background: url(https://tiendamia.com/newsletter/materiales/categorias/sprite-categorias-home-2020-octubre-min.png) -130px -260px;background-color:<?php echo 'rgb(' . rand(0, 255) . ', ' . rand(0, 255) . ', ' . rand(0, 255) . ')';  ?>"></span>
                             <span>Relojes</span>
                         </a>
-                    </div>
+                    </div> -->
                 </div>
             </div>
         </div>
@@ -309,14 +318,14 @@
                     $(".glider-products1").append(messageNoData());
                 } else {
                     for (let value of result1) {
-                        console.log(value)
+                        // console.log(value)
                         let image = '<img src ="./resource/images/noimage.png" alt="' + value.NombreMarca + '"/>';
                         if (value.Imagen != "") {
                             image = '<img class="img-size-70" src ="' + ("./resource/catalogo/" + value.Imagen) + '" alt="' + value.NombreMarca + '"/>';
                         }
                         $(".glider-products1").append(item(
                             image,
-                            value.NombreMarca,
+                            limitar_cadena(value.NombreMarca, 60, '...'),
                             tools.formatMoney(value.PrecioVentaAlto),
                             tools.formatMoney(value.PrecioVentaGeneral)
                         ));
@@ -355,7 +364,7 @@
                         let image = '<img src="./resource/images/noimage.png" alt="">';
                         $(".glider-products2").append(item(
                             image,
-                            value.NombreMarca,
+                            limitar_cadena(value.NombreMarca, 60, '...'),
                             tools.formatMoney(value.PrecioVentaAlto),
                             tools.formatMoney(value.PrecioVentaGeneral)
                         ));
@@ -390,10 +399,15 @@
             return `    
             <div class="item">
                         <span class="img_oferta">
-                            <img alt="oferta" src="https://images.tiendamia.com/materiales/peru/2021/Noviembre/Cybermonday/vinietas/pe_cybermonday-vinieta-64x64.png">
+                            <span class="text-aviso-item">
+                                INSUPERABLES
+                            </span>
                         </span>
                         <span class="img_oferta sin_impuestos">
-                            <img alt="sin impuestos" src="https://tiendamia.com/newsletter/materiales/argentina/vineta-productos-libre-impuestos.png">
+                            <span class="text-impuesto">
+                                <b>CON</b>
+                                IMPUESTO
+                            </span>
                         </span>
                         <span class="product-image">
                            ${image}
@@ -407,8 +421,7 @@
                                 <span class="discount_blackfriday">10% OFF</span>
                             </div>
                             <div class="price-box">
-                                <span class="price_blackfriday currency_price">S/ ${pricenew}</span>
-                                <span class="express"><img alt="express" src="https://tiendamia.com/skin/frontend/traigo/traigo/images/express_item.png"></span>
+                                <span class="price_blackfriday currency_price">S/ ${pricenew}</span>                               
                             </div>
                             <div class="rating-fav">
                                 <div class="rating-box">
@@ -419,20 +432,13 @@
                                 <p>
                                     Oferta del día
                                 </p>
-                                <span>Solo 7 disponibles</span>
+                                <span>Productos únicos</span>
                             </span>
                             <div class="csiFormatText">
                                 <p>
-                                    <span class="csiGreenText">Envío Gratis hasta 0.75kg pagando con </span>
+                                    <span class="csiGreenText">Envío a todo el Perú, puedes pagar con tus tarjetas preferidas</span>
                                     <strong>Visa Mastercard y Amex a través de PayPal</strong>
                                     <br class="showInCart">
-                                    <span class="showInCart"> *Desde S/299 en productos</span>
-                                </p>
-                            </div>
-                            <div class="csiFormatText">
-                                <p>
-                                    <span class="csiGreenText">Hasta 6 cuotas sin interés con </span>
-                                    <strong>tarjetas de crédito Visa BBVA</strong>
                                 </p>
                             </div>
                         </div>
@@ -452,6 +458,13 @@
                                     <h4>No se encontraron productos que coincidan con la busqueda.</h4>
                                 </div>
                             `;
+        }
+
+        function limitar_cadena(cadena, limite, sufijo) {
+            if (cadena.length > limite) {
+                return cadena.substr(0, limite) + sufijo;
+            }
+            return cadena;
         }
 
         function slideAutoPaly(glider, selector, delay = 3000, repeat = true) {

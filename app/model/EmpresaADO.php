@@ -17,6 +17,31 @@ class EmpresaADO
     {
     }
 
+    public static function Index()
+    {
+        try {
+            $cmdEmpresa = Database::getInstance()->getDb()->prepare("SELECT 
+            Telefono,
+            Celular,
+            Domicilio,
+            Email,
+            NombreComercial
+            FROM EmpresaTB");
+            $cmdEmpresa->execute();
+
+
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 200 . ' ' . "OK");
+
+            return $cmdEmpresa->fetch(PDO::FETCH_OBJ);
+        } catch (Exception $ex) {
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+
+            return $ex->getMessage();
+        }
+    }
+
     public static function ObtenerEmpresa()
     {
         try {

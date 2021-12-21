@@ -1,3 +1,12 @@
+<?php
+
+use SysSoftIntegra\Model\EmpresaADO;
+
+require __DIR__ . '/app/src/autoload.php';
+
+$empresa = EmpresaADO::Index();
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -10,9 +19,9 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" href="view/images/icon.ico">
+    <link rel="icon" href="./resource/images/icono.png">
 
-    <title>SysSoft Integra</title>
+    <title><?= $empresa->NombreComercial ?></title>
 
     <link rel="shortcut icon" href="#" />
 
@@ -34,7 +43,7 @@
         <div class="container">
             <div class="image">
                 <a href="#">
-                    <img src="https://images.tiendamia.com/materiales/argentina/2021/Octubre/Tesla/banner%20search/uyarcr_tesla_search_landingdesk_1190x90.png">
+                    <img src="./resource/images/banner.jpeg">
                 </a>
             </div>
         </div>
@@ -382,7 +391,7 @@
                     divCatalogo.append(
                         item(
                             image,
-                            value.NombreMarca,
+                            limitar_cadena(value.NombreMarca, 60, '...'),
                             tools.formatMoney(value.PrecioVentaAlto),
                             tools.formatMoney(value.PrecioVentaGeneral)));
                 }
@@ -455,10 +464,15 @@
                 <div class="col-xl-3 col-lg-4 col-md-4 col-sm-6 col-12">
                     <div class="item item-alter">
                                     <span class="img_oferta">
-                                        <img alt="oferta" src="https://images.tiendamia.com/materiales/peru/2021/Noviembre/Cybermonday/vinietas/pe_cybermonday-vinieta-64x64.png">
+                                        <span class="text-aviso-item">
+                                            INSUPERABLES
+                                        </span>
                                     </span>
                                     <span class="img_oferta sin_impuestos">
-                                        <img alt="sin impuestos" src="https://tiendamia.com/newsletter/materiales/argentina/vineta-productos-libre-impuestos.png">
+                                        <span class="text-impuesto">
+                                            <b>CON</b>
+                                            IMPUESTO
+                                        </span>
                                     </span>
                                     <span class="product-image">
                                         ${image}
@@ -473,36 +487,29 @@
                                         </div>
                                         <div class="price-box">
                                             <span class="price_blackfriday currency_price">S/ ${pricenew}</span>
-                                            <span class="express"><img alt="express" src="https://tiendamia.com/skin/frontend/traigo/traigo/images/express_item.png"></span>
                                         </div>
                                         <div class="rating-fav">
                                             <div class="rating-box">
                                                 <div id="rating_producto_ajax" class="rating a-icon a-icon-star a-star-4-5"></div>
                                             </div>
                                         </div>
-                                        <span class="regular-price">
-                                            <p>
-                                                Oferta del día
-                                            </p>
-                                            <span>Solo 7 disponibles</span>
-                                        </span>
                                         <div class="csiFormatText">
                                             <p>
-                                                <span class="csiGreenText">Envío Gratis hasta 0.75kg pagando con </span>
+                                                <span class="csiGreenText">Envío a todo el Perú, puedes pagar con tus tarjetas preferidas</span>
                                                 <strong>Visa Mastercard y Amex a través de PayPal</strong>
                                                 <br class="showInCart">
-                                                <span class="showInCart"> *Desde S/299 en productos</span>
-                                            </p>
-                                        </div>
-                                        <div class="csiFormatText">
-                                            <p>
-                                                <span class="csiGreenText">Hasta 6 cuotas sin interés con </span>
-                                                <strong>tarjetas de crédito Visa BBVA</strong>
                                             </p>
                                         </div>
                                     </div>
                                 </div>
                                 </div>`;
+        }
+
+        function limitar_cadena(cadena, limite, sufijo) {
+            if (cadena.length > limite) {
+                return cadena.substr(0, limite) + sufijo;
+            }
+            return cadena;
         }
 
         function messageLoading() {

@@ -3,8 +3,8 @@
         <div class="row">
             <div class="col-md-12 col-sm-12 col-12 text-center p-2">
                 <a href="#">
-                    <span class="text-white band_text">¡EXTENDIMOS CYBER MONDAY de EE.UU! ENVÍO GRATIS con PAYPAL</span>
-                    <span class="band_button">Ver ofertas</span>
+                    <span class="text-white band_text">TODOS LOS PRODUCTOS PARA SU CARRO EN UN SOLO LUGAR</span>
+                    <!-- <span class="band_button">Ver ofertas</span> -->
                 </a>
             </div>
         </div>
@@ -65,23 +65,23 @@
         </div>
 
         <div class="row">
-            <!-- <div class="col-md-3 col-sm-12 col-12 p-2">
+            <div class="col-md-3 col-sm-12 col-12 p-2">
                 <div class="d-flex align-items-lg-center h-100">
                     <image class="p-1" src="./resource/images/menu.svg" />
-                    <span class="text-white p-1 text-categoria">Todas las categorías</span>
+                    <span class="text-white pt-1 pb-1 pl-2 pr-2 text-categoria">Todas las categorías</span>
                 </div>
-            </div> -->
-            <div class="col-md-9 col-sm-12 col-12 p-2 ">
+            </div>
+            <div class="col-md-6 col-sm-12 col-12 p-2 ">
                 <div class="d-flex align-items-lg-center h-100">
-                    <a class="text-white p-1" href="./">
+                    <a class="text-white pt-1 pb-1 pl-2 pr-2" href="./">
                         Inicio
                     </a>
-                    <a class="text-white  p-1" href="./catalogo.php">
+                    <a class="text-white  pt-1 pb-1 pl-2 pr-2" href="./catalogo.php">
                         Catálogo
                     </a>
                 </div>
             </div>
-            <div class="col-md-3 col-sm-12 col-12 p-2 ">
+            <div class="col-md-3 col-sm-12 col-12 p-2">
                 <div class="d-flex align-items-lg-center h-100">
                     <a class="text-white lead" href="#">Ofertas todos los días</a>
                 </div>
