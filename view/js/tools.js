@@ -144,6 +144,15 @@ function Tools() {
         }
     }
 
+    this.keyEnter = function (object, callback) {
+        object.keypress(function (event) {
+            if (event.keyCode === 13) {
+                callback();
+                event.preventDefault();
+            }
+        });
+    }
+
     this.ModalDialog = function (title, mensaje, callback) {
         swal({
             title: title,

@@ -150,7 +150,7 @@ $empresa = EmpresaADO::Index();
             });
 
             $("#txtSearch").keypress(function(event) {
-                if (event.which == 13) {
+                if (event.keyCode == 13) {
                     if ($("#txtSearch").val().trim().length != 0) {
                         if (!state) {
                             paginacion = 1;
@@ -381,6 +381,8 @@ $empresa = EmpresaADO::Index();
 
                 if (result.data.length == 0) {
                     divCatalogo.append(messageNoData());
+                    $("#myPager").empty();
+                    state = false;
                     return;
                 }
 
@@ -396,7 +398,9 @@ $empresa = EmpresaADO::Index();
                             image,
                             limitar_cadena(value.NombreMarca, 60, '...'),
                             tools.formatMoney(value.PrecioVentaAlto),
-                            tools.formatMoney(value.PrecioVentaGeneral)));
+                            tools.formatMoney(value.PrecioVentaGeneral),
+                            value.Clave
+                        ));
                 }
 
                 totalPaginacion = parseInt(Math.ceil((parseFloat(result.total) / filasPorPagina)));
@@ -455,17 +459,18 @@ $empresa = EmpresaADO::Index();
                 $('#myPager li a#' + paginacion).addClass('active-input');
                 state = false;
             } catch (error) {
-                console.log(error)
                 divCatalogo.empty();
                 divCatalogo.append(messageNoData());
+                $("#myPager").empty();
                 state = false;
             }
         }
 
-        function item(image, name, priceold, pricenew) {
+        function item(image, name, priceold, pricenew, clave) {
             return `    
                 <div class="col-xl-3 col-lg-4 col-md-4 col-sm-6 col-12">
                     <div class="item item-alter">
+                        <a href="./producto.php?name=${clave}">
                                     <span class="img_oferta">
                                         <span class="text-aviso-item">
                                             INSUPERABLES
@@ -504,8 +509,9 @@ $empresa = EmpresaADO::Index();
                                             </p>
                                         </div>
                                     </div>
-                                </div>
-                                </div>`;
+                        </a>
+                    </div>
+                </div>`;
         }
 
         function limitar_cadena(cadena, limite, sufijo) {

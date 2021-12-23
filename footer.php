@@ -8,9 +8,17 @@
                     <div class="content-image-logo">
                         <img src="resource/images/logo.svg">
                     </div>
-                    <p>
-                        Transformamos la economía de nuestros países entrenando a la próxima generación de profesionales en tecnología.
-                    </p>
+                    <div class="items">
+                        <a href="https://api.whatsapp.com/send?phone=+51<?= $empresa->Celular ?>" target="_blank">
+                            <i class="fa fa-phone"></i> <?= $empresa->Celular ?>
+                        </a>
+                        <a href="mailto:<?= $empresa->Email ?>" target="_blank">
+                            <i class="fa fa-envelope-o"></i> <?= $empresa->Email ?>
+                        </a>
+                        <a href="https://goo.gl/maps/qQ4iyjyR57Wosr4f6" target="_blank">
+                            <i class="fa fa-map-marker"></i> <?= $empresa->Domicilio ?>
+                        </a>
+                    </div>
                 </div>
                 <div class="footer-up-section-content down">
                     <span>Aprende en nuestras redes:</span>
@@ -41,6 +49,7 @@
 
             <div class="footer-middle-section">
                 <div class="footer-middle-section-content">
+                    <span>Explora</span>
                     <div class="category" style="border-left:solid 3px #9019d3">
                         <a href="./">Inicio</a>
                     </div>
@@ -55,17 +64,9 @@
 
             <div class="footer-bottom-section">
                 <div class="footer-bottom-section-content">
-                    <span>Información del contacto</span>
-                    <div class="items">
-                        <a href="https://api.whatsapp.com/send?phone=+51<?= $empresa->Celular ?>" target="_blank">
-                            <i class="fa fa-whatsapp pr-2" style="color:#7d9f0e;"></i> <?= $empresa->Celular ?>
-                        </a>
-                        <a href="mailto:<?= $empresa->Email ?>" target="_blank">
-                            <i class="fa fa-envelope-o pr-2" style="color:#d31957;"></i> <?= $empresa->Email ?>
-                        </a>
-                        <a href="https://goo.gl/maps/qQ4iyjyR57Wosr4f6" target="_blank">
-                            <i class="fa fa-map-marker pr-2" style="color:#f34925;"></i> <?= $empresa->Domicilio ?>
-                        </a>
+                    <span>Mapa de Ubicación</span>
+                    <div class="text-left">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d975.4030912046085!2d-77.01095947081954!3d-12.070170199465723!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9105c89d8750c10b%3A0xa4ca7269ac5b74bc!2sJr.%20Francia%201798%2C%20Cercado%20de%20Lima%2015018!5e0!3m2!1sen!2spe!4v1630885103175!5m2!1sen!2spe" width="300" height="150" style="border:0;width:100%;" allowfullscreen="" loading="lazy"></iframe>
                     </div>
                 </div>
             </div>

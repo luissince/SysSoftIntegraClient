@@ -66,6 +66,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     } else if ($_GET["type"] == "fillSuministro") {
         print json_encode(SuministrosADO::Get_Suministro_By_Search($_GET["search"]));
         exit();
+    } else if ($_GET["type"] == "valueSuministro") {
+        print json_encode(SuministrosADO::Get_Suministro_By_Value($_GET["value"]));
+        exit();
     }
 } else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $body = json_decode(file_get_contents("php://input"), true);

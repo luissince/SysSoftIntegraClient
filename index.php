@@ -145,10 +145,10 @@ $empresa = EmpresaADO::Index();
 
     <div class="message-content">
         <div class="container">
-            <h2>Descubre lo que la gente está comprando</h2>
+            <h2>Descubre todos los productos para su carro en un solo lugar</h2>
 
             <div class="message-subtitle">
-                <span class="">Inspírate y sé parte también de #TiendamiaEnVivo</span>
+                <span class=""></span>
                 <button>
                     Quiero ver más
                 </button>
@@ -327,7 +327,8 @@ $empresa = EmpresaADO::Index();
                             image,
                             limitar_cadena(value.NombreMarca, 60, '...'),
                             tools.formatMoney(value.PrecioVentaAlto),
-                            tools.formatMoney(value.PrecioVentaGeneral)
+                            tools.formatMoney(value.PrecioVentaGeneral),
+                            value.Clave
                         ));
                     }
                     $(".products1-prev").css("display", "block");
@@ -369,7 +370,8 @@ $empresa = EmpresaADO::Index();
                             image,
                             limitar_cadena(value.NombreMarca, 60, '...'),
                             tools.formatMoney(value.PrecioVentaAlto),
-                            tools.formatMoney(value.PrecioVentaGeneral)
+                            tools.formatMoney(value.PrecioVentaGeneral),
+                            value.Clave
                         ));
                     }
                     $(".products2-prev").css("display", "block");
@@ -398,9 +400,9 @@ $empresa = EmpresaADO::Index();
             });
         }
 
-        function item(image, name, priceold, pricenew) {
+        function item(image, name, priceold, pricenew, clave) {
             return `    
-            <div class="item">
+            <a href="./producto.php?name=${clave}" class="item">
                         <span class="img_oferta">
                             <span class="text-aviso-item">
                                 INSUPERABLES
@@ -445,7 +447,7 @@ $empresa = EmpresaADO::Index();
                                 </p>
                             </div>
                         </div>
-                    </div>`;
+                    </a>`;
         }
 
         function messageLoading() {

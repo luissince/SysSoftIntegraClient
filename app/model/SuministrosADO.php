@@ -412,6 +412,7 @@ class SuministrosADO
                     "ImpuestoNombre" => $row["ImpuestoNombre"],
                     "ClaveSat" => $row["ClaveSat"],
                     "TipoPrecio" => $row["TipoPrecio"],
+                    "Descripcion" => $row["Descripcion"],
                 );
             }
 
@@ -551,7 +552,8 @@ class SuministrosADO
                     Inventario,
                     ValorInventario,
                     Imagen,
-                    ClaveSat)
+                    ClaveSat,
+                    Descripcion)
                     VALUES(
                         ?,--ID SUMINISTROS
                         ?,--ORIGREN
@@ -576,7 +578,8 @@ class SuministrosADO
                         ?,--INVENTARIO
                         ?,--VALOR INVENTARIO
                         ?,--IMAGE
-                        ?--CLAVE
+                        ?,--CLAVE
+                        ?--DESCRIPCION
                         )");
 
                     $cmdSuministro->bindParam(1, $idSuministro, PDO::PARAM_STR);
@@ -607,6 +610,7 @@ class SuministrosADO
 
                     $cmdSuministro->bindParam(23, $filename, PDO::PARAM_STR);
                     $cmdSuministro->bindParam(24, $suministro["ClaveUnica"], PDO::PARAM_STR);
+                    $cmdSuministro->bindParam(25, $suministro["Descripcion"], PDO::PARAM_STR);
                     // $cmdSuministro->bindParam(24, $image, PDO::PARAM_LOB, 0, PDO::SQLSRV_ENCODING_BINARY);
                     $cmdSuministro->execute();
 
@@ -802,7 +806,8 @@ class SuministrosADO
                         ValorInventario = ?,
 
                         ClaveSat = ?,
-                        Imagen = ?
+                        Imagen = ?,
+                        Descripcion = ?
                         WHERE IdSuministro = ?");
 
                         $cmdSuministro->bindParam(1, $suministro["Origen"], PDO::PARAM_STR);
@@ -831,8 +836,9 @@ class SuministrosADO
 
                         $cmdSuministro->bindParam(21, $suministro["ClaveUnica"], PDO::PARAM_STR);
                         $cmdSuministro->bindParam(22, $filename, PDO::PARAM_STR);
+                        $cmdSuministro->bindParam(23,  $suministro["Descripcion"], PDO::PARAM_STR);
                         // $cmdSuministro->bindParam(22, $image, PDO::PARAM_LOB, 0, PDO::SQLSRV_ENCODING_BINARY);
-                        $cmdSuministro->bindParam(23, $suministro["IdSuministro"], PDO::PARAM_STR);
+                        $cmdSuministro->bindParam(24, $suministro["IdSuministro"], PDO::PARAM_STR);
                         $cmdSuministro->execute();
 
                         $preciosBorrar = Database::getInstance()->getDb()->prepare("DELETE FROM PreciosTB WHERE IdSuministro = ?");
@@ -1039,6 +1045,46 @@ class SuministrosADO
             header($protocol . ' ' . 200 . ' ' . "OK");
 
             return $cmdSuministro->fetch(PDO::FETCH_OBJ);
+        } catch (Exception $ex) {
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+
+            return $ex->getMessage();
+        }
+    }
+
+    public static function Get_Suministro_By_Value(string $value)
+    {
+        try {
+            $cmdSuministro = Database::getInstance()->getDb()->prepare("SELECT 
+            s.IdSuministro,
+            s.Clave,
+            s.ClaveAlterna,
+            s.NombreMarca,
+            s.NombreGenerico,
+            isnull(dc.Nombre,'') as CategoriaNombre,
+            isnull(dm.Nombre,'') as MarcaNombre,
+            isnull(dp.Nombre,'') as PresentacionNombre,
+            isnull(du.Nombre,'') as UnidadCompraNombre,
+            s.Cantidad,
+            s.PrecioCompra,
+            s.PrecioVentaGeneral,
+            (s.PrecioVentaGeneral+(s.PrecioVentaGeneral*0.10)) AS PrecioVentaAlto, 
+            s.Imagen,
+            s.Descripcion
+            from SuministroTB as s 
+            inner join ImpuestoTB as i on i.IdImpuesto = s.Impuesto
+            left join DetalleTB as dc on dc.IdDetalle = s.Categoria and dc.IdMantenimiento = '0006'
+            left join DetalleTB as dm on dm.IdDetalle = s.Categoria and dm.IdMantenimiento = '0007'
+            left join DetalleTB as dp on dp.IdDetalle = s.Categoria and dp.IdMantenimiento = '0008'
+            left join DetalleTB as du on du.IdDetalle = s.Categoria and du.IdMantenimiento = '0013'
+            WHERE s.Clave = ?");
+            $cmdSuministro->execute(array($value));
+
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 200 . ' ' . "OK");
+
+            return $cmdSuministro->fetchObject();
         } catch (Exception $ex) {
             $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
             header($protocol . ' ' . 500 . ' ' . "Internal Server Error");

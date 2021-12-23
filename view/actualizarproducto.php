@@ -151,9 +151,9 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
                                 <div class="row">
                                     <div class="col-md-12 col-sm-12 col-xs-12">
-                                        <label>Descripción <i class="text-danger fa fa-info-circle"></i></label>
+                                        <label>Nombre <i class="text-danger fa fa-info-circle"></i></label>
                                         <div class="form-group">
-                                            <input type="text" class="form-control" placeholder="Clave del producto" id="txtDescripcion" />
+                                            <input type="text" class="form-control" placeholder="Clave del producto" id="txtNombre" />
                                         </div>
                                     </div>
                                 </div>
@@ -407,9 +407,9 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 <!--  -->
                                 <div class="row">
                                     <div class="col-md-6 col-sm-12 col-xs-12">
-                                        <label>Descripción alterna </label>
+                                        <label>Nombre alterna </label>
                                         <div class="form-group">
-                                            <input type="text" class="form-control" placeholder="Descripción alterna " id="txtDescripcionAlterna" />
+                                            <input type="text" class="form-control" placeholder="Descripción alterna " id="txtNombreAlterna" />
                                         </div>
                                     </div>
                                     <div class="col-md-6 col-sm-12 col-xs-12">
@@ -455,6 +455,15 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                         <label>Clave única del producto </label>
                                         <div class="form-group">
                                             <input type="text" class="form-control" placeholder="Clave única del producto" id="txtClaveUnica" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-12 col-sm-12 col-xs-12">
+                                        <label>Descripción </label>
+                                        <div class="form-group">
+                                            <input type="text" class="form-control" placeholder="Descripción" id="txtDescripcion" />
                                         </div>
                                     </div>
                                 </div>
@@ -768,7 +777,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     }
                 });
 
-                $("#txtDescripcion").keypress(function(event) {
+                $("#txtNombre").keypress(function(event) {
                     if (event.keyCode === 13) {
                         registrarProducto();
                         event.preventDefault();
@@ -838,7 +847,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     }
                 });
 
-                $("#txtDescripcionAlterna").keypress(function(event) {
+                $("#txtNombreAlterna").keypress(function(event) {
                     if (event.keyCode === 13) {
                         registrarProducto();
                         event.preventDefault();
@@ -863,6 +872,10 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         registrarProducto();
                         event.preventDefault();
                     }
+                });
+
+                tools.keyEnter($("#txtDescripcion"), function() {
+                    registrarProducto();
                 });
 
                 $("#btnRegistrar").click(function() {
@@ -920,7 +933,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     let suministro = producto.suministro;
                     $("#txtClave").val(suministro.Clave);
                     $("#txtClaveAlterna").val(suministro.ClaveAlterna);
-                    $("#txtDescripcion").val(suministro.NombreMarca);
+                    $("#txtNombre").val(suministro.NombreMarca);
 
                     if (suministro.Imagen !== "") {
                         $("#lblImagen").attr("src", "./../resource/catalogo/" + suministro.Imagen);
@@ -994,7 +1007,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         }
                     }
 
-                    $("#txtDescripcionAlterna").val(suministro.NombreGenerico);
+                    $("#txtNombreAlterna").val(suministro.NombreGenerico);
                     if (suministro.Estado == 1) {
                         $("#rbActivo").prop("checked", true);
                     } else {
@@ -1006,6 +1019,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     idPresentacion = suministro.Presentacion;
                     $("#txtPresentacion").val(suministro.PresentacionNombre);
                     $("#txtClaveUnica").val(suministro.ClaveSat);
+                    $("#txtDescripcion").val(suministro.Descripcion);
                     $("#cbLote").prop("checked", suministro.Lote == 0 ? false : true);
                     $("#cbCosto").prop("checked", suministro.Inventario == 0 ? false : true);
                     if ($("#cbCosto").is(":checked")) {
@@ -1172,8 +1186,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
             function registrarProducto() {
                 if ($("#txtClave").val().trim().length == 0) {
                     $("#txtClave").focus();
-                } else if ($("#txtDescripcion").val().trim().length == 0) {
-                    $("#txtDescripcion").focus();
+                } else if ($("#txtNombre").val().trim().length == 0) {
+                    $("#txtNombre").focus();
                 } else if ($("#txtUnidadMedida").val().trim().length == 0) {
                     $("#txtUnidadMedida").focus();
                 } else if ($("#txtCategoria").val().trim().length == 0) {
@@ -1244,8 +1258,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 "Origen": $("#rbTodoModulos").is(":checked") ? 1 : $("#rbModuloVentas").is(":checked") ? 2 : 3,
                                 "Clave": $("#txtClave").val().trim(),
                                 "ClaveAlterna": $("#txtClaveAlterna").val().trim(),
-                                "NombreMarca": $("#txtDescripcion").val().trim(),
-                                "NombreGenerico": $("#txtDescripcionAlterna").val().trim(),
+                                "NombreMarca": $("#txtNombre").val().trim(),
+                                "NombreGenerico": $("#txtNombreAlterna").val().trim(),
 
                                 "Categoria": idCategoria,
                                 "Marca": idMarca,
@@ -1267,6 +1281,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 "ValorInventario": $("#rbGranelSalida").is(":checked") ? 3 : $("#rbMonedaSalida").is(":checked") ? 2 : 1,
                                 "ClaveUnica": $("#txtClaveUnica").val(),
                                 "Imagen": image,
+                                "Descripcion": $("#txtDescripcion").val().trim(),
                                 "Ext": ext,
                                 "ListaPrecios": listaPrecios,
                             }, function() {
@@ -1333,7 +1348,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
                 $("#txtClave").val("");
                 $("#txtClaveAlterna").val("");
-                $("#txtDescripcion").val("");
+                $("#txtNombre").val("");
                 $("#txtUnidadMedida").val("");
                 $("#txtCategoria").val("");
                 $("#rbUnidad").prop("checked", true);
@@ -1346,12 +1361,13 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 $("#txtPrecio2").val("");
                 $("#txtPrecio3").val("");
 
-                $("#txtDescripcionAlterna").val("");
+                $("#txtNombreAlterna").val("");
                 $("#txtEstado").val("");
                 $("#txtMarca").val("");
                 $("#txtPresentacion").val("");
                 $("#txtClaveUnica").val("");
                 $("#cbLote").prop("checked", false);
+                $("#txtDescripcion").val("");
                 tbPrecios.empty();
             }
         </script>
