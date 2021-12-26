@@ -84,7 +84,6 @@ $empresa = EmpresaADO::Index();
                         </div>
                         <div class="store-filter">
                             <button id="liGrip" class="active-input"><i class="fa fa-th"></i></button>
-                            <button id="liList"><i class="fa fa-th-list"></i></button>
                         </div>
                     </div>
 
@@ -115,8 +114,10 @@ $empresa = EmpresaADO::Index();
     <script src="view/js/bootstrap.min.js"></script>
     <script src="view/js/main.js"></script>
     <script src="view/js/tools.js"></script>
+    <script src="resource/storage/cardStorage.js"></script>
     <script>
         let tools = new Tools();
+        let cardStorage = new CardStorage();
 
         let state = false;
         let paginacion = 0;
@@ -134,20 +135,21 @@ $empresa = EmpresaADO::Index();
         let idMarca = 0;
 
         $(document).ready(function() {
+            cardStorage.renderCard();
 
-            $("#liGrip").click(function() {
-                if ($("#liList").hasClass("active-input")) {
-                    $("#liList").removeClass("active-input");
-                }
-                $("#liGrip").addClass("active-input");
-            });
+            // $("#liGrip").click(function() {
+            //     if ($("#liList").hasClass("active-input")) {
+            //         $("#liList").removeClass("active-input");
+            //     }
+            //     $("#liGrip").addClass("active-input");
+            // });
 
-            $("#liList").click(function() {
-                if ($("#liGrip").hasClass("active-input")) {
-                    $("#liGrip").removeClass("active-input");
-                }
-                $("#liList").addClass("active-input");
-            });
+            // $("#liList").click(function() {
+            //     if ($("#liGrip").hasClass("active-input")) {
+            //         $("#liGrip").removeClass("active-input");
+            //     }
+            //     $("#liList").addClass("active-input");
+            // });
 
             $("#txtSearch").keypress(function(event) {
                 if (event.keyCode == 13) {
@@ -158,6 +160,7 @@ $empresa = EmpresaADO::Index();
                             opcion = 1;
                         }
                     }
+                    $("#liGrip").focus();
                     event.preventDefault();
                 }
             });
@@ -170,6 +173,7 @@ $empresa = EmpresaADO::Index();
                         opcion = 1;
                     }
                 }
+                $("#liGrip").focus();
             });
 
 
@@ -182,6 +186,7 @@ $empresa = EmpresaADO::Index();
                             opcion = 1;
                         }
                     }
+                    $("#liGrip").focus();
                     event.preventDefault();
                 }
             });
@@ -196,6 +201,7 @@ $empresa = EmpresaADO::Index();
                     fillProductsTable(1, searchUrl, 0, 0);
                     opcion = 1;
                 }
+                $("#liGrip").focus();
             } else {
                 loadInitProductos();
             }
@@ -396,7 +402,7 @@ $empresa = EmpresaADO::Index();
                     divCatalogo.append(
                         item(
                             image,
-                            limitar_cadena(value.NombreMarca, 60, '...'),
+                            tools.limitar_cadena(value.NombreMarca, 60, '...'),
                             tools.formatMoney(value.PrecioVentaAlto),
                             tools.formatMoney(value.PrecioVentaGeneral),
                             value.Clave
@@ -512,13 +518,6 @@ $empresa = EmpresaADO::Index();
                         </a>
                     </div>
                 </div>`;
-        }
-
-        function limitar_cadena(cadena, limite, sufijo) {
-            if (cadena.length > limite) {
-                return cadena.substr(0, limite) + sufijo;
-            }
-            return cadena;
         }
 
         function messageLoading() {

@@ -246,10 +246,13 @@ $empresa = EmpresaADO::Index();
     <script src="view/js/main.js"></script>
     <script src="view/js/glider.min.js"></script>
     <script src="view/js/tools.js"></script>
+    <script src="resource/storage/cardStorage.js"></script>
     <script>
         let tools = new Tools();
+        let cardStorage = new CardStorage();
 
         $(document).ready(function() {
+            cardStorage.renderCard();
 
             $("#txtSearch").keypress(function(event) {
                 if (event.which == 13) {
@@ -325,7 +328,7 @@ $empresa = EmpresaADO::Index();
                         }
                         $(".glider-products1").append(item(
                             image,
-                            limitar_cadena(value.NombreMarca, 60, '...'),
+                            tools.limitar_cadena(value.NombreMarca, 60, '...'),
                             tools.formatMoney(value.PrecioVentaAlto),
                             tools.formatMoney(value.PrecioVentaGeneral),
                             value.Clave
@@ -368,7 +371,7 @@ $empresa = EmpresaADO::Index();
                         }
                         $(".glider-products2").append(item(
                             image,
-                            limitar_cadena(value.NombreMarca, 60, '...'),
+                            tools.limitar_cadena(value.NombreMarca, 60, '...'),
                             tools.formatMoney(value.PrecioVentaAlto),
                             tools.formatMoney(value.PrecioVentaGeneral),
                             value.Clave
@@ -463,13 +466,6 @@ $empresa = EmpresaADO::Index();
                                     <h4>No se encontraron productos que coincidan con la busqueda.</h4>
                                 </div>
                             `;
-        }
-
-        function limitar_cadena(cadena, limite, sufijo) {
-            if (cadena.length > limite) {
-                return cadena.substr(0, limite) + sufijo;
-            }
-            return cadena;
         }
 
         function slideAutoPaly(glider, selector, delay = 3000, repeat = true) {

@@ -85,12 +85,19 @@ $empresa = EmpresaADO::Index();
                                 <div class="qty-label">
                                     Cantidad
                                     <div class="input-number">
-                                        <input type="text" id="txtCantidad" />
+                                        <input type="text" id="txtCantidad" inputmode="numeric" value="1" />
                                         <span class="qty-up">+</span>
                                         <span class="qty-down">-</span>
                                     </div>
                                 </div>
                                 <button class="add-to-cart-btn" id="btnAddCard"><i class="fa fa-shopping-cart"></i> Agregar</button>
+                            </div>
+                            <div class="csiFormatText">
+                                <p>
+                                    <span class="csiGreenText">Envío a todo el Perú, puedes pagar con tus tarjetas preferidas</span>
+                                    <strong>Visa Mastercard y Amex a través de PayPal</strong>
+                                    <br class="showInCart">
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -104,12 +111,17 @@ $empresa = EmpresaADO::Index();
 
     <script src="view/js/jquery-3.3.1.min.js"></script>
     <script src="view/js/bootstrap.min.js"></script>
+    <script src="view/js/plugins/bootstrap-notify.min.js"></script>
     <script src="view/js/main.js"></script>
     <script src="view/js/tools.js"></script>
+    <script src="resource/storage/cardStorage.js"></script>
     <script>
         let tools = new Tools();
+        let cardStorage = new CardStorage();
+
         let name_product = "<?= (isset($_GET["name"]) ? $_GET["name"] : null)  ?>";
         let idSuministro = "";
+        let precio = 0;
 
         $(document).ready(function() {
             if (name_product == "") {
@@ -117,6 +129,7 @@ $empresa = EmpresaADO::Index();
                 return;
             }
 
+            cardStorage.renderCard();
 
             $("#txtSearch").keypress(function(event) {
                 if (event.which == 13) {
@@ -142,15 +155,28 @@ $empresa = EmpresaADO::Index();
                 }
             });
 
-            $("#txtCantidad").keypress(function(event) {
-                var key = window.Event ? event.which : event.keyCode;
-                var c = String.fromCharCode(key);
-                if ((c < '0' || c > '9') && (c != '\b') && (c != '.')) {
-                    event.preventDefault();
+            $(".qty-up").click(function() {
+                let cantidad = tools.isNumeric($("#txtCantidad").val()) ? parseInt($("#txtCantidad").val()) : 1;
+                cantidad = cantidad <= 0 ? 0 : cantidad;
+                cantidad++;
+                $("#txtCantidad").val(cantidad);
+            });
+
+            $(".qty-down").click(function() {
+                let cantidad = tools.isNumeric($("#txtCantidad").val()) ? parseInt($("#txtCantidad").val()) : 1;
+                if (cantidad <= 1) {
+                    return;
                 }
-                if (c == '.' && $("#txtCantidad").val().includes(".")) {
-                    event.preventDefault();
-                }
+                cantidad--;
+                $("#txtCantidad").val(cantidad);
+            });
+
+            tools.keyNumberInteger($("#txtCantidad"));
+
+            $("#txtCantidad").focusout(function() {
+                let cantidad = tools.isNumeric($("#txtCantidad").val()) ? parseInt($("#txtCantidad").val()) : 1;
+                cantidad = cantidad <= 0 ? 1 : cantidad;
+                $("#txtCantidad").val(cantidad);
             });
 
             $("#btnAddCard").click(function() {
@@ -175,6 +201,7 @@ $empresa = EmpresaADO::Index();
                 });
 
                 idSuministro = result.IdSuministro;
+                precio = parseFloat(result.PrecioVentaGeneral);
                 $("#lblName").html(result.NombreMarca);
                 $("#lblNewPrice").html("S/ " + tools.formatMoney(result.PrecioVentaGeneral) + ' <del class="product-old-price" >S/ ' + tools.formatMoney(result.PrecioVentaAlto) + '</del>');
                 let image = '<img src ="./resource/images/noimage.png" alt="' + result.NombreMarca + '"/>';
@@ -197,7 +224,15 @@ $empresa = EmpresaADO::Index();
         }
 
         function addCard() {
-
+            cardStorage.add({
+                "idSuministro": idSuministro,
+                "cantidad": tools.isNumeric($("#txtCantidad").val()) ? parseInt($("#txtCantidad").val()) : 1,
+                "image": $("#lblImage").find("img")[0].src,
+                "nombre": $("#lblName").html(),
+                "precio": precio,
+            });
+            cardStorage.renderCard();
+            tools.AlertSuccess("", "Se agregó el producto.")
         }
     </script>
 </body>

@@ -153,6 +153,36 @@ function Tools() {
         });
     }
 
+    this.keyNumberFloat = function (object) {
+        object.keypress(function (event) {
+            var key = window.Event ? event.which : event.keyCode;
+            var c = String.fromCharCode(key);
+            if ((c < '0' || c > '9') && (c != '\b') && (c != '.')) {
+                event.preventDefault();
+            }
+            if (c == '.' && $(this).val().includes(".")) {
+                event.preventDefault();
+            }
+        })
+    }
+
+    this.keyNumberInteger = function (object) {
+        object.keypress(function (event) {
+            var key = window.Event ? event.which : event.keyCode;
+            var c = String.fromCharCode(key);
+            if ((c < '0' || c > '9') && (c != '\b')) {
+                event.preventDefault();
+            }
+        })
+    }
+
+    this.limitar_cadena = function (cadena, limite, sufijo) {
+        if (cadena.length > limite) {
+            return cadena.substr(0, limite) + sufijo;
+        }
+        return cadena;
+    }
+
     this.ModalDialog = function (title, mensaje, callback) {
         swal({
             title: title,
