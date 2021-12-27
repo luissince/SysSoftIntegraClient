@@ -15,13 +15,13 @@ ul {
 }
 
 .active-input {
-  background-color: #d10024 !important;
-  border: 1px solid #d10024 !important;
+  background-color: #ff0004 !important;
+  border: 1px solid #ff0004 !important;
   color: #fff !important;
 }
 
 .active-input:hover {
-  background-color: #b40522 !important;
+  background-color: rgba(255, 0, 4, 0.8);
   border: 1px solid #b40522 !important;
 }
 
@@ -72,6 +72,77 @@ ul {
   z-index: 200;
 }
 
+.button-transparent {
+  font-weight: bold;
+  font-size: 14px;
+  line-height: 20px;
+  color: #ffffff;
+  font-family: "Muli-Bold", arial, sans-serif;
+  background-color: transparent;
+  text-align: center;
+  padding: 8px 16px;
+  border: 1px solid #ffffff;
+  box-sizing: border-box;
+  border-radius: 4px;
+}
+
+.button-transparent:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.button-primary {
+  font-weight: bold;
+  font-size: 14px;
+  line-height: 20px;
+  color: #0c0071;
+  font-family: "Muli-Bold", arial, sans-serif;
+  text-align: center;
+  padding: 8px 16px;
+  background-color: #10ffff;
+  border: 1px solid #10ffff;
+  box-sizing: border-box;
+  border-radius: 4px;
+}
+
+.button-primary:hover {
+  background-color: rgba(16, 255, 255, 0.1);
+  color: #10ffff;
+}
+
+.button-red {
+  font-weight: bold;
+  font-size: 14px;
+  line-height: 20px;
+  color: #ffffff;
+  font-family: "Muli-Bold", arial, sans-serif;
+  padding: 8px 16px;
+  text-align: center;
+  background-color: #ff0004;
+  border: 1px solid #ff0004;
+  box-sizing: border-box;
+  border-radius: 4px;
+}
+
+.button-red:hover {
+  background-color: rgba(255, 0, 4, 0.8);
+}
+
+.button-white {
+  font-weight: bold;
+  font-size: 14px;
+  line-height: 20px;
+  font-family: "Muli-Bold", arial, sans-serif;
+  padding: 8px 16px;
+  text-align: center;
+  background-color: #ffffff;
+  border: 1px solid #ffffff;
+  box-sizing: border-box;
+  border-radius: 4px;
+}
+
+.button-white:hover {
+  background-color: rgba(131, 131, 131, 0.1);
+}
 /* header-wrapper  */
 /*==================*/
 
@@ -333,50 +404,6 @@ ul {
   overflow: hidden;
   padding: 10px 20px;
   background: #fff;
-}
-
-.cart-content .btn_action {
-  display: block;
-  width: 100%;
-  font-size: 13px;
-  padding: 8px 16px;
-  box-sizing: border-box;
-  border-radius: 3px;
-  outline: 0;
-}
-
-.cart-content .btn_cart {
-  background: #ff0004;
-  border: 1px solid #ff0004;
-  color: white;
-}
-
-.cart-content .btn_cart:hover {
-  background-color: rgba(255, 0, 4, 0.7);
-  border: 1px solid rgba(255, 0, 4, 0.7);
-}
-
-.cart-content .btn_checkout {
-  background: #ffffff;
-  border: 1px solid #ffffff;
-}
-
-.cart-content .btn_checkout:hover {
-  background: rgb(255, 255, 255, 0.5);
-}
-
-.cart-content .cart_btn {
-  background-color: #ff0004;
-  border: 1px solid #ff0004;
-  outline: 0;
-  border-radius: 4px;
-  padding: 3px 8px;
-  color: #ffffff;
-}
-
-.cart-content .cart_btn:hover {
-  background-color: #c00307;
-  border: 1px solid #c00307;
 }
 
 /* TABLEdetailt-list-cart */
@@ -715,24 +742,6 @@ ul {
   flex-wrap: wrap;
 }
 
-.message-content .message-subtitle button {
-  font-weight: bold;
-  font-size: 14px;
-  line-height: 20px;
-  letter-spacing: 0.25px;
-  color: #ffffff;
-  font-family: "Muli-Bold", arial, sans-serif;
-  background: transparent;
-  flex-direction: column;
-  align-items: flex-end;
-  padding: 8px 16px;
-  width: auto;
-  height: auto;
-  border: 1px solid #ffffff;
-  box-sizing: border-box;
-  border-radius: 4px;
-}
-
 /* banner-publicidad */
 /* ============= */
 .banner-publicidad {
@@ -805,16 +814,6 @@ ul {
   height: 60px;
   background-image: url(https://tiendamia.com/skin/frontend/traigo/traigo/images/svg/cliente-estrella-caja-premio-purple.svg);
   background-size: 40px;
-}
-
-.banner-publicidad .inner-div .button {
-  display: block;
-  padding: 9px 25px;
-  border-radius: 25px;
-  font-size: 13px;
-  color: #0c0071 !important;
-  background-color: #10ffff !important;
-  font-weight: 700;
 }
 
 /* banners-info */

@@ -25,10 +25,10 @@ $empresa = EmpresaADO::Index();
 
     <link rel="shortcut icon" href="#" />
 
-    <link rel="stylesheet" type="text/css" href="view/css/main.css">
+    <link rel="stylesheet" type="text/css" href="view/css/main.css?v=<?php echo (rand()); ?>">
     <link rel="stylesheet" type="text/css" href="view/css/font-awesome.min.css">
-    <link rel="stylesheet" type="text/css" href="view/css/shop.css">
-    <link rel="stylesheet" type="text/css" href="view/css/catalogo.css">
+    <link rel="stylesheet" type="text/css" href="view/css/shop.css?v=<?php echo (rand()); ?>">
+    <link rel="stylesheet" type="text/css" href="view/css/catalogo.css?v=<?php echo (rand()); ?>">
 
 </head>
 
@@ -112,9 +112,9 @@ $empresa = EmpresaADO::Index();
     <script src="view/js/jquery-3.3.1.min.js"></script>
     <script src="view/js/bootstrap.min.js"></script>
     <script src="view/js/plugins/bootstrap-notify.min.js"></script>
-    <script src="view/js/main.js"></script>
-    <script src="view/js/tools.js"></script>
-    <script src="resource/storage/cardStorage.js"></script>
+    <script src="view/js/main.js?v=<?php echo (rand()); ?>"></script>
+    <script src="view/js/tools.js?v=<?php echo (rand()); ?>"></script>
+    <script src="resource/storage/cardStorage.js?v=<?php echo (rand()); ?>"></script>
     <script>
         let tools = new Tools();
         let cardStorage = new CardStorage();
@@ -130,30 +130,6 @@ $empresa = EmpresaADO::Index();
             }
 
             cardStorage.renderCard();
-
-            $("#txtSearch").keypress(function(event) {
-                if (event.which == 13) {
-                    if ($("#txtSearch").val().trim().length != 0) {
-                        window.location.href = "./catalogo.php?search=" + $("#txtSearch").val().trim();
-                    }
-                    event.preventDefault();
-                }
-            });
-
-            $("#btnSearch").click(function() {
-                if ($("#txtSearch").val().trim().length != 0) {
-                    window.location.href = "./catalogo.php?search=" + $("#txtSearch").val().trim();
-                }
-            });
-
-            $("#btnSearch").keypress(function(event) {
-                if (event.which == 13) {
-                    if ($("#txtSearch").val().trim().length != 0) {
-                        window.location.href = "./catalogo.php?search=" + $("#txtSearch").val().trim();
-                    }
-                    event.preventDefault();
-                }
-            });
 
             $(".qty-up").click(function() {
                 let cantidad = tools.isNumeric($("#txtCantidad").val()) ? parseInt($("#txtCantidad").val()) : 1;

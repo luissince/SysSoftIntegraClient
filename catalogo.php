@@ -25,10 +25,10 @@ $empresa = EmpresaADO::Index();
 
     <link rel="shortcut icon" href="#" />
 
-    <link rel="stylesheet" type="text/css" href="view/css/main.css">
+    <link rel="stylesheet" type="text/css" href="view/css/main.css?v=<?php echo (rand()); ?>">
     <link rel="stylesheet" type="text/css" href="view/css/font-awesome.min.css">
-    <link rel="stylesheet" type="text/css" href="view/css/shop.css">
-    <link rel="stylesheet" type="text/css" href="view/css/catalogo.css">
+    <link rel="stylesheet" type="text/css" href="view/css/shop.css?v=<?php echo (rand()); ?>">
+    <link rel="stylesheet" type="text/css" href="view/css/catalogo.css?v=<?php echo (rand()); ?>">
 
 </head>
 
@@ -51,58 +51,60 @@ $empresa = EmpresaADO::Index();
 
     <div class="catalogo-content">
         <div class="container">
-            <div class="row">
-                <div class="col-lg-3 col-md-12 col-sm-12 col-12">
-                    <div class="aside">
-                        <h4 class="aside-title">Categorias</h4>
-                        <div class="navmenu">
-                            <ul class="menu" id="divCategorias">
-                                <div>
-                                    <span> No hay categorías para mostrar.</span>
-                                </div>
-                            </ul>
+            <div class="card p-3">
+                <div class="row">
+                    <div class="col-lg-3 col-md-12 col-sm-12 col-12">
+                        <div class="aside">
+                            <h4 class="aside-title">Categorias</h4>
+                            <div class="navmenu">
+                                <ul class="menu" id="divCategorias">
+                                    <div>
+                                        <span> No hay categorías para mostrar.</span>
+                                    </div>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="aside">
+                            <h4 class="aside-title">Marcas</h4>
+                            <div class="navmenu">
+                                <ul class="menu" id="divMarcas">
+                                    <div>
+                                        <span> No hay marcas para mostrar.</span>
+                                    </div>
+                                </ul>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="aside">
-                        <h4 class="aside-title">Marcas</h4>
-                        <div class="navmenu">
-                            <ul class="menu" id="divMarcas">
-                                <div>
-                                    <span> No hay marcas para mostrar.</span>
-                                </div>
-                            </ul>
+                    <div class="col-lg-9 col-md-12 col-sm-12 col-12">
+
+                        <div class="store">
+                            <div class="store-title">
+                                <h4 id="lblTotalRows">Se encontraron 0 productos</h4>
+                            </div>
+                            <div class="store-filter">
+                                <button id="liGrip" class="button-white active-input"><i class="fa fa-th"></i></button>
+                            </div>
                         </div>
+
+                        <div class="list">
+                            <div class="row" id="divCatalogo">
+
+                            </div>
+                        </div>
+
+                        <div class="page">
+                            <div class="title-pg">
+                                <p id="lblTitlePagination">Mostrando 0 de 0 Páginas</p>
+                            </div>
+                            <div class="content-pg">
+                                <ul class="store-pagination" id="myPager">
+                                </ul>
+                            </div>
+                        </div>
+
                     </div>
-                </div>
-
-                <div class="col-lg-9 col-md-12 col-sm-12 col-12">
-
-                    <div class="store">
-                        <div class="store-title">
-                            <h4 id="lblTotalRows">Se encontraron 0 productos</h4>
-                        </div>
-                        <div class="store-filter">
-                            <button id="liGrip" class="active-input"><i class="fa fa-th"></i></button>
-                        </div>
-                    </div>
-
-                    <div class="list">
-                        <div class="row" id="divCatalogo">
-
-                        </div>
-                    </div>
-
-                    <div class="page">
-                        <div class="title-pg">
-                            <p id="lblTitlePagination">Mostrando 0 de 0 Páginas</p>
-                        </div>
-                        <div class="content-pg">
-                            <ul class="store-pagination" id="myPager">
-                            </ul>
-                        </div>
-                    </div>
-
                 </div>
             </div>
         </div>
@@ -112,9 +114,9 @@ $empresa = EmpresaADO::Index();
 
     <script src="view/js/jquery-3.3.1.min.js"></script>
     <script src="view/js/bootstrap.min.js"></script>
-    <script src="view/js/main.js"></script>
-    <script src="view/js/tools.js"></script>
-    <script src="resource/storage/cardStorage.js"></script>
+    <script src="view/js/main.js?v=<?php echo (rand()); ?>"></script>
+    <script src="view/js/tools.js?v=<?php echo (rand()); ?>"></script>
+    <script src="resource/storage/cardStorage.js?v=<?php echo (rand()); ?>"></script>
     <script>
         let tools = new Tools();
         let cardStorage = new CardStorage();
@@ -150,46 +152,6 @@ $empresa = EmpresaADO::Index();
             //     }
             //     $("#liList").addClass("active-input");
             // });
-
-            $("#txtSearch").keypress(function(event) {
-                if (event.keyCode == 13) {
-                    if ($("#txtSearch").val().trim().length != 0) {
-                        if (!state) {
-                            paginacion = 1;
-                            fillProductsTable(1, $("#txtSearch").val().trim(), 0, 0);
-                            opcion = 1;
-                        }
-                    }
-                    $("#liGrip").focus();
-                    event.preventDefault();
-                }
-            });
-
-            $("#btnSearch").click(function() {
-                if ($("#txtSearch").val().trim().length != 0) {
-                    if (!state) {
-                        paginacion = 1;
-                        fillProductsTable(1, $("#txtSearch").val().trim(), 0, 0);
-                        opcion = 1;
-                    }
-                }
-                $("#liGrip").focus();
-            });
-
-
-            $("#btnSearch").keypress(function(event) {
-                if (event.which == 13) {
-                    if ($("#txtSearch").val().trim().length != 0) {
-                        if (!state) {
-                            paginacion = 1;
-                            fillProductsTable(1, $("#txtSearch").val().trim(), 0, 0);
-                            opcion = 1;
-                        }
-                    }
-                    $("#liGrip").focus();
-                    event.preventDefault();
-                }
-            });
 
             loadCategoria();
             loadMarca();
@@ -441,16 +403,16 @@ $empresa = EmpresaADO::Index();
 
                 let renderPrevBtn = null;
                 if (isPrevBtnActive === 'disabled') {
-                    renderPrevBtn = `<li><a href="javascript:void(0)" class='${isPrevBtnActive}' id="btnPrev"> Prev </a></li>`;
+                    renderPrevBtn = `<li><a href="javascript:void(0)" class='${isPrevBtnActive}' id="btnPrev"> Ante. </a></li>`;
                 } else {
-                    renderPrevBtn = `<li><a href="javascript:void(0)" class='${isPrevBtnActive}' id="btnPrev" onclick="btnPrevClick()"> Prev </a></li>`;
+                    renderPrevBtn = `<li><a href="javascript:void(0)" class='${isPrevBtnActive}' id="btnPrev" onclick="btnPrevClick()"> Ante.  </a></li>`;
                 }
 
                 let renderNextBtn = null;
                 if (isNextBtnActive === 'disabled') {
-                    renderNextBtn = `<li><a href="javascript:void(0)" class='${isNextBtnActive}' id="btnNext"> Next </a></li>`;
+                    renderNextBtn = `<li><a href="javascript:void(0)" class='${isNextBtnActive}' id="btnNext"> Sigui. </a></li>`;
                 } else {
-                    renderNextBtn = `<li><a href="javascript:void(0)" class='${isNextBtnActive}' id="btnNext" onclick="btnNextClick()"> Next </a></li>`;
+                    renderNextBtn = `<li><a href="javascript:void(0)" class='${isNextBtnActive}' id="btnNext" onclick="btnNextClick()"> Sigui. </a></li>`;
                 }
 
 
@@ -477,44 +439,44 @@ $empresa = EmpresaADO::Index();
                 <div class="col-xl-3 col-lg-4 col-md-4 col-sm-6 col-12">
                     <div class="item item-alter">
                         <a href="./producto.php?name=${clave}">
-                                    <span class="img_oferta">
-                                        <span class="text-aviso-item">
+                            <span class="img_oferta">
+                                <span class="text-aviso-item">
                                             INSUPERABLES
-                                        </span>
-                                    </span>
-                                    <span class="img_oferta sin_impuestos">
-                                        <span class="text-impuesto">
-                                            <b>CON</b>
-                                            IMPUESTO
-                                        </span>
-                                    </span>
-                                    <span class="product-image">
-                                        ${image}
-                                    </span>
-                                    <div class="block_holder">
-                                        <h2 class="product-name ">
-                                            <span>${name}</span>
-                                        </h2>
-                                        <div class="price-desde">
-                                            <span class="list-price currency_price">S/ ${priceold}</span>
-                                            <span class="discount_blackfriday">10% OFF</span>
-                                        </div>
-                                        <div class="price-box">
-                                            <span class="price_blackfriday currency_price">S/ ${pricenew}</span>
-                                        </div>
-                                        <div class="rating-fav">
-                                            <div class="rating-box">
-                                                <div id="rating_producto_ajax" class="rating a-icon a-icon-star a-star-4-5"></div>
-                                            </div>
-                                        </div>
-                                        <div class="csiFormatText">
-                                            <p>
-                                                <span class="csiGreenText">Envío a todo el Perú, puedes pagar con tus tarjetas preferidas</span>
-                                                <strong>Visa Mastercard y Amex a través de PayPal</strong>
-                                                <br class="showInCart">
-                                            </p>
-                                        </div>
+                                </span>
+                            </span>
+                            <span class="img_oferta sin_impuestos">
+                                <span class="text-impuesto">
+                                    <b>CON</b>
+                                    IMPUESTO
+                                </span>
+                            </span>
+                            <span class="product-image">
+                                ${image}
+                            </span>
+                            <div class="block_holder">
+                                <h2 class="product-name ">
+                                    <span>${name}</span>
+                                </h2>
+                                <div class="price-desde">
+                                    <span class="list-price currency_price">S/ ${priceold}</span>
+                                    <span class="discount_blackfriday">10% OFF</span>
+                                </div>
+                                <div class="price-box">
+                                    <span class="price_blackfriday currency_price">S/ ${pricenew}</span>
+                                </div>
+                                <div class="rating-fav">
+                                    <div class="rating-box">
+                                        <div id="rating_producto_ajax" class="rating a-icon a-icon-star a-star-4-5"></div>
                                     </div>
+                                </div>
+                                <div class="csiFormatText">
+                                    <p>
+                                        <span class="csiGreenText">Envío a todo el Perú, puedes pagar con tus tarjetas preferidas</span>
+                                        <strong>Visa Mastercard y Amex a través de PayPal</strong>
+                                        <br class="showInCart">
+                                    </p>
+                                </div>
+                            </div>
                         </a>
                     </div>
                 </div>`;
@@ -522,20 +484,20 @@ $empresa = EmpresaADO::Index();
 
         function messageLoading() {
             return `<div class="col-md-12 col-sm-12 col-12">
-                                <div class="d-flex flex-column justify-content-center align-items-center p-5">
-                                    <img width="96" height="96" class="d-block animate-image" src="resource/images/noproducto.png" />
-                                    <h4>Cargando lista de productos...</h4>
-                                </div>
-                            </div>`
+                        <div class="d-flex flex-column justify-content-center align-items-center p-5">
+                            <img width="96" height="96" class="d-block animate-image" src="resource/images/noproducto.png" />
+                            <h4>Cargando lista de productos...</h4>
+                        </div>
+                    </div>`
         }
 
         function messageNoData() {
             return `<div class="col-md-12 col-sm-12 col-12">
-                                <div class="d-flex flex-column justify-content-center align-items-center p-5">
-                                    <img width="96" height="96" class="d-block" src="resource/images/noproducto.png" />
-                                    <h4>No se encontraron productos que coincidan con la busqueda.</h4>
-                                </div>
-                            </div>`;
+                        <div class="d-flex flex-column justify-content-center align-items-center p-5">
+                            <img width="96" height="96" class="d-block" src="resource/images/noproducto.png" />
+                            <h4>No se encontraron productos que coincidan con la busqueda.</h4>
+                        </div>
+                    </div>`;
         }
 
         function handleClick(event) {

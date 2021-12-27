@@ -34,6 +34,7 @@
 /* ============= */
 .catalogo-content {
   width: 100%;
+  margin-bottom: 20px;
 }
 
 .catalogo-content .aside {
@@ -95,25 +96,6 @@
   justify-content: flex-end;
 }
 
-.catalogo-content .store .store-filter button {
-  display: block;
-  padding: 0.5rem 0.75rem;
-  line-height: 1.25;
-  background-color: #fff;
-  border-radius: 3px;
-  border: 1px solid #cccccc;
-  margin-left: 5px;
-  text-align: center;
-  -webkit-transition: 0.2s all;
-  transition: 0.2s all;
-  cursor: pointer;
-}
-
-.catalogo-content .store .store-filter button:hover {
-  background-color: rgb(226, 226, 226);
-  border: 1px solid #afafaf;
-}
-
 .catalogo-content .list {
   margin-top: 20px;
 }
@@ -165,7 +147,7 @@
 .catalogo-content .page .content-pg .store-pagination li a {
   position: relative;
   display: block;
-  padding: 0.5rem 0.75rem;
+  padding: 0.5rem 0.85rem;
   margin-left: -1px;
   line-height: 1.25;
   background-color: #fff;

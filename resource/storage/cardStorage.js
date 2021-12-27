@@ -1,5 +1,29 @@
 function CardStorage() {
 
+    $("#txtSearch").keypress(function (event) {
+        if (event.which == 13) {
+            if ($("#txtSearch").val().trim().length != 0) {
+                window.location.href = "./catalogo.php?search=" + $("#txtSearch").val().trim();
+            }
+            event.preventDefault();
+        }
+    });
+
+    $("#btnSearch").click(function () {
+        if ($("#txtSearch").val().trim().length != 0) {
+            window.location.href = "./catalogo.php?search=" + $("#txtSearch").val().trim();
+        }
+    });
+
+    $("#btnSearch").keypress(function (event) {
+        if (event.which == 13) {
+            if ($("#txtSearch").val().trim().length != 0) {
+                window.location.href = "./catalogo.php?search=" + $("#txtSearch").val().trim();
+            }
+            event.preventDefault();
+        }
+    });
+
     $(document).on("click", function (event) {
         let list = $(".cart-content");
         if ($("#btnCartAction").parent().children().hasClass("cart-active")) {
@@ -51,6 +75,10 @@ function CardStorage() {
         }
     }
 
+    this.getList = function () {
+        return getCarrito();
+    }
+
     this.renderCard = function () {
         render();
     }
@@ -76,7 +104,7 @@ function CardStorage() {
                             S/ ${tools.formatMoney(value.cantidad * value.precio)}
                         </span>
                     </div>
-                    <button onClick="removeCard('${value.idSuministro}')" class="cart_btn"><i class="fa fa-trash"></i></button>
+                    <button onClick="removeCard('${value.idSuministro}')" class="button-red"><i class="fa fa-trash"></i></button>
                 </div>
             </li>`);
         }

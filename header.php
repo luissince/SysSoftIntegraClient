@@ -37,31 +37,27 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-3 col-md-12 col-sm-12 col-12 p-2">
+            <!-- <div class="col-lg-3 col-md-12 col-sm-12 col-12 p-2">
                 <div class=" my-justify-center d-flex align-items-lg-center justify-content-end h-100">
 
-                    <!-- <div class="lang_selector flag-pe">
+                     <div class="lang_selector flag-pe">
                         <div class="lang_selected">
                             <div class="lang_selected imagen_sprite"></div>
                         </div>
-                    </div> -->
+                    </div> 
 
-                    <!-- <a class="text-white text-options" href="#" title="Regístrate">Regístrate</a>
+                   <a class="text-white text-options" href="#" title="Regístrate">Regístrate</a>
 
-                    <a class="text-white text-options" href="#" title="Regístrate">Mi Cuenta</a> -->
+                    <a class="text-white text-options" href="#" title="Regístrate">Mi Cuenta</a> 
                 </div>
-            </div>
+            </div> -->
         </div>
 
         <div class="row">
-            <div class="col-lg-3 col-md-6 col-sm-12 col-12 p-2">
+            <div class="col-lg-9 col-md-6 col-sm-12 col-12 p-2">
                 <div class="d-flex align-items-lg-center h-100">
                     <image class="p-1" src="./resource/images/menu.svg" />
                     <span class="text-white pt-1 pb-1 pl-2 pr-2 text-categoria">Todas las categorías</span>
-                </div>
-            </div>
-            <div class="col-lg-6 col-md-6 col-sm-12 col-12 p-2 ">
-                <div class="d-flex align-items-lg-center h-100">
                     <a class="text-white pt-1 pb-1 pl-2 pr-2" href="./">
                         Inicio
                     </a>
@@ -70,6 +66,11 @@
                     </a>
                 </div>
             </div>
+            <!-- <div class="col-lg-6 col-md-6 col-sm-12 col-12 p-2 ">
+                <div class="d-flex align-items-lg-center h-100">
+
+                </div>
+            </div> -->
             <div class="col-lg-3 col-md-12 col-sm-12 col-12 p-2">
                 <div class="d-flex align-items-lg-center justify-content-end h-100">
                     <div class="block-cart-header">
@@ -88,12 +89,12 @@
                                         <span class="price" id="cart-total">0.00 </span>
                                     </p>
                                     <div class="actions">
-                                        <button id="btnDetalleCart" type="button" title="Ver carrito" class="btn_action btn_cart">
+                                        <button id="btnDetalleCart" type="button" title="Ver carrito" class="btn-block button-red">
                                             Ver carrito
                                         </button>
-                                        <!-- <button type="button" title="Finalizar compra" class="btn_action btn_checkout">
+                                        <button type="button" title="Finalizar compra" class="btn-block button-white">
                                             Finalizar compra
-                                        </button> -->
+                                        </button>
                                     </div>
                                 </div>
                             </div>

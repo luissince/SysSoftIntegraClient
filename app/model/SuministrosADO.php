@@ -269,7 +269,6 @@ class SuministrosADO
                     "Cantidad" => floatval($row["Cantidad"]),
                     "PrecioCompra" => floatval($row["PrecioCompra"]),
                     "PrecioVentaGeneral" => floatval($row["PrecioVentaGeneral"]),
-                    "IdUnidadCompra" => $row["IdUnidadCompra"],
                     "UnidadCompra" => $row["UnidadCompra"],
                     "UnidadVenta" => $row["UnidadVenta"],
                     "Inventario" => $row["Inventario"],

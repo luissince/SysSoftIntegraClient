@@ -451,8 +451,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 '<td class="text-left">' + proveedor.Telefono + '<br>' + proveedor.Celular + '</td>' +
                                 '<td class="text-left">' + proveedor.Direccion + '</td>' +
                                 '<td class="text-left">' + proveedor.Representante + '</td>' +
-                                '<td class="text-center"><button class="btn btn-warning" onclick="EditarProveedor(\'' + proveedor.IdProveedor + '\')"><i class="fa fa-edit"></i><button</td>' +
-                                '<td class="text-center"><button class="btn btn-danger" onclick="DeleteProveedor(\'' + proveedor.IdProveedor + '\')"><i class="fa fa-trash"></i><button</td>' +
+                                '<td class="text-center"><button class="btn btn-warning" onclick="EditarProveedor(\'' + proveedor.IdProveedor + '\')"><i class="fa fa-edit"></i></button></td>' +
+                                '<td class="text-center"><button class="btn btn-danger" onclick="DeleteProveedor(\'' + proveedor.IdProveedor + '\')"><i class="fa fa-trash"></i></button></td>' +
                                 '</tr>');
                         }
                         totalPaginacion = parseInt(Math.ceil((parseFloat(object.total) / filasPorPagina)));

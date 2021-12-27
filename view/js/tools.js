@@ -128,8 +128,41 @@ function Tools() {
         }
     };
 
+    this.isText = function (value) {
+        if (value.trim() == "" || value.trim().length == 0 || value == 'undefined' || value == null) {
+            return false;
+        }
+        return true;
+    }
+
     this.getExtension = function (filename) {
         return filename.split("?")[0].split("#")[0].split('.').pop();
+    }
+
+    this.loadTable = function (tbody, colspan) {
+        tbody.empty();
+        tbody.append(`<tr><td class="text-center" colspan="${colspan}"><img src="./images/loading.gif" id="imgLoad" width="34" height="34" /> <p>Cargando información...</p></td></tr>`);
+    }
+
+    this.loadTableMessage = function (tbody, message, colspan) {
+        tbody.append(`<tr><td class="text-center" colspan="${colspan}"><p>${message}</p></td></tr>`);
+    }
+
+    this.messageError = function (message) {
+        if (message.responseText == "" || message.responseText == null || message.responseText == "undefined" || message.responseText == undefined) {
+            return "Se produjo un error interno, intente nuevamente por favor.";
+        } else {
+            if (message.responseJSON == "" || message.responseJSON == null || message.responseJSON == "undefined" || message.responseJSON == undefined) {
+                return message.responseText;
+            } else {
+                return message.responseJSON;
+            }
+        }
+    }
+
+    this.calculateTax = function (porcentaje, valor) {
+        let igv = porcentaje / 100.00;
+        return (valor * igv);
     }
 
     this.ErrorMessageServer = function (title, message) {
@@ -282,11 +315,6 @@ function Tools() {
             },
             z_index: 2000,
         });
-    }
-
-    this.calculateTax = function (porcentaje, valor) {
-        let igv = porcentaje / 100.00;
-        return (valor * igv);
     }
 
     this.promiseFetchGet = function (url, data, beforeSend = function () { }) {

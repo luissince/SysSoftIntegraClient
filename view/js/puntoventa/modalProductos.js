@@ -167,6 +167,7 @@ function ModalProductos() {
                 stateProductos = false;
             }
         } catch (error) {
+            console.log(error)
             tbListProductos.empty();
             tbListProductos.append('<tr><td class="text-center" colspan="7"><p>Error en obtener los datos nuevamentes</p></td></tr>');
             ulPaginationProductos.html(`

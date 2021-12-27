@@ -286,23 +286,11 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     modalCrudBanco();
                 });
 
-                $("#btnSaveBanco").keypress(function(event) {
-                    if (event.keyCode == 13) {
-                        modalCrudBanco();
-                        event.preventDefault();
-                    }
+                tools.keyEnter($("#btnSaveBanco"), function() {
+                    modalCrudBanco();
                 });
 
-                $("#txtSaldo").keypress(function(event) {
-                    var key = window.Event ? event.which : event.keyCode;
-                    var c = String.fromCharCode(key);
-                    if ((c < '0' || c > '9') && (c != '\b') && (c != '.')) {
-                        event.preventDefault();
-                    }
-                    if (c == '.' && $("#txtSaldo").val().includes(".")) {
-                        event.preventDefault();
-                    }
-                });
+                tools.keyNumberFloat($("#txtSaldo"));
             }
 
             function onEventPaginacion() {
@@ -328,14 +316,14 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         "buscar": buscar,
                     }, function() {
                         tbody.empty();
-                        tbody.append('<tr><td class="text-center" colspan="8"><img src="./images/loading.gif" id="imgLoad" width="34" height="34" /> <p>Cargando información...</p></td></tr>');
+                        tbody.append('<tr><td class="text-center" colspan="9"><img src="./images/loading.gif" id="imgLoad" width="34" height="34" /> <p>Cargando información...</p></td></tr>');
                         totalPaginacion = 0;
                         state = true;
                     });
 
                     tbody.empty();
                     if (result.length == 0) {
-                        tbody.append('<tr><td class="text-center" colspan="8"><p>No hay salidas para mostrar.</p></td></tr>');
+                        tbody.append('<tr><td class="text-center" colspan="9"><p>No hay bancos para mostrar.</p></td></tr>');
                         ulPagination.html(`
                             <button class="btn btn-outline-secondary">
                                 <i class="fa fa-angle-double-left"></i>
@@ -384,7 +372,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             <button class="btn btn-outline-secondary">
                                 <i class="fa fa-angle-double-right"></i>
                             </button>`);
-                    tbody.append('<tr><td class="text-center" colspan="8"><p>' + error.responseText + '</p></td></tr>');
+                    tbody.append('<tr><td class="text-center" colspan="9"><p>' + error.responseText + '</p></td></tr>');
                     state = false;
                 }
             }
@@ -499,7 +487,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
             }
 
             function removerBanco(id) {
-                tools.ModalDialog("Banco", '¿Está seguro de continuar?', async function(value) {
+                tools.ModalDialog("Banco", '¿Está seguro de eliminar la cuenta?', async function(value) {
                     if (value == true) {
                         try {
                             let result = await tools.promiseFetchPost("../app/controller/BancoController.php", {

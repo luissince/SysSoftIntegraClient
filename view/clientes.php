@@ -246,7 +246,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                         <th style="width:5%">Predeterminado</th>
                                         <th style="width:5%">Editar</th>
                                         <th style="width:5%">Eliminar</th>
-                                        <th style="width:5%">Predeterminar</th>
+                                        <th style="width:5%">Predet.</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tbList">
@@ -443,9 +443,9 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 '<td class="text-left">' + cliente.Direccion + '</td>' +
                                 '<td class="text-left">' + cliente.Representante + '</td>' +
                                 '<td class="text-center"><img width="32" height="32" src="' + predeterminado + '" alt="Producto"/></td>' +
-                                '<td class="text-center"><button class="btn btn-warning" onclick="EditarCliente(\'' + cliente.IdCliente + '\')"><i class="fa fa-edit"></i><button</td>' +
-                                '<td class="text-center"><button class="btn btn-danger" onclick="DeleteCliente(\'' + cliente.IdCliente + '\')"><i class="fa fa-trash"></i><button</td>' +
-                                '<td class="text-center"><button class="btn btn-info" onClick="PredeterminadoCliente(\'' + cliente.IdCliente + '\')"><i class="fa fa-check-square-o"></i><button</td>' +
+                                '<td class="text-center"><button class="btn btn-warning" onclick="EditarCliente(\'' + cliente.IdCliente + '\')"><i class="fa fa-edit"></i></button></td>' +
+                                '<td class="text-center"><button class="btn btn-danger" onclick="DeleteCliente(\'' + cliente.IdCliente + '\')"><i class="fa fa-trash"></i></button></td>' +
+                                '<td class="text-center"><button class="btn btn-info" onClick="PredeterminadoCliente(\'' + cliente.IdCliente + '\')"><i class="fa fa-check-square-o"></i></button></td>' +
                                 '</tr>');
                         }
                         totalPaginacion = parseInt(Math.ceil((parseFloat(object.total) / filasPorPagina)));
