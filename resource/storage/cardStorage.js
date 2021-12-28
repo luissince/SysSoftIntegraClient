@@ -1,7 +1,7 @@
 function CardStorage() {
 
     $("#txtSearch").keypress(function (event) {
-        if (event.which == 13) {
+        if (event.keyCode == 13) {
             if ($("#txtSearch").val().trim().length != 0) {
                 window.location.href = "./catalogo.php?search=" + $("#txtSearch").val().trim();
             }
@@ -58,6 +58,18 @@ function CardStorage() {
         window.open("./detalle.php", "_self");
     });
 
+    tools.keyEnter($("#btnDetalleCart"), function (event) {
+        window.open("./detalle.php", "_self");
+    });
+
+    $("#btnFinalizarCart").click(function () {
+        window.open("./pago.php", "_self");
+    });
+
+    tools.keyEnter($("#btnFinalizarCart"), function (event) {
+        window.open("./pago.php", "_self");
+    });
+
     this.add = function (item) {
         let carrito = getCarrito();
         if (validateDuplicate(carrito, item.idSuministro)) {
@@ -77,6 +89,10 @@ function CardStorage() {
 
     this.getList = function () {
         return getCarrito();
+    }
+
+    this.empty = function () {
+        localStorage.removeItem('carrito');
     }
 
     this.renderCard = function () {

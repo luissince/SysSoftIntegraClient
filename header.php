@@ -56,8 +56,10 @@
         <div class="row">
             <div class="col-lg-9 col-md-6 col-sm-12 col-12 p-2">
                 <div class="d-flex align-items-lg-center h-100">
-                    <image class="p-1" src="./resource/images/menu.svg" />
-                    <span class="text-white pt-1 pb-1 pl-2 pr-2 text-categoria">Todas las categorías</span>
+                    <a class="text-white pt-1 pb-1 pl-2 pr-2">
+                        <image class="" src="./resource/images/menu.svg" />
+                        Todas las categorías
+                    </a>
                     <a class="text-white pt-1 pb-1 pl-2 pr-2" href="./">
                         Inicio
                     </a>
@@ -92,7 +94,7 @@
                                         <button id="btnDetalleCart" type="button" title="Ver carrito" class="btn-block button-red">
                                             Ver carrito
                                         </button>
-                                        <button type="button" title="Finalizar compra" class="btn-block button-white">
+                                        <button id="btnFinalizarCart" type="button" title="Finalizar compra" class="btn-block button-white">
                                             Finalizar compra
                                         </button>
                                     </div>

@@ -85,7 +85,7 @@ $empresa = EmpresaADO::Index();
                                 <div class="qty-label">
                                     Cantidad
                                     <div class="input-number">
-                                        <input type="text" id="txtCantidad" inputmode="numeric" value="1" />
+                                        <input type="text" id="txtCantidad" inputmode="numeric" value="1" autocomplete="off" />
                                         <span class="qty-up">+</span>
                                         <span class="qty-down">-</span>
                                     </div>

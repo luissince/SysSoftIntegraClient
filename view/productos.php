@@ -36,6 +36,10 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 <i class="fa fa-refresh"></i>
                                 Recargar
                             </button>
+                            <button class="btn btn-secondary" id="btnCatalogo">
+                                <i class="fa fa-file-image-o"></i>
+                                Catálogo
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -187,22 +191,25 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     window.location.href = "registrarproducto.php";
                 });
 
-                $("#btnAgregar").keypress(function(event) {
-                    if (event.keyCode === 13) {
-                        window.location.href = "registrarproducto.php";
-                    }
-                    event.preventDefault();
+                tools.keyEnter($("#btnAgregar"), function() {
+                    window.location.href = "registrarproducto.php";
                 });
 
                 $("#btnReload").click(function() {
                     loadInitProductos();
                 });
 
-                $("#btnReload").keypress(function(event) {
-                    if (event.keyCode === 13) {
-                        loadInitProductos();
-                    }
-                    event.preventDefault();
+                tools.keyEnter($("#btnReload"), function() {
+                    loadInitProductos();
+                });
+
+
+                $("#btnCatalogo").click(function(event) {
+                    window.open("../app/sunat/pdfcatalogo.php", "_blank");
+                });
+
+                tools.keyEnter($("#btnCatalogo"), function() {
+                    window.open("../app/sunat/pdfcatalogo.php", "_blank");
                 });
 
                 loadInitProductos();
@@ -251,8 +258,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         "posicionPagina": ((paginacion - 1) * filasPorPagina),
                         "filasPorPagina": filasPorPagina
                     }, function() {
-                        tbList.empty();
-                        tbList.append('<tr><td class="text-center" colspan="10"><img src="./images/loading.gif" id="imgLoad" width="34" height="34" /> <p>Cargando información...</p></td></tr>');
+                        tools.loadTable(tbList, 10);
                         state = true;
                         totalPaginacion = 0;
                     });
@@ -341,7 +347,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
                 } catch (error) {
                     tbList.empty();
-                    tbList.append('<tr><td class="text-center" colspan="10"><p>' + error.responseText + '</p></td></tr>');
+                    tools.loadTableMessage(tbList, tools.messageError(error), 10);
                     ulPagination.html(`
                             <button class="btn btn-outline-secondary">
                                 <i class="fa fa-angle-double-left"></i>

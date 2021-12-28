@@ -60,7 +60,7 @@ $empresa = EmpresaADO::Index();
                     </div>
                     <div class="col-lg-6 col-md-12 col-sm-12 col-12 mb-2">
                         <div class="d-flex align-items-lg-center justify-content-end h-100">
-                            <button class="button-red">Finalizar compra</button>
+                            <button class="button-red" id="btnFinalizar">Finalizar compra</button>
                         </div>
                     </div>
                 </div>
@@ -127,18 +127,41 @@ $empresa = EmpresaADO::Index();
         $(document).ready(function() {
             cardStorage.renderCard();
 
+            $("#btnFinalizar").click(function() {
+                window.location.href = "./pago.php";
+            });
+
+            tools.keyEnter($("#btnFinalizar"), function(event) {
+                window.location.href = "./pago.php";
+            });
+
+            renderTable();
+            $('#preloader').fadeOut(1000, function() {
+                $(this).remove();
+            });
+        });
+
+        function renderTable() {
             $("#tbList").empty();
+            importeTotal = 0;
             for (let value of cardStorage.getList()) {
                 $("#tbList").append(`<tr>
-                <td class="text-center"><button class="button-red"><i class="fa fa-trash"></i></button></td>
+                <td class="text-center">
+                <button class="button-red" onClick="removeItem('${value.idSuministro}')"><i class="fa fa-trash"></i></button>
+                </td>
                 <td>
                 <div class="d-flex align-items-center">
                 <img class="m-1" width="100" src="${value.image}" alt="${value.nombre}"/>
                 <p class="m-1">${value.nombre}<p/>
-                </div>
-               
+                </div>               
                 </td>
-                <td class="text-right">${value.cantidad}</td>
+                <td class="text-right">
+                    <div class="input-number">
+                            <input type="text" onkeypress="onKeyPressTable(this)" inputmode="numeric" value="${value.cantidad}" autocomplete="off" disabled>
+                            <span class="qty-up" onclick="qtyUp('${value.idSuministro}','${value.cantidad}')">+</span>
+                            <span class="qty-down" onclick="qtyDown('${value.idSuministro}','${value.cantidad}')">-</span>
+                    </div>               
+                </td>
                 <td class="text-right">S/ ${tools.formatMoney(value.precio)}</td>
                 <td class="text-right">S/ ${tools.formatMoney(value.cantidad*value.precio)}</td>
             </tr>`);
@@ -146,11 +169,66 @@ $empresa = EmpresaADO::Index();
             }
 
             $("#lblImporteNeto").html("S/ " + tools.formatMoney(importeTotal));
+        }
 
-            $('#preloader').fadeOut(1000, function() {
-                $(this).remove();
-            });
-        });
+        qtyUp = function(idSuministro, unt) {
+            let cantidad = tools.isNumeric(unt) ? parseInt(unt) : 1;
+            cantidad++;
+            let carrito = cardStorage.getList();;
+            for (let value of carrito) {
+                if (value.idSuministro == idSuministro) {
+                    let suministro = value;
+                    suministro.cantidad = cantidad;
+                    localStorage.setItem("carrito", JSON.stringify(carrito));
+                    break;
+                }
+            }
+            cardStorage.renderCard();
+            renderTable();
+        }
+
+        qtyDown = function(idSuministro, unt) {
+            let cantidad = tools.isNumeric(unt) ? parseInt(unt) : 1;
+            if (cantidad <= 1) {
+                return;
+            }
+            cantidad--;
+            let carrito = cardStorage.getList();;
+            for (let value of carrito) {
+                if (value.idSuministro == idSuministro) {
+                    let suministro = value;
+                    suministro.cantidad = cantidad;
+                    localStorage.setItem("carrito", JSON.stringify(carrito));
+                    break;
+                }
+            }
+            cardStorage.renderCard();
+            renderTable();
+        }
+
+        function onKeyPressTable() {
+            var key = window.Event ? event.which : event.keyCode;
+            var c = String.fromCharCode(key);
+            if ((c < '0' || c > '9') && (c != '\b')) {
+                event.preventDefault();
+            }
+        }
+
+        function removeItem(idSuministro) {
+            event.preventDefault();
+            event.stopPropagation();
+            let carrito = cardStorage.getList();;
+            for (let i = 0; i < carrito.length; i++) {
+                if (carrito[i].idSuministro == idSuministro) {
+                    carrito.splice(i, 1);
+                    i--;
+                    localStorage.setItem("carrito", JSON.stringify(carrito));
+                    break;
+                }
+            }
+            cardStorage.renderCard();
+            renderTable();
+        }
     </script>
 </body>
 

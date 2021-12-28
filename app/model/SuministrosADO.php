@@ -356,13 +356,25 @@ class SuministrosADO
     {
         try {
             $comando = Database::getInstance()->getDb()->prepare("SELECT 
-            IdSuministro,Clave,NombreMarca,StockMinimo,Cantidad,
+            IdSuministro,
+            Clave,
+            NombreMarca,
+            StockMinimo,
+            Cantidad,
             dbo.Fc_Obtener_Nombre_Detalle(UnidadCompra,'0013') AS UnidadCompraNombre,
             dbo.Fc_Obtener_Nombre_Detalle(Marca,'0007') AS MarcaNombre,
-            PrecioCompra,Impuesto,PrecioVentaGeneral,
-            Inventario,ValorInventario 
+            PrecioCompra,
+            Impuesto,
+            PrecioVentaGeneral,
+            Inventario,
+            ValorInventario,
+            Imagen 
             FROM SuministroTB ORDER BY MarcaNombre");
             $comando->execute();
+
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 200 . ' ' . "OK");
+
             return $comando->fetchAll(PDO::FETCH_OBJ);
         } catch (Exception $ex) {
             $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');

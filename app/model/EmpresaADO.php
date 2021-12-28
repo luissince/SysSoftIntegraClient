@@ -29,7 +29,6 @@ class EmpresaADO
             FROM EmpresaTB");
             $cmdEmpresa->execute();
 
-
             $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
             header($protocol . ' ' . 200 . ' ' . "OK");
 
