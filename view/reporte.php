@@ -19,7 +19,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
         <!--  -->
         <?php include "./layout/reporte/modalVentaLibre.php"; ?>
         <!--  -->
-        <!--  -->
         <?php include "./layout/reporte/modalVentaPos.php"; ?>
         <!--  -->
 
@@ -318,8 +317,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
         </main>
         <?php include "./layout/footer.php"; ?>
         <script src="js/notificaciones.js"></script>
-        <script src="js/reporte/modalVentaLibre.js?v=<?php echo (rand()); ?>"></script>
-        <script src="js/reporte/ModalVentaPos.js?v=<?php echo (rand()); ?>"></script>
+        <script src="js/reporte/modalVentaLibre.js"></script>
+        <script src="js/reporte/modalVentaPos.js"></script>
         <script>
             let tools = new Tools();
             let modalVentaLibre = new ModalVentaLibre();
