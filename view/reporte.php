@@ -317,9 +317,9 @@ if (!isset($_SESSION['IdEmpleado'])) {
             </div>
         </main>
         <?php include "./layout/footer.php"; ?>
-        <script src="./js/notificaciones.js"></script>
-        <script src="./js/reporte/ModalVentaLibre.js"></script>
-        <script src="./js/reporte/ModalVentaPos.js"></script>
+        <script src="js/notificaciones.js"></script>
+        <script src="js/reporte/modalVentaLibre.js"></script>
+        <script src="js/reporte/ModalVentaPos.js"></script>
         <script>
             let tools = new Tools();
             let modalVentaLibre = new ModalVentaLibre();
