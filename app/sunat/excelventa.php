@@ -9,8 +9,8 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use SysSoftIntegra\Model\VentasADO;
 
-require __DIR__ . "/lib/phpspreadsheet/vendor/autoload.php";
-require __DIR__ . './../src/autoload.php';
+require  "/lib/phpspreadsheet/vendor/autoload.php";
+require  './../src/autoload.php';
 
 $fechaInicio = $_GET["txtFechaInicial"];
 $fechaFinal = $_GET["txtFechaFinal"];

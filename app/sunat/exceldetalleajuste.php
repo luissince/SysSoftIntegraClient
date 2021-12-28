@@ -9,8 +9,8 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use SysSoftIntegra\Model\MovimientoADO;
 
-require __DIR__ . "/lib/phpspreadsheet/vendor/autoload.php";
-require __DIR__ . './../src/autoload.php';
+require "/lib/phpspreadsheet/vendor/autoload.php";
+require './../src/autoload.php';
 
 $result = MovimientoADO::ObtenerMovimientoInventarioById($_GET["idMovimiento"]);
 if (!is_array($result)) {

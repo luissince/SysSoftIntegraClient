@@ -1,7 +1,7 @@
 <?php
 
-require __DIR__ . './lib/mpdf/vendor/autoload.php';
-require __DIR__ . './../src/autoload.php';
+require './lib/mpdf/vendor/autoload.php';
+require  './../src/autoload.php';
 
 use SysSoftIntegra\Model\CotizacionADO;
 use SysSoftIntegra\Src\NumberLleters;

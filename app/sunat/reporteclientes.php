@@ -4,7 +4,7 @@ define('_MPDF_PATH', '/lib');
 require('./lib/mpdf/vendor/autoload.php');
 include('../src/GenerateCoinToLetters.php');
 require_once("./lib/phpqrcode/qrlib.php");
-require __DIR__ . './../src/autoload.php';
+require './../src/autoload.php';
 
 use SysSoftIntegra\Model\VentasADO;
 

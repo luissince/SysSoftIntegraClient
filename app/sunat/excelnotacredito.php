@@ -1,8 +1,8 @@
 <?php
 set_time_limit(300);
 
-require __DIR__ . "/lib/phpspreadsheet/vendor/autoload.php";
-require __DIR__ . './../src/autoload.php';
+require "/lib/phpspreadsheet/vendor/autoload.php";
+require './../src/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;

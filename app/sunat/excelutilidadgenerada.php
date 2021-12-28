@@ -2,8 +2,8 @@
 
 set_time_limit(300); //evita el error 20 segundos de peticion
 
-require __DIR__ . "/lib/phpspreadsheet/vendor/autoload.php";
-require __DIR__ . './../src/autoload.php';
+require  "/lib/phpspreadsheet/vendor/autoload.php";
+require './../src/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;

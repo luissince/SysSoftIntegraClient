@@ -3,7 +3,7 @@
 define('_MPDF_PATH', '/lib');
 require('./lib/mpdf/vendor/autoload.php');
 require_once("./lib/phpqrcode/qrlib.php");
-require __DIR__ . './../src/autoload.php';
+require './../src/autoload.php';
 
 use SysSoftIntegra\Src\NumberLleters;
 use SysSoftIntegra\Model\VentasADO;

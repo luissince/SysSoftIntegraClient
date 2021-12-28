@@ -4,8 +4,8 @@ set_time_limit(300);
 
 use SysSoftIntegra\Model\VentasADO;
 
-require __DIR__ . "/lib/phpspreadsheet/vendor/autoload.php";
-require __DIR__ . './../src/autoload.php';
+require  "/lib/phpspreadsheet/vendor/autoload.php";
+require  './../src/autoload.php';
 
 $fechaInicio = $_GET["txtFechaInicial"];
 $fechaFinal = $_GET["txtFechaFinal"];

@@ -1,13 +1,11 @@
 <?php
 
-require __DIR__ . './lib/mpdf/vendor/autoload.php';
-require __DIR__ . './lib/phpqrcode/vendor/autoload.php';
-require __DIR__ . './../src/autoload.php';
+require  './lib/mpdf/vendor/autoload.php';
+require  './lib/phpqrcode/vendor/autoload.php';
+require  './../src/autoload.php';
 
 use SysSoftIntegra\Model\SuministrosADO;
 use SysSoftIntegra\Model\EmpresaADO;
-use SysSoftIntegra\Src\NumberLleters;
-use chillerlan\QRCode\QRCode;
 use Mpdf\Mpdf;
 
 $empresa = EmpresaADO::ObtenerEmpresa();

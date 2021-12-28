@@ -1,8 +1,8 @@
 <?php
 
-require __DIR__ . './lib/mpdf/vendor/autoload.php';
-require __DIR__ . './lib/phpqrcode/vendor/autoload.php';
-require __DIR__ . './../src/autoload.php';
+require './lib/mpdf/vendor/autoload.php';
+require './lib/phpqrcode/vendor/autoload.php';
+require './../src/autoload.php';
 
 use SysSoftIntegra\Model\VentasADO;
 use SysSoftIntegra\Src\NumberLleters;
