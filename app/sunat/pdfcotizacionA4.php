@@ -1,7 +1,7 @@
 <?php
 
 require './lib/mpdf/vendor/autoload.php';
-require  './../src/autoload.php';
+require './../src/autoload.php';
 
 use SysSoftIntegra\Model\CotizacionADO;
 use SysSoftIntegra\Src\NumberLleters;

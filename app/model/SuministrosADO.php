@@ -355,7 +355,7 @@ class SuministrosADO
     public static function ListarTodosSuministros()
     {
         try {
-            $comando = Database::getInstance()->getDb()->prepare("SELECT 
+            $comando = Database::getInstance()->getDb()->prepare("SELECT TOP 5
             IdSuministro,
             Clave,
             NombreMarca,

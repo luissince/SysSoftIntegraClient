@@ -87,7 +87,7 @@ foreach ($lista as $value) {
     <div style="
         width:225px;
         float:left;  
-        
+        margin-bottom:40px;
         text-align:center;    
         ">
             <img width="150" height="150" src="' .   $imagen . '" />
@@ -101,14 +101,12 @@ foreach ($lista as $value) {
     ';
 }
 
-$html .= '';
-
 
 $mpdf = new Mpdf([
     'margin_left' => 10,
     'margin_right' => 10,
     'margin_top' => 10,
-    'margin_bottom' => 10,
+    'margin_bottom' => 20,
     'margin_header' => 10,
     'margin_footer' => 10,
     'mode' => 'utf-8',
