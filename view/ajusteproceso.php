@@ -451,6 +451,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
             async function loadTipoMovimiento(ajuste) {
                 try {
+                    console.log(ajuste)
                     let result = await tools.promiseFetchGet("../app/controller/MovimientoController.php", {
                         "type": "listipomovimiento",
                         "ajuste": ajuste,

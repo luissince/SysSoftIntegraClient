@@ -17,7 +17,7 @@ class MovimientoADO
     {
     }
 
-    public static function ListarTipoMovimiento(bool $ajuste, $all)
+    public static function ListarTipoMovimiento($ajuste, $all)
     {
         try {
             $consulta = "SELECT IdTipoMovimiento,Nombre,Predeterminado,Sistema,Ajuste FROM TipoMovimientoTB";
