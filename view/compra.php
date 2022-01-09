@@ -395,94 +395,90 @@ if (!isset($_SESSION['IdEmpleado'])) {
         <main class="app-content">
 
             <div class="app-title">
-                <h1><i class="fa fa-cart-plus"></i> Compras</h1>
+                <h1><i class="fa fa-cart-plus"></i> Compra <small>Lista</small></h1>
             </div>
 
             <div class="tile mb-4">
 
-                <div class="row ">
+                <div class="row">
                     <div class="col-md-12 col-sm-12 col-xs-12">
                         <div class="form-group">
-                            <button class="btn btn-success" id="btnGuardarCompra">
-                                <i class="fa fa-save"></i> Registrar
-                                <!-- <img src="./images/save.png" width="18" /> Registrar -->
+                            <a href="./compraproceso.php" class="btn btn-primary">
+                                <i class="fa fa-plus"></i>
+                                Nuevo
+                            </a>
+                            <button class="btn btn-secondary" id="btnRecargar">
+                                <i class="fa fa-refresh"></i>
+                                Recargar
                             </button>
-                            <button class="btn btn-secondary" id="btnProductos">
-                                <i class="fa fa-shopping-basket"></i> Productos
-                            </button>
-                            <button class="btn btn-secondary" id="btnEditarProducto">
-                                <i class="fa fa-pencil"></i> Editar
-                            </button>
-                            <button class="btn btn-secondary" id="btnLimpiarListaCompra">
-                                <i class="fa fa-eraser"></i> Limpiar
-                            </button>
-                            <button class="btn btn-secondary" id="btnProveedor">
-                                <i class="fa fa-address-book"></i> Proveedor
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <hr class="mt-0 mb-2">
-                <div class="row ">
-                    <div class="col-md-6 col-sm-12 col-xs-12">
-                        <div class="form-group">
-                            <label>Proveedor:</label>
-                            <input id="txtProveedor" type="text" class="form-control" placeholder="Ingresar el proveedor" />
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-sm-12 col-xs-12">
-                        <div class="form-group">
-                            <label>fecha:</label>
-                            <input id="dFecha" type="date" class="form-control" />
+                  
                         </div>
                     </div>
                 </div>
 
                 <div class="row">
-                    <div class="col-md-6 col-sm-12 col-xs-12">
-                        <div class="form-group">
-                            <label>Almacen:</label>
-                            <select id="cbAlmacen" class="form-control">
-                                <option value="0">--SELECCIONE--</option>
-                                <option value="1">ALMACEN 1</option>
-                                <option value="2">ALMACEN 2</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-sm-12 col-xs-12">
-                        <div class="form-group">
-                            <label>Serie y Numeración:</label>
-                            <div class="row">
-                                <div class="col-md-6 col-sm12">
-                                    <input id="txtSerie" type="text" class="form-control" placeholder="Ingrese la serie" />
-                                </div>
-                                <div class="col-md-6 col-sm12">
-                                    <input id="txtNumeracion" type="text" class="form-control" placeholder="Ingrese la numeración" />
+
+                    <div class="col-md-8 col-sm-12 col-xs-12">
+                        <label><img src="./images/search.png" width="22" height="22"> Buscar por proveedor o Serie/Numeración:</label>
+                        <div class="form-group d-flex">
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="txtBuscar" placeholder="Buscar..." />
+                                <div class="input-group-append">
+                                    <button class="btn btn-success" type="button" id="btnBuscar">Buscar</button>
                                 </div>
                             </div>
                         </div>
                     </div>
+
+                    <div class="col-md-4 col-sm-12 col-xs-12">
+                        <label><img src="./images/options.png" width="22" height="22"> Estado:</label>
+                        <div class="form-group">
+                            <select id="cbAlmacen" class="form-control">
+                                <option value="0">Todos</option>
+                                <option value="1">Opcion 1</option>
+                                <option value="2">Opcion 2</option>
+                            </select>
+                        </div>
+                    </div>
+
+                </div>
+                
+                <div class="row">
+                    
+                    <div class="col-md-4 col-sm-12 col-xs-12">
+                        <label><img src="./images/calendar.png" width="22" height="22"> Fecha de Inicio:</label>
+                        <div class="form-group">
+                            <input type="date" class="form-control" id="txtFechaInicial">
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 col-sm-12 col-xs-12">
+                        <label><img src="./images/calendar.png" width="22" height="22"> Fecha Final:</label>
+                        <div class="form-group">
+                            <input type="date" class="form-control" id="txtFechaFinal">
+                        </div>
+                    </div>
+
                 </div>
 
-                <div class="row ">
+                <div class="row">
                     <div class="col-md-12 col-sm-12 col-xs-12">
                         <div class="table-responsive">
-                            <table class="table table-striped" style="border-width: 1px;border-style: dashed;border-color: #007bff;">
-                                <thead style="background-color: #0766cc;color: white;">
+                            <table class="table table-striped">
+                                <thead class="table-header-background">
                                     <tr>
-                                        <th>#</th>
-                                        <th>Cantidad</th>
-                                        <th>Clave/Descripción</th>
-                                        <th>Costo Unitario</th>
-                                        <th>Descuento</th>
-                                        <th>Impuesto %</th>
-                                        <th>Importe</th>
-                                        <th>Opciones</th>
+                                        <th scope="col" class="th-porcent-5">N°</th>
+                                        <th scope="col" class="th-porcent-5">Fecha de compra</th>
+                                        <th scope="col" class="th-porcent-15">Proveedor</th>
+                                        <th scope="col" class="th-porcent-10">Serie/Numeración</th>
+                                        <th scope="col" class="th-porcent-15">Tipo de compra</th>
+                                        <th scope="col" class="th-porcent-25">Estado</th>
+                                        <th scope="col" class="th-porcent-10">Total</th>
                                     </tr>
                                 </thead>
-                                <tbody id="tbListProducts">
+                                <tbody id="tbList">
                                     <tr>
-                                        <td class="text-center" colspan="8">Tabla sin contenido</td>
+                                        <td class="text-center" colspan="7">No hay datos para mostrar</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -491,73 +487,28 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 </div>
 
                 <div class="row">
-                    <div class="col-md-6 col-sm-12 col-xs-12">
-                        <div class="form-group">
-                            <div class="row">
-                                <div class="col-md-6 col-sm12">
-                                    <label>Nota:</label>
-                                    <input id="txtNota" type="text" class="form-control" placeholder="Ingrese una nota" />
-                                </div>
-                                <div class="col-md-6 col-sm12">
-                                    <label>Observación:</label>
-                                    <input id="txtObservacion" type="text" class="form-control" placeholder="Ingrese una observación" />
-                                </div>
-                            </div>
+
+                    <div class="col-md-12 col-sm-12 col-xs-12 text-center">
+                        <label>Paginación</label>
+                        <div class="form-group" id="ulPagination">
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-double-left"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-left"></i>
+                            </button>
+                            <span class="btn btn-outline-secondary disabled" id="lblPaginacion">0 - 0</span>
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-right"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-double-right"></i>
+                            </button>
                         </div>
                     </div>
-                    <div class="col-md-6 col-sm-12 col-xs-12">
 
-                        <div class="row text-right">
-                            <div class="col-md-7 col-sm-7">
-                                <span>IMPORTE BRUTO: </span>
-                            </div>
-                            <div class="col-md-5 col-sm-5">
-                                <span class="text-info"><strong>M 0000.00</strong></span>
-                            </div>
-                        </div>
-                        <div class="row text-right">
-                            <div class="col-md-7 col-sm-7">
-                                <span>DESCUENTO TOTAL: </span>
-                            </div>
-                            <div class="col-md-5 col-sm-5">
-                                <span class="text-info"><strong>M 0000.00</strong></span>
-                            </div>
-                        </div>
-                        <div class="row text-right">
-                            <div class="col-md-7 col-sm-7">
-                                <span>SUB IMPORTE BRUTO: </span>
-                            </div>
-                            <div class="col-md-5 col-sm-5">
-                                <span class="text-info"><strong>M 0000.00</strong></span>
-                            </div>
-                        </div>
-                        <div class="row text-right">
-                            <div class="col-md-7 col-sm-7">
-                                <span>SUB IMPORTE NETO: </span>
-                            </div>
-                            <div class="col-md-5 col-sm-5">
-                                <span class="text-info"><strong>M 0000.00</strong></span>
-                            </div>
-                        </div>
-                        <div class="row text-right">
-                            <div class="col-md-7 col-sm-7">
-                                <span>IMPUESTO: </span>
-                            </div>
-                            <div class="col-md-5 col-sm-5">
-                                <span class="text-info"><strong>M 0000.00</strong></span>
-                            </div>
-                        </div>
-                        <div class="row text-right">
-                            <div class="col-md-7 col-sm-7">
-                                <span>IMPORTE NETO: </span>
-                            </div>
-                            <div class="col-md-5 col-sm-5">
-                                <span class="text-info"><strong>M 0000.00</strong></span>
-                            </div>
-                        </div>
-
-                    </div>
                 </div>
+                
             </div>
         </main>
 
