@@ -181,7 +181,7 @@ $empresa = EmpresaADO::Index();
         <div class="banner-publicidad">
             <div class="inner-div">
                 <p class="text-1">Conviértete en un</p>
-                <p class="text-2">Cliente Estrella de tiendamia</p>
+                <p class="text-2">Cliente Estrella de LeatSac</p>
             </div>
 
             <div class="inner-div">
@@ -196,9 +196,9 @@ $empresa = EmpresaADO::Index();
             </div>
 
             <div class="inner-div">
-                <p class="text-1">Cada 4 pedidos que realices <span style="font-size: 11px;">(de 1kg o más)</span>
+                <p class="text-1">Cada 12 pedidos que relalices<span style="font-size: 11px;">(de 50 kg o más)</span>
                 </p>
-                <p class="text-2">¡Descuenta 1kg gratis en el próximo!</p>
+                <p class="text-2">¡Descuenta 5kg gratis en el próximo!</p>
             </div>
 
             <div class="inner-div">
@@ -213,11 +213,15 @@ $empresa = EmpresaADO::Index();
         <div class="banners-info">
             <div class="inner-div">
                 <span class="icon-svg box-svg"></span>
-                <p>Qué es Tiendamia. Fácil, rápido y seguro. <a id="como_comprar_light">Cómo comprar</a></p>
+                <p>¿ Qué es LeatSac.com ? Catalogo de productos fácil de usar, rápido y seguro de cotizar. 
+                    <!-- <a id="como_comprar_light">Cómo comprar</a> -->
+                </p>
             </div>
             <div class="inner-div border-left">
                 <span class="icon-svg aduanas-svg"></span>
-                <p>Información de Aduanas. Hacemos todo por ti. <a href="#informacion_aduana_modal">Saber más</a></p>
+                <p>Información de envio de productos a Provincia. Hacemos todo por ti. 
+                    <!-- <a href="#informacion_aduana_modal">Saber más</a> -->
+                </p>
             </div>
             <div class="inner-div border-left">
                 <div class="cards-container">
@@ -227,13 +231,15 @@ $empresa = EmpresaADO::Index();
                     <span class="pagoefectivo-svg solo_pe"></span>
                 </div>
                 <p class="solo_uy solo_pe solo_cl">Paga con crédito o débito. <br>
-                    <a class="solo_uy" href="#">Ver promociones</a>
+                    <a class="solo_uy text-primary" href="./catalogo.php">Ver promociones</a>
                 </p>
             </div>
             <div class="inner-div border-left">
                 <span class="icon-svg help-svg"></span>
-                <p>Ayuda y seguimiento en tu idioma. <a class="solo_ar">Centro de ayuda en línea</a>
-                    <a class="solo_uy solo_pe solo_cl solo_ec" href="#" target="_blank">Centro de ayuda</a>
+                <p>Comunicate con nosotros. Centro de ayuda en línea y atencion al cliente.
+                    <!-- <a class="solo_ar">Centro de ayuda en línea</a> -->
+                    <!-- <br> -->
+                    <a class="solo_uy solo_pe solo_cl solo_ec text-primary" href="https://api.whatsapp.com/send?phone=+51<?= $empresa->Celular ?>" target="_blank">Resolver dudas</a>
                 </p>
             </div>
         </div>
@@ -419,7 +425,7 @@ $empresa = EmpresaADO::Index();
                                 <span>Productos únicos</span>
                             </span>
                             <div class="csiFormatText">
-                                <p>
+                                <p class="text-justify">
                                     <span class="csiGreenText">Envío a todo el Perú, puedes pagar con tus tarjetas preferidas</span>
                                     <strong>Visa Mastercard y Amex a través de PayPal</strong>
                                     <br class="showInCart">

@@ -470,7 +470,7 @@ $empresa = EmpresaADO::Index();
                                     </div>
                                 </div>
                                 <div class="csiFormatText">
-                                    <p>
+                                    <p class="text-justify">
                                         <span class="csiGreenText">Envío a todo el Perú, puedes pagar con tus tarjetas preferidas</span>
                                         <strong>Visa Mastercard y Amex a través de PayPal</strong>
                                         <br class="showInCart">
