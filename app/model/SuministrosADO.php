@@ -270,6 +270,7 @@ class SuministrosADO
                     "PrecioCompra" => floatval($row["PrecioCompra"]),
                     "PrecioVentaGeneral" => floatval($row["PrecioVentaGeneral"]),
                     "UnidadCompra" => $row["UnidadCompra"],
+                    "UnidadCompraName" => $row["UnidadCompraName"],
                     "UnidadVenta" => $row["UnidadVenta"],
                     "Inventario" => $row["Inventario"],
                     "Operacion" => $row["Operacion"],
@@ -352,10 +353,10 @@ class SuministrosADO
         }
     }
 
-    public static function ListarTodosSuministros()
+    public static function ListarTodosSuministros(int $marca, int $catagoria, int $presentacion, int $unindad)
     {
         try {
-            $comando = Database::getInstance()->getDb()->prepare("SELECT TOP 5
+            $comando = Database::getInstance()->getDb()->prepare("SELECT
             IdSuministro,
             Clave,
             NombreMarca,
@@ -369,7 +370,90 @@ class SuministrosADO
             Inventario,
             ValorInventario,
             Imagen 
-            FROM SuministroTB ORDER BY MarcaNombre");
+            FROM SuministroTB 
+            WHERE 
+            $marca = 0 AND $catagoria = 0 AND $presentacion = 0 AND $unindad = 0
+
+
+            OR
+            Marca = $marca AND $catagoria = 0 AND $presentacion = 0 AND $unindad = 0
+            OR
+            Marca = $marca AND Categoria = $catagoria AND $presentacion = 0 AND $unindad = 0
+            OR
+            Marca = $marca AND $catagoria = 0 AND Presentacion = $presentacion AND $unindad = 0
+            OR
+            Marca = $marca AND $catagoria = 0 AND $presentacion = 0 AND UnidadCompra = $unindad            
+            OR
+            Marca = $marca AND Categoria = $catagoria AND Presentacion = $presentacion AND $unindad = 0
+            OR
+            Marca = $marca AND Categoria = $catagoria AND $presentacion = 0 AND UnidadCompra = $unindad
+            OR
+            Marca = $marca AND $catagoria = 0 AND Presentacion = $presentacion AND UnidadCompra = $unindad
+            OR
+            Marca = $marca AND Categoria = $catagoria AND Presentacion = $presentacion AND UnidadCompra = $unindad
+
+
+            OR
+            $marca = 0  AND Categoria = $catagoria AND $presentacion = 0 AND $unindad = 0
+            OR
+            Marca = $marca  AND Categoria = $catagoria AND $presentacion = 0 AND $unindad = 0
+            OR
+            $marca = 0  AND Categoria = $catagoria AND Presentacion = $presentacion AND $unindad = 0
+            OR
+            $marca = 0  AND Categoria = $catagoria AND $presentacion = 0 AND UnidadCompra = $unindad
+            OR
+            Marca = $marca  AND Categoria = $catagoria AND Presentacion = $presentacion AND $unindad = 0
+            OR
+            Marca = $marca  AND Categoria = $catagoria AND $presentacion = 0 AND UnidadCompra = $unindad
+            OR
+            $marca = 0  AND Categoria = $catagoria AND Presentacion = $presentacion AND UnidadCompra = $unindad
+            OR
+            Marca = $marca AND Categoria = $catagoria AND Presentacion = $presentacion AND UnidadCompra = $unindad
+
+
+            OR
+            $marca = 0 AND $catagoria = 0 AND Presentacion = $presentacion AND $unindad = 0
+            OR
+            Marca = $marca AND $catagoria = 0 AND Presentacion = $presentacion AND $unindad = 0
+            OR
+            $marca = 0 AND Categoria = $catagoria AND Presentacion = $presentacion AND $unindad = 0
+            OR
+            $marca = 0 AND $catagoria = 0 AND Presentacion = $presentacion AND UnidadCompra = $unindad
+            OR
+            Marca = $marca AND Categoria = $catagoria AND Presentacion = $presentacion AND $unindad = 0
+            OR
+            $marca = 0 AND Categoria = $catagoria AND Presentacion = $presentacion AND UnidadCompra = $unindad            
+            OR
+            Marca = $marca AND $catagoria = 0 AND Presentacion = $presentacion AND UnidadCompra = $unindad
+            OR
+            Marca = $marca AND Categoria = $catagoria AND Presentacion = $presentacion AND UnidadCompra = $unindad
+            
+            OR
+            $marca = 0 AND $catagoria = 0 AND $presentacion = 0 AND UnidadCompra = $unindad
+            OR
+            $marca = 0 AND $catagoria = 0 AND Presentacion = $presentacion AND UnidadCompra = $unindad
+            OR
+            $marca = 0 AND Categoria = $catagoria AND $presentacion = 0 AND UnidadCompra = $unindad
+            OR
+            Marca = $marca AND $catagoria = 0 AND $presentacion = 0 AND UnidadCompra = $unindad
+            OR
+            $marca = 0 AND Categoria = $catagoria AND Presentacion = $presentacion AND UnidadCompra = $unindad
+            OR
+            Marca = $marca AND $catagoria = 0 AND Presentacion = $presentacion AND UnidadCompra = $unindad
+            OR
+            Marca = $marca AND  Categoria = $catagoria AND $presentacion = 0 AND UnidadCompra = $unindad
+            OR
+            Marca = $marca AND Categoria = $catagoria AND Presentacion = $presentacion AND UnidadCompra = $unindad
+            
+            ORDER BY MarcaNombre");
+            // $comando->bindParam(1, $tipo, PDO::PARAM_INT);
+
+            // $comando->bindParam(2, $tipo, PDO::PARAM_INT);
+            // $comando->bindParam(3, $marca, PDO::PARAM_INT);
+            // $comando->bindParam(3, $catagoria, PDO::PARAM_INT);
+            // $comando->bindParam(4, $presentacion, PDO::PARAM_INT);
+            // $comando->bindParam(5, $unindad, PDO::PARAM_INT);
+            //AND Categoria = 0 AND Presentacion = 0 AND UnidadCompra = 0
             $comando->execute();
 
             $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');

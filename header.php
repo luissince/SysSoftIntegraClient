@@ -1,19 +1,15 @@
 <div class="header-wrapper">
     <div class="container">
         <div class="row">
-            <div class="col-lg-8 col-md-8 col-sm-12 col-12 text-right p-2">
-                <a href="#">
-                    <span class="text-white band_text">TODOS LOS PRODUCTOS PARA SU CARRO EN UN SOLO LUGAR</span>
-                    <!-- <span class="band_button">Ver ofertas</span> -->
+            <div class="col-lg-12 col-md-12 col-sm-12 col-12 text-center p-2">
+                <a class="h5 text-white" href="https://api.whatsapp.com/send?phone=+51<?= $empresa->Telefono ?>" target="_blank">
+                    Lima - <?= $empresa->Telefono ?>
+                </a>
+                &nbsp;
+                <a class="h5 text-white" href="https://api.whatsapp.com/send?phone=+51<?= $empresa->Celular ?>" target="_blank">
+                    <i class="fa fa-mobile"></i> <?= $empresa->Celular ?>
                 </a>
             </div>
-            <div class="col-lg-4 col-md-4 col-sm-12 col-12 text-right p-2">
-                <a class="h5 text-white" href="https://api.whatsapp.com/send?phone=+51<?= $empresa->Celular ?>"
-                    target="_blank">
-                    <i class="fa fa-phone"></i> <?= $empresa->Celular ?>
-                </a>
-            </div>
-
         </div>
 
         <div class="row">
@@ -39,8 +35,7 @@
                     <div id="resultado_input">
                         <div class="input_amz">
                             <div id="search-lupa" class="lupa"></div>
-                            <input id="txtSearch" placeholder="Buscar entre mil millones de productos"
-                                autocomplete="off">
+                            <input id="txtSearch" placeholder="Buscar entre mil millones de productos" autocomplete="off">
                         </div>
                     </div>
                 </div>
@@ -64,14 +59,14 @@
         <div class="row">
             <div class="col-lg-9 col-md-6 col-sm-12 col-12 p-2">
                 <div class="d-flex align-items-lg-center h-100">
-                    <a class="text-white pt-1 pb-1 pl-2 pr-2 h5">
+                    <a class="text-white pt-1 pb-1 pl-2 pr-2">
                         <image class="" src="./resource/images/menu.svg" />
                         Todas las categorías
                     </a>
-                    <a class="text-white pt-1 pb-1 pl-2 pr-2 h5" href="./">
+                    <a class="text-white pt-1 pb-1 pl-2 pr-2" href="./">
                         Inicio
                     </a>
-                    <a class="text-white  pt-1 pb-1 pl-2 pr-2 h5" href="./catalogo.php">
+                    <a class="text-white  pt-1 pb-1 pl-2 pr-2" href="./catalogo.php">
                         Catálogo
                     </a>
                 </div>
@@ -88,7 +83,7 @@
                             <a href="javascript:void(0)" id="btnCartAction" class="pt-1 pb-1 pl-2 pr-2">
                                 <i class="fa fa-shopping-cart fa-lg"></i>
                                 <span class="monto" id="count-cart">0</span>
-                                <span class="h5 text-white">&nbsp;Mi Carrito</span>
+                                <span class="text-white">&nbsp;Mi Carrito</span>
                             </a>
                             <div id="capa" class="cart-content">
                                 <div>
@@ -99,12 +94,10 @@
                                         <span class="price" id="cart-total">0.00 </span>
                                     </p>
                                     <div class="actions">
-                                        <button id="btnDetalleCart" type="button" title="Ver carrito"
-                                            class="btn-block button-red">
+                                        <button id="btnDetalleCart" type="button" title="Ver carrito" class="btn-block button-red">
                                             Ver carrito
                                         </button>
-                                        <button id="btnFinalizarCart" type="button" title="Finalizar compra"
-                                            class="btn-block button-white">
+                                        <button id="btnFinalizarCart" type="button" title="Finalizar compra" class="btn-block button-white">
                                             Finalizar compra
                                         </button>
                                     </div>

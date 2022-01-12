@@ -6,13 +6,14 @@ require './../src/autoload.php';
 
 use SysSoftIntegra\Model\VentasADO;
 use SysSoftIntegra\Src\NumberLleters;
+use SysSoftIntegra\Src\Tools;
 use chillerlan\QRCode\QRCode;
 use Mpdf\Mpdf;
 
 $result = VentasADO::ReporteVentaDetalle($_GET["idVenta"]);
 
 if (!is_array($result)) {
-    echo $result;
+    Tools::printErrorJson($result);
     return;
 }
 
@@ -21,12 +22,16 @@ $detalleVenta = $result["ventadetalle"];
 $empresa = $result["empresa"];
 $banco = $result["banco"];
 
-$photo = $empresa->Image == "" ?  "<img src=\"./../../view/images/logo.png\"/>" : "<img width=\"120\" src=\"data:image/(png|jpg|gif);base64, " . $empresa->Image . "\"/>";
+$photo = Tools::showImageReport($empresa->Image);
 $gcl = new NumberLleters();
 
-$length = 6;
-$codigoFormat = strlen($venta->Numeracion) > $length ? $venta->Numeracion : substr(str_repeat(0, $length) . $venta->Numeracion, -$length);
+$codigoFormat = Tools::formatNumber($venta->Numeracion);
 
+$importeBrutoTotal = 0;
+$descuentoTotal = 0;
+$subImporteNetoTotal = 0;
+$impuestoTotal = 0;
+$importeNetoTotal = 0;
 
 $textoCodBar =
     '|' . $empresa->NumeroDocumento
@@ -308,12 +313,25 @@ $html = '<html>
                             foreach ($detalleVenta as $value) {
                                 $html .= '<tr>
                                 <td class="background-primary plr-2 ptb-1 font-size-9 text-center">' . $value["id"] . '</td>
-                                <td class="background-seconday plr-2 ptb-1 font-size-9">' . $value["NombreMarca"] . '</td>
-                                <td class="background-seconday plr-2 ptb-1 font-size-9">' . $value["Cantidad"] . '</td>
-                                <td class="background-seconday plr-2 ptb-1 font-size-9">' . number_format(round($value["PrecioVenta"], 2, PHP_ROUND_HALF_UP), 2, '.', '') . '</td>
+                                <td class="background-seconday plr-2 ptb-1 font-size-9">' . $value["Clave"] . '<br>' . $value["NombreMarca"] . '</td>
+                                <td class="background-seconday plr-2 ptb-1 font-size-9">' . Tools::roundingValue($value["Cantidad"]) . '</td>
+                                <td class="background-seconday plr-2 ptb-1 font-size-9">' . Tools::roundingValue($value["PrecioVenta"]) . '</td>
                                 <td class="background-seconday plr-2 ptb-1 font-size-9">' . $value["UnidadCompra"] . '</td>
-                                <td class="background-primary plr-2 ptb-1 font-size-9 text-right">' . number_format(round($value["PrecioVenta"] * $value["Cantidad"], 2, PHP_ROUND_HALF_UP), 2, '.', '') . '</td>
+                                <td class="background-primary plr-2 ptb-1 font-size-9 text-right">' . Tools::roundingValue($value["PrecioVenta"] * $value["Cantidad"]) . '</td>
                                 </tr>';
+
+                                $importeBruto = $value["PrecioVenta"] * $value["Cantidad"];
+                                $descuento = $value["Descuento"];
+                                $subImporteBruto = $importeBruto - $descuento;
+                                $subImporteNeto = Tools::calculateTaxBruto($value["ValorImpuesto"], $subImporteBruto);
+                                $impuesto = Tools::calculateTax($value["ValorImpuesto"], $subImporteNeto);
+                                $importeNeto = $subImporteNeto + $impuesto;
+
+                                $importeBrutoTotal += $importeBruto;
+                                $descuentoTotal += $descuento;
+                                $subImporteNetoTotal += $subImporteNeto;
+                                $impuestoTotal += $impuesto;
+                                $importeNetoTotal += $importeNeto;
                             }
                             ?>
                             <?php
@@ -324,23 +342,23 @@ $html = '<html>
         <tbody>
             <tr>
                 <th class="th-total-title font-size-9">IMPORTE BRUTO:</th>
-                <th class="th-total-valor font-size-9"> ' . $venta->Simbolo . ' ' . number_format(round(($venta->SubTotal), 2, PHP_ROUND_HALF_UP), 2, '.', '') . '</th>
+                <th class="th-total-valor font-size-9"> ' . $venta->Simbolo . ' ' . Tools::roundingValue($importeBrutoTotal) . '</th>
             </tr>
             <tr>
                 <th class="th-total-title font-size-9">DESCUENTO:</th>
-                <th class="th-total-valor font-size-9"> ' . $venta->Simbolo . ' ' . number_format(round(($venta->Descuento), 2, PHP_ROUND_HALF_UP), 2, '.', '') . '</th>
+                <th class="th-total-valor font-size-9"> ' . $venta->Simbolo . ' ' . Tools::roundingValue($descuentoTotal) . '</th>
             </tr>
             <tr>
                 <th class="th-total-title font-size-9">SUB IMPORTE:</th>
-                <th class="th-total-valor font-size-9"> ' . $venta->Simbolo . ' ' . number_format(round(($venta->SubImporte), 2, PHP_ROUND_HALF_UP), 2, '.', '') . '</th>
+                <th class="th-total-valor font-size-9"> ' . $venta->Simbolo . ' ' . Tools::roundingValue($subImporteNetoTotal) . '</th>
             </tr>
             <tr>
                 <th class="th-total-title font-size-9">IGV(18%):</th>
-                <th class="th-total-valor font-size-9"> ' . $venta->Simbolo . ' ' . number_format(round(($venta->Impuesto), 2, PHP_ROUND_HALF_UP), 2, '.', '') . '</th>
+                <th class="th-total-valor font-size-9"> ' . $venta->Simbolo . ' ' . Tools::roundingValue($impuestoTotal) . '</th>
             </tr>
             <tr>
                 <th class="th-total-title font-size-9">IMPORTE NETO :</th>
-                <th class="th-total-valor font-size-9"> ' . $venta->Simbolo . ' ' . number_format(round($venta->Total, 2, PHP_ROUND_HALF_UP), 2, '.', '') . '</th>
+                <th class="th-total-valor font-size-9"> ' . $venta->Simbolo . ' ' . Tools::roundingValue($importeNetoTotal) . '</th>
             </tr>
         <tbody>
     </table> 
@@ -348,7 +366,7 @@ $html = '<html>
     <div class="border-bottom"></div>
 
     <p class="mb-2 font-size-9">
-        <b>SON: ' . $gcl->getResult(round($venta->Total, 2, PHP_ROUND_HALF_UP), $venta->Nombre) . '</b>
+        <b>SON: ' . $gcl->getResult(round($importeNetoTotal, 2, PHP_ROUND_HALF_UP), $venta->Nombre) . '</b>
     <p>
 
      <div style="border-left: 2mm solid #b3b1b1; width:100%;">

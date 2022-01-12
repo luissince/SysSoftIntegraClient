@@ -25,6 +25,7 @@ class EmpresaADO
             Celular,
             Domicilio,
             Email,
+            Telefono,
             NombreComercial
             FROM EmpresaTB");
             $cmdEmpresa->execute();

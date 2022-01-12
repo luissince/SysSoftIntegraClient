@@ -416,6 +416,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         state = true;
                     });
 
+                    console.log(result)
+
                     let object = result;
                     tbProductos.empty();
                     let productos = object.data;
@@ -427,7 +429,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         state = false;
                     } else {
                         for (let producto of productos) {
-                            let cantidad = producto.Cantidad <= 0 ? "<span class='text-danger'>" + tools.formatMoney(parseFloat(producto.Cantidad)) + '<br>' + producto.UnidadCompra + "</span>" : "<span class='text-success'>" + tools.formatMoney(parseFloat(producto.Cantidad)) + '<br>' + producto.UnidadCompra + "</span>";
+                            let cantidad = producto.Cantidad <= 0 ? "<span class='text-danger'>" + tools.formatMoney(parseFloat(producto.Cantidad)) + '<br>' + producto.UnidadCompraName + "</span>" : "<span class='text-success'>" + tools.formatMoney(parseFloat(producto.Cantidad)) + '<br>' + producto.UnidadCompraName + "</span>";
                             tbProductos.append('<tr ondblclick="onSelectProducto(\'' + producto.IdSuministro + '\',\'' + producto.NombreMarca + '\')">' +
                                 '<td>' + producto.Id + '</td>' +
                                 '<td>' + producto.Clave + '</br>' + producto.NombreMarca + '</td>' +

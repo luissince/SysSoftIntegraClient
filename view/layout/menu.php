@@ -99,7 +99,7 @@
                                         </a>
                                 </li>
                                 <li>
-                                        <a class="app-menu__item" id="tab-tablabasica" href="tablabasica.php">
+                                        <a class="app-menu__item" id="tab-mantenimiento" href="mantenimiento.php">
                                                 <i class="app-menu__icon fa fa-circle-o"></i>
                                                 <span class="app-menu__label">Tabla básica</span>
                                         </a>
@@ -174,7 +174,8 @@
                 "actualizarproducto",
 
                 "reporte",
-                "empresa"
+                "empresa",
+                "mantenimiento"
         ];
 
         tabs.forEach(e => {
@@ -245,10 +246,12 @@
                         if (id == "tab-reporte") {
                                 document.getElementById("tab-reporte").setAttribute("class", "app-menu__item active");
                         }
-                } else if (id == "tab-empresa") {
+                } else if (id == "tab-empresa" || id == "tab-mantenimiento") {
                         document.getElementById("treeview-configuracion").setAttribute("class", "treeview is-expanded");
                         if (id == "tab-empresa") {
                                 document.getElementById("tab-empresa").setAttribute("class", "app-menu__item active");
+                        } else if (id == "tab-mantenimiento") {
+                                document.getElementById("tab-mantenimiento").setAttribute("class", "app-menu__item active");
                         }
                 } else {
                         document.getElementById(id).setAttribute("class", "app-menu__item active");

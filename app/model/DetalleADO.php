@@ -18,6 +18,33 @@ class DetalleADO
     {
     }
 
+    public static function Listar_Mantenimiento(string $value)
+    {
+        try {
+
+            $cmdMantenimiento  = Database::getInstance()->getDb()->prepare("{call Sp_List_Table_Matenimiento(?)}");
+            $cmdMantenimiento->bindParam(1, $value, PDO::PARAM_STR);
+            $cmdMantenimiento->execute();
+            return $cmdMantenimiento->fetchAll(PDO::FETCH_OBJ);
+        } catch (Exception $ex) {
+            return $ex->getMessage();
+        }
+    }
+
+
+    public static function Listar_Detalle_ById(string $idMantenimiento, string $search)
+    {
+        try {
+            $cmdDetalle = Database::getInstance()->getDb()->prepare("{call Sp_List_Table_Detalle(?,?)}");
+            $cmdDetalle->bindParam(1, $idMantenimiento, PDO::PARAM_STR);
+            $cmdDetalle->bindParam(2, $search, PDO::PARAM_STR);
+            $cmdDetalle->execute();
+            return $cmdDetalle->fetchAll(PDO::FETCH_OBJ);
+        } catch (Exception $ex) {
+            return $ex->getMessage();
+        }
+    }
+
     public static function GetDetailIdName($value)
     {
         try {

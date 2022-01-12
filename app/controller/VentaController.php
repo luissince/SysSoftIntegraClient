@@ -34,6 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         $posicionPagina = $_GET['posicionPagina'];
         $filasPorPagina = $_GET['filasPorPagina'];
         print json_encode(VentasADO::ListComprobantes(intval($opcion), $busqueda,  $fechaInicial, $fechaFinal, intval($comprobante), intval($estado), intval($posicionPagina), intval($filasPorPagina)));
+        exit();
     } else if ($_GET["type"] == "getventanotacredito") {
         print json_encode(VentasADO::ListarComprobanteParaNotaCredito($_GET['comprobante']));
         exit();
@@ -81,7 +82,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     $body = json_decode(file_get_contents("php://input"), true);
     if ($body["type"] == "crudnotacredito") {
         print json_encode(VentasADO::RegistrarNotaCredito($body));
+        exit();
     } else if ($body["type"] == "crudventa") {
         print json_encode(VentasADO::RegistrarVenta($body));
+        exit();
     }
 }

@@ -24,6 +24,7 @@ class Autoload_Static
             'SysSoftIntegra\\Model\\PedidoADO' => __DIR__  . '/../model/PedidoADO.php',
             'SysSoftIntegra\\Controller\\BaseController' => __DIR__  . '/../controller/BaseController.php',
             'SysSoftIntegra\\Src\\Sunat' => __DIR__  . '/Sunat.php',
+            'SysSoftIntegra\\Src\\Tools' => __DIR__  . '/Tools.php',
             'SysSoftIntegra\\Src\\SoapResult' => __DIR__  . '/SoapResult.php',
             'SysSoftIntegra\\Src\\SoapBuilder' => __DIR__  . '/SoapBuilder.php',
             'SysSoftIntegra\\Src\\NumberLleters' => __DIR__  . '/NumberLleters.php',

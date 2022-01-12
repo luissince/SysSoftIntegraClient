@@ -322,6 +322,7 @@ class VentasADO
             e.NombreComercial,
             e.Domicilio,
             e.Telefono,
+            e.Celular,
             e.Email,
             e.Terminos,
             e.Condiciones,
@@ -341,6 +342,7 @@ class VentasADO
                 "PaginaWeb" => $rowEmpresa['PaginaWeb'],
                 "Email" => $rowEmpresa['Email'],
                 "Terminos" => $rowEmpresa['Terminos'],
+                "Celular" => $rowEmpresa['Celular'],
                 "Condiciones" => $rowEmpresa['Condiciones'],
                 "Image" => $rowEmpresa['Image'] == null ? "" : base64_encode($rowEmpresa['Image'])
             );
@@ -1664,7 +1666,7 @@ class VentasADO
         }
     }
 
-    private static function ObtenerNotaCreditoById($idNotaCredito)
+    public static function ObtenerNotaCreditoById($idNotaCredito)
     {
         try {
             $array = array();

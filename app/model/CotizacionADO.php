@@ -121,7 +121,7 @@ class CotizacionADO
     public static function ReporteCotizacionDetalle(int $idCotizacion)
     {
         try {
-            $cmdCotizacion = Database::getInstance()->getDb()->prepare("{CALL Sp_Obtener_Cotizacion_Reporte_ById(?)}");
+            $cmdCotizacion = Database::getInstance()->getDb()->prepare("{CALL Sp_Obtener_Cotizacion_ById(?)}");
             $cmdCotizacion->bindParam(1, $idCotizacion, PDO::PARAM_INT);
             $cmdCotizacion->execute();
 
@@ -165,7 +165,7 @@ class CotizacionADO
             WHERE Mostrar = 1");
             $cmdBanco->execute();
 
-            $cmdDetalle = Database::getInstance()->getDb()->prepare("{CALL Sp_Obtener_Detalle_Cotizacion_Reporte_ById(?)}");
+            $cmdDetalle = Database::getInstance()->getDb()->prepare("{CALL Sp_Obtener_Detalle_Cotizacion_ById(?)}");
             $cmdDetalle->bindParam(1, $idCotizacion, PDO::PARAM_STR);
             $cmdDetalle->execute();
 

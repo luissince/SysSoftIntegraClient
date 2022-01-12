@@ -317,8 +317,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
             function loadInitTable() {
                 if (!state) {
                     paginacion = 1;
-                    fillInventarioTable(0, 0, "", "");
-                    opcion = 0;
+                    fillInventarioTable(1, 0, txtFechaInicio.val(), txtFechaTermino.val());
+                    opcion = 1;
                 }
             }
 
@@ -498,6 +498,42 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         }
                     }
                 });
+            }
+
+            function onEventPaginacionInicio(value) {
+                if (!state) {
+                    if (value !== paginacion) {
+                        paginacion = value;
+                        onEventPaginacion();
+                    }
+                }
+            }
+
+            function onEventPaginacionFinal(value) {
+                if (!state) {
+                    if (value !== paginacion) {
+                        paginacion = value;
+                        onEventPaginacion();
+                    }
+                }
+            }
+
+            function onEventAnteriorPaginacion() {
+                if (!state) {
+                    if (paginacion > 1) {
+                        paginacion--;
+                        onEventPaginacion();
+                    }
+                }
+            }
+
+            function onEventSiguientePaginacion() {
+                if (!state) {
+                    if (paginacion < totalPaginacion) {
+                        paginacion++;
+                        onEventPaginacion();
+                    }
+                }
             }
 
             function generarExcel(idMovimiento) {
