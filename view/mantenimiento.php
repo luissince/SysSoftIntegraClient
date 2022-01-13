@@ -116,14 +116,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 <i class="fa fa-plus"></i>
                                 Agregar
                             </button>
-                            <button class="btn btn-secondary" id="btnEditar">
-                                <i class="fa fa-pencil"></i>
-                                Editar
-                            </button>
-                            <button class="btn btn-secondary" id="btnEliminar">
-                                <i class="fa fa-trash"></i>
-                                Eliminar
-                            </button>
                             <button class="btn btn-secondary" id="btnRecargar">
                                 <i class="fa fa-refresh"></i>
                                 Recargar
@@ -135,7 +127,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
                 <div class="row">
                     <div class="col-lg-4 col-md-12 col-sm-12">
-                        <label> Items <span id="lblMantenimiento">#</span></label>
+                        <label> Items <span id="lblMantenimiento"></span></label>
                         <div class="form-group d-flex">
                             <div class="input-group">
                                 <input type="text" class="form-control" id="txtBuscarTable" placeholder="Buscar..." />
@@ -160,7 +152,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     </div>
 
                     <div class="col-lg-8 col-md-12 col-sm-12">
-                        <label> Ingrese el nombre del detalle <span id="lblDetalle">#</span></label>
+                        <label> Ingrese el nombre del detalle <span id="lblDetalle"></span></label>
                         <div class="form-group d-flex">
                             <div class="input-group">
                                 <input type="text" class="form-control" id="txtBuscarCampos" placeholder="Buscar..." />
@@ -238,6 +230,26 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
                 tools.keyEnter($("#btnAgregar"), function() {
                     addDetalleModal();
+                });
+
+                $("#btnRecargar").click(function() {
+                    loadListaMantenimiento();
+                    idMantenimiento = "";
+                    $("#lblMantenimiento").empty();
+                    $("#lblDetalle").empty();
+                    $("#tbListDetalle").empty();
+                    tools.loadTableMessage($("#tbListDetalle"), "No hay datos para mostrar.", 6);
+                    clearComponents();
+                });
+
+                tools.keyEnter($("#btnRecargar"), function() {
+                    loadListaMantenimiento();
+                    idMantenimiento = "";
+                    $("#lblMantenimiento").empty();
+                    $("#lblDetalle").empty();
+                    $("#tbListDetalle").empty();
+                    tools.loadTableMessage($("#tbListDetalle"), "No hay datos para mostrar.", 6);
+                    clearComponents();
                 });
 
                 modalComponents();
@@ -377,7 +389,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 });
 
                                 tools.ModalAlertSuccess("Detalle", result, function() {
-                                    location.reload();
+                                    loadListaMantenimiento();
                                 });
                             } catch (error) {
                                 tools.ErrorMessageServer("Detalle", error);
@@ -392,6 +404,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 $("#txtNombre").val('');
                 $("#txtDescripcion").val('');
                 $("#rbActivo").prop('checked', true);
+                idDetalle = "";
             }
         </script>
     </body>
