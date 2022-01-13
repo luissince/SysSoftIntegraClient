@@ -184,14 +184,17 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
             async function loadInitConsultaAvanzada() {
                 try {
-                    let result = await tools.promiseFetchGet("../app/controller/EmpresaController.php");
-                    $("#txtRuc").val(result.empresa.NumeroDocumento);
-                    $("#txtUsuario").val(result.empresa.UsuarioSol);
-                    $("#txtClave").val(result.empresa.ClaveSol);
-                    $("#txtRucEmision").val(result.empresa.NumeroDocumento);
-                    $("#divOverlayInformacion").addClass("d-none");
+                    let result = await tools.promiseFetchGet("../app/controller/EmpresaController.php", {
+                        "type": "getempresa"
+                    });
 
+                    $("#txtRuc").val(result.NumeroDocumento);
+                    $("#txtUsuario").val(result.UsuarioSol);
+                    $("#txtClave").val(result.ClaveSol);
+                    $("#txtRucEmision").val(result.NumeroDocumento);
+                    $("#divOverlayInformacion").addClass("d-none");
                 } catch (error) {
+                    console.log(error);
                     $("#lblTextOverlayInformacion").html("Se produjo un error interno, recargue la pagina por favor.");
                 }
             }

@@ -33,5 +33,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     if ($body["type"] == "crud") {
         print json_encode(DetalleADO::CrudDetalle($body));
         exit();
+    } else if ($body["type"] == "delete") {
+        print json_encode(DetalleADO::DeleteDetalle($body));
+        exit();
     }
 }

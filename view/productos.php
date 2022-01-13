@@ -454,8 +454,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 '<br>' + suministro.UnidadCompraNombre + '</span>';
                             tbList.append('<tr>' +
                                 '<td class="text-center">' + suministro.Id + '</td>' +
-                                '<td>' + clave + '<br>' + suministro.NombreMarca + '</td>' +
-                                '<td>' + suministro.Categoria + '<br>' + suministro.Marca + '</td>' +
+                                '<td class="text-left">' + clave + '<br>' + suministro.NombreMarca + '</td>' +
+                                '<td class="text-left">' + suministro.Categoria + '<br>' + suministro.Marca + '</td>' +
                                 '<td class="text-right">' + tools.formatMoney(suministro.PrecioCompra) + '</td>' +
                                 '<td class="text-right">' + tools.formatMoney(suministro.PrecioVentaGeneral) + '</td>' +
                                 '<td class="text-right">' + suministro.ImpuestoNombre + '</td>' +

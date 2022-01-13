@@ -225,4 +225,74 @@ class DetalleADO
             return $ex->getMessage();
         }
     }
+
+    public static function DeleteDetalle($body)
+    {
+        try {
+            Database::getInstance()->getDb()->beginTransaction();
+
+            $cmdValidate = Database::getInstance()->getDb()->prepare("SELECT * FROM SuministroTB WHERE Categoria = ?");
+            $cmdValidate->bindParam(1, $body["IdDetalle"], PDO::PARAM_INT);
+            $cmdValidate->execute();
+            if ($cmdValidate->fetch()) {
+                Database::getInstance()->getDb()->rollback();
+                $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+                header($protocol . ' ' . 400 . ' ' . "Bad Request");
+
+                return "No se puede eliminar el detalle porque esta ligado a un producto.";
+            } else {
+
+                $cmdValidate = Database::getInstance()->getDb()->prepare("SELECT * FROM SuministroTB WHERE Marca = ?");
+                $cmdValidate->bindParam(1, $body["IdDetalle"], PDO::PARAM_INT);
+                $cmdValidate->execute();
+                if ($cmdValidate->fetch()) {
+                    Database::getInstance()->getDb()->rollback();
+                    $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+                    header($protocol . ' ' . 400 . ' ' . "Bad Request");
+
+                    return "No se puede eliminar el detalle porque esta ligado a un producto.";
+                } else {
+                    $cmdValidate = Database::getInstance()->getDb()->prepare("SELECT * FROM SuministroTB WHERE Presentacion = ?");
+                    $cmdValidate->bindParam(1, $body["IdDetalle"], PDO::PARAM_INT);
+                    $cmdValidate->execute();
+                    if ($cmdValidate->fetch()) {
+                        Database::getInstance()->getDb()->rollback();
+                        $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+                        header($protocol . ' ' . 400 . ' ' . "Bad Request");
+
+                        return "No se puede eliminar el detalle porque esta ligado a un producto.";
+                    } else {
+                        $cmdValidate = Database::getInstance()->getDb()->prepare("SELECT * FROM SuministroTB WHERE UnidadCompra = ?");
+                        $cmdValidate->bindParam(1, $body["IdDetalle"], PDO::PARAM_INT);
+                        $cmdValidate->execute();
+                        if ($cmdValidate->fetch()) {
+                            Database::getInstance()->getDb()->rollback();
+                            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+                            header($protocol . ' ' . 400 . ' ' . "Bad Request");
+
+                            return "No se puede eliminar el detalle porque esta ligado a un producto.";
+                        } else {
+                            $cmdDetalle = Database::getInstance()->getDb()->prepare("DELETE FROM DetalleTB WHERE IdDetalle = ? AND IdMantenimiento = ?");
+                            $cmdDetalle->execute(array(
+                                $body["IdDetalle"],
+                                $body["IdMantenimiento"]
+                            ));
+
+                            Database::getInstance()->getDb()->commit();
+                            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+                            header($protocol . ' ' . 201 . ' ' . "Created");
+
+                            return "Se eliminó correctamente del detalle.";
+                        }
+                    }
+                }
+            }
+        } catch (Exception $ex) {
+            Database::getInstance()->getDb()->rollback();
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+
+            return $ex->getMessage();
+        }
+    }
 }

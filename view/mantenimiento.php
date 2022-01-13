@@ -155,7 +155,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         <label> Ingrese el nombre del detalle <span id="lblDetalle"></span></label>
                         <div class="form-group d-flex">
                             <div class="input-group">
-                                <input type="text" class="form-control" id="txtBuscarCampos" placeholder="Buscar..." />
+                                <input type="text" class="form-control" id="txtBuscarDetalle" placeholder="Buscar..." />
                             </div>
                         </div>
 
@@ -169,38 +169,19 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                         <th scope="col" width="15%">Descripción</th>
                                         <th scope="col" width="5%">Estado</th>
                                         <th scope="col" width="5%">Editar</th>
+                                        <th scope="col" width="5%">Quitar</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tbListDetalle">
                                     <tr>
-                                        <td class="text-center" colspan="6">No hay datos para mostrar</td>
+                                        <td class="text-center" colspan="7">No hay datos para mostrar</td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
 
-                        <div class="row">
-                            <div class="col-md-12 col-sm-12 col-12 text-center">
-                                <div class="form-group" id="ulPagination">
-                                    <button class="btn btn-outline-secondary">
-                                        <i class="fa fa-angle-double-left"></i>
-                                    </button>
-                                    <button class="btn btn-outline-secondary">
-                                        <i class="fa fa-angle-left"></i>
-                                    </button>
-                                    <span class="btn btn-outline-secondary disabled" id="lblPaginacion">0 - 0</span>
-                                    <button class="btn btn-outline-secondary">
-                                        <i class="fa fa-angle-right"></i>
-                                    </button>
-                                    <button class="btn btn-outline-secondary">
-                                        <i class="fa fa-angle-double-right"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
                         <label> Las opciones del detalle están en el panel de los botones.</label>
                     </div>
-
                 </div>
 
             </div>
@@ -233,23 +214,20 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 });
 
                 $("#btnRecargar").click(function() {
-                    loadListaMantenimiento();
-                    idMantenimiento = "";
-                    $("#lblMantenimiento").empty();
-                    $("#lblDetalle").empty();
-                    $("#tbListDetalle").empty();
-                    tools.loadTableMessage($("#tbListDetalle"), "No hay datos para mostrar.", 6);
-                    clearComponents();
+                    recargarVista();
                 });
 
                 tools.keyEnter($("#btnRecargar"), function() {
-                    loadListaMantenimiento();
-                    idMantenimiento = "";
-                    $("#lblMantenimiento").empty();
-                    $("#lblDetalle").empty();
-                    $("#tbListDetalle").empty();
-                    tools.loadTableMessage($("#tbListDetalle"), "No hay datos para mostrar.", 6);
-                    clearComponents();
+                    recargarVista();
+                });
+
+                $("#txtBuscarDetalle").keyup(function(event) {
+                    let value = $("#txtBuscarDetalle").val();
+                    if (event.keyCode !== 9 && event.keyCode !== 18) {
+                        if (value.trim().length != 0) {
+                            detalleBuscar(value);
+                        }
+                    }
                 });
 
                 modalComponents();
@@ -293,7 +271,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             $("#tbListMantenimiento").append(`<tr>
                             <td>${count}</td>
                             <td>${mantenimiento.Nombre}</td>
-                            <td><button class="btn btn-info" id="btn${mantenimiento.IdMantenimiento}" onclick="loadListaDetalle('${mantenimiento.IdMantenimiento}','','${mantenimiento.Nombre}')"><i class="fa fa-external-link-square "></i></button></td>
+                            <td><button class="btn btn-info" id="btn${mantenimiento.IdMantenimiento}" onclick="loadListaDetalle('${mantenimiento.IdMantenimiento}','','${'('+mantenimiento.Nombre+')'}')"><i class="fa fa-external-link-square "></i></button></td>
                             </tr>`);
                         }
                     }
@@ -304,19 +282,26 @@ if (!isset($_SESSION['IdEmpleado'])) {
             }
 
             async function loadListaDetalle(id, search, nombre) {
-                try {
-                    idMantenimiento = id;
-                    if (btnSelect !== undefined) {
-                        btnSelect.removeClass().addClass("btn btn-info");
-                    }
-                    btnSelect = $("#btn" + idMantenimiento);
-                    $("#lblMantenimiento").html("(" + nombre + ")");
-                    $("#lblMantenimiento").addClass("text-danger");
-                    $("#lblDetalle").html("(" + nombre + ")");
-                    $("#lblDetalle").addClass("text-danger");
-                    $("#btn" + idMantenimiento).removeClass("btn-info").addClass("btn-danger");
-                    $("#txtCodigo").val(idMantenimiento);
+                idMantenimiento = id;
+                if (btnSelect !== undefined) {
+                    btnSelect.removeClass().addClass("btn btn-info");
+                }
+                btnSelect = $("#btn" + idMantenimiento);
 
+                $("#lblMantenimiento").html(nombre);
+                $("#lblMantenimiento").addClass("text-danger");
+
+                $("#lblDetalle").html(nombre);
+                $("#lblDetalle").addClass("text-danger");
+
+                $("#btn" + idMantenimiento).removeClass("btn-info").addClass("btn-danger");
+                $("#txtCodigo").val(idMantenimiento);
+
+                detalleBuscar(search);
+            }
+
+            async function detalleBuscar(search) {
+                try {
                     let result = await tools.promiseFetchGet("../app/controller/DetalleController.php", {
                         "type": "listdetalle",
                         "idMantenimiento": idMantenimiento,
@@ -327,7 +312,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
                     $("#tbListDetalle").empty();
                     if (result.length == 0) {
-                        tools.loadTableMessage($("#tbListDetalle"), "No hay datos para mostrar.", 6);
+                        tools.loadTableMessage($("#tbListDetalle"), "No hay datos para mostrar.", 7);
                     } else {
                         let count = 0;
                         for (let detalle of result) {
@@ -339,12 +324,14 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             <td>${detalle.Descripcion}</td>
                             <td class="text-center">${detalle.Estado=="1"?"ACTIVO":"INACTIVO"}</td>
                             <td class="text-center"><button class="btn btn-warning" onclick="editDetalleModal('${detalle.IdDetalle}','${detalle.IdAuxiliar}','${detalle.Nombre}','${detalle.Descripcion}','${detalle.Estado}')"><i class="fa fa-edit"></i></button></td>
+                            <td class="text-center"><button class="btn btn-danger" onclick="removeDetalleModal('${detalle.IdDetalle}')"><i class="fa fa-trash"></i></button></td>
                             </tr>`);
+
                         }
                     }
                 } catch (error) {
                     $("#tbListDetalle").empty();
-                    tools.loadTableMessage($("#tbListDetalle"), tools.messageError(error), 6);
+                    tools.loadTableMessage($("#tbListDetalle"), tools.messageError(error), 7);
                 }
             }
 
@@ -363,6 +350,34 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 $("#txtNombre").val(nombre);
                 $("#txtDescripcion").val(description);
                 $("#rbActivo").prop('checked', estado == "1" ? true : false);
+            }
+
+            function removeDetalleModal(id) {
+                if (idMantenimiento == "") {
+                    tools.AlertWarning("", "Selecciona un item para agregar un detalle.");
+                } else {
+                    tools.ModalDialog("Detalle", "¿Está seguro de quitar el detalle?", async function(value) {
+                        if (value == true) {
+                            try {
+                                let result = await tools.promiseFetchPost("../app/controller/DetalleController.php", {
+                                    "type": "delete",
+                                    "IdDetalle": id,
+                                    "IdMantenimiento": idMantenimiento,
+                                }, function() {
+                                    $("#modalDetalle").modal("hide");
+                                    clearComponents();
+                                    tools.ModalAlertInfo("Detalle", "Se está procesando la información.");
+                                });
+
+                                tools.ModalAlertSuccess("Detalle", result, function() {
+                                    detalleBuscar("");
+                                });
+                            } catch (error) {
+                                tools.ErrorMessageServer("Detalle", error);
+                            }
+                        }
+                    });
+                }
             }
 
             function crudDetalle() {
@@ -389,7 +404,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 });
 
                                 tools.ModalAlertSuccess("Detalle", result, function() {
-                                    loadListaMantenimiento();
+                                    detalleBuscar("");
                                 });
                             } catch (error) {
                                 tools.ErrorMessageServer("Detalle", error);
@@ -397,6 +412,16 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         }
                     });
                 }
+            }
+
+            function recargarVista() {
+                loadListaMantenimiento();
+                idMantenimiento = "";
+                $("#lblMantenimiento").empty();
+                $("#lblDetalle").empty();
+                $("#tbListDetalle").empty();
+                tools.loadTableMessage($("#tbListDetalle"), "No hay datos para mostrar.", 6);
+                clearComponents();
             }
 
             function clearComponents() {

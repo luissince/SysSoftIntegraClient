@@ -9,7 +9,7 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use SysSoftIntegra\Model\VentasADO;
 
-require  "/lib/phpspreadsheet/vendor/autoload.php";
+require  "./lib/phpspreadsheet/vendor/autoload.php";
 require  './../src/autoload.php';
 
 $fechaInicio = $_GET["txtFechaInicial"];
