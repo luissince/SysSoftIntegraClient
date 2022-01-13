@@ -29,4 +29,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         exit();
     }
 } else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $body = json_decode(file_get_contents("php://input"), true);
+    if ($body["type"] == "crud") {
+        print json_encode(DetalleADO::CrudDetalle($body));
+        exit();
+    }
 }

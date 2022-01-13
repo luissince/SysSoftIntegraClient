@@ -446,14 +446,6 @@ class SuministrosADO
             Marca = $marca AND Categoria = $catagoria AND Presentacion = $presentacion AND UnidadCompra = $unindad
             
             ORDER BY MarcaNombre");
-            // $comando->bindParam(1, $tipo, PDO::PARAM_INT);
-
-            // $comando->bindParam(2, $tipo, PDO::PARAM_INT);
-            // $comando->bindParam(3, $marca, PDO::PARAM_INT);
-            // $comando->bindParam(3, $catagoria, PDO::PARAM_INT);
-            // $comando->bindParam(4, $presentacion, PDO::PARAM_INT);
-            // $comando->bindParam(5, $unindad, PDO::PARAM_INT);
-            //AND Categoria = 0 AND Presentacion = 0 AND UnidadCompra = 0
             $comando->execute();
 
             $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');

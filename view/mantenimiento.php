@@ -20,7 +20,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
         <!-- modal items -->
         <div class="row">
             <div class="modal fade" id="modalDetalle" data-backdrop="static">
-                <div class="modal-dialog modal-sm">
+                <div class="modal-dialog">
                     <div class="modal-content">
 
                         <div class="modal-header">
@@ -33,57 +33,67 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         </div>
 
                         <div class="modal-body">
-                            <label class="control-label">Detalle de mantenimiento del directorio</label>
-                            <div class="tile">
-                                <div class="tile-body">
-
-                                    <!-- <label class="control-label">Detalle de mantenimiento del directorio</label> -->
-
-                                    <div class="row">
-                                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
-                                            <div class="form-group">
-                                                <label>Código: </label>
-                                                <input id="txtCodigo" type="text" class="form-control" placeholder="Ingrese el código" disabled>
-                                            </div>
-                                        </div>
-                                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
-                                            <div class="form-group">
-                                                <label>Código Auxiliar: </label>
-                                                <input id="txtCodAuxiliar" type="text" class="form-control" placeholder="Ingrese el código auxiliar">
-                                            </div>
-                                        </div>
+                            <div class="row">
+                                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                                    <div class="form-group">
+                                        <label>Código: </label>
+                                        <input id="txtCodigo" type="text" class="form-control" placeholder="Ingrese el código" disabled>
                                     </div>
-
-                                    <div class="row">
-                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                                            <div class="form-group">
-                                                <label>Nombre: <i class="fa fa-info-circle text-danger"></i></label>
-                                                <input id="txtNombre" type="text" class="form-control" placeholder="Ingrese el nombre">
-                                            </div>
-                                        </div>
+                                </div>
+                                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                                    <div class="form-group">
+                                        <label>Código Auxiliar: </label>
+                                        <input id="txtCodAuxiliar" type="text" class="form-control" placeholder="Ingrese el código auxiliar">
                                     </div>
-
-                                    <div class="row">
-                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                                            <div class="form-group">
-                                                <label>Descripción: </label>
-                                                <textarea id="txtDescripcion" class="form-control" placeholder="Ingrese una descripción"></textarea>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                                            <div class="form-group">
-                                                <label>Estado: </label>
-                                                <select class="select2-selection__rendered form-control" id="cbEstado">
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-
                                 </div>
                             </div>
+
+                            <div class="row">
+                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                    <div class="form-group">
+                                        <label>Nombre: <i class="fa fa-info-circle text-danger"></i></label>
+                                        <input id="txtNombre" type="text" class="form-control" placeholder="Ingrese el nombre">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                    <div class="form-group">
+                                        <label>Descripción: </label>
+                                        <textarea id="txtDescripcion" class="form-control" placeholder="Ingrese una descripción"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                    <div class="form-group">
+                                        <label>Estado: </label>
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-12 col-xs-12">
+                                                <input type="radio" id="rbActivo" name="tbEstado" checked="">
+                                                <label for="rbActivo">
+                                                    Activo
+                                                </label>
+                                            </div>
+                                            <div class="col-md-6 col-sm-12 col-xs-12">
+                                                <input type="radio" id="tbDesactivo" name="tbEstado">
+                                                <label for="tbDesactivo" class="radio-custom-label">
+                                                    Inactivo
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-success" id="btnCrudDetalle">
+                                <i class="fa fa-save"></i> Guardar</button>
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">
+                                <i class="fa fa-close"></i> Cerrar</button>
                         </div>
                     </div>
                 </div>
@@ -125,7 +135,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
                 <div class="row">
                     <div class="col-lg-4 col-md-12 col-sm-12">
-                        <label> Items <span>#</span></label>
+                        <label> Items <span id="lblMantenimiento">#</span></label>
                         <div class="form-group d-flex">
                             <div class="input-group">
                                 <input type="text" class="form-control" id="txtBuscarTable" placeholder="Buscar..." />
@@ -150,7 +160,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     </div>
 
                     <div class="col-lg-8 col-md-12 col-sm-12">
-                        <label> Ingrese el nombre del detalle <span>#</span></label>
+                        <label> Ingrese el nombre del detalle <span id="lblDetalle">#</span></label>
                         <div class="form-group d-flex">
                             <div class="input-group">
                                 <input type="text" class="form-control" id="txtBuscarCampos" placeholder="Buscar..." />
@@ -161,16 +171,17 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             <table class="table table-striped">
                                 <thead class="table-header-background">
                                     <tr>
-                                        <th scope="col" class="th-porcent-5">N°</th>
-                                        <th scope="col" class="th-porcent-10">Codigo Aux.</th>
-                                        <th scope="col" class="th-porcent-15">Nombre</th>
-                                        <th scope="col" class="th-porcent-15">Descripción</th>
-                                        <th scope="col" class="th-porcent-5">Estado</th>
+                                        <th scope="col" width="5%">N°</th>
+                                        <th scope="col" width="10%">Codigo Aux.</th>
+                                        <th scope="col" width="15%">Nombre</th>
+                                        <th scope="col" width="15%">Descripción</th>
+                                        <th scope="col" width="5%">Estado</th>
+                                        <th scope="col" width="5%">Editar</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tbListDetalle">
                                     <tr>
-                                        <td class="text-center" colspan="5">No hay datos para mostrar</td>
+                                        <td class="text-center" colspan="6">No hay datos para mostrar</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -209,6 +220,10 @@ if (!isset($_SESSION['IdEmpleado'])) {
             let tools = new Tools();
 
             let btnSelect = undefined;
+            let idMantenimiento = "";
+            let idDetalle = "";
+
+            let idEmpleado = "<?= $_SESSION['IdEmpleado'] ?>";
 
             // let state = false;
             // let paginacion = 0;
@@ -218,11 +233,11 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
             $(document).ready(function() {
                 $("#btnAgregar").click(function() {
-                    $("#modalDetalle").modal("show");
+                    addDetalleModal();
                 });
 
                 tools.keyEnter($("#btnAgregar"), function() {
-                    $("#modalDetalle").modal("show");
+                    addDetalleModal();
                 });
 
                 modalComponents();
@@ -235,7 +250,15 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 });
 
                 $("#modalDetalle").on("hide.bs.modal", function() {
+                    clearComponents();
+                });
 
+                $("#btnCrudDetalle").click(function() {
+                    crudDetalle();
+                });
+
+                tools.keyEnter($("#btnCrudDetalle"), function() {
+                    crudDetalle();
                 });
             }
 
@@ -250,8 +273,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
                     $("#tbListMantenimiento").empty();
                     if (result.length == 0) {
-                        $("#tbListMantenimiento").append(
-                            '<tr><td class="text-center" colspan="3"><p>No hay datos para mostrar.</p></td></tr>');
+                        tools.loadTableMessage($("#tbListMantenimiento"), "No hay datos para mostrar.", 3);
                     } else {
                         let count = 0;
                         for (let mantenimiento of result) {
@@ -259,22 +281,29 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             $("#tbListMantenimiento").append(`<tr>
                             <td>${count}</td>
                             <td>${mantenimiento.Nombre}</td>
-                            <td><button class="btn btn-info" id="btn${mantenimiento.IdMantenimiento}" onclick="loadListaDetalle('${mantenimiento.IdMantenimiento}','')"><i class="fa fa-external-link-square "></i></button></td>
+                            <td><button class="btn btn-info" id="btn${mantenimiento.IdMantenimiento}" onclick="loadListaDetalle('${mantenimiento.IdMantenimiento}','','${mantenimiento.Nombre}')"><i class="fa fa-external-link-square "></i></button></td>
                             </tr>`);
                         }
                     }
                 } catch (error) {
-
+                    $("#tbListMantenimiento").empty();
+                    tools.loadTableMessage($("#tbListMantenimiento"), tools.messageError(error), 3);
                 }
             }
 
-            async function loadListaDetalle(idMantenimiento, search) {
+            async function loadListaDetalle(id, search, nombre) {
                 try {
+                    idMantenimiento = id;
                     if (btnSelect !== undefined) {
                         btnSelect.removeClass().addClass("btn btn-info");
                     }
                     btnSelect = $("#btn" + idMantenimiento);
-                    $("#btn" + idMantenimiento).removeClass("btn-info").addClass("btn-success");
+                    $("#lblMantenimiento").html("(" + nombre + ")");
+                    $("#lblMantenimiento").addClass("text-danger");
+                    $("#lblDetalle").html("(" + nombre + ")");
+                    $("#lblDetalle").addClass("text-danger");
+                    $("#btn" + idMantenimiento).removeClass("btn-info").addClass("btn-danger");
+                    $("#txtCodigo").val(idMantenimiento);
 
                     let result = await tools.promiseFetchGet("../app/controller/DetalleController.php", {
                         "type": "listdetalle",
@@ -286,24 +315,83 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
                     $("#tbListDetalle").empty();
                     if (result.length == 0) {
-                        $("#tbListDetalle").append(
-                            '<tr><td class="text-center" colspan="5"><p>No hay datos para mostrar.</p></td></tr>');
+                        tools.loadTableMessage($("#tbListDetalle"), "No hay datos para mostrar.", 6);
                     } else {
                         let count = 0;
                         for (let detalle of result) {
                             count++;
                             $("#tbListDetalle").append(`<tr>
-                            <td>${count}</td>
+                            <td class="text-center">${count}</td>
                             <td>${detalle.IdAuxiliar}</td>
                             <td>${detalle.Nombre}</td>
                             <td>${detalle.Descripcion}</td>
-                            <td>${detalle.Estado=="1"?"ACTIVO":"INACTIVO"}</td>
+                            <td class="text-center">${detalle.Estado=="1"?"ACTIVO":"INACTIVO"}</td>
+                            <td class="text-center"><button class="btn btn-warning" onclick="editDetalleModal('${detalle.IdDetalle}','${detalle.IdAuxiliar}','${detalle.Nombre}','${detalle.Descripcion}','${detalle.Estado}')"><i class="fa fa-edit"></i></button></td>
                             </tr>`);
                         }
                     }
                 } catch (error) {
-
+                    $("#tbListDetalle").empty();
+                    tools.loadTableMessage($("#tbListDetalle"), tools.messageError(error), 6);
                 }
+            }
+
+            function addDetalleModal() {
+                if (idMantenimiento == "") {
+                    tools.AlertWarning("", "Selecciona un item para agregar un detalle.");
+                } else {
+                    $("#modalDetalle").modal("show");
+                }
+            }
+
+            function editDetalleModal(id, idAuxiliar, nombre, description, estado) {
+                $("#modalDetalle").modal("show");
+                idDetalle = id;
+                $("#txtCodAuxiliar").val(idAuxiliar);
+                $("#txtNombre").val(nombre);
+                $("#txtDescripcion").val(description);
+                $("#rbActivo").prop('checked', estado == "1" ? true : false);
+            }
+
+            function crudDetalle() {
+                if ($("#txtNombre").val() == "") {
+                    tools.AlertWarning("", "Ingrese el nombre del detalle.");
+                    $("#txtNombre").focus();
+                } else {
+                    tools.ModalDialog("Detalle", "¿Está seguro de continuar?", async function(value) {
+                        if (value == true) {
+                            try {
+                                let result = await tools.promiseFetchPost("../app/controller/DetalleController.php", {
+                                    "type": "crud",
+                                    "IdDetalle": idDetalle,
+                                    "IdMantenimiento": idMantenimiento,
+                                    "IdAuxiliar": $("#txtCodAuxiliar").val().trim().toUpperCase(),
+                                    "Nombre": $("#txtNombre").val().trim().toUpperCase(),
+                                    "Descripcion": $("#txtDescripcion").val().trim().toUpperCase(),
+                                    "Estado": $("#rbActivo").is(":checked") ? "1" : "0",
+                                    "UsuarioRegistro": idEmpleado,
+                                }, function() {
+                                    $("#modalDetalle").modal("hide");
+                                    clearComponents();
+                                    tools.ModalAlertInfo("Detalle", "Se está procesando la información.");
+                                });
+
+                                tools.ModalAlertSuccess("Detalle", result, function() {
+                                    location.reload();
+                                });
+                            } catch (error) {
+                                tools.ErrorMessageServer("Detalle", error);
+                            }
+                        }
+                    });
+                }
+            }
+
+            function clearComponents() {
+                $("#txtCodAuxiliar").val('');
+                $("#txtNombre").val('');
+                $("#txtDescripcion").val('');
+                $("#rbActivo").prop('checked', true);
             }
         </script>
     </body>
