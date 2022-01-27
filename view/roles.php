@@ -273,7 +273,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
     <main class="app-content">
 
         <div class="app-title">
-            <h1><i class="fa fa-window-maximize"></i> Mantenimiento de los detalles basicos</h1>
+            <h1><i class="fa fa-address-card"></i> Roles</h1>
         </div>
 
         <div class="tile mb-4">
@@ -281,10 +281,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
             <div class="row">
                 <div class="col-md-12 col-sm-12 col-xs-12">
                     <div class="form-group">
-                        <!-- <a href="./guiaremisionproceso.php" class="btn btn-primary">
-                                <i class="fa fa-plus"></i>
-                                Agregar
-                            </a> -->
                         <button class="btn btn-primary" id="btnAgregar">
                             <i class="fa fa-plus"></i>
                             Agregar
@@ -308,7 +304,9 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
             <div class="row">
 
-                <div class="col-xs-4 col-md-4 col-sm-12">
+
+
+                <div class="col-lg-5 col-md-12 col-sm-12">
                     <label> Items <span>#</span></label>
                     <div class="form-group d-flex">
                         <div class="input-group">
@@ -333,7 +331,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     </div>
                 </div>
 
-                <div class="col-xs-8 col-md-8 col-sm-12">
+                <div class="col-lg-7 col-md-12 col-sm-12">
                     <label> Ingrese el nombre del detalle <span>#</span></label>
                     <div class="form-group d-flex">
                         <div class="input-group">
