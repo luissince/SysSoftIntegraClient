@@ -199,40 +199,27 @@ function ModalVentaEchas() {
             let detalle = result[1];
             for (let value of detalle) {
                 let cantidad = parseFloat(value.Cantidad);
-
-                let valor_sin_impuesto = parseFloat(value.PrecioVenta) / ((parseFloat(value.ValorImpuesto) / 100.00) + 1);
-                let descuento = 0;
-                let porcentajeRestante = valor_sin_impuesto * (descuento / 100.00);
-                let preciocalculado = valor_sin_impuesto - porcentajeRestante;
-
-                let impuesto = tools.calculateTax(value.ValorImpuesto, preciocalculado);
+                let precio = parseFloat(value.PrecioVenta);
 
                 listaProductos.push({
                     "idSuministro": value.IdSuministro,
                     "clave": value.Clave,
                     "nombreMarca": value.NombreMarca,
                     "cantidad": cantidad,
-                    "costoCompra": value.CostoVenta,
+                    "costoCompra": parseFloat(value.CostoVenta),
                     "bonificacion": 0,
                     "descuento": 0,
                     "descuentoCalculado": 0,
                     "descuentoSumado": 0,
 
-                    "precioVentaGeneralUnico": valor_sin_impuesto,
-                    "precioVentaGeneralReal": preciocalculado,
+                    "precioVentaGeneral": precio,
+                    "precioVentaGeneralUnico": precio,
+                    "precioVentaGeneralReal": precio,
 
                     "impuestoOperacion": value.Operacion,
-                    "impuestoId": value.IdImpuesto,
+                    "idImpuesto": value.IdImpuesto,
                     "impuestoNombre": value.NombreImpuesto,
-                    "impuestoValor": value.ValorImpuesto,
-
-                    "impuestoSumado": cantidad * impuesto,
-                    "precioVentaGeneral": preciocalculado + impuesto,
-                    "precioVentaGeneralAuxiliar": preciocalculado + impuesto,
-
-                    "importeBruto": cantidad * valor_sin_impuesto,
-                    "subImporteNeto": cantidad * preciocalculado,
-                    "importeNeto": cantidad * (preciocalculado + impuesto),
+                    "impuestoValor": parseFloat(value.ValorImpuesto),
 
                     "inventario": value.Inventario,
                     "unidadVenta": value.UnidadVenta,

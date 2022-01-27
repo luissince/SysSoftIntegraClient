@@ -13,6 +13,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         print json_encode(ProveedorADO::ListProveedor($_GET["nombre"], $_GET["posicionPagina"], $_GET["filasPorPagina"]));
     } else if ($_GET["type"] == "GetByIdProveedor") {
         print json_encode(ProveedorADO::GetByIdProveedor($_GET["idProveedor"]));
+    } else if ($_GET["type"] == "fillproveedor") {
+        print json_encode(ProveedorADO::FillProveedor($_GET["search"]));
     }
 } else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $body = json_decode(file_get_contents("php://input"), true);

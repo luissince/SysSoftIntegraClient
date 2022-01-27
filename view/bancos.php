@@ -261,13 +261,21 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     loadInitBancos();
                 });
 
-                $("#btnReload").keypress(function(event) {
-                    if (event.keyCode == 13) {
-                        loadInitBancos();
-                        event.preventDefault();
+                tools.keyEnter($("#btnReload"), function() {
+                    loadInitBancos();
+                });
+
+                $("#btnBuscar").click(function() {
+                    if ($("#txtBuscar").val() !== "") {
+                        fillTableBancos($("#txtBuscar").val());
                     }
                 });
 
+                tools.keyEnter($("#btnBuscar"), function() {
+                    if ($("#txtBuscar").val() !== "") {
+                        fillTableBancos($("#txtBuscar").val());
+                    }
+                });
 
                 modalComponents();
                 loadInitBancos();
@@ -314,16 +322,18 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     let result = await tools.promiseFetchGet("../app/controller/BancoController.php", {
                         "type": "all",
                         "buscar": buscar,
+                        "posicionPagina": ((paginacion - 1) * filasPorPagina),
+                        "filasPorPagina": filasPorPagina
                     }, function() {
                         tbody.empty();
-                        tbody.append('<tr><td class="text-center" colspan="9"><img src="./images/loading.gif" id="imgLoad" width="34" height="34" /> <p>Cargando información...</p></td></tr>');
+                        tools.loadTable(tbody, 9);
                         totalPaginacion = 0;
                         state = true;
                     });
 
                     tbody.empty();
-                    if (result.length == 0) {
-                        tbody.append('<tr><td class="text-center" colspan="9"><p>No hay bancos para mostrar.</p></td></tr>');
+                    if (result.data.length == 0) {
+                        tools.loadTableMessage(tbody, "No hay datos para mostrar.", 9);
                         ulPagination.html(`
                             <button class="btn btn-outline-secondary">
                                 <i class="fa fa-angle-double-left"></i>
@@ -340,7 +350,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             </button>`);
                         state = false;
                     } else {
-                        for (let value of result) {
+                        for (let value of result.data) {
                             tbody.append(`<tr>
                                 <td class="text-center">${value.Id}</td>
                                 <td class="text-left">${value.NombreCuenta}</td>
@@ -354,10 +364,41 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 </tr>                                
                                 `);
                         }
+
+                        totalPaginacion = parseInt(Math.ceil((parseFloat(result.total) / filasPorPagina)));
+
+                        let i = 1;
+                        let range = [];
+                        while (i <= totalPaginacion) {
+                            range.push(i);
+                            i++;
+                        }
+
+                        let min = Math.min.apply(null, range);
+                        let max = Math.max.apply(null, range);
+
+                        let paginacionHtml = `
+                            <button class="btn btn-outline-secondary" onclick="onEventPaginacionInicio(${min})">
+                                <i class="fa fa-angle-double-left"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary" onclick="onEventAnteriorPaginacion()">
+                                <i class="fa fa-angle-left"></i>
+                            </button>
+                            <span class="btn btn-outline-secondary disabled" id="lblPaginacion">${paginacion} - ${totalPaginacion}</span>
+                            <button class="btn btn-outline-secondary" onclick="onEventSiguientePaginacion()">
+                                <i class="fa fa-angle-right"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary" onclick="onEventPaginacionFinal(${max})">
+                                <i class="fa fa-angle-double-right"></i>
+                            </button>`;
+
+                        ulPagination.html(paginacionHtml);
                         state = false;
                     }
                 } catch (error) {
+                    console.log(error);
                     tbody.empty();
+                    tools.loadTableMessage(tbody, tools.messageError(error), 9);
                     ulPagination.html(`
                             <button class="btn btn-outline-secondary">
                                 <i class="fa fa-angle-double-left"></i>
@@ -372,7 +413,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             <button class="btn btn-outline-secondary">
                                 <i class="fa fa-angle-double-right"></i>
                             </button>`);
-                    tbody.append('<tr><td class="text-center" colspan="9"><p>' + error.responseText + '</p></td></tr>');
                     state = false;
                 }
             }
@@ -496,8 +536,9 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             }, function() {
                                 tools.ModalAlertInfo("Banco", "Procesando petición..");
                             });
-                            tools.ModalAlertSuccess("Banco", result);
-                            onEventPaginacion();
+                            tools.ModalAlertSuccess("Banco", result, function() {
+                                onEventPaginacion();
+                            });
                         } catch (error) {
                             tools.ErrorMessageServer("Banco", error);
                         }

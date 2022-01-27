@@ -75,6 +75,17 @@ $empresa = EmpresaADO::Index();
                                 </ul>
                             </div>
                         </div>
+
+                        <div class="aside">
+                            <h4 class="aside-title">Presentación</h4>
+                            <div class="navmenu">
+                                <ul class="menu" id="divPresentacion">
+                                    <div>
+                                        <span> No hay marcas para mostrar.</span>
+                                    </div>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="col-lg-9 col-md-12 col-sm-12 col-12">

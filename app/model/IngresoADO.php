@@ -122,42 +122,6 @@ class IngresoADO
         }
     }
 
-    public static function ListarClientes()
-    {
-        try {
-            $cmdCliente = Database::getInstance()->getDb()->prepare("SELECT IdCliente,NumeroDocumento,Informacion FROM ClienteTB");
-            $cmdCliente->execute();
-
-            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-            header($protocol . ' ' . 200 . ' ' . "OK");
-
-            return $cmdCliente->fetchAll(PDO::FETCH_OBJ);
-        } catch (Exception $ex) {
-            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
-
-            return  $ex->getMessage();
-        }
-    }
-
-    public static function ListarProveedor()
-    {
-        try {
-            $cmdCliente = Database::getInstance()->getDb()->prepare("SELECT IdProveedor,NumeroDocumento,RazonSocial FROM ProveedorTB");
-            $cmdCliente->execute();
-
-            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-            header($protocol . ' ' . 200 . ' ' . "OK");
-
-            return $cmdCliente->fetchAll(PDO::FETCH_OBJ);
-        } catch (Exception $ex) {
-            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
-
-            return  $ex->getMessage();
-        }
-    }
-
     public static function InsertIngreso($body)
     {
         try {
@@ -199,6 +163,24 @@ class IngresoADO
 
             $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
             header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+
+            return $ex->getMessage();
+        }
+    }
+
+    public static function Reporte_Ingresos(string $fechaInico, string $fechaFinal, int $empleado, string $idUsuario)
+    {
+        try {
+
+            $cmdIngreso = Database::getInstance()->getDb()->prepare("{call Sp_Reporte_Ingresos(?,?,?,?)}");
+            $cmdIngreso->bindParam(1, $fechaInico, PDO::PARAM_STR);
+            $cmdIngreso->bindParam(2, $fechaFinal, PDO::PARAM_INT);
+            $cmdIngreso->bindParam(3, $empleado, PDO::PARAM_STR);
+            $cmdIngreso->bindParam(4, $idUsuario, PDO::PARAM_STR);
+            $cmdIngreso->execute();
+
+            return   $cmdIngreso->fetchAll(PDO::FETCH_OBJ);
+        } catch (Exception $ex) {
 
             return $ex->getMessage();
         }

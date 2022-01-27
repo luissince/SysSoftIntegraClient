@@ -36,11 +36,20 @@ class CotizacionADO
                     "IdCotizacion" => $row['IdCotizacion'],
                     "FechaCotizacion" => $row['FechaCotizacion'],
                     "HoraCotizacion" => $row['HoraCotizacion'],
+                    "Estado" => $row['Estado'],
+                    "SimboloMoneda" => $row['SimboloMoneda'],
+                    "Observaciones" => $row['Observaciones'],
+
                     "Apellidos" => $row['Apellidos'],
                     "Nombres" => $row['Nombres'],
+
                     "NumeroDocumento" => $row['NumeroDocumento'],
                     "Informacion" => $row['Informacion'],
-                    "SimboloMoneda" => $row['SimboloMoneda'],
+
+                    "Comprobante" => $row['Comprobante'],
+                    "Serie" => $row['Serie'],
+                    "Numeracion" => $row['Numeracion'],
+
                     "Total" => floatval($row['Total']),
                 ));
             }
@@ -68,7 +77,7 @@ class CotizacionADO
         }
     }
 
-    public static function ListDetalleCotizacion(string $idCotizacion)
+    public static function Sp_Obtener_Cotizacion_ById(string $idCotizacion)
     {
         try {
             $cmdCotizacion = Database::getInstance()->getDb()->prepare("{CALL Sp_Obtener_Cotizacion_ById(?)}");
@@ -114,14 +123,10 @@ class CotizacionADO
         }
     }
 
-    public static function CotizacionDetalleById(int $idCotizacion)
-    {
-    }
-
     public static function ReporteCotizacionDetalle(int $idCotizacion)
     {
         try {
-            $cmdCotizacion = Database::getInstance()->getDb()->prepare("{CALL Sp_Obtener_Cotizacion_Reporte_ById(?)}");
+            $cmdCotizacion = Database::getInstance()->getDb()->prepare("{CALL Sp_Obtener_Cotizacion_ById(?)}");
             $cmdCotizacion->bindParam(1, $idCotizacion, PDO::PARAM_INT);
             $cmdCotizacion->execute();
 
@@ -165,7 +170,7 @@ class CotizacionADO
             WHERE Mostrar = 1");
             $cmdBanco->execute();
 
-            $cmdDetalle = Database::getInstance()->getDb()->prepare("{CALL Sp_Obtener_Detalle_Cotizacion_Reporte_ById(?)}");
+            $cmdDetalle = Database::getInstance()->getDb()->prepare("{CALL Sp_Obtener_Detalle_Cotizacion_ById(?)}");
             $cmdDetalle->bindParam(1, $idCotizacion, PDO::PARAM_STR);
             $cmdDetalle->execute();
 
@@ -221,8 +226,9 @@ class CotizacionADO
                 Cantidad,
                 Precio,
                 Descuento,
-                IdImpuesto)
-                VALUES(?,?,?,?,?,?)");
+                IdImpuesto,
+                IdMedida)
+                VALUES(?,?,?,?,?,?,?)");
                 foreach ($body["detalle"] as $value) {
                     $cmdDetalle->execute(array(
                         $body["idCotizacion"],
@@ -230,7 +236,8 @@ class CotizacionADO
                         $value["cantidad"],
                         $value["precioVentaGeneral"],
                         $value["descuento"],
-                        $value["impuestoId"],
+                        $value["idImpuesto"],
+                        $value["idUnidadCompra"],
                     ));
                 }
 
@@ -274,8 +281,9 @@ class CotizacionADO
                 Cantidad,
                 Precio,
                 Descuento,
-                IdImpuesto)
-                VALUES(?,?,?,?,?,?)");
+                IdImpuesto,
+                IdMedida)
+                VALUES(?,?,?,?,?,?,?)");
                 foreach ($body["detalle"] as $value) {
                     $cmdDetalle->execute(array(
                         $idCotizacion,
@@ -283,7 +291,8 @@ class CotizacionADO
                         $value["cantidad"],
                         $value["precioVentaGeneral"],
                         $value["descuento"],
-                        $value["impuestoId"],
+                        $value["idImpuesto"],
+                        $value["idUnidadCompra"],
                     ));
                 }
 

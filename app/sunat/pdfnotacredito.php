@@ -270,7 +270,6 @@ if (is_array($notaCreditoDatos)) {
                     <?php
                     // number_format(round($totales['totalconimpuesto'], 2, PHP_ROUND_HALF_UP), 2, '.', '') 
                     foreach ($detallenotacredito as $value) {
-
                         $html .= '<tr>
                         <td style="text-align: center;font-size: 7pt;">' . $value["id"] . '</td>
                         <td style="text-align: center;font-size: 7pt;">' . $value["Cantidad"] . '</td>

@@ -6,610 +6,673 @@ if (!isset($_SESSION['IdEmpleado'])) {
 } else {
 ?>
 
-<!DOCTYPE html>
-<html lang="es">
-<!-- background: linear-gradient(to right bottom, rgb(77, 84, 209), rgb(165, 28, 123) 50%, rgb(238, 74, 55) 100%) center center; -->
+    <!DOCTYPE html>
+    <html lang="es">
 
-<head>
-    <?php include './layout/head.php'; ?>
-</head>
+    <head>
+        <?php include './layout/head.php'; ?>
+    </head>
 
-<body class="app sidebar-mini">
-    <!-- Navbar-->
-    <?php include "./layout/header.php"; ?>
-    <!-- Sidebar menu-->
-    <?php include "./layout/menu.php"; ?>
-    <main class="app-content">
+    <body class="app sidebar-mini">
+        <!-- Navbar-->
+        <?php include "./layout/header.php"; ?>
+        <!-- Sidebar menu-->
+        <?php include "./layout/menu.php"; ?>
+        <main class="app-content">
 
-        <div class="app-title">
-            <div>
-                <h1>Dashboard <small>Panel de control</small>
-                </h1>
-            </div>
-        </div>
+            <div class="tile mb-4">
 
-        <div class="tile mb-4">
-
-            <div class="overlay d-none" id="divOverlayEmpresa">
-                <div class="m-loader mr-4">
-                    <svg class="m-circular" viewBox="25 25 50 50">
-                        <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="4" stroke-miterlimit="10">
-                        </circle>
-                    </svg>
+                <div class="overlay" id="divOverlayIndex">
+                    <div class="m-loader mr-4">
+                        <svg class="m-circular" viewBox="25 25 50 50">
+                            <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="4" stroke-miterlimit="10">
+                            </circle>
+                        </svg>
+                    </div>
+                    <h4 class="l-text text-white" id="lblTextOverlayIndex">Cargando información...</h4>
                 </div>
-                <h4 class="l-text" id="lblTextOverlayEmpresa">Cargando información...</h4>
-            </div>
 
-            <div class="tile-body">
+                <div class="tile-body">
 
-                <!-- Info boxes -->
-                <div class="row">
+                    <div class="row">
 
-                    <div class="col-lg-3 col-6">
-                        <div class="card mb-3 text-white bg-primary">
-                            <div class="card-body">
-                                <h3 id="lblTotalVentas" class="text-white">S/ 0.00</h3>
-                                <p>VENTAS DEL DÍA</p>
+                        <div class="col-lg-3 col-md-6 col-12">
+                            <div class="card mb-3 text-white bg-primary">
+                                <div class="card-body">
+                                    <h3 id="lblTotalVentas" class="text-white">S/ 0.00</h3>
+                                    <p class="m-0">VENTAS DEL DÍA</p>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="col-lg-3 col-6">
-                        <div class="card mb-3 text-white bg-danger">
-                            <div class="card-body">
-                                <h3 id="lblTotalCompras" class="text-white">S/ 0.00</h3>
-                                <p>COMPRAS DEL DÍA</p>
+                        <div class="col-lg-3 col-md-6 col-12">
+                            <div class="card mb-3 text-white bg-danger">
+                                <div class="card-body">
+                                    <h3 id="lblTotalCompras" class="text-white">S/ 0.00</h3>
+                                    <p class="m-0">COMPRAS DEL DÍA</p>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="col-lg-3 col-6">
-                        <div class="card mb-3 text-white bg-warning">
-                            <div class="card-body">
-                                <h3 id="lblTotalCuentasPorCobrar" class="text-white">0</h3>
-                                <p>CUENTAS POR COBRAR</p>
+                        <div class="col-lg-3 col-md-6 col-12">
+                            <div class="card mb-3 text-white bg-warning">
+                                <div class="card-body">
+                                    <h3 id="lblTotalCuentasPorCobrar" class="text-white">0</h3>
+                                    <p class="m-0">CUENTAS POR COBRAR</p>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="col-lg-3 col-6">
-                        <div class="card mb-3 text-white bg-success">
-                            <div class="card-body">
-                                <h3 id="lblTotalCuentasPorPagar" class="text-white">0</h3>
-                                <p>CUENTAS POR PAGAR</p>
+                        <div class="col-lg-3 col-md-6 col-12">
+                            <div class="card mb-3 text-white bg-success">
+                                <div class="card-body">
+                                    <h3 id="lblTotalCuentasPorPagar" class="text-white">0</h3>
+                                    <p class="m-0">CUENTAS POR PAGAR</p>
+                                </div>
                             </div>
                         </div>
+
                     </div>
 
-                </div>
-                <!-- /.row -->
-
-                <!-- Info boxes -->
-                <div class="row">
-
-                    <div class="col-lg-3 col-6">
-                        <div class="card mb-3 text-white bg-white">
-                            <div class="card-body">
-                                <h4 class="text-danger">Negativos</h4>
-                                <h4 id="lblProductosNegativos" class="text-dark">0</h4>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-lg-3 col-6">
-                        <div class="card mb-3 text-white bg-white">
-                            <div class="card-body">
-                                <h4 class="text-warning">Intermedios</h4>
-                                <h4 id="lblProductosIntermedios" class="text-dark">0</h4>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-lg-3 col-6">
-                        <div class="card mb-3 text-white bg-white">
-                            <div class="card-body">
-                                <h4 class="text-success">Necesarios</h4>
-                                <h4 id="lblProductosNecesarios" class="text-dark">0</h4>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-lg-3 col-6">
-                        <div class="card mb-3 text-white bg-white">
-                            <div class="card-body">
-                                <h4 class="text-primary">Excedentes</h4>
-                                <h4 id="lblProductosExcedentes" class="text-dark">0</h4>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-                <!-- /.row -->
-
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="card mb-3">
-                            <div class="card-header">
-                                <h5 class="card-title">Gráficos de las Ventas Por Mes</h5>
-                            </div>
-                            <!-- /.card-header -->
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="embed-responsive embed-responsive-16by9" style="height:320px">
-                                            <canvas class="embed-responsive-item" id="lineChartDemo" width="444"
-                                                height="249"></canvas>
+                    <div class="row">
+                        <div class="col-lg-3 col-md-6 col-12">
+                            <div class="card mb-3 text-white bg-secondary">
+                                <div class="card-body">
+                                    <div class="d-flex">
+                                        <div class="">
+                                            <img src="./images/producto.png" width="32" />
+                                        </div>
+                                        <div class="ml-2">
+                                            <p class="m-0"> Productos</p>
+                                            <h3 class="text-white" id="lblProductos"> 0</h3>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <!-- /.card -->
-                    </div>
-                </div>
-                <!--  -->
 
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="card mb-3">
-                            <div class="card-header">
-                                <h5 class="card-title">Los 10 Productos Más Vendidos del Mes y Día</h5>
-                            </div>
-                            <!-- /.card-header -->
-                            <div class="card-body p-0">
-                                <ul class="product-list-in-card pl-2 pr-2" id="tvProductos">
-
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="card mb-3 card-primary card-tabs">
-                            <div class="card-header">
-                                <h5 class="card-title">Estado del Inventario</h5>
-                            </div>
-                            <div class="card-body">
-                                <ul class="nav nav-tabs" id="custom-tabs-two-tab" role="tablist">
-                                    <li class="nav-item">
-                                        <a class="nav-link active" id="custom-tabs-two-home-tab" data-toggle="pill"
-                                            href="#custom-tabs-two-home" role="tab" aria-controls="custom-tabs-two-home"
-                                            aria-selected="false">Agotados</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" id="custom-tabs-two-profile-tab" data-toggle="pill"
-                                            href="#custom-tabs-two-profile" role="tab"
-                                            aria-controls="custom-tabs-two-profile" aria-selected="false">Por
-                                            Agotarse</a>
-                                    </li>
-                                </ul>
-                                <div class="tab-content" id="custom-tabs-two-tabContent">
-                                    <div class="tab-pane fade active show" id="custom-tabs-two-home" role="tabpanel"
-                                        aria-labelledby="custom-tabs-two-home-tab">
-                                        <div class="row">
-                                            <div class="col-md-12 col-sm-12 col-xs-12 p-1">
-                                                <div id="tvProductoAgotado">
-
-                                                </div>
-                                            </div>
-                                            <div class="col-md-12 col-sm-12 col-xs-12 text-center">
-                                                <div class="form-group">
-                                                    <button class="btn btn-secondary" id="btnPaginaAnteriorAgotados">
-                                                        <i class="fa fa fa-arrow-circle-left"></i>
-                                                    </button>
-                                                    <span class="m-2" id="lblPaginaActualAgotados">0</span>
-                                                    <span class="m-2">de</span>
-                                                    <span class="m-2" id="lblPaginaSiguienteAgotados">0</span>
-                                                    <button class="btn btn-secondary" id="btnPaginaSiguienteAgotados">
-                                                        <i class="fa fa fa-arrow-circle-right"></i>
-                                                    </button>
-                                                </div>
-                                            </div>
+                        <div class="col-lg-3 col-md-6 col-12">
+                            <div class="card mb-3 text-white bg-secondary">
+                                <div class="card-body">
+                                    <div class="d-flex">
+                                        <div class="">
+                                            <img src="./images/clients.png" width="32" />
+                                        </div>
+                                        <div class="ml-2">
+                                            <p class="m-0"> Clientes</p>
+                                            <h3 class="text-white" id="lblClientes"> 0</h3>
                                         </div>
                                     </div>
-                                    <div class="tab-pane fade" id="custom-tabs-two-profile" role="tabpanel"
-                                        aria-labelledby="custom-tabs-two-profile-tab">
-                                        <div class="row">
-                                            <div class="col-md-12 col-sm-12 col-xs-12 p-1">
-                                                <div id="tvProductoPorAgotarse">
+                                </div>
+                            </div>
+                        </div>
 
-                                                </div>
-                                            </div>
-                                            <div class="col-md-12 col-sm-12 col-xs-12 text-center">
-                                                <div class="form-group">
-                                                    <button class="btn btn-secondary" id="btnPaginaAnteriorPorAgotarse">
-                                                        <i class="fa fa fa-arrow-circle-left"></i>
-                                                    </button>
-                                                    <span class="m-2" id="lblPaginaActualPorAgotarse">0</span>
-                                                    <span class="m-2">de</span>
-                                                    <span class="m-2" id="lblPaginaSiguientePorAgotarse">0</span>
-                                                    <button class="btn btn-secondary"
-                                                        id="btnPaginaSiguientePorAgotarse">
-                                                        <i class="fa fa fa-arrow-circle-right"></i>
-                                                    </button>
-                                                </div>
-                                            </div>
+                        <div class="col-lg-3 col-md-6 col-12">
+                            <div class="card mb-3 text-white bg-secondary">
+                                <div class="card-body">
+                                    <div class="d-flex">
+                                        <div class="">
+                                            <img src="./images/providers.png" width=" 32" />
+                                        </div>
+                                        <div class="ml-2">
+                                            <p class="m-0"> Proveedores</p>
+                                            <h3 class="text-white" id="lblProveedores"> 0</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-3 col-md-6 col-12">
+                            <div class="card mb-3 text-white bg-secondary">
+                                <div class="card-body">
+                                    <div class="d-flex">
+                                        <div class="">
+                                            <img src="./images/employees.png" width=" 32" />
+                                        </div>
+                                        <div class="ml-2">
+                                            <p class="m-0"> Trabajadores</p>
+                                            <h3 class="text-white" id="lblTrabajadores"> 0</h3>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <!--  -->
-               
-                <hr>
 
-                <div class="row">
-                    <div class="col-lg-8 col-md-8 col-sm-12">
-                        <h5 class="card-title">Ventas y Compras - <span class="text-secondary">2022</span></h5>
+                    <div class="row">
+                        <div class="col-lg-6 col-md-12 col-12">
+                            <div class=" form-group">
+                                <div class="card">
+                                    <div class="card-body">
 
-                        <div class="table-responsive">
-                            <table class="table table-striped">
-                                <thead class="bg-primary text-white">
-                                    <tr>
-                                        <th scope="col" class="th-porcent-5">Mes</th>
-                                        <th scope="col" class="th-porcent-15">Venta SUNAT</th>
-                                        <th scope="col" class="th-porcent-5">Venta Libre</th>
-                                        <th scope="col" class="th-porcent-5">Compras + Gastos</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tbListTable">
-                                    <!-- <tr>
-                                        <td class="text-center" colspan="4">No hay datos para mostrar</td>
-                                    </tr> -->
-                                    <tr>
-                                        <td class="text-center text-secondary">Enero</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-center text-secondary">Febrero</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-center text-secondary">Marzo</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-center text-secondary">Abril</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-center text-secondary">Mayo</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-center text-secondary">Junio</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-center text-secondary">Julio</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-center text-secondary">Agosto</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-center text-secondary">Setiembre</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-center text-secondary">Octubre</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-center text-secondary">Noviembre</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-center text-secondary">Diciembre</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-4 col-sm-12">
-                        <h5 class="card-title">Ventas de <span class="text-secondary">Enero</span></h5>
-                        <div class="card mb-3 text-white bg-success">
-                            <div class="card-body">
-                                <h3 id="lblTotalVentas" class="text-white">S/ 00.00</h3>
-                                <p>Efectivo</p>
+                                        <canvas id="myChart" style="min-height: 300px; height: 300px; max-height: 300px; max-width: 100%;"></canvas>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div class="card mb-3 text-white bg-warning">
-                            <div class="card-body">
-                                <h3 id="lblTotalVentas" class="text-white">S/ 00.00</h3>
-                                <p>Credito</p>
-                            </div>
-                        </div>
-                        <div class="card mb-3 text-white bg-primary">
-                            <div class="card-body">
-                                <h3 id="lblTotalVentas" class="text-white">S/ 00.00</h3>
-                                <p>Tarjeta(deposito/trasferencia)</p>
+
+                        <div class="col-lg-6 col-md-12 col-12">
+                            <div class=" form-group">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <canvas id="myPie" style="min-height: 300px;  height: 300px; max-height: 300px; max-width: 100%;"></canvas>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
+                    <div class="row">
+                        <div class="col-lg-6 col-md-12 col-sm-12">
+                            <div class="form-group">
+                                <div class="card">
+                                    <div class="card-body p-0">
+                                        <div class="table-responsive">
+                                            <table class="table table-striped border-0">
+                                                <thead class="bg-white">
+                                                    <tr>
+                                                        <th scope="col" width="5%">Mes</th>
+                                                        <th scope="col" width="5%">Venta Sunat</th>
+                                                        <th scope="col" width="5%">Venta Libre</th>
+                                                        <th scope="col" width="5%">Venta Total</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="tbListTable">
+                                                    <tr>
+                                                        <td class="text-center text-secondary">Enero</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-center text-secondary">Febrero</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-center text-secondary">Marzo</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-center text-secondary">Abril</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-center text-secondary">Mayo</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-center text-secondary">Junio</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-center text-secondary">Julio</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-center text-secondary">Agosto</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-center text-secondary">Setiembre</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-center text-secondary">Octubre</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-center text-secondary">Noviembre</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-center text-secondary">Diciembre</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6 col-md-12 col-sm-12">
+                            <div class="form-group">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <canvas id="myDonut" style="min-height: 300px;  height: 300px; max-height: 300px; max-width: 100%;"></canvas>
+                                        <div class="d-flex flex-row justify-content-end">
+                                            <span class="mr-2" id="lblTipoMes">
+                                                <i class="fa fa-stop text-primary"></i>MES - 0
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer">
+                                        <div class="row">
+                                            <div class="col-md-3 col-sm-6  col-12">
+                                                <div class="description-block border-right text-center">
+                                                    <span class="description-percentage text-success" id="lblPorcentajeEfectivo"><i class="fa fa-caret-up"></i> 0%</span>
+                                                    <h5 class="description-header" id="lblTotalEfectivo">S/ 0.00</h5>
+                                                    <p class="description-text">TOTAL EFECTIVO</p>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-3 col-sm-6  col-12">
+                                                <div class="description-block border-right text-center">
+                                                    <span class="description-percentage text-warning" id="lblPorcentajeCredito"><i class="fa fa-caret-left"></i> 0%</span>
+                                                    <h5 class="description-header" id="lblTotalCredito">S/ 0.00</h5>
+                                                    <p class="description-text">TOTAL CRÉDITO</p>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-3 col-sm-6  col-12">
+                                                <div class="description-block border-right text-center">
+                                                    <span class="description-percentage text-success" id="lblPorcentajeTarjeta"><i class="fa fa-caret-up"></i> 0%</span>
+                                                    <h5 class="description-header" id="lblTotalTarjeta">S/ 0.00</h5>
+                                                    <p class="description-text">TOTAL TARJETA</p>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-3 col-sm-6 col-12">
+                                                <div class="description-block text-center">
+                                                    <span class="description-percentage text-success" id="lblPorcentajeDeposito"><i class="fa fa-caret-up"></i> 0%</span>
+                                                    <h5 class="description-header" id="lblTotalDepostio">S/ 0.00</h5>
+                                                    <p class="description-text">TOTAL DEPOSITO</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-6 col-md-12 col-sm-12">
+                            <div class="form-group">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <p class="card-title text-center m-0">Productos más veces vendidos</p>
+                                    </div>
+                                    <div class="card-body p-0">
+                                        <div class="table-responsive">
+                                            <table class="table table-striped border-0">
+                                                <thead>
+                                                    <tr>
+                                                        <th>N°</th>
+                                                        <th>Producto</th>
+                                                        <th>Categoría/Marca</th>
+                                                        <th>Veces</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="tbListMasVendidos">
+                                                    <tr>
+                                                        <td colspan="4" class="text-center">No hay datos para mostrar</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6 col-md-12 col-sm-12">
+                            <div class="form-group">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <p class="card-title text-center m-0">Productos con más cantidades vendidas</p>
+                                    </div>
+                                    <div class="card-body p-0">
+                                        <div class="table-responsive">
+                                            <table class="table table-striped border-0">
+                                                <thead>
+                                                    <tr>
+                                                        <th>N°</th>
+                                                        <th>Producto</th>
+                                                        <th>Categoría/Marca</th>
+                                                        <th>Cantidad</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="tbListCantidadVendidos">
+                                                    <tr>
+                                                        <td colspan="4" class="text-center">No hay datos para mostrar</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
             </div>
+        </main>
+        <!-- Essential javascripts for application to work-->
+        <?php include "./layout/footer.php"; ?>
+        <script src="./js/notificaciones.js"></script>
+        <script>
+            let tools = new Tools();
 
-        </div>
-
-    </main>
-    <!-- Essential javascripts for application to work-->
-    <?php include "./layout/footer.php"; ?>
-    <script src="./js/notificaciones.js"></script>
-    <script>
-    let tools = new Tools();
-    let buttonSelected = false;
-    let buttonAgotadosSelected = false;
-
-    let productoVendidos = $("#tvProductos");
-
-    let productoAgotado = $("#tvProductoAgotado");
-    let posicionPaginaAgotados = 0;
-    let filasPorPaginaAgotados = 7;
-    let totalPaginacionAgotadas = 0;
-
-    let productosPorAgotarse = $("#tvProductoPorAgotarse");
-    let posicionPaginaPorAgotarse = 0;
-    let filasPorPaginaPorAgotarse = 7;
-    let totalPaginacionPorAgotarse = 0;
-
-    // var salesChart = $("#sales-chart");
-    // var ctxb = salesChart.get(0).getContext("2d");
-
-    $(document).ready(function() {
-
-        $("#lblMesActual").html("Ventas: " + tools.nombreMes(tools.getCurrentMonth()) + ", " + tools
-            .getCurrentYear());
-
-        //botones de Productos por agotarse
-        $("#btnPaginaAnteriorAgotados").click(function() {
-            if (posicionPaginaAgotados > 1) {
-                posicionPaginaAgotados--;
-                cargarProductosAgotados();
-            }
-        });
-
-        $("#btnPaginaSiguienteAgotados").click(function() {
-            if (posicionPaginaAgotados < totalPaginacionAgotadas) {
-                posicionPaginaAgotados++;
-                cargarProductosAgotados();
-            }
-        });
-
-        $("#btnPaginaAnteriorPorAgotarse").click(function() {
-            if (posicionPaginaPorAgotarse > 1) {
-                posicionPaginaPorAgotarse--;
-                cargarProductosPorAgotarse();
-            }
-        });
-
-        $("#btnPaginaSiguientePorAgotarse").click(function() {
-            if (posicionPaginaPorAgotarse < totalPaginacionPorAgotarse) {
-                posicionPaginaPorAgotarse++;
-                cargarProductosPorAgotarse();
-            }
-        });
-
-        cargarDashboard();
-    });
-
-    async function cargarDashboard() {
-        posicionPaginaAgotados = 1;
-        posicionPaginaPorAgotarse = 1;
-        let totalVentas = $("#lblTotalVentas");
-        let totalCompras = $('#lblTotalCompras');
-        let totalCuentasPorCobrar = $('#lblTotalCuentasPorCobrar');
-        let totalCuentasPorPagar = $('#lblTotalCuentasPorPagar');
-        productoVendidos.empty();
-
-        try {
-            let result = await tools.promiseFetchGet("../app/controller/VentaController.php", {
-                type: "global",
-                fechaActual: tools.getCurrentDate(),
-                posicionPaginaAgotados: ((posicionPaginaAgotados - 1) * filasPorPaginaAgotados),
-                filasPorPaginaAgotados: filasPorPaginaAgotados,
-
-                posicionPaginaPorAgotarse: ((posicionPaginaPorAgotarse - 1) * filasPorPaginaPorAgotarse),
-                filasPorPaginaPorAgotarse: filasPorPaginaPorAgotarse,
+            $(document).ready(function() {
+                loadDashboard();
             });
 
-            console.log(result)
+            async function loadDashboard() {
+                try {
 
-            let data = result.data[0];
+                    let dashboard = await tools.promiseFetchGet("../app/controller/DashboardController.php");
 
-            totalVentas.html("S/  " + tools.formatMoney(data.TotalVentas));
-            totalCompras.html("S/  " + tools.formatMoney(data.TotalCompras));
-            totalCuentasPorCobrar.html(data.TotalCuentasCobrar);
-            totalCuentasPorPagar.html(data.TotalCuentasPagar);
-            let productosVendidos = data.ProductosMasVendidos;
+                    let promise = await Promise.all([dashboard]);
+                    let result = await promise;
 
-            for (let value of productosVendidos) {
-                let image = "./images/noimage.jpg";
-                if (value.Imagen != '') {
-                    image = ("data:image/png;base64," + value.Imagen);
+                    let primer = result[0];
+
+                    $("#lblTotalVentas").html("S/ " + tools.formatMoney(primer.ventas));
+                    $("#lblTotalCompras").html("S/ " + tools.formatMoney(primer.compras));
+                    $("#lblTotalCuentasPorCobrar").html(primer.ccobrar);
+                    $("#lblTotalCuentasPorPagar").html(primer.ccpagar);
+
+                    $("#lblProductos").html(primer.productos);
+                    $("#lblClientes").html(primer.clientes);
+                    $("#lblProveedores").html(primer.proveedores);
+                    $("#lblTrabajadores").html(primer.empleados);
+
+
+                    let historialVentas = [{
+                        id: 0,
+                        mes: "Enero",
+                        sunat: 0,
+                        libre: 0
+                    }, {
+                        id: 1,
+                        mes: "Febrero",
+                        sunat: 0,
+                        libre: 0
+                    }, {
+                        id: 2,
+                        mes: "Marzo",
+                        sunat: 0,
+                        libre: 0
+                    }, {
+                        id: 3,
+                        mes: "Abril",
+                        sunat: 0,
+                        libre: 0
+                    }, {
+                        id: 4,
+                        mes: "Mayo",
+                        sunat: 0,
+                        libre: 0
+                    }, {
+                        id: 5,
+                        mes: "Junio",
+                        sunat: 0,
+                        libre: 0
+                    }, {
+                        id: 6,
+                        mes: "Julio",
+                        sunat: 0,
+                        libre: 0
+                    }, {
+                        id: 7,
+                        mes: "Agosto",
+                        sunat: 0,
+                        libre: 0
+                    }, {
+                        id: 8,
+                        mes: "Setiembre",
+                        sunat: 0,
+                        libre: 0
+                    }, {
+                        id: 9,
+                        mes: "Octubre",
+                        sunat: 0,
+                        libre: 0
+                    }, {
+                        id: 10,
+                        mes: "Noviembre",
+                        sunat: 0,
+                        libre: 0
+                    }, {
+                        id: 11,
+                        mes: "Diciembre",
+                        sunat: 0,
+                        libre: 0
+                    }];
+
+                    for (let i = 0; i < historialVentas.length; i++) {
+                        for (let value of primer.historialventastipos) {
+                            if (value.Mes == (i + 1)) {
+                                historialVentas[i].sunat += parseFloat(value.Sunat);
+                                historialVentas[i].libre += parseFloat(value.Libre);
+                            }
+                        }
+                    }
+
+                    $("#tbListTable").empty();
+                    for (let value of historialVentas) {
+                        $("#tbListTable").append(`
+                        <tr>
+                            <td  class="text-center text-secondary">${value.mes}</td>
+                            <td class="text-right text-secondary">S/ ${tools.formatMoney(value.sunat)}</td>
+                            <td class="text-right text-secondary">S/ ${tools.formatMoney(value.libre)}</td>
+                            <td class="text-right text-secondary">S/ ${tools.formatMoney(value.sunat+value.libre)}</td>
+                        </tr>
+                        `);
+                    }
+
+                    let dataActual = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+                    for (let i = 0; i < dataActual.length; i++) {
+                        for (let value of primer.hventas) {
+                            if (value.Mes == (i + 1)) {
+                                dataActual[i] = tools.formatMoney(parseFloat(value.Monto));
+                            }
+                        }
+                    }
+
+                    let efectivo = 0;
+                    let credito = 0;
+                    let tarjeta = 0;
+                    let deposito = 0;
+                    let total = 0;
+
+                    for (let value of primer.tipoventa) {
+                        if (value.IdNotaCredito == 0 && value.Estado != 3) {
+                            if (value.Estado == 2 || value.Tipo == 2 && value.Estado == 1) {
+                                credito += parseFloat(value.Total);
+                            } else if (value.Estado == 1 || value.Estado == 4) {
+                                if (value.FormaName == "EFECTIVO") {
+                                    efectivo += parseFloat(value.Total);
+                                } else if (value.FormaName == "TARJETA") {
+                                    tarjeta += parseFloat(value.Total);
+                                } else if (value.FormaName == "MIXTO") {
+                                    efectivo += parseFloat(value.Efectivo);
+                                    tarjeta += parseFloat(value.Tarjeta);
+                                } else {
+                                    deposito += parseFloat(value.Total);
+                                }
+                            }
+                        }
+                    }
+
+                    total = efectivo + credito + tarjeta + deposito;
+
+                    $("#lblTotalEfectivo").html("S/ " + tools.formatMoney(efectivo));
+                    $("#lblTotalCredito").html("S/ " + tools.formatMoney(credito));
+                    $("#lblTotalTarjeta").html("S/ " + tools.formatMoney(tarjeta));
+                    $("#lblTotalDepostio").html("S/ " + tools.formatMoney(deposito));
+
+                    $("#lblTipoMes").html('<i class="fa fa-stop text-primary"></i> ' + tools.nombreMes(new Date().getMonth() + 1) + " - " + new Date().getFullYear());
+
+                    $("#lblPorcentajeEfectivo").html('<i class="fa fa-caret-up"></i> ' + Math.round(porcent(total, efectivo)) + " %");
+                    $("#lblPorcentajeCredito").html('<i class="fa fa-caret-left"></i> ' + Math.round(porcent(total, credito)) + " %");
+                    $("#lblPorcentajeTarjeta").html('<i class="fa fa-caret-up"></i> ' + Math.round(porcent(total, tarjeta)) + " %");
+                    $("#lblPorcentajeDeposito").html('<i class="fa fa-caret-up"></i> ' + Math.round(porcent(total, deposito)) + " %");
+
+
+                    $("#tbListMasVendidos").empty();
+                    let cv = 0;
+                    for (let value of primer.vecesVendidos) {
+                        cv++;
+                        $("#tbListMasVendidos").append(`
+                        <tr>
+                            <td>${cv}</td>
+                            <td>${value.Clave+"<br>"+value.NombreMarca}</td>
+                            <td>${value.Categoria+"<br>"+value.Marca}</td>
+                            <td>${tools.formatMoney(value.Cantidad)}</td>
+                        </tr>
+                        `);
+                    }
+
+                    $("#tbListCantidadVendidos").empty();
+                    let cc = 0;
+                    for (let value of primer.cantidadVendidos) {
+                        cc++;
+                        $("#tbListCantidadVendidos").append(`
+                        <tr>
+                            <td>${cc}</td>
+                            <td>${value.Clave+"<br>"+value.NombreMarca}</td>
+                            <td>${value.Categoria+"<br>"+value.Marca}</td>
+                            <td>${tools.formatMoney(value.Suma)+"<br>"+value.Medida}</td>
+                        </tr>
+                        `);
+                    }
+
+                    chartLineaVentas(dataActual);
+                    chartPieInventario([primer.innegativo, primer.inintermedio, primer.innecesario, primer.inexcecende]);
+                    chartDonutVentas([efectivo, credito, tarjeta, deposito]);
+                    $("#divOverlayIndex").addClass("d-none");
+                } catch (error) {
+                    console.log(error);
                 }
-                productoVendidos.append('<li class="item">' +
-                    '<div class="product-img">' +
-                    '    <img src="' + image + '" alt="Product Image" class="img-size-70">' +
-                    '</div>' +
-                    '<div class="product-info">' +
-                    '    <span class="product-title text-primary">' + value.NombreMarca + '' +
-                    '    </span>' +
-                    '    <span class="product-price badge badge-warning float-right">' + tools.formatMoney(value
-                        .Cantidad, 0) + ' ' + value.Medida + '</span>' +
-                    '</div>' +
-                    '</li>');
             }
 
-            // /*vista donde carga */
-            let dataActual = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-            for (let value of data.VentasMesActual) {
-                if (value.Mes == 1) {
-                    dataActual[0] = tools.formatMoney(value.Monto)
-                } else if (value.Mes == 2) {
-                    dataActual[1] = tools.formatMoney(value.Monto)
-                } else if (value.Mes == 3) {
-                    dataActual[2] = tools.formatMoney(value.Monto)
-                } else if (value.Mes == 4) {
-                    dataActual[3] = tools.formatMoney(value.Monto)
-                } else if (value.Mes == 5) {
-                    dataActual[4] = tools.formatMoney(value.Monto)
-                } else if (value.Mes == 6) {
-                    dataActual[5] = tools.formatMoney(value.Monto)
-                } else if (value.Mes == 7) {
-                    dataActual[6] = tools.formatMoney(value.Monto)
-                } else if (value.Mes == 8) {
-                    dataActual[7] = tools.formatMoney(value.Monto)
-                } else if (value.Mes == 9) {
-                    dataActual[8] = tools.formatMoney(value.Monto)
-                } else if (value.Mes == 10) {
-                    dataActual[9] = tools.formatMoney(value.Monto)
-                } else if (value.Mes == 11) {
-                    dataActual[10] = tools.formatMoney(value.Monto)
-                } else if (value.Mes == 12) {
-                    dataActual[11] = tools.formatMoney(value.Monto)
-                }
+            function porcent(total, valor) {
+                return (valor * 100) / total;
             }
 
-            $("#lblProductosNegativos").html(data.InventarioNegativo);
-            $("#lblProductosIntermedios").html(data.InventarioIntermedio);
-
-            diagramaVentas(dataActual);
-            // ProductosAgotados(result.agota);
-            // ProductosPorAgotarse(result.porag);
-        } catch (error) {
-
-        }
-
-    }
-
-    async function cargarProductosAgotados() {
-        try {
-            let result = await tools.promiseFetchGet("../app/controller/VentaController.php", {
-                type: "productosAgotados",
-                posicionPaginaAgotados: ((posicionPaginaAgotados - 1) * filasPorPaginaAgotados),
-                filasPorPaginaAgotados: filasPorPaginaAgotados
-            });
-
-            ProductosAgotados(result);
-        } catch (error) {
-
-        }
-    }
-
-    async function cargarProductosPorAgotarse() {
-        try {
-            productosPorAgotarse.empty();
-            let result = await tools.promiseFetchGet("../app/controller/VentaController.php", {
-                type: "productosPorAgotarse",
-                posicionPaginaPorAgotarse: ((posicionPaginaPorAgotarse - 1) * filasPorPaginaPorAgotarse),
-                filasPorPaginaPorAgotarse: filasPorPaginaPorAgotarse,
-            });
-
-            ProductosPorAgotarse(result);
-        } catch (error) {
-
-        }
-    }
-
-    function ProductosAgotados(result) {
-        let productosAgotados = result.productosAgotadosLista;
-        if (productosAgotados.length == 0) {
-
-            totalPaginacionAgotadas = 0;
-            $("#lblPaginaActualAgotados").html(0);
-            $("#lblPaginaSiguienteAgotados").html(0);
-        } else {
-            for (let data of productosAgotados) {
-                productoAgotado.append(
-                    '<div class="widget-small danger"><i class="icon fa fa-exclamation  fa-2x"></i>' +
-                    '<div class="info">' +
-                    '<h6 class="text-white">' + data.NombreProducto.substr(0, 35) + '</h6>' +
-                    ' <p><b>' + tools.formatMoney(data.Cantidad, 2) + '</b></p>' +
-                    ' </div>' +
-                    '</div>');
+            function chartLineaVentas(dataActual) {
+                const myChart = document.getElementById('myChart');
+                const chart = new Chart(myChart, {
+                    type: 'bar',
+                    data: {
+                        labels: ["ENE", "FEB", "MAR", "ABR", "MAY", "JUN", "JUL", "AGO", "SET", "OCT", "NOV", "DIC"],
+                        datasets: [{
+                            label: new Date().getFullYear(),
+                            data: dataActual,
+                            backgroundColor: [
+                                'rgb(40, 167, 69)',
+                            ],
+                            borderColor: [
+                                'rgb(40, 167, 69)',
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                                labels: {
+                                    color: "#020203"
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: 'VENTAS POR AÑO',
+                                color: "#020203"
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
             }
-            totalPaginacionAgotadas = parseInt(Math.ceil((parseFloat(result.productosAgotadosTotal) /
-                filasPorPaginaAgotados)));
-            $("#lblPaginaActualAgotados").html(posicionPaginaAgotados);
-            $("#lblPaginaSiguienteAgotados").html(totalPaginacionAgotadas);
-        }
-    }
 
-    function ProductosPorAgotarse(result) {
-        let prodcutosAgotados = result.productoPorAgotarseLista;
-        if (prodcutosAgotados.length == 0) {
-
-
-            totalPaginacionPorAgotarse = 0;
-            $("#lblPaginaActualPorAgotarse").html(0);
-            $("#lblPaginaSiguientePorAgotarse").html(0);
-        } else {
-            for (let data of prodcutosAgotados) {
-                productosPorAgotarse.append(
-                    '<div class="widget-small warning"><i class="icon fa fa-exclamation  fa-2x"></i>' +
-                    '<div class="info">' +
-                    '<h6>' + data.NombreProducto.substr(0, 35) + '</h6>' +
-                    ' <p><b>' + tools.formatMoney(data.Cantidad, 0) + '</b></p>' +
-                    ' </div>' +
-                    '</div>');
+            function chartPieInventario(dataInventario) {
+                const myPie = document.getElementById('myPie');
+                const pie = new Chart(myPie, {
+                    type: 'pie',
+                    data: {
+                        labels: ['Negativos', 'Intermedios', 'Necesarios', 'Excedentes', ],
+                        datasets: [{
+                            label: 'Estado del Inventario',
+                            data: dataInventario,
+                            backgroundColor: [
+                                'rgb(220, 53, 69)',
+                                'rgb(255, 206, 86)',
+                                'rgb(40, 167, 69)',
+                                'rgb(4, 94, 191)',
+                            ],
+                            borderColor: [
+                                'rgb(220, 53, 69)',
+                                'rgb(255, 206, 86)',
+                                'rgb(40, 167, 69)',
+                                'rgb(4, 94, 191)',
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                                labels: {
+                                    color: "#020203"
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: 'INVENTARIO',
+                                color: "#020203"
+                            }
+                        }
+                    },
+                });
             }
-            totalPaginacionPorAgotarse = parseInt(Math.ceil((parseFloat(result.productoPorAgotarseTotal) /
-                filasPorPaginaPorAgotarse)));
-            $("#lblPaginaActualPorAgotarse").html(posicionPaginaPorAgotarse);
-            $("#lblPaginaSiguientePorAgotarse").html(totalPaginacionPorAgotarse);
-        }
 
-    }
+            function chartDonutVentas(dataVentas) {
+                const myDonut = document.getElementById('myDonut');
+                const donut = new Chart(myDonut, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Efectivo', 'Crédito', 'Tarjeta', 'Deposito', ],
+                        datasets: [{
+                            label: 'TIPO DE VENTA',
+                            data: dataVentas,
+                            backgroundColor: [
+                                '#1a9e65',
+                                '#ea920d',
+                                'rgb(182,162,222)',
+                                'rgb(46, 199, 201)',
+                            ],
+                            borderColor: [
+                                '#1a9e65',
+                                '#ea920d',
+                                'rgb(182,162,222)',
+                                'rgb(46, 199, 201)',
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                                labels: {
+                                    color: "#020203"
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: 'TIPO DE VENTAS',
+                                color: "#020203"
+                            }
+                        }
+                    },
+                });
 
-    function diagramaVentas(dataActual, dataPasada) {
-        var data = {
-            labels: ["ENE", "FEB", "MAR", "ABR", "MAY", "JUN", "JUL", "AGO", "SET", "OCT", "NOV", "DIC"],
-            datasets: [{
-                    label: "Años Actual",
-                    fillColor: "#007bff",
-                    strokeColor: "#007bff",
-                    pointColor: "#007bff",
-                    pointStrokeColor: "#fff",
-                    pointHighlightFill: "#fff",
-                    pointHighlightStroke: "#007bff",
-                    data: dataActual
-                },
-                {
-                    label: "Año Pasado",
-                    fillColor: "#212529",
-                    strokeColor: "#212529",
-                    pointColor: "#212529",
-                    pointStrokeColor: "#fff",
-                    pointHighlightFill: "#fff",
-                    pointHighlightStroke: "#212529",
-                    data: dataPasada
-                }
-            ],
-            options: {
-                responsive: true,
-                maintainAspectRatio: false
             }
-        };
-        var pdata = [{
-                value: 300,
-                color: "#F7464A",
-                highlight: "#FF5A5E",
-                label: "Red"
-            },
-            {
-                value: 50,
-                color: "#46BFBD",
-                highlight: "#5AD3D1",
-                label: "Green"
-            },
-            {
-                value: 100,
-                color: "#FDB45C",
-                highlight: "#FFC870",
-                label: "Yellow"
-            }
-        ]
+        </script>
+    </body>
 
-        var ctxl = $("#lineChartDemo").get(0).getContext("2d");
-        var lineChart = new Chart(ctxl).Line(data);
-    }
-    </script>
-</body>
-
-</html>
+    </html>
 
 <?php
 }

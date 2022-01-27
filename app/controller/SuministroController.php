@@ -57,9 +57,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     } else if ($_GET["type"] == "getsuministroformovimiento") {
         print json_encode(SuministrosADO::ObtenerSuministroForMovimiento($_GET["idSuministro"]));
         exit();
-    } else if ($_GET["type"] == "listallsuministro") {
-        print json_encode(SuministrosADO::ListarTodosSuministros());
-        exit();
     } else if ($_GET["type"] == "listallnegativo") {
         print json_encode(SuministrosADO::ListarSuministroNegativos());
         exit();

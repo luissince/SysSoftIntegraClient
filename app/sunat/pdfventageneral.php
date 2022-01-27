@@ -218,8 +218,8 @@ foreach ($venta as $value) {
     }
 
     if ($value["IdNotaCredito"] == 0 && $value["Estado"] != 3) {
-        if ($value["Estado"] == 2 &&  $value["Estado"] == 1) {
-            //                        efectivo += vt.getImporteNeto();
+        if ($value["Tipo"] == 2 &&  $value["Estado"] == 1) {
+            $efectivo += $value["Total"];
         } else if ($value["Estado"] == 1 ||  $value["Estado"] == 4) {
             if ($value["FormaName"] == "EFECTIVO") {
                 $efectivo += $value["Total"];

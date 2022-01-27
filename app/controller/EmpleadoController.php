@@ -43,6 +43,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         exit();
     } else if ($_GET["type"] == "GetListEmpleados") {
         echo json_encode(EmpleadoADO::GetListEmpleados());
+        exit();
+    } else if ($_GET["type"] == "fillempleado") {
+        echo json_encode(EmpleadoADO::FillEmpleados($_GET["search"]));
     }
 } else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }

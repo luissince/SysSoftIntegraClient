@@ -752,13 +752,13 @@ ul {
   padding: 15px 0px;
   border-radius: 8px;
   background: #0c0071;
-  background: -moz-linear-gradient(left, #0c0071 0%, #9019d3 100%) !important;
+  background: -moz-linear-gradient(left, #212e57 0%, #1435a1 100%) !important;
   background: -webkit-linear-gradient(
     left,
-    #0c0071 0%,
-    #9019d3 100%
+    #212e57 0%,
+    #1435a1 100%
   ) !important;
-  background: linear-gradient(to left, #0c0071 0%, #9019d3 100%) !important;
+  background: linear-gradient(to left, #212e57 0%, #1435a1 100%) !important;
   box-shadow: 0 1px 1px 0 rgb(0 0 0 / 10%);
   border: 1px solid #dcdcdced;
 }

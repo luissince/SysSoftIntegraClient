@@ -35,7 +35,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             <div class="row">
                                 <div class="col-md 12 col-sm-12 col-xs-12">
                                     <div class="table-responsive">
-                                        <table class="table">
+                                        <table class="table border-0">
                                             <thead>
                                                 <tr>
                                                     <th class="text-left border-0 p-1">Tipo de Ajustes:</th>
@@ -63,16 +63,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-md 12 col-sm-12 col-xs-12">
-                                    <div class="form-group">
-                                        <button class="btn btn-secondary" id="btnCancelarMovimiento">
-                                            <img src="./images/unable.svg" width="18" />
-                                            Anular Ajuste
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
+
                             <div class="row">
                                 <div class="col-md 12 col-sm-12 col-xs-12">
                                     <div class="table-responsive">
@@ -106,6 +97,15 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
             <div class="tile mb-4">
 
+                <div class="overlay p-5" id="divOverlayAjuste">
+                    <div class="m-loader mr-4">
+                        <svg class="m-circular" viewBox="25 25 50 50">
+                            <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="4" stroke-miterlimit="10"></circle>
+                        </svg>
+                    </div>
+                    <h4 class="l-text text-center p-10 text-white" id="lblTextOverlayAjuste">Cargando información...</h4>
+                </div>
+
                 <div class="row">
                     <div class="col-md 12 col-sm-12 col-xs-12">
                         <div class="form-group">
@@ -113,7 +113,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 <i class="fa fa-plus"></i>
                                 Realizar Ajuste
                             </a>
-                            <button class="btn btn-success" id="btnReload">
+                            <button class="btn btn-secondary" id="btnReload">
                                 <i class="fa fa-refresh"></i>
                                 Recargar
                             </button>
@@ -158,9 +158,9 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                         <th scope="col" class="th-porcent-10">Fecha y Hora</th>
                                         <th scope="col" class="th-porcent-25">Observación</th>
                                         <th scope="col" class="th-porcent-20">Información</th>
-                                        <th scope="col" class="th-porcent-15">Estado</th>
-                                        <th scope="col" class="th-porcent-5">Detalle</th>
-                                        <th scope="col" class="th-porcent-5">Excel</th>
+                                        <th scope="col" class="th-porcent-10">Estado</th>
+                                        <th scope="col" class="th-porcent-7">Detalle</th>
+                                        <th scope="col" class="th-porcent-7">Excel</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tbList">
@@ -311,14 +311,17 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     }
                     loadInitTable();
 
-                } catch (error) {}
+                    $("#divOverlayAjuste").addClass('d-none');
+                } catch (error) {
+                    $("#lblTextOverlayAjuste").html(tools.messageError(error));
+                }
             }
 
             function loadInitTable() {
                 if (!state) {
                     paginacion = 1;
-                    fillInventarioTable(0, 0, "", "");
-                    opcion = 0;
+                    fillInventarioTable(1, 0, txtFechaInicio.val(), txtFechaTermino.val());
+                    opcion = 1;
                 }
             }
 
@@ -333,30 +336,15 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         "posicionPagina": ((paginacion - 1) * filasPorPagina),
                         "filasPorPagina": filasPorPagina
                     }, function() {
-                        tbody.empty();
-                        tbody.append('<tr><td class="text-center" colspan="8"><img src="./images/loading.gif" id="imgLoad" width="34" height="34" /> <p>Cargando información...</p></td></tr>');
+                        tools.loadTable(tbody, 8);
                         state = true;
                     });
 
                     let object = result;
                     let movimientos = object.data;
                     if (movimientos.length == 0) {
-                        tbody.empty();
-                        tbody.append('<tr><td class="text-center" colspan="8"><p>No hay datos para mostrar</p></td></tr>');
-                        ulPagination.html(`
-                                <button class="btn btn-outline-secondary">
-                                    <i class="fa fa-angle-double-left"></i>
-                                </button>
-                                <button class="btn btn-outline-secondary">
-                                    <i class="fa fa-angle-left"></i>
-                                </button>
-                                <span class="btn btn-outline-secondary disabled" id="lblPaginacion">0 - 0</span>
-                                <button class="btn btn-outline-secondary">
-                                    <i class="fa fa-angle-right"></i>
-                                </button>
-                                <button class="btn btn-outline-secondary">
-                                    <i class="fa fa-angle-double-right"></i>
-                                </button>`);
+                        tools.loadTableMessage(tbody, 'No hay datos para mostrar', 8, true);
+                        tools.paginationEmpty(ulPagination);
                         state = false;
                     } else {
                         tbody.empty();
@@ -364,13 +352,13 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             let estadoStyle = moviminento.Estado === "CANCELADO" ? "text-danger" : moviminento.Estado === "EN PROCESO" ? "text-warning" : "text-success";
                             tbody.append('<tr>' +
                                 '<td>' + moviminento.count + '</td>' +
-                                '<td>' + (moviminento.TipoAjuste == 0 ? "DECREMENTO" : "INCREMENTO") + '<br>' + moviminento.TipoMovimiento + '</td>' +
+                                '<td>' + (moviminento.TipoAjuste == 0 ? 'DECREMENTO <i class="fa fa-arrow-down text-danger"></i>' : 'INCREMENTO <i class="fa fa-arrow-up text-success"></i>') + '<br>' + moviminento.TipoMovimiento + '</td>' +
                                 '<td>' + tools.getDateForma(moviminento.Fecha) + "</br>" + tools.getTimeForma24(moviminento.Hora) + '</td>' +
                                 '<td>' + moviminento.Observacion + '</td>' +
                                 '<td>' + moviminento.Informacion + '</td>' +
                                 '<td>' + '<div class="' + estadoStyle + '">' + moviminento.Estado + '</div>' + '</td>' +
-                                '<td><button class="btn btn-warning btn-sm" onclick="loadDetalleMovimiento(\'' + moviminento.IdMovimientoInventario + '\')"><img src="./images/search.png" width="18" /><span> Ver</span></button></td>' +
-                                '<td><button class="btn btn-success btn-sm" onclick="generarExcel(\'' + moviminento.IdMovimientoInventario + '\')"><i class="fa fa-file-excel-o"></i><span> Excel</span></button></td>' +
+                                '<td class="text-center"><button class="btn btn-warning btn-sm" onclick="loadDetalleMovimiento(\'' + moviminento.IdMovimientoInventario + '\')"><i class="fa fa-search fa-lg"></i><span></span></button></td>' +
+                                '<td class="text-center"><button class="btn btn-success btn-sm" onclick="generarExcel(\'' + moviminento.IdMovimientoInventario + '\')"><i class="fa fa-file-excel-o fa-lg"></i><span></span></button></td>' +
                                 '</tr>');
                         }
                         totalPaginacion = parseInt(Math.ceil((parseFloat(object.total) / filasPorPagina)));
@@ -404,23 +392,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     }
 
                 } catch (error) {
-                    console.log(error)
-                    tbody.empty();
-                    tbody.append('<tr><td class="text-center" colspan="8"><p>Error en: ' + error.responseText + '</p></td></tr>');
-                    ulPagination.html(`
-                                <button class="btn btn-outline-secondary">
-                                    <i class="fa fa-angle-double-left"></i>
-                                </button>
-                                <button class="btn btn-outline-secondary">
-                                    <i class="fa fa-angle-left"></i>
-                                </button>
-                                <span class="btn btn-outline-secondary disabled" id="lblPaginacion">0 - 0</span>
-                                <button class="btn btn-outline-secondary">
-                                    <i class="fa fa-angle-right"></i>
-                                </button>
-                                <button class="btn btn-outline-secondary">
-                                    <i class="fa fa-angle-double-right"></i>
-                                </button>`);
+                    tools.loadTableMessage(tbody, tools.messageError(error), 8, true);
+                    tools.paginationEmpty(ulPagination);
                     state = false;
                 }
             }
@@ -432,9 +405,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         "type": "listforidmovimiento",
                         "idMovimiento": idMovimiento
                     }, function() {
-                        tbMovimientos.empty();
-                        tbMovimientos.append('<tr><td class="td-center" colspan="3">Cargando información...</td></tr>');
-
+                        tools.loadTable(tbMovimientos, 3);
                     });
                     tbMovimientos.empty();
 
@@ -449,55 +420,53 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     lblEstadoMovimiento.html(movimiento.Estado);
                     lblCodigoVerificacion.html(movimiento.CodigoVerificacion);
 
-                    $("#btnCancelarMovimiento").unbind();
-
-                    $("#btnCancelarMovimiento").bind("click", function() {
-                        cancelarMovimiento(idMovimiento);
-                    });
-
-                    $("#btnCancelarMovimiento").bind("keydown", function(event) {
-                        if (event.keyCode === 13) {
-                            cancelarMovimiento(idMovimiento);
-                            event.preventDefault();
-                        }
-                    });
-
                     for (let md of movimientoDetalle) {
-                        tbMovimientos.append('<tr>' +
-                            '<td class="td-center">' + md.Id + '</td>' +
-                            '<td class="td-left">' + md.Clave + '</br>' + md.NombreMarca + '</td>' +
-                            '<td class="td-right">' + tools.formatMoney(md.Cantidad) + '</td>' +
-                            +'</tr>');
+                        tbMovimientos.append(`<tr>
+                            <td class="td-center">${md.Id} </td>
+                            <td class="td-left">${ md.Clave  +'</br>' + md.NombreMarca }</td>
+                            <td class="td-right">${ tools.formatMoney(md.Cantidad) }</td>
+                            </tr>`);
                     }
 
                 } catch (error) {
-                    tbMovimientos.empty();
-                    tbMovimientos.append('<tr><td class="td-center" colspan="3">Error en cargar la información.</td></tr>');
+                    tools.loadTableMessage(tbMovimientos, tools.messageError(error), 3, true);
                 }
             }
 
-            function cancelarMovimiento(idMovimiento) {
-                tools.ModalDialog("Ajuste", "¿Está seguro de anular el Ajuste?", async function(value) {
-                    if (value == true) {
-                        try {
-                            let result = await tools.promiseFetchPost("../app/controller/MovimientoController.php", {
-                                "type": "cancelarmovimiento",
-                                "idMovimiento": idMovimiento
-                            }, function() {
-                                $("#id-modal-productos").modal("hide");
-                                tools.ModalAlertInfo("Ajuste", "Se está procesando la información.");
-                            });
-
-                            tools.ModalAlertSuccess("Ajuste", result);
-                        } catch (error) {
-                            if (error.responseText == "" || error.responseText == null) {
-                                tools.ModalAlertError("Ajuste", "Se produjo un error interno, intente nuevamente por favor.");
-                            } else {
-                                tools.ModalAlertWarning("Ajuste", error.responseJSON);
-                            }
-                        }
+            function onEventPaginacionInicio(value) {
+                if (!state) {
+                    if (value !== paginacion) {
+                        paginacion = value;
+                        onEventPaginacion();
                     }
-                });
+                }
+            }
+
+            function onEventPaginacionFinal(value) {
+                if (!state) {
+                    if (value !== paginacion) {
+                        paginacion = value;
+                        onEventPaginacion();
+                    }
+                }
+            }
+
+            function onEventAnteriorPaginacion() {
+                if (!state) {
+                    if (paginacion > 1) {
+                        paginacion--;
+                        onEventPaginacion();
+                    }
+                }
+            }
+
+            function onEventSiguientePaginacion() {
+                if (!state) {
+                    if (paginacion < totalPaginacion) {
+                        paginacion++;
+                        onEventPaginacion();
+                    }
+                }
             }
 
             function generarExcel(idMovimiento) {

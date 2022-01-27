@@ -25,6 +25,7 @@ class EmpresaADO
             Celular,
             Domicilio,
             Email,
+            Telefono,
             NombreComercial
             FROM EmpresaTB");
             $cmdEmpresa->execute();
@@ -90,6 +91,47 @@ class EmpresaADO
             $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
             header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
 
+            return $ex->getMessage();
+        }
+    }
+
+    public static function ReporteEmpresa()
+    {
+        try {
+            $cmdEmpresa = Database::getInstance()->getDb()->prepare("SELECT TOP 1 
+            d.IdAuxiliar,
+            e.NumeroDocumento,
+            e.RazonSocial,
+            e.NombreComercial,
+            e.Domicilio,
+            e.Telefono,
+            e.Celular,
+            e.Email,
+            e.Terminos,
+            e.Condiciones,
+            e.PaginaWeb,
+            e.Image
+            FROM EmpresaTB AS e 
+            INNER JOIN DetalleTB AS d ON e.TipoDocumento = d.IdDetalle AND d.IdMantenimiento = '0003'");
+            $cmdEmpresa->execute();
+            $rowEmpresa = $cmdEmpresa->fetch();
+            $empresa  = (object)array(
+                "IdAuxiliar" => $rowEmpresa['IdAuxiliar'],
+                "NumeroDocumento" => $rowEmpresa['NumeroDocumento'],
+                "RazonSocial" => $rowEmpresa['RazonSocial'],
+                "NombreComercial" => $rowEmpresa['NombreComercial'],
+                "Domicilio" => $rowEmpresa['Domicilio'],
+                "Telefono" => $rowEmpresa['Telefono'],
+                "PaginaWeb" => $rowEmpresa['PaginaWeb'],
+                "Email" => $rowEmpresa['Email'],
+                "Terminos" => $rowEmpresa['Terminos'],
+                "Celular" => $rowEmpresa['Celular'],
+                "Condiciones" => $rowEmpresa['Condiciones'],
+                "Image" => $rowEmpresa['Image'] == null ? "" : base64_encode($rowEmpresa['Image'])
+            );
+
+            return  $empresa;
+        } catch (Exception $ex) {
             return $ex->getMessage();
         }
     }

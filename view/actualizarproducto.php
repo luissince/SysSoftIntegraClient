@@ -415,7 +415,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                     <div class="col-md-6 col-sm-12 col-xs-12">
                                         <label>Estado </label>
                                         <div class="row">
-                                            <div class="col-md-3 col-sm-12 col-xs-12">
+                                            <div class="col-md-6 col-sm-12 col-xs-12">
                                                 <div class="form-group">
                                                     <input type="radio" id="rbActivo" name="tbEstado" checked />
                                                     <label for="rbActivo">

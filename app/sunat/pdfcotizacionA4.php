@@ -5,12 +5,13 @@ require './../src/autoload.php';
 
 use SysSoftIntegra\Model\CotizacionADO;
 use SysSoftIntegra\Src\NumberLleters;
+use SysSoftIntegra\Src\Tools;
 use Mpdf\Mpdf;
 
 $result = CotizacionADO::ReporteCotizacionDetalle($_GET["idCotizacion"]);
 
 if (!is_array($result)) {
-    echo $result;
+    Tools::printErrorJson($result);
     return;
 }
 
@@ -19,14 +20,15 @@ $empresa = $result["empresa"];
 $banco = $result["banco"];
 $detalle = $result["detalle"];
 
-// header('Content-Type: application/json; charset=UTF-8');
-// print json_encode($result);
-// return;
+$codigoFormat = Tools::formatNumber($cotizacion->IdCotizacion);
 
-$length = 6;
-$codigoFormat = strlen($cotizacion->IdCotizacion) > $length ? $cotizacion->IdCotizacion : substr(str_repeat(0, $length) . $cotizacion->IdCotizacion, -$length);
+$importeBrutoTotal = 0;
+$descuentoTotal = 0;
+$subImporteNetoTotal = 0;
+$impuestoTotal = 0;
+$importeNetoTotal = 0;
 
-$photo = $empresa->Image == "" ?  "<img src=\"./../../view/images/logo.png\"/>" : "<img width=\"120\" src=\"data:image/(png|jpg|gif);base64, " . $empresa->Image . "\"/>";
+$photo = Tools::showImageReport($empresa->Image);
 $gcl = new NumberLleters();
 
 $html = '<html>
@@ -251,7 +253,7 @@ $html = '<html>
 
     <div class="border-bottom mb-2"></div>
     
-    <table border="0" cellspacing="0" cellpadding="1" class="mb-2">
+    <table width="50%" border="0" cellspacing="0" cellpadding="1" class="mb-2">
         <thead>
             <tr>
                 <th class="th-text-head">D.N.I./R.U.C.</th>    
@@ -267,7 +269,7 @@ $html = '<html>
             </tr>
             <tr>
                 <th class="th-text-head">MONEDA</th>            
-                <th class="th-text-head font-normal">: ' . $cotizacion->Nombre . ' - ' . $cotizacion->Abreviado . '</th>  
+                <th class="th-text-head font-normal">: ' . $cotizacion->Moneda . ' - ' . $cotizacion->Abreviado . '</th>  
             </tr>         
         </thead>
     </table>
@@ -288,39 +290,52 @@ $count = 0;
 foreach ($detalle as $value) {
     $count++;
     $html .= '<tr>
-    <td class="background-primary plr-2 ptb-1 font-size-9 text-center">' . $count . '</td>
-    <td class="background-seconday plr-2 ptb-1 font-size-9">' . $value["NombreMarca"] . '</td>
-    <td class="background-seconday plr-2 ptb-1 font-size-9">' . $value["Cantidad"] . '</td>
-    <td class="background-seconday plr-2 ptb-1 font-size-9">' . number_format(round($value["Precio"], 2, PHP_ROUND_HALF_UP), 2, '.', '') . '</td>
-    <td class="background-seconday plr-2 ptb-1 font-size-9">' . $value["UnidadCompraNombre"] . '</td>
-    <td class="background-primary plr-2 ptb-1 font-size-9 text-right">' . number_format(round($value["Precio"] * $value["Cantidad"], 2, PHP_ROUND_HALF_UP), 2, '.', '') . '</td>
+    <td class="background-primary plr-2 ptb-1 font-size-8 text-center">' . $count . '</td>
+    <td class="background-seconday plr-2 ptb-1 font-size-8">' . $value["Clave"] . '<br>' . $value["NombreMarca"] . '</td>
+    <td class="background-seconday plr-2 ptb-1 font-size-8">' . Tools::roundingValue($value["Cantidad"]) . '</td>
+    <td class="background-seconday plr-2 ptb-1 font-size-8">' . Tools::roundingValue($value["Precio"]) . '</td>
+    <td class="background-seconday plr-2 ptb-1 font-size-8">' . $value["UnidadCompraName"] . '</td>
+    <td class="background-primary plr-2 ptb-1 font-size-8 text-right">' . Tools::roundingValue($value["Precio"] * $value["Cantidad"]) . '</td>
     </tr>';
+
+    $importeBruto = $value["Precio"] * $value["Cantidad"];
+    $descuento = $value["Descuento"];
+    $subImporteBruto = $importeBruto - $descuento;
+    $subImporteNeto = Tools::calculateTaxBruto($value["Valor"], $subImporteBruto);
+    $impuesto = Tools::calculateTax($value["Valor"], $subImporteNeto);
+    $importeNeto = $subImporteNeto + $impuesto;
+
+    $importeBrutoTotal += $importeBruto;
+    $descuentoTotal += $descuento;
+    $subImporteNetoTotal += $subImporteNeto;
+    $impuestoTotal += $impuesto;
+    $importeNetoTotal += $importeNeto;
 }
 
 $html .= '</tbody>
     </table>
 
-    <table width="" style="margin: 0 0 0 auto;" border="0" cellspacing="1">
+    <table style="margin: 0 0 0 auto;" border="0" cellspacing="1">
         <tbody>
             <tr>
                 <th class="th-total-title font-size-9">IMPORTE BRUTO:</th>
-                <th class="th-total-valor font-size-9">' . $cotizacion->Simbolo . ' ' . number_format(round($cotizacion->SubTotal, 2, PHP_ROUND_HALF_UP), 2, '.', '') . ' </th>
+                <th class="th-total-valor font-size-9">' . $cotizacion->Simbolo . ' ' . Tools::roundingValue($importeBrutoTotal)  . ' </th>
             </tr>
             <tr>
                 <th class="th-total-title font-size-9">DESCUENTO:</th>
-                <th class="th-total-valor font-size-9"> ' . $cotizacion->Simbolo . ' ' . number_format(round($cotizacion->Descuento, 2, PHP_ROUND_HALF_UP), 2, '.', '') . '</th>
+                <th class="th-total-valor font-size-9"> ' . $cotizacion->Simbolo . ' ' . Tools::roundingValue($descuentoTotal) . '</th>
             </tr>
             <tr>
                 <th class="th-total-title font-size-9">SUB IMPORTE:</th>
-                <th class="th-total-valor font-size-9">' . $cotizacion->Simbolo . ' ' . number_format(round($cotizacion->SubImporte, 2, PHP_ROUND_HALF_UP), 2, '.', '') . ' </th>
+                <th class="th-total-valor font-size-9">' . $cotizacion->Simbolo . ' ' . Tools::roundingValue($subImporteNetoTotal) . ' </th>
             </tr>
             <tr>
                 <th class="th-total-title font-size-9">IGV(18%):</th>
-                <th class="th-total-valor font-size-9"> ' . $cotizacion->Simbolo . ' ' . number_format(round($cotizacion->Impuesto, 2, PHP_ROUND_HALF_UP), 2, '.', '') . '</th>
+                <th class="th-total-valor font-size-9"> ' . $cotizacion->Simbolo . ' ' . Tools::roundingValue($impuestoTotal) . '</th>
             </tr>
             <tr>
                 <th class="th-total-title font-size-9">IMPORTE NETO :</th>
-                <th class="th-total-valor font-size-9">' . $cotizacion->Simbolo . ' ' . number_format(round($cotizacion->Total, 2, PHP_ROUND_HALF_UP), 2, '.', '') . '</th>
+                <th class="th-total-valor font-size-9">' . $cotizacion->Simbolo . ' ' . Tools::roundingValue($importeNetoTotal) . '</th>
             </tr>
         <tbody>
     </table> 
@@ -328,7 +343,7 @@ $html .= '</tbody>
     <div class="border-bottom"></div>
 
     <p class="mb-2 font-size-9">
-    <b>SON: ' . $gcl->getResult(round($cotizacion->Total, 2, PHP_ROUND_HALF_UP), $cotizacion->Nombre) . '</b>
+    <b>SON: ' . $gcl->getResult(round($importeNetoTotal, 2, PHP_ROUND_HALF_UP), $cotizacion->Nombre) . '</b>
     <p>
 
     <div style="border-left: 2mm solid #b3b1b1; width:100%;">

@@ -147,20 +147,21 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             <table class="table table-striped">
                                 <thead class="table-header-background">
                                     <tr>
-                                        <th scope="col" class="th-porcent-5">N°</th>
-                                        <th scope="col" class="th-porcent-5">Pdf</th>
-                                        <th scope="col" class="th-porcent-15">Vendedor</th>
-                                        <th scope="col" class="th-porcent-10">Cotización</th>
-                                        <th scope="col" class="th-porcent-15">Fecha</th>
-                                        <th scope="col" class="th-porcent-25">Cliente</th>
-                                        <th scope="col" class="th-porcent-10">Total</th>
-                                        <th scope="col" class="th-porcent-5">Detalle</th>
-                                        <th scope="col" class="th-porcent-5">Eliminar</th>
+                                        <th scope="col" width="5%">N°</th>
+                                        <th scope="col" width="5%">Pdf</th>
+                                        <th scope="col" width="15%">Fecha Registro</th>
+                                        <th scope="col" width="20%">Cliente</th>
+                                        <th scope="col" width="10%">Cotización</th>
+                                        <th scope="col" width="15%">Observación</th>
+                                        <th scope="col" width="10%">Uso</th>
+                                        <th scope="col" width="10%">Total</th>
+                                        <th scope="col" width="5%">Detalle</th>
+                                        <th scope="col" width="5%">Eliminar</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tbList">
                                     <tr>
-                                        <td class="text-center" colspan="10">No hay datos para mostrar</td>
+                                        <td class="text-center" colspan="11">No hay datos para mostrar</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -324,18 +325,16 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         },
                         function() {
                             tbody.empty();
-                            tbody.append('<tr><td class="text-center" colspan="10"><img src="./images/loading.gif" id="imgLoad" width="34" height="34" /> <p>Cargando información...</p></td></tr>');
+                            tools.loadTable(tbody, 11);
                             state = true;
                             totalPaginacion = 0;
                             arrayVentas = [];
                         }
                     );
 
-                    let object = result;
-
                     tbody.empty();
-                    if (object.data.length == 0) {
-                        tbody.append('<tr><td class="text-center" colspan="10"><p>No hay datos para mostrar.</p></td></tr>');
+                    if (result.data.length == 0) {
+                        tools.loadTableMessage(tbody, "No hay datos para mostrar.", 11);
                         ulPagination.html(`
                         <button class="btn btn-outline-secondary">
                             <i class="fa fa-angle-double-left"></i>
@@ -352,23 +351,23 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         </button>`);
                         state = false;
                     } else {
-
-                        for (let cotizacion of object.data) {
+                        for (let cotizacion of result.data) {
                             let pdf = '<button class="btn btn-secondary btn-sm"  onclick="openPdf(\'' + cotizacion.IdCotizacion + '\')"><img src="./images/pdf.svg" width="26" /> </button>';
                             tbody.append(`<tr>
                                 <td class="text-center"> ${ cotizacion.Id }</td >
                                 <td class="text-center"> ${ pdf }</td >
-                                <td class="text-left"> ${ cotizacion.Apellidos + "<br>" + cotizacion.Nombres }</td>
-                                <td class="text-left"> ${ "COTIZACIÓN <br>N° " + cotizacion.IdCotizacion }</td>
-                                <td class="text-left"> ${ tools.getDateForma(cotizacion.FechaCotizacion)+'<br>'+tools.getTimeForma24(cotizacion.HoraCotizacion) }</td>
+                                <td class="text-center"> ${ tools.getDateForma(cotizacion.FechaCotizacion)+'<br>'+tools.getTimeForma24(cotizacion.HoraCotizacion) }</td>
                                 <td class="text-left"> ${ cotizacion.NumeroDocumento+'<br>'+cotizacion.Informacion }</td>
-                                <td class="text-right">${ cotizacion.SimboloMoneda + " " + tools.formatMoney(cotizacion.Total) }</td>
+                                <td class="text-left"> ${ "COTIZACIÓN <br>N° - " + tools.formatNumber(cotizacion.IdCotizacion) }</td>    
+                                <td class="text-left">${cotizacion.Observaciones}</td>                                                    
+                                <td class="text-left">${cotizacion.Estado ==1? "SIN USO":cotizacion.Comprobante+"<br>"+cotizacion.Serie+"-"+cotizacion.Numeracion}</td>
+                                <td class="text-right">${ cotizacion.SimboloMoneda + " " + tools.formatMoney(cotizacion.Total) }</td>                                
                                 <td class="text-center"><button type="button" class="btn btn-info" onclick="modalDetalle('${cotizacion.IdCotizacion}')"><i class="fa fa-eye"></i></button></td >
                                 <td class="text-center"><button type="button" class="btn btn-danger" onclick="quitarCotizacion('${cotizacion.IdCotizacion}')"><i class="fa fa-trash"></i></button></td >
                                 </tr >`);
                         }
 
-                        totalPaginacion = parseInt(Math.ceil((parseFloat(object.total) / filasPorPagina)));
+                        totalPaginacion = parseInt(Math.ceil((parseFloat(result.total) / filasPorPagina)));
 
                         let i = 1;
                         let range = [];
@@ -400,6 +399,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     }
                 } catch (error) {
                     tbody.empty();
+                    tools.loadTableMessage(tbody, tools.messageError(error), 11);
                     ulPagination.html(`
                             <button class="btn btn-outline-secondary">
                                 <i class="fa fa-angle-double-left"></i>

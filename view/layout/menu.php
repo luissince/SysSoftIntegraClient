@@ -99,7 +99,7 @@
                                         </a>
                                 </li>
                                 <li>
-                                        <a class="app-menu__item" id="tab-tablabasica" href="tablabasica.php">
+                                        <a class="app-menu__item" id="tab-mantenimiento" href="mantenimiento.php">
                                                 <i class="app-menu__icon fa fa-circle-o"></i>
                                                 <span class="app-menu__label">Tabla básica</span>
                                         </a>
@@ -169,12 +169,14 @@
                 "inventario",
                 "kardexproducto",
                 "ajustes",
+                "ajusteproceso",
 
                 "registrarproducto",
                 "actualizarproducto",
 
                 "reporte",
-                "empresa"
+                "empresa",
+                "mantenimiento"
         ];
 
         tabs.forEach(e => {
@@ -226,7 +228,7 @@
                         } else if (id == "tab-proveedores") {
                                 document.getElementById("tab-proveedores").setAttribute("class", "app-menu__item active");
                         }
-                } else if (id == "tab-productos" || id == "tab-inventario" || id == "tab-kardexproducto" || id == "tab-ajustes" || id == "tab-registrarproducto" || id == "tab-actualizarproducto") {
+                } else if (id == "tab-productos" || id == "tab-inventario" || id == "tab-kardexproducto" || id == "tab-ajustes" || id == "tab-registrarproducto" || id == "tab-ajusteproceso" || id == "tab-actualizarproducto") {
                         document.getElementById("treeview-inventario").setAttribute("class", "treeview is-expanded");
                         if (id == "tab-productos") {
                                 document.getElementById("tab-productos").setAttribute("class", "app-menu__item active");
@@ -234,7 +236,7 @@
                                 document.getElementById("tab-inventario").setAttribute("class", "app-menu__item active");
                         } else if (id == "tab-kardexproducto") {
                                 document.getElementById("tab-kardexproducto").setAttribute("class", "app-menu__item active");
-                        } else if (id == "tab-ajustes") {
+                        } else if (id == "tab-ajustes" || id == "tab-ajusteproceso") {
                                 document.getElementById("tab-ajustes").setAttribute("class", "app-menu__item active");
                         } else if (id == "tab-registrarproducto") {
                                 document.getElementById("tab-productos").setAttribute("class", "app-menu__item active");
@@ -245,10 +247,12 @@
                         if (id == "tab-reporte") {
                                 document.getElementById("tab-reporte").setAttribute("class", "app-menu__item active");
                         }
-                } else if (id == "tab-empresa") {
+                } else if (id == "tab-empresa" || id == "tab-mantenimiento") {
                         document.getElementById("treeview-configuracion").setAttribute("class", "treeview is-expanded");
                         if (id == "tab-empresa") {
                                 document.getElementById("tab-empresa").setAttribute("class", "app-menu__item active");
+                        } else if (id == "tab-mantenimiento") {
+                                document.getElementById("tab-mantenimiento").setAttribute("class", "app-menu__item active");
                         }
                 } else {
                         document.getElementById(id).setAttribute("class", "app-menu__item active");

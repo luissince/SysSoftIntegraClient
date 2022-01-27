@@ -112,6 +112,22 @@ function Tools() {
         return today.getFullYear();
     }
 
+    this.getFirstDayOfMoth = function () {
+        let date = new Date();
+        let today = new Date(date.getFullYear(), date.getMonth(), 1);
+        let formatted_date = today.getFullYear() + "-" + ((today.getMonth() + 1) > 9 ? (today.getMonth() + 1) : '0' + (
+            today.getMonth() + 1)) + "-" + (today.getDate() > 9 ? today.getDate() : '0' + today.getDate());
+        return formatted_date;
+    }
+
+    this.getLastDayOfMonth = function () {
+        let date = new Date();
+        let today = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+        let formatted_date = today.getFullYear() + "-" + ((today.getMonth() + 1) > 9 ? (today.getMonth() + 1) : '0' + (
+            today.getMonth() + 1)) + "-" + (today.getDate() > 9 ? today.getDate() : '0' + today.getDate());
+        return formatted_date;
+    }
+
     this.diasEnUnMes = function (mes, year) {
         mes = mes.toUpperCase();
         var meses = ["ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO", "JULIO", "AGOSTO", "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "DICIEMBRE"];
@@ -153,11 +169,35 @@ function Tools() {
         tbody.append(`<tr><td class="text-center" colspan="${colspan}"><img src="./images/loading.gif" id="imgLoad" width="34" height="34" /> <p>Cargando información...</p></td></tr>`);
     }
 
-    this.loadTableMessage = function (tbody, message, colspan) {
+    this.loadTableMessage = function (tbody, message, colspan, clear = false) {
+        if (clear) {
+            tbody.empty();
+        }
         tbody.append(`<tr><td class="text-center" colspan="${colspan}"><p>${message}</p></td></tr>`);
     }
 
+    this.paginationEmpty = function (component) {
+        component.html(`
+        <button class="btn btn-outline-secondary">
+            <i class="fa fa-angle-double-left"></i>
+        </button>
+        <button class="btn btn-outline-secondary">
+            <i class="fa fa-angle-left"></i>
+        </button>
+        <span class="btn btn-outline-secondary disabled" id="lblPaginacion">0 - 0</span>
+        <button class="btn btn-outline-secondary">
+            <i class="fa fa-angle-right"></i>
+        </button>
+        <button class="btn btn-outline-secondary">
+            <i class="fa fa-angle-double-right"></i>
+        </button>
+    `);
+    }
+
     this.messageError = function (message) {
+        if (message.status == 404) {
+            return "No se puedo encontrar la ruta solicitada.";
+        }
         if (message.responseText == "" || message.responseText == null || message.responseText == "undefined" || message.responseText == undefined) {
             return "Se produjo un error interno, intente nuevamente por favor.";
         } else {
@@ -169,19 +209,18 @@ function Tools() {
         }
     }
 
-    this.calculateTax = function (porcentaje, valor) {
-        let igv = porcentaje / 100.00;
-        return (valor * igv);
-    }
-
     this.ErrorMessageServer = function (title, message) {
-        if (message.responseText == "" || message.responseText == null || message.responseText == "undefined" || message.responseText == undefined) {
-            this.ModalAlertError(title, "Se produjo un error interno, intente nuevamente por favor.")
+        if (message.status == 404) {
+            this.ModalAlertError(title, "No se puedo encontrar la ruta solicitada.");
         } else {
-            if (message.responseJSON == "" || message.responseJSON == null || message.responseJSON == "undefined" || message.responseJSON == undefined) {
-                this.ModalAlertWarning(title, message.responseText);
+            if (message.responseText == "" || message.responseText == null || message.responseText == "undefined" || message.responseText == undefined) {
+                this.ModalAlertError(title, "Se produjo un error interno, intente nuevamente por favor.");
             } else {
-                this.ModalAlertWarning(title, message.responseJSON);
+                if (message.responseJSON == "" || message.responseJSON == null || message.responseJSON == "undefined" || message.responseJSON == undefined) {
+                    this.ModalAlertWarning(title, message.responseText);
+                } else {
+                    this.ModalAlertWarning(title, message.responseJSON);
+                }
             }
         }
     }
@@ -223,6 +262,45 @@ function Tools() {
             return cadena.substr(0, limite) + sufijo;
         }
         return cadena;
+    }
+
+    this.calculateTaxBruto = function (impuesto, monto) {
+        return monto / ((impuesto + 100) * 0.01);
+    }
+
+    this.calculateTax = function (porcentaje, valor) {
+        let igv = (parseFloat(porcentaje) / 100.00);
+        return valor * igv;
+    }
+
+    this.calculateAumento = function (margen, costo) {
+        let totalimporte = parseFloat(costo) + (parseFloat(costo) * (parseFloat(margen) / 100.00));
+        return parseFloat(this.formatMoney(totalimporte, 1));
+    }
+
+    this.formatNumber = function (numeracion, length = 6) {
+        if (numeracion.length >= 6) {
+            return numeracion;
+        }
+        let pad_char = '0';
+        let pad = new Array(1 + length).join(pad_char);
+        return (pad + numeracion).slice(-pad.length);
+    }
+
+    this.ModalDialogInputText = function (title, mensaje, callback) {
+        swal({
+            title: title,
+            text: mensaje,
+            input: 'text',
+            inputPlaceholder: 'Ingrese un el motivo de la anulación',
+            type: 'question',
+            showCancelButton: true,
+            confirmButtonText: "Si",
+            cancelButtonText: "No",
+            allowOutsideClick: false,
+        }).then((isConfirm) => {
+            callback(isConfirm)
+        });
     }
 
     this.ModalDialog = function (title, mensaje, callback) {

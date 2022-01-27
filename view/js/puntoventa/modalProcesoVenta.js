@@ -35,6 +35,14 @@ function ModalProcesoVenta() {
             $("#boxContado").removeClass("d-none");
             $("#boxCredito").addClass("d-none");
             $("#boxAdelantado").addClass("d-none");
+
+            if ($("#cbDeposito").is(":checked")) {
+                $("#txtNumOperacion").focus();
+            } else {
+                $("#txtEfectivo").focus();
+            }
+
+            console.log();
             state_view_pago = 0;
         });
 
@@ -51,6 +59,8 @@ function ModalProcesoVenta() {
             $("#boxContado").addClass("d-none");
             $("#boxCredito").removeClass("d-none");
             $("#boxAdelantado").addClass("d-none");
+
+            $("#txtFechaVencimiento").focus();
             state_view_pago = 1;
         });
 
@@ -67,6 +77,13 @@ function ModalProcesoVenta() {
             $("#boxContado").addClass("d-none");
             $("#boxCredito").addClass("d-none");
             $("#boxAdelantado").removeClass("d-none");
+
+            if ($("#cbDeposito").is(":checked")) {
+                $("#txtNumOperacionAdelantado").focus();
+            } else {
+                $("#txtEfectivoAdelanto").focus();
+            }
+
             state_view_pago = 2;
         });
 
@@ -169,6 +186,64 @@ function ModalProcesoVenta() {
         $("#divAdelantado").css("display", "block");
         $("#divAdelantadoDeposito").css("display", "none");
 
+        $("#txtEfectivoAdelanto").keyup(function (event) {
+            if ($("#txtEfectivoAdelanto").val() == "") {
+                vueltoAdelantado = total_venta;
+                TotalAPagarAdelantado();
+                return;
+            }
+            if (tools.isNumeric($("#txtEfectivoAdelanto").val())) {
+                TotalAPagarAdelantado();
+            }
+        });
+
+        $("#txtEfectivoAdelanto").keydown(function (event) {
+            if (event.keyCode == 13) {
+                crudVenta();
+                event.preventDefault();
+            }
+        });
+
+        $("#txtEfectivoAdelanto").keypress(function (event) {
+            var key = window.Event ? event.which : event.keyCode;
+            var c = String.fromCharCode(key);
+            if ((c < '0' || c > '9') && (c != '\b') && (c != '.')) {
+                event.preventDefault();
+            }
+            if (c == '.' && $("#txtEfectivoAdelanto").val().includes(".")) {
+                event.preventDefault();
+            }
+        });
+
+        $("#txtTarjetaAdelanto").keyup(function (event) {
+            if ($("#txtTarjetaAdelanto").val() == "") {
+                vueltoAdelantado = total_venta;
+                TotalAPagarAdelantado();
+                return;
+            }
+            if (tools.isNumeric($("#txtTarjetaAdelanto").val())) {
+                TotalAPagarAdelantado();
+            }
+        });
+
+        $("#txtTarjetaAdelanto").keydown(function (event) {
+            if (event.keyCode == 13) {
+                crudVenta();
+                event.preventDefault();
+            }
+        });
+
+        $("#txtTarjetaAdelanto").keypress(function (event) {
+            var key = window.Event ? event.which : event.keyCode;
+            var c = String.fromCharCode(key);
+            if ((c < '0' || c > '9') && (c != '\b') && (c != '.')) {
+                event.preventDefault();
+            }
+            if (c == '.' && $("#txtTarjetaAdelanto").val().includes(".")) {
+                event.preventDefault();
+            }
+        });
+
         $("#cbDepositoAdelantado").change(function () {
             if (!$(this).is(":checked")) {
                 $("#divAdelantado").css("display", "block");
@@ -228,9 +303,14 @@ function ModalProcesoVenta() {
         $("#divAdelantadoDeposito").css("display", "none");
 
         state_view_pago = 0;
+
         vueltoContado = 0;
-        total_venta = 0;
         estadoCobroContado = false;
+
+        vueltoAdelantado = 0;
+        estadoCobroAdelantado = false;
+
+        total_venta = 0;
     }
 
     function TotalAPagarContado() {
@@ -272,6 +352,48 @@ function ModalProcesoVenta() {
         }
 
         $("#lblVuelto").html(monedaSimbolo + " " + tools.formatMoney(vueltoContado, 2));
+    }
+
+    function TotalAPagarAdelantado() {
+        if ($("#txtEfectivoAdelanto").val() == '' && $("#txtTarjetaAdelanto").val() == '') {
+            $("#lblVueltoAdelanto").html(monedaSimbolo + " 0.00");
+            $("#lblVueltoAdelantoNombre").html("POR PAGAR: ");
+            estadoCobroAdelantado = false;
+        } else if ($("#txtEfectivoAdelanto").val() == '') {
+            if (parseFloat($("#txtTarjetaAdelanto").val()) >= total_venta) {
+                vueltoAdelantado = parseFloat($("#txtTarjetaAdelanto").val()) - total_venta;
+                $("#lblVueltoAdelantoNombre").html("SU CAMBIO ES: ");
+                estadoCobroAdelantado = true;
+            } else {
+                vueltoAdelantado = total_venta - parseFloat($("#txtTarjetaAdelanto").val());
+                $("#lblVueltoAdelantoNombre").html("POR PAGAR: ");
+                estadoCobroAdelantado = false;
+            }
+        } else if ($("#txtTarjetaAdelanto").val() == '') {
+            if (parseFloat($("#txtEfectivoAdelanto").val()) >= total_venta) {
+                vueltoAdelantado = parseFloat($("#txtEfectivoAdelanto").val()) - total_venta;
+                $("#lblVueltoAdelantoNombre").html("SU CAMBIO ES: ");
+                estadoCobroAdelantado = true;
+            } else {
+                vueltoAdelantado = total_venta - parseFloat($("#txtEfectivoAdelanto").val());
+                $("#lblVueltoAdelantoNombre").html("POR PAGAR: ");
+                estadoCobroAdelantado = false;
+            }
+        } else {
+            let suma = (parseFloat($("#txtEfectivoAdelanto").val())) + (parseFloat($("#txtTarjetaAdelanto").val()));
+            if (suma >= total_venta) {
+                vueltoAdelantado = suma - total_venta;
+                $("#lblVueltoAdelantoNombre").html("SU CAMBIO ES: ");
+                estadoCobroAdelantado = true;
+            } else {
+                vueltoAdelantado = total_venta - suma;
+                $("#lblVueltoAdelantoNombre").html("POR PAGAR: ");
+                estadoCobroAdelantado = false;
+            }
+        }
+
+        $("#lblVueltoAdelanto").html(monedaSimbolo + " " + tools.formatMoney(vueltoAdelantado, 2));
+
     }
 
 }

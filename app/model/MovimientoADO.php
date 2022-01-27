@@ -136,6 +136,10 @@ class MovimientoADO
                 ? Database::getInstance()->getDb()->prepare("UPDATE SuministroTB SET Cantidad = Cantidad + ? WHERE IdSuministro = ?")
                 : Database::getInstance()->getDb()->prepare("UPDATE SuministroTB SET Cantidad = Cantidad - ? WHERE IdSuministro = ?");
 
+            $suministroUpdateAlmacen = $body["tipoAjuste"]
+                ? Database::getInstance()->getDb()->prepare("UPDATE CantidadTB SET Cantidad = Cantidad + ? WHERE IdAlmacen = ? AND IdSuministro = ?")
+                : Database::getInstance()->getDb()->prepare("UPDATE CantidadTB SET Cantidad = Cantidad - ? WHERE IdAlmacen = ? AND IdSuministro = ?");
+
             $suministroKardex = Database::getInstance()->getDb()->prepare("INSERT INTO KardexSuministroTB
             (IdSuministro,
             Fecha,
@@ -158,7 +162,7 @@ class MovimientoADO
                     $result["PrecioVentaGeneral"],
                 ));
 
-                if ($body["estado"] == 1) {
+                if ($body["idAlmacen"] == 0) {
                     $suministroUpdate->execute(array(
                         $result["Movimiento"],
                         $result["IdSuministro"],
@@ -174,7 +178,26 @@ class MovimientoADO
                         $result["Movimiento"],
                         $result["PrecioCompra"],
                         $result["PrecioCompra"] * $result["Movimiento"],
-                        0
+                        $body["idAlmacen"]
+                    ));
+                } else {
+                    $suministroUpdateAlmacen->execute(array(
+                        $result["Movimiento"],
+                        $body["idAlmacen"],
+                        $result["IdSuministro"]
+                    ));
+
+                    $suministroKardex->execute(array(
+                        $result["IdSuministro"],
+                        $body["fecha"],
+                        $body["hora"],
+                        $body["tipoAjuste"] ? 1 : 2,
+                        $body["tipoMovimiento"],
+                        $body["observacion"],
+                        $result["Movimiento"],
+                        $result["PrecioCompra"],
+                        $result["PrecioCompra"] * $result["Movimiento"],
+                        $body["idAlmacen"]
                     ));
                 }
             }
@@ -308,155 +331,6 @@ class MovimientoADO
                 "detalle" => $resultMovimientoDetalle
             );
         } catch (Exception $ex) {
-            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
-
-            return $ex->getMessage();
-        }
-    }
-
-    public static function CancelarMovimientoById($idMovimiento)
-    {
-        try {
-            Database::getInstance()->getDb()->beginTransaction();
-            $comando = Database::getInstance()->getDb()->prepare("SELECT * FROM MovimientoInventarioTB WHERE IdMovimientoInventario = ? AND Estado = 2");
-            $comando->bindParam(1, $idMovimiento, PDO::PARAM_STR);
-            $comando->execute();
-            if ($comando->fetch()) {
-                Database::getInstance()->getDb()->rollback();
-                $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-                header($protocol . ' ' . 400 . ' ' . "Bad Request");
-
-                return "El Ajuste ya está anulado.";
-            } else {
-                $cmdMovimiento = Database::getInstance()->getDb()->prepare("SELECT TipoAjuste FROM MovimientoInventarioTB WHERE IdMovimientoInventario = ?");
-                $cmdMovimiento->bindParam(1, $idMovimiento, PDO::PARAM_STR);
-                $cmdMovimiento->execute();
-                $tipoMovimiento = $cmdMovimiento->fetchColumn();
-
-                if ($tipoMovimiento == 0) {
-
-                    $cmdDetalleMovimiento = Database::getInstance()->getDb()->prepare("SELECT 
-                    IdSuministro,
-                    Cantidad,
-                    Costo 
-                    FROM MovimientoInventarioDetalleTB 
-                    WHERE IdMovimientoInventario = ?");
-                    $cmdDetalleMovimiento->bindParam(1, $idMovimiento, PDO::PARAM_STR);
-                    $cmdDetalleMovimiento->execute();
-                    $arrayDetalleMovimiento = array();
-                    while ($row = $cmdDetalleMovimiento->fetch()) {
-                        array_push($arrayDetalleMovimiento, array(
-                            "IdSuministro" => $row["IdSuministro"],
-                            "Cantidad" => $row["Cantidad"],
-                            "Costo" => $row["Costo"],
-                        ));
-                    }
-
-                    $cmdKardex = Database::getInstance()->getDb()->prepare("INSERT INTO 
-                    KardexSuministroTB(
-                    IdSuministro,
-                    Fecha,
-                    Hora,
-                    Tipo,
-                    Movimiento,
-                    Detalle,
-                    Cantidad, 
-                    Costo, 
-                    Total,
-                    IdAlmacen) 
-                    VALUES(?,CAST(GETDATE() AS DATE),CAST(GETDATE() AS TIME),?,?,?,?,?,?,?)");
-
-                    $cmdSuministro = Database::getInstance()->getDb()->prepare("UPDATE 
-                    SuministroTB SET Cantidad = Cantidad + ? 
-                    WHERE IdSuministro = ?");
-                    foreach ($arrayDetalleMovimiento as $value) {
-                        $cmdKardex->execute(array(
-                            $value["IdSuministro"],
-                            1,
-                            2,
-                            "CANCELAR MOVIMIENTO",
-                            $value["Cantidad"],
-                            $value["Costo"],
-                            $value["Cantidad"] * $value["Costo"],
-                            0
-                        ));
-                        $cmdSuministro->execute(array(
-                            $value["Cantidad"],
-                            $value["IdSuministro"]
-                        ));
-                    }
-
-                    $cmdMovimiento = Database::getInstance()->getDb()->prepare("UPDATE MovimientoInventarioTB SET Estado = 2  WHERE IdMovimientoInventario = ?");
-                    $cmdMovimiento->bindParam(1, $idMovimiento, PDO::PARAM_STR);
-                    $cmdMovimiento->execute();
-                    Database::getInstance()->getDb()->commit();
-                    $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-                    header($protocol . ' ' . 201 . ' ' . "Created");
-
-                    return "Se anuló correctamente el Ajuste.";
-                } else {
-                    $cmdDetalleMovimiento = Database::getInstance()->getDb()->prepare("SELECT 
-                    IdSuministro,
-                    Cantidad,
-                    Costo 
-                    FROM MovimientoInventarioDetalleTB 
-                    WHERE IdMovimientoInventario = ?");
-                    $cmdDetalleMovimiento->bindParam(1, $idMovimiento, PDO::PARAM_STR);
-                    $cmdDetalleMovimiento->execute();
-                    $arrayDetalleMovimiento = array();
-                    while ($row = $cmdDetalleMovimiento->fetch()) {
-                        array_push($arrayDetalleMovimiento, array(
-                            "IdSuministro" => $row["IdSuministro"],
-                            "Cantidad" => $row["Cantidad"],
-                            "Costo" => $row["Costo"],
-                        ));
-                    }
-
-                    $cmdKardex = Database::getInstance()->getDb()->prepare("INSERT INTO 
-                        KardexSuministroTB(
-                        IdSuministro,
-                        Fecha,
-                        Hora,
-                        Tipo,
-                        Movimiento,
-                        Detalle,
-                        Cantidad, 
-                        Costo, 
-                        Total,
-                        IdAlmacen) 
-                        VALUES(?,CAST(GETDATE() AS DATE),CAST(GETDATE() AS TIME),?,?,?,?,?,?,?)");
-
-                    $cmdSuministro = Database::getInstance()->getDb()->prepare("UPDATE SuministroTB SET Cantidad = Cantidad - ? WHERE IdSuministro = ?");
-                    foreach ($arrayDetalleMovimiento as $value) {
-                        $cmdKardex->execute(array(
-                            $value["IdSuministro"],
-                            2,
-                            1,
-                            "CANCELAR MOVIMIENTO",
-                            $value["Cantidad"],
-                            $value["Costo"],
-                            $value["Cantidad"] * $value["Costo"],
-                            0
-                        ));
-                        $cmdSuministro->execute(array(
-                            $value["Cantidad"],
-                            $value["IdSuministro"]
-                        ));
-                    }
-
-                    $cmdMovimiento = Database::getInstance()->getDb()->prepare("UPDATE MovimientoInventarioTB SET Estado = 2  WHERE IdMovimientoInventario = ?");
-                    $cmdMovimiento->bindParam(1, $idMovimiento, PDO::PARAM_STR);
-                    $cmdMovimiento->execute();
-                    Database::getInstance()->getDb()->commit();
-                    $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-                    header($protocol . ' ' . 201 . ' ' . "Created");
-
-                    return "Se anuló correctamente el Ajuste.";
-                }
-            }
-        } catch (Exception $ex) {
-            Database::getInstance()->getDb()->rollback();
             $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
             header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
 

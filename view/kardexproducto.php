@@ -25,7 +25,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
                         <div class="modal-header">
                             <h4 class="modal-title">
-                                <i class="fa fa-indent">
+                                <i class="fa fa-window-maximize">
                                 </i> Lista de Productos
                             </h4>
                             <button type="button" class="close" data-dismiss="modal">
@@ -105,14 +105,13 @@ if (!isset($_SESSION['IdEmpleado'])) {
             </div>
 
             <div class="tile mb-4">
-
                 <div class="row">
                     <div class="col-md-12 col-sm-12 col-xs-12">
                         <div class="form-group">
                             <button class="btn btn-primary" id="btnProductos">
                                 <i class="fa fa-archive"></i> Productos
                             </button>
-                            <a href="restablecerkardex.php" class="btn btn-info" id="btnRestablecer">
+                            <a href="restablecerkardex.php" class="btn btn-secondary" id="btnRestablecer">
                                 <i class="fa fa-eraser"></i>
                                 Restablecer Kardex
                             </a>
@@ -377,7 +376,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         state = false;
                     } else {
                         for (let producto of productos) {
-                            let cantidad = producto.Cantidad <= 0 ? "<span class='text-danger'>" + tools.formatMoney(parseFloat(producto.Cantidad)) + '<br>' + producto.UnidadCompra + "</span>" : "<span class='text-success'>" + tools.formatMoney(parseFloat(producto.Cantidad)) + '<br>' + producto.UnidadCompra + "</span>";
+                            let cantidad = producto.Cantidad <= 0 ? "<span class='text-danger'>" + tools.formatMoney(parseFloat(producto.Cantidad)) + '<br>' + producto.UnidadCompraName + "</span>" : "<span class='text-success'>" + tools.formatMoney(parseFloat(producto.Cantidad)) + '<br>' + producto.UnidadCompraName + "</span>";
                             tbProductos.append('<tr ondblclick="onSelectProducto(\'' + producto.IdSuministro + '\',\'' + producto.NombreMarca + '\')">' +
                                 '<td>' + producto.Id + '</td>' +
                                 '<td>' + producto.Clave + '</br>' + producto.NombreMarca + '</td>' +

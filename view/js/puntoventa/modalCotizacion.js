@@ -159,7 +159,7 @@ function ModalCotizacion() {
                     tbListCotizacion.append(`<tr>
                     <td>${value.Id}</td>
                     <td>${value.Apellidos + '<br>' + value.Nombres}</td>
-                    <td>${'COTIZACIÓN <br>N° - ' + value.IdCotizacion}</td>
+                    <td>${'COTIZACIÓN <br>N° - ' + tools.formatNumber(value.IdCotizacion)}</td>
                     <td>${tools.getDateForma(value.FechaCotizacion) + '<br>' + tools.getTimeForma24(value.HoraCotizacion)}</td>
                     <td>${value.NumeroDocumento + '<br>' + value.Informacion}</td>
                     <td>${value.SimboloMoneda + ' ' + tools.formatMoney(value.Total)}</td>
@@ -244,40 +244,27 @@ function ModalCotizacion() {
             let detalle = result[1];
             for (let value of detalle) {
                 let cantidad = parseFloat(value.Cantidad);
-
-                let valor_sin_impuesto = parseFloat(value.Precio) / ((parseFloat(value.Valor) / 100.00) + 1);
-                let descuento = 0;
-                let porcentajeRestante = valor_sin_impuesto * (descuento / 100.00);
-                let preciocalculado = valor_sin_impuesto - porcentajeRestante;
-
-                let impuesto = tools.calculateTax(value.Valor, preciocalculado);
+                let precio = parseFloat(value.Precio);
 
                 listaProductos.push({
                     "idSuministro": value.IdSuministro,
                     "clave": value.Clave,
                     "nombreMarca": value.NombreMarca,
                     "cantidad": cantidad,
-                    "costoCompra": value.PrecioCompra,
+                    "costoCompra": parseFloat(value.PrecioCompra),
                     "bonificacion": 0,
                     "descuento": 0,
                     "descuentoCalculado": 0,
                     "descuentoSumado": 0,
 
-                    "precioVentaGeneralUnico": valor_sin_impuesto,
-                    "precioVentaGeneralReal": preciocalculado,
+                    "precioVentaGeneral": precio,
+                    "precioVentaGeneralUnico": precio,
+                    "precioVentaGeneralReal": precio,
 
                     "impuestoOperacion": value.Operacion,
-                    "impuestoId": value.Impuesto,
+                    "idImpuesto": value.Impuesto,
                     "impuestoNombre": value.ImpuestoNombre,
-                    "impuestoValor": value.Valor,
-
-                    "impuestoSumado": cantidad * impuesto,
-                    "precioVentaGeneral": preciocalculado + impuesto,
-                    "precioVentaGeneralAuxiliar": preciocalculado + impuesto,
-
-                    "importeBruto": cantidad * valor_sin_impuesto,
-                    "subImporteNeto": cantidad * preciocalculado,
-                    "importeNeto": cantidad * (preciocalculado + impuesto),
+                    "impuestoValor": parseFloat(value.Valor),
 
                     "inventario": value.Inventario,
                     "unidadVenta": value.UnidadVenta,

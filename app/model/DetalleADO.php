@@ -2,11 +2,11 @@
 
 namespace SysSoftIntegra\Model;
 
+use SysSoftIntegra\Src\Tools;
 use Database;
 use PDO;
-use PDOException;
 use Exception;
-use DateTime;
+
 
 require_once __DIR__ . './../database/DataBaseConexion.php';
 
@@ -16,6 +16,32 @@ class DetalleADO
 
     function construct()
     {
+    }
+
+    public static function Listar_Mantenimiento(string $value)
+    {
+        try {
+            $cmdMantenimiento  = Database::getInstance()->getDb()->prepare("{call Sp_List_Table_Matenimiento(?)}");
+            $cmdMantenimiento->bindParam(1, $value, PDO::PARAM_STR);
+            $cmdMantenimiento->execute();
+            return $cmdMantenimiento->fetchAll(PDO::FETCH_OBJ);
+        } catch (Exception $ex) {
+            return $ex->getMessage();
+        }
+    }
+
+
+    public static function Listar_Detalle_ById(string $idMantenimiento, string $search)
+    {
+        try {
+            $cmdDetalle = Database::getInstance()->getDb()->prepare("{call Sp_List_Table_Detalle(?,?)}");
+            $cmdDetalle->bindParam(1, $idMantenimiento, PDO::PARAM_STR);
+            $cmdDetalle->bindParam(2, $search, PDO::PARAM_STR);
+            $cmdDetalle->execute();
+            return $cmdDetalle->fetchAll(PDO::FETCH_OBJ);
+        } catch (Exception $ex) {
+            return $ex->getMessage();
+        }
     }
 
     public static function GetDetailIdName($value)
@@ -53,6 +79,22 @@ class DetalleADO
             $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
             header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
 
+            return $ex->getMessage();
+        }
+    }
+
+    public static function FillDetalleUnidadMedida($search)
+    {
+        try {
+            $cmdUnidad = Database::getInstance()->getDb()->prepare("SELECT IdDetalle,Nombre FROM DetalleTB 
+            WHERE Nombre LIKE CONCAT('%',?,'%') AND IdMantenimiento = '0013'");
+            $cmdUnidad->bindParam(1, $search, PDO::PARAM_STR);
+            $cmdUnidad->execute();
+
+            Tools::httpStatus200();
+            return $cmdUnidad->fetchAll(PDO::FETCH_OBJ);
+        } catch (Exception $ex) {
+            Tools::httpStatus500();
             return $ex->getMessage();
         }
     }
@@ -100,6 +142,168 @@ class DetalleADO
 
             return  $cmdDatalle->fetchAll(PDO::FETCH_OBJ);
         } catch (Exception $ex) {
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+
+            return $ex->getMessage();
+        }
+    }
+
+    public static function CrudDetalle($body)
+    {
+        try {
+            Database::getInstance()->getDb()->beginTransaction();
+
+            $cmdValidate = Database::getInstance()->getDb()->prepare("SELECT 
+            IdDetalle,
+            IdMantenimiento 
+            FROM DetalleTB 
+            WHERE IdDetalle=? AND IdMantenimiento=?");
+            $cmdValidate->bindParam(1, $body["IdDetalle"], PDO::PARAM_INT);
+            $cmdValidate->bindParam(2, $body["IdMantenimiento"], PDO::PARAM_STR);
+            $cmdValidate->execute();
+            if ($cmdValidate->fetch()) {
+                $cmdValidate = Database::getInstance()->getDb()->prepare("SELECT IdDetalle,IdMantenimiento 
+                FROM DetalleTB 
+                WHERE IdDetalle<>? AND IdMantenimiento=? AND Nombre = ?");
+                $cmdValidate->bindParam(1, $body["IdDetalle"], PDO::PARAM_INT);
+                $cmdValidate->bindParam(2, $body["IdMantenimiento"], PDO::PARAM_STR);
+                $cmdValidate->bindParam(3, $body["Nombre"], PDO::PARAM_STR);
+                $cmdValidate->execute();
+                if ($cmdValidate->fetch()) {
+                    Database::getInstance()->getDb()->rollback();
+                    $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+                    header($protocol . ' ' . 400 . ' ' . "Bad Request");
+
+                    return "No puede haber 2 detalles con el mismo nombre.";
+                } else {
+                    $cmdDetalle = Database::getInstance()->getDb()->prepare("UPDATE DetalleTB SET IdAuxiliar=?,Nombre=?,Descripcion=?,Estado=? 
+                    WHERE IdDetalle =? AND IdMantenimiento = ?");
+                    $cmdDetalle->execute(array(
+                        $body["IdAuxiliar"],
+                        $body["Nombre"],
+                        $body["Descripcion"],
+                        $body["Estado"],
+                        $body["IdDetalle"],
+                        $body["IdMantenimiento"],
+                    ));
+
+                    Database::getInstance()->getDb()->commit();
+                    $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+                    header($protocol . ' ' . 201 . ' ' . "Created");
+
+                    return "Se actualizó correctamente el detalle.";
+                }
+            } else {
+                $cmdValidate = Database::getInstance()->getDb()->prepare("SELECT Nombre FROM DetalleTB 
+                WHERE IdMantenimiento = ? AND Nombre = ?");
+                $cmdValidate->bindParam(1, $body["IdMantenimiento"], PDO::PARAM_STR);
+                $cmdValidate->bindParam(2, $body["Nombre"], PDO::PARAM_STR);
+                $cmdValidate->execute();
+                if ($cmdValidate->fetch()) {
+                    Database::getInstance()->getDb()->rollback();
+                    $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+                    header($protocol . ' ' . 400 . ' ' . "Bad Request");
+
+                    return "No puede haber 2 detalles con el mismo nombre.";
+                } else {
+                    $cmdDetalle = Database::getInstance()->getDb()->prepare("INSERT INTO 
+                    DetalleTB(
+                    IdMantenimiento,
+                    IdAuxiliar,
+                    Nombre,
+                    Descripcion,
+                    Estado,
+                    UsuarioRegistro) 
+                    values(?,?,?,?,?,?)");
+                    $cmdDetalle->execute(array(
+                        $body["IdMantenimiento"],
+                        $body["IdAuxiliar"],
+                        $body["Nombre"],
+                        $body["Descripcion"],
+                        $body["Estado"],
+                        $body["UsuarioRegistro"],
+                    ));
+
+                    Database::getInstance()->getDb()->commit();
+                    $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+                    header($protocol . ' ' . 201 . ' ' . "Created");
+
+                    return "El registró correctamente el detalle.";
+                }
+            }
+        } catch (Exception $ex) {
+            Database::getInstance()->getDb()->rollback();
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+
+            return $ex->getMessage();
+        }
+    }
+
+    public static function DeleteDetalle($body)
+    {
+        try {
+            Database::getInstance()->getDb()->beginTransaction();
+
+            $cmdValidate = Database::getInstance()->getDb()->prepare("SELECT * FROM SuministroTB WHERE Categoria = ?");
+            $cmdValidate->bindParam(1, $body["IdDetalle"], PDO::PARAM_INT);
+            $cmdValidate->execute();
+            if ($cmdValidate->fetch()) {
+                Database::getInstance()->getDb()->rollback();
+                $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+                header($protocol . ' ' . 400 . ' ' . "Bad Request");
+
+                return "No se puede eliminar el detalle porque esta ligado a un producto.";
+            } else {
+
+                $cmdValidate = Database::getInstance()->getDb()->prepare("SELECT * FROM SuministroTB WHERE Marca = ?");
+                $cmdValidate->bindParam(1, $body["IdDetalle"], PDO::PARAM_INT);
+                $cmdValidate->execute();
+                if ($cmdValidate->fetch()) {
+                    Database::getInstance()->getDb()->rollback();
+                    $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+                    header($protocol . ' ' . 400 . ' ' . "Bad Request");
+
+                    return "No se puede eliminar el detalle porque esta ligado a un producto.";
+                } else {
+                    $cmdValidate = Database::getInstance()->getDb()->prepare("SELECT * FROM SuministroTB WHERE Presentacion = ?");
+                    $cmdValidate->bindParam(1, $body["IdDetalle"], PDO::PARAM_INT);
+                    $cmdValidate->execute();
+                    if ($cmdValidate->fetch()) {
+                        Database::getInstance()->getDb()->rollback();
+                        $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+                        header($protocol . ' ' . 400 . ' ' . "Bad Request");
+
+                        return "No se puede eliminar el detalle porque esta ligado a un producto.";
+                    } else {
+                        $cmdValidate = Database::getInstance()->getDb()->prepare("SELECT * FROM SuministroTB WHERE UnidadCompra = ?");
+                        $cmdValidate->bindParam(1, $body["IdDetalle"], PDO::PARAM_INT);
+                        $cmdValidate->execute();
+                        if ($cmdValidate->fetch()) {
+                            Database::getInstance()->getDb()->rollback();
+                            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+                            header($protocol . ' ' . 400 . ' ' . "Bad Request");
+
+                            return "No se puede eliminar el detalle porque esta ligado a un producto.";
+                        } else {
+                            $cmdDetalle = Database::getInstance()->getDb()->prepare("DELETE FROM DetalleTB WHERE IdDetalle = ? AND IdMantenimiento = ?");
+                            $cmdDetalle->execute(array(
+                                $body["IdDetalle"],
+                                $body["IdMantenimiento"]
+                            ));
+
+                            Database::getInstance()->getDb()->commit();
+                            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+                            header($protocol . ' ' . 201 . ' ' . "Created");
+
+                            return "Se eliminó correctamente del detalle.";
+                        }
+                    }
+                }
+            }
+        } catch (Exception $ex) {
+            Database::getInstance()->getDb()->rollback();
             $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
             header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
 
