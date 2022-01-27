@@ -169,6 +169,7 @@
                 "inventario",
                 "kardexproducto",
                 "ajustes",
+                "ajusteproceso",
 
                 "registrarproducto",
                 "actualizarproducto",
@@ -227,7 +228,7 @@
                         } else if (id == "tab-proveedores") {
                                 document.getElementById("tab-proveedores").setAttribute("class", "app-menu__item active");
                         }
-                } else if (id == "tab-productos" || id == "tab-inventario" || id == "tab-kardexproducto" || id == "tab-ajustes" || id == "tab-registrarproducto" || id == "tab-actualizarproducto") {
+                } else if (id == "tab-productos" || id == "tab-inventario" || id == "tab-kardexproducto" || id == "tab-ajustes" || id == "tab-registrarproducto" || id == "tab-ajusteproceso" || id == "tab-actualizarproducto") {
                         document.getElementById("treeview-inventario").setAttribute("class", "treeview is-expanded");
                         if (id == "tab-productos") {
                                 document.getElementById("tab-productos").setAttribute("class", "app-menu__item active");
@@ -235,7 +236,7 @@
                                 document.getElementById("tab-inventario").setAttribute("class", "app-menu__item active");
                         } else if (id == "tab-kardexproducto") {
                                 document.getElementById("tab-kardexproducto").setAttribute("class", "app-menu__item active");
-                        } else if (id == "tab-ajustes") {
+                        } else if (id == "tab-ajustes" || id == "tab-ajusteproceso") {
                                 document.getElementById("tab-ajustes").setAttribute("class", "app-menu__item active");
                         } else if (id == "tab-registrarproducto") {
                                 document.getElementById("tab-productos").setAttribute("class", "app-menu__item active");

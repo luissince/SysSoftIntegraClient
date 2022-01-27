@@ -42,21 +42,22 @@
                 <div class="row">
                     <div class="col-md-12 col-sm-12">
                         <div class="table-responsive">
-                            <table class="table table-hover">
+                            <table class="table table-bordered table-hover">
                                 <thead class="table-header-background">
                                     <tr role="row">
                                         <th class="text-center">#</th>
-                                        <th class="text-center">Vendedor</th>
-                                        <th class="text-center">Cotización</th>
-                                        <th class="text-center">Fecha</th>
+                                        <th class="text-center">Fecha Registro</th>
+                                        <th class="text-left">Cliente</th>
+                                        <th class="text-left">Cotización</th>
+                                        <th class="text-left">Observación</th>
+                                        <th class="text-left">Uso</th>
                                         <th class="text-center">Total</th>
-                                        <th class="text-center">Cliente</th>
                                         <th class="text-center">Agregar</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tbListCotizacion">
                                     <tr>
-                                        <td colspan="7" align="center"> !No hay datos para mostrar¡</td>
+                                        <td colspan="8" align="center"> !No hay datos para mostrar¡</td>
                                     </tr>
                                 </tbody>
                             </table>

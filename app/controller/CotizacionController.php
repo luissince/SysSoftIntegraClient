@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         print json_encode(CotizacionADO::CargarCotizacionVenta($_GET["idCotizacion"]));
         exit();
     } else if ($_GET["type"] == "cotizaciondetalle") {
-        print json_encode(CotizacionADO::ListDetalleCotizacion($_GET["idCotizacion"]));
+        print json_encode(CotizacionADO::Sp_Obtener_Cotizacion_ById($_GET["idCotizacion"]));
         exit();
     }
 } else if ($_SERVER['REQUEST_METHOD'] == 'POST') {

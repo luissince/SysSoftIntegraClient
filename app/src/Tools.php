@@ -25,6 +25,16 @@ class Tools
         return number_format(round($valor, 2, PHP_ROUND_HALF_UP), $decimals, '.', '');
     }
 
+    public static function round($value, $precision = 2)
+    {
+        return round($value, $precision, PHP_ROUND_HALF_UP);
+    }
+
+    public static function formatDate($fecha)
+    {
+        return date("d/m/Y", strtotime($fecha));
+    }
+
     public static function printErrorJson($result)
     {
         header('Content-Type: application/json; charset=UTF-8');
@@ -34,5 +44,23 @@ class Tools
     public static function showImageReport($image)
     {
         return $image == "" ?  '<img src="./../../view/images/logo.png" />' : '<img width="120" src="data:image/(png|jpg|gif);base64, ' . $image . '"/>';
+    }
+
+    public static function httpStatus200()
+    {
+        $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+        header($protocol . ' ' . 200 . ' ' . "OK");
+    }
+
+    public static function httpStatus400()
+    {
+        $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+        header($protocol . ' ' . 400 . ' ' . "Bad Request");
+    }
+
+    public static function httpStatus500()
+    {
+        $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+        header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
     }
 }

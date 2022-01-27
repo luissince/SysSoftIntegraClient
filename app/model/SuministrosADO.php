@@ -277,7 +277,7 @@ class SuministrosADO
                     "Impuesto" => $row["Impuesto"],
                     "ImpuestoNombre" => $row["ImpuestoNombre"],
                     "Valor" => floatval($row["Valor"]),
-                    "Lote" => floatval($row["Lote"]),
+                    "Lote" => $row["Lote"],
                     "ValorInventario" => $row["ValorInventario"],
                 ));
             }

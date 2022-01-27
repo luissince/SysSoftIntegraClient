@@ -253,7 +253,7 @@ $html = '<html>
 
     <div class="border-bottom mb-2"></div>
     
-    <table border="0" cellspacing="0" cellpadding="1" class="mb-2">
+    <table width="50%" border="0" cellspacing="0" cellpadding="1" class="mb-2">
         <thead>
             <tr>
                 <th class="th-text-head">D.N.I./R.U.C.</th>    
@@ -315,7 +315,7 @@ foreach ($detalle as $value) {
 $html .= '</tbody>
     </table>
 
-    <table width="" style="margin: 0 0 0 auto;" border="0" cellspacing="1">
+    <table style="margin: 0 0 0 auto;" border="0" cellspacing="1">
         <tbody>
             <tr>
                 <th class="th-total-title font-size-9">IMPORTE BRUTO:</th>

@@ -24,8 +24,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
                         <div class="modal-header">
                             <h4 class="modal-title">
-                                <i class="fa fa-indent">
-                                </i> Lista de Productos
+                                <i class="fa fa-window-maximize">
+                                </i> Productos
                             </h4>
                             <button type="button" class="close" id="btnCloseModal">
                                 <i class="fa fa-close"></i>
@@ -34,18 +34,17 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
                         <div class="modal-body">
                             <div class="row">
-                                <div class="col-md-9 col-sm-12 col-xs-12">
-                                    <label>Buscar:</label>
+                                <div class="col-md-12 col-sm-12 col-xs-12">
+                                    <label>Buscar por Nombre del Producto o Clave/Clave Alterna</label>
                                     <div class="form-group">
-                                        <input type="text" class="form-control" placeholder="Buscar producto..." id="txtBuscarProducto" />
-                                    </div>
-                                </div>
-                                <div class="col-md-3 col-sm-12 col-xs-12">
-                                    <label>Opción:</label>
-                                    <div class="form-group">
-                                        <button class="btn btn-secondary" id="btnRecargarProductos">
-                                            <img src="./images/reload.png" width="18" /> Recargar
-                                        </button>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" placeholder="Buscar producto..." id="txtBuscarProducto" />
+                                            <div class="input-group-append">
+                                                <button class="btn btn-secondary" id="btnRecargarProductos">
+                                                    <img src="./images/reload.png" width="18" /> Recargar
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -101,26 +100,31 @@ if (!isset($_SESSION['IdEmpleado'])) {
             </div>
 
             <div class="tile mb-4">
+                <div class="overlay p-5" id="divOverlayAjuste">
+                    <div class="m-loader mr-4">
+                        <svg class="m-circular" viewBox="25 25 50 50">
+                            <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="4" stroke-miterlimit="10"></circle>
+                        </svg>
+                    </div>
+                    <h4 class="l-text text-center p-10 text-white" id="lblTextOverlayAjuste">Cargando información...</h4>
+                </div>
 
                 <div class="row ">
                     <div class="col-md-12 col-sm-12 col-xs-12">
                         <div class="form-group">
                             <button class="btn btn-success" id="btnGuardar">
-                                <img src="./images/save.png" width="18" />Realizar proceso
+                                <img src="./images/save.png" width="18" /> Registrar
                             </button>
                             <button class="btn btn-secondary" id="btnProductos">
-                                <img src="./images/search.png" width="18" />Buscar productos
+                                <img src="./images/search.png" width="18" /> Productos
                             </button>
                             <button class="btn btn-danger" id="btnProductosNegativos">
-                                <i class="fa fa-long-arrow-down"></i> Lista Producto Negativos
+                                <i class="fa fa-long-arrow-down"></i> Producto Negativos
                             </button>
                             <button class="btn btn-danger" id="btnTodosProductos">
-                                <i class="fa fa-exchange"></i> Lista Todos los Productos
+                                <i class="fa fa-exchange"></i> Todos los Productos
                             </button>
                         </div>
-                        <!-- <button class="btn button-secondary margin-10">
-                                <img src="./image/reports.png" width="18" />Generar reporte
-                            </button> -->
                     </div>
                 </div>
 
@@ -173,10 +177,18 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 </div>
 
                 <div class="row">
-                    <div class="col-md-12 col-sm-12 col-xs-12">
+                    <div class="col-md-6 col-sm-12 col-xs-12">
                         <label>Observación:</label>
                         <div class="form-group">
                             <input type="text" class="form-control" value="N/D" id="txtObservacion" />
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-12 col-xs-12">
+                        <label>Almacén:</label>
+                        <div class="form-group">
+                            <select class="form-control" id="cbAlmacen">
+                                <option value="">Cargando información...</option>
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -187,12 +199,12 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             <table class="table table-striped">
                                 <thead class="table-header-background">
                                     <tr>
-                                        <th>Acción</th>
-                                        <th>Clave/Nombre</th>
-                                        <th>Marca</th>
-                                        <th>Nueva Existencia</th>
-                                        <th>Existencia Actual</th>
-                                        <th>Diferencia</th>
+                                        <th width="10%">Acción</th>
+                                        <th width="30%">Clave/Nombre</th>
+                                        <th width="15%">Marca</th>
+                                        <th width="15%">Nueva Existencia</th>
+                                        <th width="15%">Existencia Actual</th>
+                                        <th width="15%">Medida</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tbList">
@@ -225,6 +237,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
             let lblPaginaSiguiente = $("#lblPaginaSiguiente");
 
             let tbList = $("#tbList");
+            let cbAlmacen = $("#cbAlmacen");
             let rbIncremento = $("#rbIncremento")
             let rbDecremento = $("#rbDecremento");
 
@@ -272,7 +285,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 $("#txtCodigoVerificacion").val(loadCodeRandom());
 
                 loadComponentsModal();
-                loadTipoMovimiento($("#rbIncremento")[0].checked);
+                loadComponents();
             });
 
             function validateIngreso() {
@@ -289,11 +302,11 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 });
 
                 if (cbTipoMovimiento.val() === "0" || cbTipoMovimiento.val() === undefined) {
-                    tools.AlertWarning("Movimiento", "Seleccione un tipo de movimiento.");
+                    tools.AlertWarning("", "Seleccione un tipo de movimiento.");
                 } else if (arrayProductos.length === 0) {
-                    tools.AlertWarning("Movimiento", "No hay productos en la lista para continuar.");
+                    tools.AlertWarning("", "No hay productos en la lista para continuar.");
                 } else if (count > 0) {
-                    tools.AlertWarning("Movimiento", "Hay valores que no son numéricos o menores que 1 en la columna nueva existencia.");
+                    tools.AlertWarning("", "Hay valores que no son numéricos o menores que 1 en la columna nueva existencia.");
                 } else {
                     let newArrayProductos = [];
                     $("#tbList tr").each(function(row, tr) {
@@ -380,7 +393,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     }
                     event.preventDefault();
                 });
-
             }
 
             function onEventPaginacion() {
@@ -416,8 +428,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         state = true;
                     });
 
-                    console.log(result)
-
                     let object = result;
                     tbProductos.empty();
                     let productos = object.data;
@@ -451,15 +461,48 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 }
             }
 
+            async function loadComponents() {
+                try {
+                    let promiseFetchAlmacen = tools.promiseFetchGet("../app/controller/AlmacenController.php", {
+                        "type": "almacencombobox"
+                    }, function() {
+                        cbAlmacen.empty();
+                    });
+
+                    let promiseFetchMovimiento = await tools.promiseFetchGet("../app/controller/MovimientoController.php", {
+                        "type": "listipomovimiento",
+                        "ajuste": $("#rbIncremento")[0].checked,
+                        "all": "false"
+                    }, function() {
+                        cbTipoMovimiento.empty();
+                    });
+
+                    let promise = await Promise.all([promiseFetchAlmacen, promiseFetchMovimiento]);
+
+                    for (let value of promise[0]) {
+                        cbAlmacen.append('<option value="' + value.IdAlmacen + '">' + value.Nombre + '</option> ');
+                    }
+
+                    for (let tipos of promise[1]) {
+                        cbTipoMovimiento.append('<option value="' + tipos.IdTipoMovimiento + '">' + tipos.Nombre + '</option>');
+                    }
+
+                    $("#divOverlayAjuste").addClass('d-none');
+                } catch (error) {
+                    $("#lblTextOverlayAjuste").html(tools.messageError(error));
+                }
+            }
+
             async function loadTipoMovimiento(ajuste) {
                 try {
                     let result = await tools.promiseFetchGet("../app/controller/MovimientoController.php", {
                         "type": "listipomovimiento",
                         "ajuste": ajuste,
                         "all": "false"
+                    }, function() {
+                        cbTipoMovimiento.empty();
                     });
 
-                    cbTipoMovimiento.empty();
                     cbTipoMovimiento.append('<option value="0">--TODOS--</option>');
                     for (let tipos of result) {
                         cbTipoMovimiento.append('<option value="' + tipos.IdTipoMovimiento + '">' + tipos.Nombre + '</option>');
@@ -470,37 +513,32 @@ if (!isset($_SESSION['IdEmpleado'])) {
             }
 
             async function onSelectProducto(idSuministro) {
-                $("#id-modal-productos").modal("hide");
+                $("#txtBuscarProducto").focus();
                 if (!validateDuplicate(idSuministro)) {
                     try {
                         let result = await tools.promiseFetchGet("../app/controller/SuministroController.php", {
                             "type": "getsuministroformovimiento",
                             "idSuministro": idSuministro
                         }, function() {
-                            tools.AlertInfo("Movimiento", "Agregando producto.");
-                            if (arrayProductos.length === 0) {
-                                tbList.empty();
-                            }
+                            if (arrayProductos.length === 0) tbList.empty();
                         });
 
                         let suministro = result;
                         arrayProductos.push(suministro);
                         tbList.append('<tr id="' + suministro.IdSuministro + '">' +
-                            '<td><button class="btn btn-default" onclick="removeTableTr(\'' + suministro.IdSuministro + '\')"><img src="./images/remove.png" width="24" /></button></td>' +
+                            '<td class="text-center"><button class="btn btn-danger" onclick="removeTableTr(\'' + suministro.IdSuministro + '\')"><i class="fa fa-trash"></i></button></td>' +
                             '<td>' + suministro.Clave + '</br>' + suministro.NombreMarca + '</td>' +
                             '<td>' + suministro.MarcaNombre + '</td>' +
                             '<td><input type="number" class="form-control" placeholder="0.00" /></td>' +
-                            '<td>' + suministro.Cantidad + " " + suministro.UnidadCompraNombre + '</td>' +
-                            '<td>0.00</td>' +
+                            '<td class="text-center">' + suministro.Cantidad + '</td>' +
+                            '<td class="text-center">' + suministro.UnidadCompraNombre + '</td>' +
                             '</tr>');
 
-                        tools.AlertSuccess("Movimiento", "Se agregó correctamente a la lista.");
-
                     } catch (error) {
-                        tools.AlertError("Movimiento", "Error al agregar el producto, comuníquese con su proveedor.");
+                        tools.AlertError("", "Error al agregar el producto, comuníquese con su proveedor.");
                     }
                 } else {
-                    tools.AlertWarning("Movimiento", "Hay producto con las mismas características.");
+                    tools.AlertWarning("", "Hay producto con las mismas características.");
                 }
             }
 
@@ -511,13 +549,13 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     }, function() {
                         tbList.empty();
                         arrayProductos = [];
-                        tools.AlertInfo("Movimiento", "Agregando lista de productos.");
+                        tools.AlertInfo("", "Agregando lista de productos.");
                     });
 
                     for (let suministro of result) {
                         arrayProductos.push(suministro);
                         tbList.append('<tr id="' + suministro.IdSuministro + '">' +
-                            '<td><button class="btn btn-default" onclick="removeTableTr(\'' + suministro.IdSuministro + '\')"><img src="./images/remove.png" width="24" /></button></td>' +
+                            '<td class="text-center"><button class="btn btn-danger" onclick="removeTableTr(\'' + suministro.IdSuministro + '\')"><i class="fa fa-trash"></i></button></td>' +
                             '<td>' + suministro.Clave + '</br>' + suministro.NombreMarca + '</td>' +
                             '<td>' + suministro.MarcaNombre + '</td>' +
                             '<td><input type="number" class="form-control" placeholder="0.00" /></td>' +
@@ -525,9 +563,9 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             '<td>0.00</td>' +
                             '</tr>');
                     }
-                    tools.AlertSuccess("Movimiento", "Se agregó correctamente a la lista.");
+                    tools.AlertSuccess("", "Se agregó correctamente a la lista.");
                 } catch (error) {
-                    tools.AlertError("Movimiento", "Error al agregar el producto, comuníquese con su proveedor.");
+                    tools.AlertError("", "Error al agregar el producto, comuníquese con su proveedor.");
                 }
             }
 
@@ -538,13 +576,13 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     }, function() {
                         tbList.empty();
                         arrayProductos = [];
-                        tools.AlertInfo("Movimiento", "Agregando lista de productos.");
+                        tools.AlertInfo("", "Agregando lista de productos.");
                     });
 
                     for (let suministro of result) {
                         arrayProductos.push(suministro);
                         tbList.append('<tr id="' + suministro.IdSuministro + '">' +
-                            '<td><button class="btn btn-default" onclick="removeTableTr(\'' + suministro.IdSuministro + '\')"><img src="./images/remove.png" width="24" /></button></td>' +
+                            '<td class="text-center"><button class="btn btn-danger" onclick="removeTableTr(\'' + suministro.IdSuministro + '\')"><i class="fa fa-trash"></i></button></td>' +
                             '<td>' + suministro.Clave + '</br>' + suministro.NombreMarca + '</td>' +
                             '<td>' + suministro.MarcaNombre + '</td>' +
                             '<td><input type="number" class="form-control" placeholder="0.00" /></td>' +
@@ -552,9 +590,9 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             '<td>0.00</td>' +
                             '</tr>');
                     }
-                    tools.AlertSuccess("Movimiento", "Se agregó correctamente a la lista.");
+                    tools.AlertSuccess("", "Se agregó correctamente a la lista.");
                 } catch (error) {
-                    tools.AlertError("Movimiento", "Error al agregar el producto, comuníquese con su proveedor.");
+                    tools.AlertError("", "Error al agregar el producto, comuníquese con su proveedor.");
                 }
             }
 
@@ -572,28 +610,31 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 "suministro": 1,
                                 "estado": $("#cbEstadoMivimiento")[0].checked,
                                 "codigoVerificacion": $("#txtCodigoVerificacion").val().trim(),
+                                "idAlmacen": $("#cbAlmacen").val(),
                                 "lista": newArrayProductos
                             }, function() {
                                 tools.ModalAlertInfo("Movimiento", "Se está procesando la información.");
                             });
 
-                            tools.ModalAlertSuccess("Movimiento", "Se completo correctamente el movimiento de inventario.");
-
-                            arrayProductos.splice(0, arrayProductos.length);
-                            tbList.empty();
-                            $("#rbIncremento")[0].checked = true;
-                            loadTipoMovimiento($("#rbIncremento")[0].checked);
-                            $("#txtObservacion").val("N/D");
-                            $("#cbEstadoMivimiento")[0].checked = true;
+                            tools.ModalAlertSuccess("Movimiento", "Se completo correctamente el movimiento de inventario.", function() {
+                                clearComponents();
+                            });
                         } catch (error) {
-                            if (error.responseText == '' || error.responseText == null) {
-                                tools.ModalAlertError("Producto", "Se produjo un interno intente nuevamente, por favor.");
-                            } else {
-                                tools.ModalAlertWarning("Producto", error.responseText);
-                            }
+                            tools.ErrorMessageServer("Movimiento", error);
                         }
                     }
                 });
+            }
+
+            function clearComponents() {
+                arrayProductos = [];
+                tbList.empty();
+                $("#rbIncremento")[0].checked = true;
+                loadTipoMovimiento($("#rbIncremento")[0].checked);
+                $("#txtObservacion").val("N/D");
+                $("#cbEstadoMivimiento")[0].checked = true;
+                $("#divOverlayAjuste").removeClass("d-none");
+                loadComponents();
             }
 
             function removeTableTr(idSuministro) {

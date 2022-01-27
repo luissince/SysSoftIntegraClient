@@ -29,8 +29,7 @@ function ModalCotizacion() {
         });
 
         $("#modalCotizacion").on("hide.bs.modal", function () {
-            tbListCotizacion.empty();
-            tbListCotizacion.append('<tr><td class="text-center" colspan="7"><p>Iniciar la busqueda para cargar los datos.</p></td></tr>');
+            tools.loadTableMessage(tbListCotizacion, 'No hay datos para mostrar.', 8, true);
             $("#txtSearchCotizacion").val('');
             $("#txtFechaInicialCotizacion").val(tools.getCurrentDate());
             $("#txtFechaFinalCotizacion").val(tools.getCurrentDate());
@@ -131,37 +130,26 @@ function ModalCotizacion() {
                 "filasPorPagina": filasPorPaginaCotizacion
             }, function () {
                 tbListCotizacion.empty();
-                tbListCotizacion.append('<tr><td class="text-center" colspan="7"><img src="./images/loading.gif" id="imgLoad" width="34" height="34" /> <p>Cargando información...</p></td></tr>');
+                tools.loadTable(tbListCotizacion, 8);
                 stateCotizacion = true;
                 totalPaginacionCotizacion = 0;
             });
 
-            tbListCotizacion.empty();
+
             if (result.data.length == 0) {
-                tbListCotizacion.append('<tr><td class="text-center" colspan="7"><p>!No hay datos para mostrar¡</p></td></tr>');
-                ulPaginationCotizacion.html(`
-                <button class="btn btn-outline-secondary">
-                    <i class="fa fa-angle-double-left"></i>
-                </button>
-                <button class="btn btn-outline-secondary">
-                    <i class="fa fa-angle-left"></i>
-                </button>
-                <span class="btn btn-outline-secondary disabled">0 - 0</span>
-                <button class="btn btn-outline-secondary">
-                    <i class="fa fa-angle-right"></i>
-                </button>
-                <button class="btn btn-outline-secondary">
-                    <i class="fa fa-angle-double-right"></i>
-                </button>`);
+                tools.loadTableMessage(tbListCotizacion, 'No hay datos para mostrar.', 8, true);
+                tools.paginationEmpty(ulPaginationCotizacion);
                 stateCotizacion = false;
             } else {
+                tbListCotizacion.empty();
                 for (let value of result.data) {
                     tbListCotizacion.append(`<tr>
                     <td>${value.Id}</td>
-                    <td>${value.Apellidos + '<br>' + value.Nombres}</td>
-                    <td>${'COTIZACIÓN' + '<br>N° ' + value.IdCotizacion}</td>
                     <td>${tools.getDateForma(value.FechaCotizacion) + '<br>' + tools.getTimeForma24(value.HoraCotizacion)}</td>
                     <td>${value.NumeroDocumento + '<br>' + value.Informacion}</td>
+                    <td>${'COTIZACIÓN' + '<br>N° - ' + tools.formatNumber(value.IdCotizacion)}</td>     
+                    <td>${value.Observaciones}</td>               
+                    <td>${value.Estado == 1 ? "SIN USO" : value.Comprobante + "<br>" + value.Serie + "-" + value.Numeracion}</td>
                     <td>${value.SimboloMoneda + ' ' + tools.formatMoney(value.Total)}</td>
                     <td class="text-center"><button class="btn btn-danger" onclick="loadAddCotizacion('${value.IdCotizacion}')"><image src="./images/accept.png" width="22" height="22" /></button></td>
                     </tr>
@@ -199,23 +187,8 @@ function ModalCotizacion() {
                 stateCotizacion = false;
             }
         } catch (error) {
-            tbListCotizacion.empty();
-            tbListCotizacion.append('<tr><td class="text-center" colspan="7"><p>' + error.responseText + '</p></td></tr>');
-
-            ulPaginationCotizacion.html(`
-            <button class="btn btn-outline-secondary">
-                <i class="fa fa-angle-double-left"></i>
-            </button>
-            <button class="btn btn-outline-secondary">
-                <i class="fa fa-angle-left"></i>
-            </button>
-            <span class="btn btn-outline-secondary disabled">0 - 0</span>
-            <button class="btn btn-outline-secondary">
-                <i class="fa fa-angle-right"></i>
-            </button>
-            <button class="btn btn-outline-secondary">
-                <i class="fa fa-angle-double-right"></i>
-            </button>`);
+            tools.loadTableMessage(tbListCotizacion, tools.messageError(error), 8, true);
+            tools.paginationEmpty(ulPaginationCotizacion);
             stateCotizacion = false;
         }
     }
@@ -276,13 +249,7 @@ function ModalCotizacion() {
             for (let value of result.detalle) {
                 let suministro = value;
                 let cantidad = parseFloat(suministro.Cantidad);
-
-                let valor_sin_impuesto = parseFloat(suministro.Precio) / ((parseFloat(suministro.Valor) / 100.00) + 1);
-                let descuento = 0;
-                let porcentajeRestante = valor_sin_impuesto * (descuento / 100.00);
-                let preciocalculado = valor_sin_impuesto - porcentajeRestante;
-
-                let impuesto = tools.calculateTax(parseFloat(suministro.Valor), preciocalculado);
+                let precio = parseFloat(suministro.Precio);
 
                 listaProductos.push({
                     "idSuministro": suministro.IdSuministro,
@@ -291,28 +258,21 @@ function ModalCotizacion() {
                     "cantidad": cantidad,
                     "costoCompra": suministro.PrecioCompra,
                     "bonificacion": 0,
-                    "descuento": 0,
-                    "descuentoCalculado": 0,
-                    "descuentoSumado": 0,
+                    "descuento": parseFloat(suministro.Descuento),
+                    "descuentoCalculado": parseFloat(suministro.Descuento),
+                    "descuentoSumado": parseFloat(suministro.Descuento),
 
-                    "precioVentaGeneralUnico": valor_sin_impuesto,
-                    "precioVentaGeneralReal": preciocalculado,
+                    "precioVentaGeneral": precio,
+                    "precioVentaGeneralUnico": precio,
+                    "precioVentaGeneralReal": precio,
 
                     "impuestoOperacion": suministro.Operacion,
-                    "impuestoId": suministro.Impuesto,
+                    "idImpuesto": suministro.IdImpuesto,
                     "impuestoNombre": suministro.ImpuestoNombre,
                     "impuestoValor": parseFloat(suministro.Valor),
 
-                    "impuestoSumado": cantidad * impuesto,
-                    "precioVentaGeneral": preciocalculado + impuesto,
-                    "precioVentaGeneralAuxiliar": preciocalculado + impuesto,
-
-                    "importeBruto": cantidad * valor_sin_impuesto,
-                    "subImporteNeto": cantidad * preciocalculado,
-                    "importeNeto": cantidad * (preciocalculado + impuesto),
-
-                    "unidadCompraId": suministro.UnidadCompra,
-                    "unidadCompra": suministro.Medida
+                    "idUnidadCompra": suministro.IdMedida,
+                    "unidadCompra": suministro.UnidadCompraName
                 });
             }
             renderTableProductos();

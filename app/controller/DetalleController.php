@@ -27,6 +27,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     } else if ($_GET["type"] == "listdetalle") {
         print json_encode(DetalleADO::Listar_Detalle_ById($_GET["idMantenimiento"], $_GET["search"]));
         exit();
+    } else if ($_GET["type"] == "fillunidad") {
+        print json_encode(DetalleADO::FillDetalleUnidadMedida($_GET["search"]));
+        exit();
     }
 } else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $body = json_decode(file_get_contents("php://input"), true);

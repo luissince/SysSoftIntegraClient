@@ -243,7 +243,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                         <th style="width:10%">Teléfono/Celular</th>
                                         <th style="width:25%">Dirección</th>
                                         <th style="width:10%">Representante</th>
-                                        <th style="width:5%">Predeterminado</th>
+                                        <th style="width:5%">Predet.</th>
                                         <th style="width:5%">Editar</th>
                                         <th style="width:5%">Eliminar</th>
                                         <th style="width:5%">Predet.</th>

@@ -307,7 +307,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         "idMantenimiento": idMantenimiento,
                         "search": search
                     }, function() {
-                        tools.loadTable($("#tbListDetalle"), 5);
+                        tools.loadTable($("#tbListDetalle"), 7);
                     });
 
                     $("#tbListDetalle").empty();

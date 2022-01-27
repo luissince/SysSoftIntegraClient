@@ -22,6 +22,10 @@ if (!isset($_SESSION['IdEmpleado'])) {
         <!--  -->
         <?php include "./layout/cotizacion/modalCotizacion.php"; ?>
         <!--  -->
+        <!--  -->
+        <?php include "./layout/cotizacion/modalEditarProducto.php"; ?>
+        <!--  -->
+
         <main class="app-content">
 
             <div class="tile mb-4">
@@ -81,6 +85,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 <thead class="table-header-background">
                                     <tr role="row">
                                         <th width="5%">Quitar</th>
+                                        <th width="5%">Editar</th>
                                         <th width="15%">Cantidad</th>
                                         <th width="30%">Descripción</th>
                                         <th width="15%">Impuesto</th>
@@ -91,7 +96,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 </thead>
                                 <tbody id="tbList">
                                     <tr>
-                                        <td colspan="6" align="center">!No hay datos para mostrar¡</td>
+                                        <td colspan="8" class="text-center">!No hay datos para mostrar¡</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -153,11 +158,11 @@ if (!isset($_SESSION['IdEmpleado'])) {
             let modalCotizacion = new ModalCotizacion();
 
             let monedaSimbolo = "M";
-            let importeBruto = 0;
-            let descuentoBruto = 0;
-            let subImporteNeto = 0;
-            let impuestoNeto = 0;
-            let importeNeto = 0;
+            let importeBrutoTotal = 0;
+            let descuentoBrutoTotal = 0;
+            let subImporteNetoTotal = 0;
+            let impuestoNetoTotal = 0;
+            let importeNetoTotal = 0;
 
             let listaProductos = [];
 
@@ -168,7 +173,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
             $(document).ready(function() {
                 modalProductos.init();
                 modalCotizacion.init();
-                select2_();
+                selectCliente();
 
                 $("#txtFechaEmision").val(tools.getCurrentDate());
                 $("#txtFechaVencimiento").val(tools.getCurrentDate());
@@ -195,6 +200,9 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         event.preventDefault();
                     }
                 });
+
+                tools.keyNumberFloat($("#txtCantidadEdit"));
+                tools.keyNumberFloat($("#txtPrecioEdit"));
 
                 loadInit();
             });
@@ -226,13 +234,13 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         }
                     }
 
-                    $("#lblTotal").html(monedaSimbolo + " " + tools.formatMoney(importeNeto));
+                    $("#lblTotal").html(monedaSimbolo + " " + tools.formatMoney(importeNetoTotal));
 
-                    $("#lblImporteBruto").html(monedaSimbolo + " " + tools.formatMoney(importeBruto));
-                    $("#lblDescuentoBruto").html(monedaSimbolo + " " + tools.formatMoney(descuentoBruto));
-                    $("#lblSubImporteNeto").html(monedaSimbolo + " " + tools.formatMoney(subImporteNeto));
-                    $("#lblImpuestoNeto").html(monedaSimbolo + " " + tools.formatMoney(impuestoNeto));
-                    $("#lblImporteNeto").html(monedaSimbolo + " " + tools.formatMoney(importeNeto));
+                    $("#lblImporteBruto").html(monedaSimbolo + " " + tools.formatMoney(importeBrutoTotal));
+                    $("#lblDescuentoBruto").html(monedaSimbolo + " " + tools.formatMoney(descuentoBrutoTotal));
+                    $("#lblSubImporteNeto").html(monedaSimbolo + " " + tools.formatMoney(subImporteNetoTotal));
+                    $("#lblImpuestoNeto").html(monedaSimbolo + " " + tools.formatMoney(impuestoNetoTotal));
+                    $("#lblImporteNeto").html(monedaSimbolo + " " + tools.formatMoney(importeNetoTotal));
 
                     $("#divOverlayPuntoVenta").addClass("d-none");
                 } catch (error) {
@@ -249,6 +257,103 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     }
                 }
                 renderTableProductos();
+            }
+
+            function editDetalleProducto(idSuministro, cantidad, precio, idUnidadCompra, unidadCompra) {
+                $("#modalEditProducto").modal("show");
+
+                $("#modalEditProducto").on("shown.bs.modal", function() {
+                    $("#txtCantidadEdit").val(cantidad);
+                    $("#txtPrecioEdit").val(precio);
+                    $("#txtCantidadEdit").focus();
+
+
+                    var data = [{
+                        id: idUnidadCompra,
+                        text: unidadCompra
+                    }];
+
+                    $("#cbMedidaEdit").empty();
+                    $('#cbMedidaEdit').select2({
+                        width: '100%',
+                        data: data,
+                        placeholder: "Buscar Unidad de Medida",
+                        ajax: {
+                            url: "../app/controller/DetalleController.php",
+                            type: "GET",
+                            dataType: 'json',
+                            delay: 250,
+                            data: function(params) {
+                                return {
+                                    type: "fillunidad",
+                                    search: params.term
+                                };
+                            },
+                            processResults: function(response) {
+                                let datafill = response.map((item, index) => {
+                                    return {
+                                        id: item.IdDetalle,
+                                        text: item.Nombre
+                                    };
+                                });
+                                return {
+                                    results: datafill
+                                };
+                            },
+                            cache: true
+                        }
+
+                    });
+                });
+
+
+                $("#modalEditProducto").on("hide.bs.modal", function() {
+                    $("#txtCantidadEdit").val('');
+                    $("#txtPrecioEdit").val('');
+                });
+
+                $("#txtCantidadEdit").unbind();
+                $("#txtCantidadEdit").bind("keypress", function(event) {
+                    if (event.keyCode == 13) {
+                        onEventEditProducto(idSuministro, $("#txtCantidadEdit").val(), $("#txtPrecioEdit").val(), $("#cbMedidaEdit").val(), $("#cbMedidaEdit option:selected").text());
+                        event.preventDefault();
+                    }
+                });
+
+                $("#txtPrecioEdit").unbind();
+                $("#txtPrecioEdit").bind("keypress", function(event) {
+                    if (event.keyCode == 13) {
+                        onEventEditProducto(idSuministro, $("#txtCantidadEdit").val(), $("#txtPrecioEdit").val(), $("#cbMedidaEdit").val(), $("#cbMedidaEdit option:selected").text());
+                        event.preventDefault();
+                    }
+                });
+
+                $("#btnSaveEditProducto").unbind();
+                $("#btnSaveEditProducto").bind("click", function() {
+                    onEventEditProducto(idSuministro, $("#txtCantidadEdit").val(), $("#txtPrecioEdit").val(), $("#cbMedidaEdit").val(), $("#cbMedidaEdit option:selected").text());
+                });
+
+                $("#btnSaveEditProducto").bind("keypress", function(event) {
+                    if (event.keyCode == 13) {
+                        onEventEditProducto(idSuministro, $("#txtCantidadEdit").val(), $("#txtPrecioEdit").val(), $("#cbMedidaEdit").val(), $("#cbMedidaEdit option:selected").text());
+                        event.preventDefault();
+                    }
+                });
+            }
+
+            function onEventEditProducto(idSuministro, cantidad, precio, idMedida, medida) {
+                for (let i = 0; i < listaProductos.length; i++) {
+                    if (listaProductos[i].idSuministro == idSuministro) {
+                        let suministro = listaProductos[i];
+                        suministro.cantidad = tools.isNumeric(cantidad) ? parseFloat(cantidad) <= 0 ? 1 : parseFloat(cantidad) : 1;
+                        suministro.precioVentaGeneral = tools.isNumeric(precio) ? parseFloat(precio) <= 0 ? 1 : parseFloat(precio) : 1;
+                        suministro.idUnidadCompra = idMedida;
+                        suministro.unidadCompra = medida;
+                        break;
+                    }
+                }
+                renderTableProductos();
+                $("#modalEditProducto").modal("hide");
             }
 
             onKeyPressTable = function(value) {
@@ -268,21 +373,11 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         if (listaProductos[i].idSuministro == idSuministro) {
                             let suministro = listaProductos[i];
                             suministro.cantidad = tools.isNumeric(value.value) ? value.value <= 0 ? 1 : parseFloat(value.value) : 1;
-
-                            let porcentajeRestante = suministro.precioVentaGeneralUnico * (suministro.descuento / 100.00);
-                            suministro.descuentoCalculado = porcentajeRestante;
-                            suministro.descuentoSumado = porcentajeRestante * suministro.cantidad;
-
-                            let impuesto = tools.calculateTax(suministro.impuestoValor, suministro.precioVentaGeneralReal);
-                            suministro.impuestoSumado = suministro.cantidad * impuesto;
-
-                            suministro.importeBruto = suministro.cantidad * suministro.precioVentaGeneralUnico;
-                            suministro.subImporteNeto = suministro.cantidad * suministro.precioVentaGeneralReal;
-                            suministro.importeNeto = suministro.cantidad * suministro.precioVentaGeneralReal;
                             break;
                         }
                     }
                     renderTableProductos();
+                    event.preventDefault();
                 }
             }
 
@@ -291,33 +386,14 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     for (let i = 0; i < listaProductos.length; i++) {
                         if (listaProductos[i].idSuministro == idSuministro) {
                             let suministro = listaProductos[i];
-
                             let monto = tools.isNumeric(value.value) ? value.value <= 0 ? 1 : parseFloat(value.value) : 1;
-
-                            let valor_sin_impuesto = monto / ((suministro.impuestoValor / 100.00) + 1);
-                            let descuento = suministro.descuento;
-                            let porcentajeRestante = valor_sin_impuesto * (descuento / 100.00);
-                            let preciocalculado = valor_sin_impuesto - porcentajeRestante;
-
-                            suministro.descuento = descuento;
-                            suministro.descuentoCalculado = porcentajeRestante;
-                            suministro.descuentoSumado = porcentajeRestante * suministro.cantidad;
-
-                            suministro.precioVentaGeneralUnico = valor_sin_impuesto;
-                            suministro.precioVentaGeneralReal = preciocalculado;
-
-                            let impuesto = tools.calculateTax(suministro.impuestoValor, suministro.precioVentaGeneralReal);
-                            suministro.impuestoSumado = suministro.cantidad * impuesto;
-                            suministro.precioVentaGeneral = suministro.precioVentaGeneralReal + impuesto;
-
-                            suministro.importeBruto = suministro.cantidad * suministro.precioVentaGeneralUnico;
-                            suministro.subImporteNeto = suministro.cantidad * suministro.precioVentaGeneralReal;
-                            suministro.importeNeto = suministro.cantidad * suministro.precioVentaGeneralReal;
+                            suministro.precioVentaGeneral = monto;
 
                             break;
                         }
                     }
                     renderTableProductos();
+                    event.preventDefault();
                 }
             }
 
@@ -331,42 +407,48 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
             function renderTableProductos() {
                 $("#tbList").empty();
-                importeBruto = 0;
-                descuentoBruto = 0;
-                subImporteNeto = 0;
-                impuestoNeto = 0;
-                importeNeto = 0;
+                importeBrutoTotal = 0;
+                descuentoBrutoTotal = 0;
+                subImporteNetoTotal = 0;
+                impuestoNetoTotal = 0;
+                importeNetoTotal = 0;
 
                 if (listaProductos.length == 0) {
-                    $("#tbList").append(`<tr> 
-                        <td colspan = "6" align = "center"> !No hay datos para mostrar¡ </td> 
-                    </tr>`);
+                    $("#tbList").append(`<tr><td colspan="8" align="center"> !No hay datos para mostrar¡ </td></tr>`);
                 } else {
                     for (let value of listaProductos) {
-                        $("#tbList").append('<tr role="row" class="odd">' +
-                            '<td class="text-center"><button class="btn btn-danger" onclick="removeDetalleProducto(\'' + value.idSuministro + '\')"><i class="fa fa-trash"></i></button></td>' +
-                            '<td><input readonly id="c-' + value.idSuministro + '" type="text" class="form-control" placeholder="0" onkeypress="onKeyPressTable(this)" onkeydown="onKeyDownTableCantidad(this,\'' + value.idSuministro + '\')" value="' + tools.formatMoney(value.cantidad) + '" onfocusout="onFocusOutTable()" ondblclick="onClickTable(\'' + "c-" + value.idSuministro + '\')" autocomplete="off" /></td>' +
-                            '<td>' + value.clave + '<br>' + value.nombreMarca + '</td>' +
-                            '<td class="text-center">' + value.impuestoNombre + '</td>' +
-                            '<td><input readonly id="p-' + value.idSuministro + '" type="text" class="form-control" placeholder="0" onkeypress="onKeyPressTable(this)"  onkeydown="onKeyDownTablePrecio(this,\'' + value.idSuministro + '\')" value="' + tools.formatMoney(value.precioVentaGeneral) + '" onfocusout="onFocusOutTable()" ondblclick="onClickTable(\'' + "p-" + value.idSuministro + '\')" autocomplete="off" /></td>' +
-                            '<td><select class="form-control"><option>'+value.unidadCompra+'</option><select></td>'+
-                            '<td class="text-center">' + tools.formatMoney(value.cantidad * value.precioVentaGeneral) + '</td>' +
-                            '</tr>');
+                        $("#tbList").append(`<tr role="row" class="odd">
+                            <td class="text-center"><button class="btn btn-danger" onclick="removeDetalleProducto('${ value.idSuministro }')"><i class="fa fa-trash"></i></button></td>
+                            <td class="text-center"><button class="btn btn-warning" onclick="editDetalleProducto('${ value.idSuministro }','${value.cantidad}','${value.precioVentaGeneral}','${value.idUnidadCompra }','${value.unidadCompra }')"><i class="fa fa-edit"></i></button></td>
+                            <td><input readonly id="${'c-' + value.idSuministro }" type="text" class="form-control" placeholder="0" onkeypress="onKeyPressTable(this)" onkeydown="onKeyDownTableCantidad(this,'${ value.idSuministro }')" value="${ tools.formatMoney(value.cantidad) }" onfocusout="onFocusOutTable()" ondblclick="onClickTable('${ "c-" + value.idSuministro }')" autocomplete="off" /></td>
+                            <td>${ value.clave+'<br>'+ value.nombreMarca } </td>
+                            <td class="text-center">${ value.impuestoNombre }</td>
+                            <td><input readonly id="${'p-' + value.idSuministro }" type="text" class="form-control" placeholder="0" onkeypress="onKeyPressTable(this)"  onkeydown="onKeyDownTablePrecio(this,'${ value.idSuministro }')" value="${ tools.formatMoney(value.precioVentaGeneral) }" onfocusout="onFocusOutTable()" ondblclick="onClickTable('${ "p-" + value.idSuministro }')" autocomplete="off" /></td>
+                            <td class="text-center">${value.unidadCompra }</td>
+                            <td class="text-center">${ tools.formatMoney(value.cantidad * (value.precioVentaGeneral-value.descuento)) }</td>
+                            </tr>`);
 
-                        importeBruto += value.importeBruto;
-                        descuentoBruto += value.descuentoSumado;
-                        subImporteNeto += value.subImporteNeto;
-                        impuestoNeto += value.impuestoSumado;
+                        let importeBruto = value.precioVentaGeneral * value.cantidad;
+                        let descuento = value.descuento;
+                        let subImporteBruto = importeBruto - descuento;
+                        let subImporteNeto = tools.calculateTaxBruto(value.impuestoValor, subImporteBruto);
+                        let impuesto = tools.calculateTax(value.impuestoValor, subImporteNeto);
+                        let importeNeto = subImporteNeto + impuesto;
+
+                        importeBrutoTotal += importeBruto;
+                        descuentoBrutoTotal += descuento;
+                        subImporteNetoTotal += subImporteNeto;
+                        impuestoNetoTotal += impuesto;
+                        importeNetoTotal += importeNeto;
                     }
                 }
-                importeNeto = subImporteNeto + impuestoNeto;
 
-                $("#lblTotal").html(monedaSimbolo + " " + tools.formatMoney(importeNeto));
-                $("#lblImporteBruto").html(monedaSimbolo + " " + tools.formatMoney(importeBruto));
-                $("#lblDescuentoBruto").html(monedaSimbolo + " " + tools.formatMoney(descuentoBruto));
-                $("#lblSubImporteNeto").html(monedaSimbolo + " " + tools.formatMoney(subImporteNeto));
-                $("#lblImpuestoNeto").html(monedaSimbolo + " " + tools.formatMoney(impuestoNeto));
-                $("#lblImporteNeto").html(monedaSimbolo + " " + tools.formatMoney(importeNeto));
+                $("#lblTotal").html(monedaSimbolo + " " + tools.formatMoney(importeNetoTotal));
+                $("#lblImporteBruto").html(monedaSimbolo + " " + tools.formatMoney(importeBrutoTotal));
+                $("#lblDescuentoBruto").html(monedaSimbolo + " " + tools.formatMoney(descuentoBrutoTotal));
+                $("#lblSubImporteNeto").html(monedaSimbolo + " " + tools.formatMoney(subImporteNetoTotal));
+                $("#lblImpuestoNeto").html(monedaSimbolo + " " + tools.formatMoney(impuestoNetoTotal));
+                $("#lblImporteNeto").html(monedaSimbolo + " " + tools.formatMoney(importeNetoTotal));
             }
 
             function validateDatelleVenta(idSuministro) {
@@ -428,20 +510,20 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 $("#btnGuardar").addClass("btn-primary");
                 $("#btnGuardar").html('<i class="fa fa-save"></i> Guardar');
 
-                importeBruto = 0;
-                descuentoBruto = 0;
-                subImporteNeto = 0;
-                impuestoNeto = 0;
-                importeNeto = 0;
+                importeBrutoTotal = 0;
+                descuentoBrutoTotal = 0;
+                subImporteNetoTotal = 0;
+                impuestoNetoTotal = 0;
+                importeNetoTotal = 0;
                 listaProductos = [];
                 renderTableProductos();
                 loadInit();
 
                 $('#cbCliente').empty();
-                select2_();
+                selectCliente();
             }
 
-            function select2_() {
+            function selectCliente() {
                 $('#cbCliente').empty();
                 $('#cbCliente').select2({
                     width: '100%',

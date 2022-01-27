@@ -312,12 +312,12 @@ $html = '<html>
                             <?php
                             foreach ($detalleVenta as $value) {
                                 $html .= '<tr>
-                                <td class="background-primary plr-2 ptb-1 font-size-9 text-center">' . $value["id"] . '</td>
-                                <td class="background-seconday plr-2 ptb-1 font-size-9">' . $value["Clave"] . '<br>' . $value["NombreMarca"] . '</td>
-                                <td class="background-seconday plr-2 ptb-1 font-size-9">' . Tools::roundingValue($value["Cantidad"]) . '</td>
-                                <td class="background-seconday plr-2 ptb-1 font-size-9">' . Tools::roundingValue($value["PrecioVenta"]) . '</td>
-                                <td class="background-seconday plr-2 ptb-1 font-size-9">' . $value["UnidadCompra"] . '</td>
-                                <td class="background-primary plr-2 ptb-1 font-size-9 text-right">' . Tools::roundingValue($value["PrecioVenta"] * $value["Cantidad"]) . '</td>
+                                <td class="background-primary plr-2 ptb-1 font-size-8 text-center">' . $value["id"] . '</td>
+                                <td class="background-seconday plr-2 ptb-1 font-size-8">' . $value["Clave"] . '<br>' . $value["NombreMarca"] . '</td>
+                                <td class="background-seconday plr-2 ptb-1 font-size-8">' . Tools::roundingValue($value["Cantidad"]) . '</td>
+                                <td class="background-seconday plr-2 ptb-1 font-size-8">' . Tools::roundingValue($value["PrecioVenta"]) . '</td>
+                                <td class="background-seconday plr-2 ptb-1 font-size-8">' . $value["UnidadCompra"] . '</td>
+                                <td class="background-primary plr-2 ptb-1 font-size-8 text-right">' . Tools::roundingValue($value["PrecioVenta"] * $value["Cantidad"]) . '</td>
                                 </tr>';
 
                                 $importeBruto = $value["PrecioVenta"] * $value["Cantidad"];

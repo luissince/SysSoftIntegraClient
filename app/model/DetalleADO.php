@@ -2,11 +2,11 @@
 
 namespace SysSoftIntegra\Model;
 
+use SysSoftIntegra\Src\Tools;
 use Database;
 use PDO;
-use PDOException;
 use Exception;
-use DateTime;
+
 
 require_once __DIR__ . './../database/DataBaseConexion.php';
 
@@ -21,7 +21,6 @@ class DetalleADO
     public static function Listar_Mantenimiento(string $value)
     {
         try {
-
             $cmdMantenimiento  = Database::getInstance()->getDb()->prepare("{call Sp_List_Table_Matenimiento(?)}");
             $cmdMantenimiento->bindParam(1, $value, PDO::PARAM_STR);
             $cmdMantenimiento->execute();
@@ -80,6 +79,22 @@ class DetalleADO
             $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
             header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
 
+            return $ex->getMessage();
+        }
+    }
+
+    public static function FillDetalleUnidadMedida($search)
+    {
+        try {
+            $cmdUnidad = Database::getInstance()->getDb()->prepare("SELECT IdDetalle,Nombre FROM DetalleTB 
+            WHERE Nombre LIKE CONCAT('%',?,'%') AND IdMantenimiento = '0013'");
+            $cmdUnidad->bindParam(1, $search, PDO::PARAM_STR);
+            $cmdUnidad->execute();
+
+            Tools::httpStatus200();
+            return $cmdUnidad->fetchAll(PDO::FETCH_OBJ);
+        } catch (Exception $ex) {
+            Tools::httpStatus500();
             return $ex->getMessage();
         }
     }

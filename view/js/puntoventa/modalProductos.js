@@ -96,8 +96,7 @@ function ModalProductos() {
                 "posicionPagina": ((paginacionProductos - 1) * filasPorPaginaProductos),
                 "filasPorPagina": filasPorPaginaProductos
             }, function () {
-                tbListProductos.empty();
-                tbListProductos.append('<tr><td class="text-center" colspan="7"><img src="./images/loading.gif" id="imgLoad" width="34" height="34" /> <p>Cargando información...</p></td></tr>');
+                tools.loadTable(tbListProductos, 7);
                 stateProductos = true;
                 totalPaginacionProductos = 0;
                 arrayProductos = [];
@@ -107,7 +106,7 @@ function ModalProductos() {
             tbListProductos.empty();
             arrayProductos = object.data;
             if (arrayProductos.length === 0) {
-                tbListProductos.append('<tr><td class="text-center" colspan="7"><p>No hay datos para mostrar</p></td></tr>');
+                tools.loadTableMessage(tbListProductos, "No hay datos para mostrar", 7);
                 ulPaginationProductos.html(`
                 <button class="btn btn-outline-secondary">
                     <i class="fa fa-angle-double-left"></i>
@@ -129,7 +128,7 @@ function ModalProductos() {
                         <td class="text-center">${producto.Id}</td>
                         <td>${producto.Clave + '</br>' + producto.NombreMarca}</td>
                         <td>${producto.Categoria + '<br>' + producto.Marca}</td>
-                        <td class="${(parseFloat(producto.Cantidad) > 0 ? "text-black" : "text-danger")}">${tools.formatMoney(parseFloat(producto.Cantidad)) + '<br>' + producto.UnidadCompra}</td>
+                        <td class="${(parseFloat(producto.Cantidad) > 0 ? "text-black" : "text-danger")}">${tools.formatMoney(parseFloat(producto.Cantidad)) + '<br>' + producto.UnidadCompraName}</td>
                         <td>${producto.ImpuestoNombre}</td>
                         <td>${tools.formatMoney(parseFloat(producto.PrecioVentaGeneral))}</td>
                         <td><button class="btn btn-danger" onclick="onSelectProducto('${producto.IdSuministro}')"><image src="./images/accept.png" width="22" height="22" /></button></td>' +
@@ -167,9 +166,7 @@ function ModalProductos() {
                 stateProductos = false;
             }
         } catch (error) {
-            console.log(error)
-            tbListProductos.empty();
-            tbListProductos.append('<tr><td class="text-center" colspan="7"><p>Error en obtener los datos nuevamentes</p></td></tr>');
+            tools.loadTableMessage(tbListProductos, tools.messageError(error), 7, true);
             ulPaginationProductos.html(`
                 <button class="btn btn-outline-secondary">
                     <i class="fa fa-angle-double-left"></i>
@@ -194,40 +191,27 @@ function ModalProductos() {
                 if (!validateDatelleVenta(idSuministro)) {
                     let suministro = arrayProductos[i];
                     let cantidad = 1;
-
-                    let valor_sin_impuesto = parseFloat(suministro.PrecioVentaGeneral) / ((parseFloat(suministro.Valor) / 100.00) + 1);
-                    let descuento = 0;
-                    let porcentajeRestante = valor_sin_impuesto * (descuento / 100.00);
-                    let preciocalculado = valor_sin_impuesto - porcentajeRestante;
-
-                    let impuesto = tools.calculateTax(parseFloat(suministro.Valor), preciocalculado);
+                    let precio = parseFloat(suministro.PrecioVentaGeneral);
 
                     listaProductos.push({
                         "idSuministro": suministro.IdSuministro,
                         "clave": suministro.Clave,
                         "nombreMarca": suministro.NombreMarca,
                         "cantidad": cantidad,
-                        "costoCompra": suministro.PrecioCompra,
+                        "costoCompra": parseFloat(suministro.PrecioCompra),
                         "bonificacion": 0,
                         "descuento": 0,
                         "descuentoCalculado": 0,
                         "descuentoSumado": 0,
 
-                        "precioVentaGeneralUnico": valor_sin_impuesto,
-                        "precioVentaGeneralReal": preciocalculado,
+                        "precioVentaGeneral": precio,
+                        "precioVentaGeneralUnico": precio,
+                        "precioVentaGeneralReal": precio,
 
                         "impuestoOperacion": suministro.Operacion,
-                        "impuestoId": suministro.Impuesto,
+                        "idImpuesto": suministro.Impuesto,
                         "impuestoNombre": suministro.ImpuestoNombre,
-                        "impuestoValor": suministro.Valor,
-
-                        "impuestoSumado": cantidad * impuesto,
-                        "precioVentaGeneral": preciocalculado + impuesto,
-                        "precioVentaGeneralAuxiliar": preciocalculado + impuesto,
-
-                        "importeBruto": cantidad * valor_sin_impuesto,
-                        "subImporteNeto": cantidad * preciocalculado,
-                        "importeNeto": cantidad * (preciocalculado + impuesto),
+                        "impuestoValor": parseFloat(suministro.Valor),
 
                         "inventario": suministro.Inventario,
                         "unidadVenta": suministro.UnidadVenta,
@@ -240,14 +224,6 @@ function ModalProductos() {
                             let currenteObject = listaProductos[i];
 
                             currenteObject.cantidad = parseFloat(currenteObject.cantidad) + 1;
-
-                            let porcentajeRestante = parseFloat(currenteObject.precioVentaGeneralUnico) * (parseFloat(currenteObject.descuento) / 100.00);
-                            currenteObject.descuentoSumado = porcentajeRestante * currenteObject.cantidad;
-                            currenteObject.impuestoSumado = currenteObject.cantidad * (parseFloat(currenteObject.precioVentaGeneralReal) * (parseFloat(currenteObject.impuestoValor) / 100.00));
-
-                            currenteObject.importeBruto = currenteObject.cantidad * currenteObject.precioVentaGeneralUnico;
-                            currenteObject.subImporteNeto = currenteObject.cantidad * currenteObject.precioVentaGeneralReal;
-                            currenteObject.importeNeto = currenteObject.cantidad * currenteObject.precioVentaGeneral;
                             break;
                         }
                     }

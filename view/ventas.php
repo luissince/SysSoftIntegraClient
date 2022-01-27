@@ -20,7 +20,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
         <!-- Modal del detalle de ingreso -->
         <div class="row">
             <div class="modal fade" id="id-modal-productos" data-backdrop="static">
-                <div class="modal-dialog">
+                <div class="modal-dialog modal-lg">
                     <div class="modal-content">
 
                         <div class="modal-header">
@@ -71,6 +71,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                                     <th style="width:5%;">N°</th>
                                                     <th style="width:30%;">Descripción</th>
                                                     <th style="width:15%;">Cantidad</th>
+                                                    <th style="width:15%;">Bonificación</th>
                                                     <th style="width:15%;">Impuesto</th>
                                                     <th style="width:15%;">Precio</th>
                                                     <th style="width:15%;">Descuento</th>
@@ -185,6 +186,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 <thead class="table-header-background">
                                     <tr>
                                         <th style="width:5%;">#</th>
+                                        <th style="width:5%;">Anular</th>
                                         <th style="width:5%;">PDF</th>
                                         <th style="width:5%;">Detalle</th>
                                         <th style="width:10%;">Fecha</th>
@@ -242,6 +244,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
             let ulPagination = $("#ulPagination");
             let lblTotalVenta = $("#lblTotalVenta");
+
+            let empleado = "<?= $_SESSION["Apellidos"] . " " . $_SESSION["Nombres"]; ?>";
 
             $(document).ready(function() {
 
@@ -433,8 +437,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             "filasPorPagina": filasPorPagina
                         },
                         function() {
-                            tbody.empty();
-                            tbody.append('<tr><td class="text-center" colspan="10"><img src="./images/loading.gif" id="imgLoad" width="34" height="34" /> <p>Cargando información...</p></td></tr>');
+                            tools.loadTable(tbody, 11);
                             state = true;
                             totalPaginacion = 0;
                             arrayVentas = [];
@@ -446,21 +449,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     arrayVentas = object.data;
                     tbody.empty();
                     if (arrayVentas.length == 0) {
-                        tbody.append('<tr><td class="text-center" colspan="10"><p>No hay datos para mostrar.</p></td></tr>');
-                        ulPagination.html(`
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-double-left"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-left"></i>
-                            </button>
-                            <span class="btn btn-outline-secondary disabled" id="lblPaginacion">0 - 0</span>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-right"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-double-right"></i>
-                            </button>`);
+                        tools.loadTableMessage(tbody, "No hay datos para mostrar.", 11);
+                        tools.paginationEmpty(ulPagination);
                         lblTotalVenta.html(tools.formatMoney(parseFloat(object.suma)));
                         state = false;
                     } else {
@@ -495,6 +485,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
                             tbody.append('<tr>' +
                                 ' <td class="text-center">' + venta.id + '</td >' +
+                                ' <td class="text-center"><button class="btn btn-danger" onclick="anularVenta(\'' + venta.IdVenta + '\')"><i class="fa fa-ban"></i></button></td>' +
                                 ' <td class="text-center">' + pdf + '</td>' +
                                 ' <td class="text-centerr">' + ver + '</td>' +
                                 ' <td class="text-left">' + datetime + '</td>' +
@@ -541,25 +532,38 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     }
 
                 } catch (error) {
-                    tbody.empty();
-                    ulPagination.html(`
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-double-left"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-left"></i>
-                            </button>
-                            <span class="btn btn-outline-secondary disabled" id="lblPaginacion">0 - 0</span>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-right"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-double-right"></i>
-                            </button>`);
-                    tbody.append('<tr><td class="text-center" colspan="10"><p>' + error.responseText + '</p></td></tr>');
+                    tools.loadTableMessage(tbody, tools.messageError(error), 11, true);
+                    tools.paginationEmpty(ulPagination);
                     lblTotalVenta.html(tools.formatMoney(parseFloat(0)));
                     state = false;
                 }
+            }
+
+            function anularVenta(idVenta) {
+                tools.ModalDialogInputText("Venta", '¿Está seguro de anular venta?', async function(value) {
+                    if (value.dismiss == "cancel") {
+
+                    } else if (value.value.length == 0) {
+                        tools.ModalAlertWarning("Ingreso", "No ingreso ningún motivo :(");
+                    } else {
+                        try {
+                            let result = await tools.promiseFetchPost("../app/controller/VentaController.php", {
+                                "type": "anularventa",
+                                "idVenta": idVenta,
+                                "motivo": value.value.trim().toUpperCase(),
+                                "empleado": empleado
+                            }, function() {
+                                tools.ModalAlertInfo("Venta", "Se está procesando la información.");
+                            });
+
+                            tools.ModalAlertSuccess("Venta", result, function() {
+                                loadInitVentas();
+                            });
+                        } catch (error) {
+                            tools.ErrorMessageServer("Venta", error);
+                        }
+                    }
+                });
             }
 
             async function opeModalDetalleIngreso(idVenta) {
@@ -588,9 +592,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         "type": "ventadetalle",
                         "idVenta": idVenta
                     }, function() {
-                        tbIngresosDetalle.empty();
-                        tbIngresosDetalle.append('<tr><td class="text-center" colspan="6"><img src="./images/loading.gif" id="imgLoad" width="34" height="34" /> <p>Cargando información...</p></td></tr>');
-
+                        tools.loadTable(tbIngresosDetalle, 7);
                     });
 
                     let object = result;
@@ -613,22 +615,22 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         let precio = venta.PrecioVenta;
                         let descuento = venta.Descuento;
                         let importe = cantidad * precio;
-                        tbIngresosDetalle.append('<tr>' +
-                            '<td>' + num + '</td>' +
-                            '<td class="td-left">' + descripcion + '</td>' +
-                            '<td>' + tools.formatMoney(cantidad) + "<br>" + venta.UnidadCompra + '</td>' +
-                            '<td>' + impuesto + '</td>' +
-                            '<td>' + tools.formatMoney(precio) + '</td>' +
-                            '<td>' + tools.formatMoney(descuento) + '</td>' +
-                            '<td>' + tools.formatMoney(importe) + '</td>' +
-                            '</tr>');
+                        tbIngresosDetalle.append(`<tr>
+                            <td>${ num }</td>
+                            <td class="td-left">${ descripcion }</td>
+                            <td>${ tools.formatMoney(cantidad) + "<br>" + venta.UnidadCompra }</td>
+                            <td>${ tools.formatMoney(venta.Bonificacion) }</td>
+                            <td>${ impuesto }</td>
+                            <td>${ tools.formatMoney(precio) }</td>
+                            <td>${ tools.formatMoney(descuento) }</td>
+                            <td>${ tools.formatMoney(importe) }</td>
+                            </tr>`);
                         total += parseFloat(importe);
                     }
                     thTotal.html(venta.Simbolo + " " + tools.formatMoney(total));
 
                 } catch (error) {
-                    tbIngresosDetalle.empty();
-                    tbIngresosDetalle.append('<tr><td class="text-center" colspan="6"><p>' + error.responseText + '</p></td></tr>');
+                    tools.loadTableMessage(tbIngresosDetalle, tools.messageError(error), 7, true);
                 }
             }
 

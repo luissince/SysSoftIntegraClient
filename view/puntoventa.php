@@ -187,12 +187,12 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
                             <div class="card-header p-0">
                                 <button id="btnCobrar" class="btn btn-success btn-block">
-                                    <div class="row justify-content-center p-2">
+                                    <div class="row justify-content-center align-items-center p-2">
                                         <div class="col-md-6 col-sm-6 col-6 text-left">
                                             <span class="text-white h5">COBRAR (F1)</span>
                                         </div>
                                         <div class="col-md-6 col-sm-6 col-6 text-right">
-                                            <span class="text-white h5" id="lblTotal">M 0.00</span>
+                                            <span class="text-white h3" id="lblTotal">M 0.00</span>
                                         </div>
                                     </div>
                                 </button>
@@ -218,16 +218,16 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                     <div class="col-md-12 col-sm-12 col-12 pt-2">
                                         <div class="row">
                                             <div class="col-md-6 text-left">
-                                                <h6>Serie: <span id="lblSerie">-</span></h6>
+                                                <h5>Serie: <span id="lblSerie">-</span></h5>
                                             </div>
                                             <div class="col-md-6 text-right">
-                                                <h6> N°: <span id="lblNumeracion">-</span></h6>
+                                                <h5> N°: <span id="lblNumeracion">-</span></h5>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div class="tile">
+                                <div class="tile border-0 p-0">
 
                                     <div class="overlay d-none p-5" id="divOverlayCliente">
                                         <div class="m-loader mr-4">
@@ -401,19 +401,25 @@ if (!isset($_SESSION['IdEmpleado'])) {
             let modalCotizacion = new ModalCotizacion();
 
             let monedaSimbolo = "M";
-            let importeBruto = 0;
-            let descuentoBruto = 0;
-            let subImporteNeto = 0;
-            let impuestoNeto = 0;
-            let importeNeto = 0;
+            let importeBrutoTotal = 0;
+            let descuentoBrutoTotal = 0;
+            let subImporteNetoTotal = 0;
+            let impuestoNetoTotal = 0;
+            let importeNetoTotal = 0;
+
+            let idCotizacion = "";
 
             let listaComprobantes = [];
             let listaProductos = [];
 
-            let state_view_pago = 0;
             let vueltoContado = 0;
-            let total_venta = 0;
             let estadoCobroContado = false;
+
+            let vueltoAdelantado = 0;
+            let estadoCobroAdelantado = false;
+
+            let total_venta = 0;
+            let state_view_pago = 0;
 
             let idEmpleado = "<?= $_SESSION['IdEmpleado'] ?>";
 
@@ -672,11 +678,11 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
             function renderTableProductos() {
                 $("#tbList").empty();
-                importeBruto = 0;
-                descuentoBruto = 0;
-                subImporteNeto = 0;
-                impuestoNeto = 0;
-                importeNeto = 0;
+                importeBrutoTotal = 0;
+                descuentoBrutoTotal = 0;
+                subImporteNetoTotal = 0;
+                impuestoNetoTotal = 0;
+                importeNetoTotal = 0;
 
                 if (listaProductos.length == 0) {
                     $("#tbList").append(`<tr> 
@@ -690,23 +696,30 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             '<td>' + value.clave + '<br>' + value.nombreMarca + '</td>' +
                             '<td class="text-center">' + value.impuestoNombre + '</td>' +
                             '<td><input readonly id="p-' + value.idSuministro + '" type="text" class="form-control" placeholder="0" onkeypress="onKeyPressTable(this)"  onkeydown="onKeyDownTablePrecio(this,\'' + value.idSuministro + '\')" value="' + tools.formatMoney(value.precioVentaGeneral) + '" onfocusout="onFocusOutTable()" ondblclick="onClickTable(\'' + "p-" + value.idSuministro + '\')" autocomplete="off" /></td>' +
-                            '<td class="text-center">' + tools.formatMoney(value.cantidad * value.precioVentaGeneral) + '</td>' +
+                            '<td class="text-center"><b class="h4">' + monedaSimbolo + " " + tools.formatMoney(value.cantidad * (value.precioVentaGeneral - value.descuento)) + '</b></td>' +
                             '</tr>');
 
-                        importeBruto += value.importeBruto;
-                        descuentoBruto += value.descuentoSumado;
-                        subImporteNeto += value.subImporteNeto;
-                        impuestoNeto += value.impuestoSumado;
+                        let importeBruto = value.precioVentaGeneral * value.cantidad;
+                        let descuento = value.descuento;
+                        let subImporteBruto = importeBruto - descuento;
+                        let subImporteNeto = tools.calculateTaxBruto(value.impuestoValor, subImporteBruto);
+                        let impuesto = tools.calculateTax(value.impuestoValor, subImporteNeto);
+                        let importeNeto = subImporteNeto + impuesto;
+
+                        importeBrutoTotal += importeBruto;
+                        descuentoBrutoTotal += descuento;
+                        subImporteNetoTotal += subImporteNeto;
+                        impuestoNetoTotal += impuesto;
+                        importeNetoTotal += importeNeto;
                     }
                 }
-                importeNeto = subImporteNeto + impuestoNeto;
 
-                $("#lblTotal").html(monedaSimbolo + " " + tools.formatMoney(importeNeto));
-                $("#lblImporteBruto").html(monedaSimbolo + " " + tools.formatMoney(importeBruto));
-                $("#lblDescuentoBruto").html(monedaSimbolo + " " + tools.formatMoney(descuentoBruto));
-                $("#lblSubImporteNeto").html(monedaSimbolo + " " + tools.formatMoney(subImporteNeto));
-                $("#lblImpuestoNeto").html(monedaSimbolo + " " + tools.formatMoney(impuestoNeto));
-                $("#lblImporteNeto").html(monedaSimbolo + " " + tools.formatMoney(importeNeto));
+                $("#lblTotal").html(monedaSimbolo + " " + tools.formatMoney(importeNetoTotal));
+                $("#lblImporteBruto").html(monedaSimbolo + " " + tools.formatMoney(importeBrutoTotal));
+                $("#lblDescuentoBruto").html(monedaSimbolo + " " + tools.formatMoney(descuentoBrutoTotal));
+                $("#lblSubImporteNeto").html(monedaSimbolo + " " + tools.formatMoney(subImporteNetoTotal));
+                $("#lblImpuestoNeto").html(monedaSimbolo + " " + tools.formatMoney(impuestoNetoTotal));
+                $("#lblImporteNeto").html(monedaSimbolo + " " + tools.formatMoney(importeNetoTotal));
             }
 
             onKeyPressTable = function(value) {
@@ -726,17 +739,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         if (listaProductos[i].idSuministro == idSuministro) {
                             let suministro = listaProductos[i];
                             suministro.cantidad = tools.isNumeric(value.value) ? value.value <= 0 ? 1 : parseFloat(value.value) : 1;
-
-                            let porcentajeRestante = suministro.precioVentaGeneralUnico * (suministro.descuento / 100.00);
-                            suministro.descuentoCalculado = porcentajeRestante;
-                            suministro.descuentoSumado = porcentajeRestante * suministro.cantidad;
-
-                            let impuesto = tools.calculateTax(suministro.impuestoValor, suministro.precioVentaGeneralReal);
-                            suministro.impuestoSumado = suministro.cantidad * impuesto;
-
-                            suministro.importeBruto = suministro.cantidad * suministro.precioVentaGeneralUnico;
-                            suministro.subImporteNeto = suministro.cantidad * suministro.precioVentaGeneralReal;
-                            suministro.importeNeto = suministro.cantidad * suministro.precioVentaGeneralReal;
                             break;
                         }
                     }
@@ -750,28 +752,14 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         if (listaProductos[i].idSuministro == idSuministro) {
                             let suministro = listaProductos[i];
 
-                            let monto = tools.isNumeric(value.value) ? value.value <= 0 ? 1 : parseFloat(value.value) : 1;
+                            let monto =
+                                tools.isNumeric(value.value) ?
+                                parseFloat(value.value) <= 0 ?
+                                1 :
+                                parseFloat(value.value) :
+                                1;
 
-                            let valor_sin_impuesto = monto / ((suministro.impuestoValor / 100.00) + 1);
-                            let descuento = suministro.descuento;
-                            let porcentajeRestante = valor_sin_impuesto * (descuento / 100.00);
-                            let preciocalculado = valor_sin_impuesto - porcentajeRestante;
-
-                            suministro.descuento = descuento;
-                            suministro.descuentoCalculado = porcentajeRestante;
-                            suministro.descuentoSumado = porcentajeRestante * suministro.cantidad;
-
-                            suministro.precioVentaGeneralUnico = valor_sin_impuesto;
-                            suministro.precioVentaGeneralReal = preciocalculado;
-
-                            let impuesto = tools.calculateTax(suministro.impuestoValor, suministro.precioVentaGeneralReal);
-                            suministro.impuestoSumado = suministro.cantidad * impuesto;
-                            suministro.precioVentaGeneral = suministro.precioVentaGeneralReal + impuesto;
-
-                            suministro.importeBruto = suministro.cantidad * suministro.precioVentaGeneralUnico;
-                            suministro.subImporteNeto = suministro.cantidad * suministro.precioVentaGeneralReal;
-                            suministro.importeNeto = suministro.cantidad * suministro.precioVentaGeneralReal;
-
+                            suministro.precioVentaGeneral = monto;
                             break;
                         }
                     }
@@ -859,13 +847,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         if (!validateDatelleVenta(result.IdSuministro)) {
                             let suministro = result;
                             let cantidad = 1;
-
-                            let valor_sin_impuesto = parseFloat(suministro.PrecioVentaGeneral) / ((parseFloat(suministro.Valor) / 100.00) + 1);
-                            let descuento = 0;
-                            let porcentajeRestante = valor_sin_impuesto * (descuento / 100.00);
-                            let preciocalculado = valor_sin_impuesto - porcentajeRestante;
-
-                            let impuesto = tools.calculateTax(parseFloat(suministro.Valor), preciocalculado);
+                            let precio = parseFloat(suministro.PrecioVentaGeneral);
 
                             listaProductos.push({
                                 "idSuministro": suministro.IdSuministro,
@@ -878,21 +860,14 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 "descuentoCalculado": 0,
                                 "descuentoSumado": 0,
 
-                                "precioVentaGeneralUnico": valor_sin_impuesto,
-                                "precioVentaGeneralReal": preciocalculado,
+                                "precioVentaGeneral": precio,
+                                "precioVentaGeneralUnico": precio,
+                                "precioVentaGeneralReal": precio,
 
                                 "impuestoOperacion": suministro.Operacion,
-                                "impuestoId": suministro.Impuesto,
+                                "idImpuesto": suministro.Impuesto,
                                 "impuestoNombre": suministro.ImpuestoNombre,
-                                "impuestoValor": suministro.Valor,
-
-                                "impuestoSumado": cantidad * impuesto,
-                                "precioVentaGeneral": preciocalculado + impuesto,
-                                "precioVentaGeneralAuxiliar": preciocalculado + impuesto,
-
-                                "importeBruto": cantidad * valor_sin_impuesto,
-                                "subImporteNeto": cantidad * preciocalculado,
-                                "importeNeto": cantidad * (preciocalculado + impuesto),
+                                "impuestoValor": parseFloat(suministro.Valor),
 
                                 "inventario": suministro.Inventario,
                                 "unidadVenta": suministro.UnidadVenta,
@@ -904,14 +879,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                     let currenteObject = listaProductos[i];
 
                                     currenteObject.cantidad = parseFloat(currenteObject.cantidad) + 1;
-
-                                    let porcentajeRestante = parseFloat(currenteObject.precioVentaGeneralUnico) * (parseFloat(currenteObject.descuento) / 100.00);
-                                    currenteObject.descuentoSumado = porcentajeRestante * currenteObject.cantidad;
-                                    currenteObject.impuestoSumado = currenteObject.cantidad * (parseFloat(currenteObject.precioVentaGeneralReal) * (parseFloat(currenteObject.impuestoValor) / 100.00));
-
-                                    currenteObject.importeBruto = currenteObject.cantidad * currenteObject.precioVentaGeneralUnico;
-                                    currenteObject.subImporteNeto = currenteObject.cantidad * currenteObject.precioVentaGeneralReal;
-                                    currenteObject.importeNeto = currenteObject.cantidad * currenteObject.precioVentaGeneral;
                                     break;
                                 }
                             }
@@ -967,7 +934,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     $("#txtCliente").focus();
                 } else if (listaProductos.length !== 0) {
                     $("#modalProcesoVenta").modal("show");
-                    $("#lblTotalModal").html(monedaSimbolo + " " + tools.formatMoney(importeNeto));
+                    $("#lblTotalModal").html(monedaSimbolo + " " + tools.formatMoney(importeNetoTotal));
 
                     $("#lblVueltoNombre").html('Su cambio:');
                     $("#lblVuelto").html(monedaSimbolo + ' 0.00');
@@ -975,7 +942,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     $("#lblVueltoAdelantoNombre").html('Su cambio:');
                     $("#lblVueltoAdelanto").html(monedaSimbolo + ' 0.00');
 
-                    total_venta = parseFloat(tools.formatMoney(importeNeto));
+                    total_venta = parseFloat(tools.formatMoney(importeNetoTotal));
                     $("#txtDeposito").val(tools.formatMoney(total_venta));
                     $("#txtDepositoAdelantado").val(tools.formatMoney(total_venta));
                 } else {
@@ -984,115 +951,190 @@ if (!isset($_SESSION['IdEmpleado'])) {
             }
 
             function crudVenta() {
-                if (state_view_pago == 0) {
-                    if (!estadoCobroContado && $("#cbDeposito").is("checked")) {
-                        $("#txtEfectivo").focus();
-                        tools.AlertWarning("", "El monto es menor que el total.");
-                    } else {
-                        let tipo = 1;
-                        let estado = 1;
-                        let efectivo = 0;
-                        let vuelto = vueltoContado;
-                        let tarjeta = 0;
-                        let deposito = 0;
-                        let numeroOperacion = "";
-
-                        if ($("#cbDeposito").is("checked")) {
-                            if (tools.isNumeric($("#txtDeposito").val())) {
-                                Tools.AlertMessageWarning(window, "Venta", "El monto del deposito tiene que ser numérico.");
-                                $("#txtDeposito").focus();
-                                return;
-                            } else if ($("#txtNumOperacion").val().trim() === "") {
-                                Tools.AlertMessageWarning(window, "Venta", "Ingrese el número de Operación");
-                                $("#txtNumOperacion").requestFocus();
-                                return;
-                            } else {
-                                deposito = parseFloat($("#txtDeposito").val());
-                                numeroOperacion = $("#txtNumOperacion").val().trim();
-                            }
+                switch (state_view_pago) {
+                    case 0:
+                        if (!estadoCobroContado && !$("#cbDeposito").is(":checked")) {
+                            $("#txtEfectivo").focus();
+                            tools.AlertWarning("", "El monto es menor que el total.");
                         } else {
-                            if (tools.isNumeric($("#txtEfectivo").val()) && parseFloat($("#txtEfectivo").val()) > 0) {
-                                efectivo = parseFloat($("#txtEfectivo").val());
+                            let tipo = 1;
+                            let estado = 1;
+                            let vuelto = vueltoContado;
+
+                            let efectivo = 0;
+                            let tarjeta = 0;
+                            let deposito = 0;
+                            let numeroOperacion = "";
+
+                            if ($("#cbDeposito").is(":checked")) {
+                                if (!tools.isNumeric($("#txtDeposito").val())) {
+                                    tools.AlertWarning("", "El monto del deposito tiene que ser numérico.");
+                                    $("#txtDeposito").focus();
+                                    return;
+                                } else if ($("#txtNumOperacion").val().trim() === "") {
+                                    tools.AlertWarning("", "Ingrese el número de Operación");
+                                    $("#txtNumOperacion").requestFocus();
+                                    return;
+                                } else {
+                                    deposito = parseFloat($("#txtDeposito").val());
+                                    numeroOperacion = $("#txtNumOperacion").val().trim();
+                                }
+                            } else {
+                                if (tools.isNumeric($("#txtEfectivo").val()) && parseFloat($("#txtEfectivo").val()) > 0) {
+                                    efectivo = parseFloat($("#txtEfectivo").val());
+                                }
+
+                                if (tools.isNumeric($("#txtTarjeta").val()) && parseFloat($("#txtTarjeta").val()) > 0) {
+                                    tarjeta = parseFloat($("#txtTarjeta").val());
+                                }
+
+                                if (tools.isNumeric($("#txtEfectivo").val()) && tools.isNumeric($("#txtTarjeta").val())) {
+                                    if ((parseFloat($("#txtEfectivo").val())) >= total_venta) {
+                                        tools.AlertWarning("", "Los valores ingresados no son correctos!!");
+                                        return;
+                                    }
+                                    let efectivo = parseFloat($("#txtEfectivo").val());
+                                    let tarjeta = parseFloat($("#txtTarjeta").val());
+                                    if ((efectivo + tarjeta) != total_venta) {
+                                        tools.AlertWarning("", "El monto a pagar no debe ser mayor al total!!");
+                                        return;
+                                    }
+                                }
+
+                                if (!tools.isNumeric($("#txtEfectivo").val()) && tools.isNumeric($("#txtTarjeta").val())) {
+                                    if ((parseFloat($("#txtTarjeta").val())) > total_venta) {
+                                        tools.AlertWarning("", "El pago con tarjeta no debe ser mayor al total!!");
+                                        return;
+                                    }
+                                }
                             }
 
-                            if (tools.isNumeric($("#txtTarjeta").val()) && parseFloat($("#txtTarjeta").val()) > 0) {
-                                tarjeta = parseFloat($("#txtTarjeta").val());
-                            }
-
-                            if (tools.isNumeric($("#txtEfectivo").val()) && tools.isNumeric($("#txtTarjeta").val())) {
-                                if ((parseFloat($("#txtEfectivo").val())) >= total_venta) {
-                                    tools.AlertWarning("", "Los valores ingresados no son correctos!!");
-                                    return;
-                                }
-                                let efectivo = parseFloat($("#txtEfectivo").val());
-                                let tarjeta = parseFloat($("#txtTarjeta").val());
-                                if ((efectivo + tarjeta) != total_venta) {
-                                    tools.AlertWarning("", "El monto a pagar no debe ser mayor al total!!");
-                                    return;
-                                }
-                            }
-
-                            if (!tools.isNumeric($("#txtEfectivo").val()) && tools.isNumeric($("#txtTarjeta").val())) {
-                                if ((parseFloat($("#txtTarjeta").val())) > total_venta) {
-                                    tools.AlertWarning("", "El pago con tarjeta no debe ser mayor al total!!");
-                                    return;
-                                }
-                            }
+                            completeVenta(tipo, estado, efectivo, vuelto, tarjeta, deposito, numeroOperacion);
                         }
+                        break;
 
-                        completeVenta(tipo, estado, efectivo, vuelto, tarjeta, deposito, numeroOperacion);
-                    }
-                } else if (state_view_pago == 1) {
-                    completeVenta();
-                } else {
-                    completeVenta();
+                    case 1:
+                        if (!tools.validateDate($("#txtFechaVencimiento").val())) {
+                            tools.AlertWarning("", "Ingrese la fecha de vencimiento.");
+                            $("#txtFechaVencimiento").focus();
+                        } else {
+                            let tipo = 2;
+                            let estado = 2;
+                            let vuelto = 0;
+
+                            let efectivo = 0;
+                            let tarjeta = 0;
+                            let deposito = 0;
+                            let numeroOperacion = "";
+
+                            completeVenta(tipo, estado, efectivo, vuelto, tarjeta, deposito, numeroOperacion);
+                        }
+                        break;
+
+                    case 2:
+                        if (!estadoCobroAdelantado && !$("#cbDepositoAdelantado").is(":checked")) {
+                            tools.AlertWarning("", "El monto es menor que el total.");
+                            $("#txtEfectivoAdelanto").focus();
+                        } else {
+                            let tipo = 1;
+                            let estado = 4;
+                            let vuelto = vueltoAdelantado;
+
+                            let efectivo = 0;
+                            let tarjeta = 0;
+                            let deposito = 0;
+                            let numeroOperacion = "";
+
+                            if ($("#cbDepositoAdelantado").is(":checked")) {
+                                if (!tools.isNumeric($("#txtDepositoAdelantado").val())) {
+                                    tools.AlertWarning("", "El monto del deposito tiene que ser numérico.");
+                                    $("#txtDepositoAdelantado").focus();
+                                    return;
+                                } else if ($("#txtNumOperacionAdelantado").val().trim() === "") {
+                                    tools.AlertWarning("", "Ingrese el número de Operación");
+                                    $("#txtNumOperacionAdelantado").requestFocus();
+                                    return;
+                                } else {
+                                    deposito = parseFloat($("#txtDepositoAdelantado").val());
+                                    numeroOperacion = $("#txtNumOperacionAdelantado").val().trim();
+                                }
+                            } else {
+                                if (tools.isNumeric($("#txtEfectivoAdelanto").val()) && parseFloat($("#txtEfectivoAdelanto").val()) > 0) {
+                                    efectivo = parseFloat($("#txtEfectivoAdelanto").val());
+                                }
+
+                                if (tools.isNumeric($("#txtTarjetaAdelanto").val()) && parseFloat($("#txtTarjetaAdelanto").val()) > 0) {
+                                    tarjeta = parseFloat($("#txtTarjetaAdelanto").val());
+                                }
+
+                                if (tools.isNumeric($("#txtEfectivoAdelanto").val()) && tools.isNumeric($("#txtTarjetaAdelanto").val())) {
+                                    if ((parseFloat($("#txtEfectivoAdelanto").val())) >= total_venta) {
+                                        tools.AlertWarning("", "Los valores ingresados no son correctos!!");
+                                        return;
+                                    }
+                                    let efectivo = parseFloat($("#txtEfectivoAdelanto").val());
+                                    let tarjeta = parseFloat($("#txtTarjetaAdelanto").val());
+                                    if ((efectivo + tarjeta) != total_venta) {
+                                        tools.AlertWarning("", "El monto a pagar no debe ser mayor al total!!");
+                                        return;
+                                    }
+                                }
+
+                                if (!tools.isNumeric($("#txtEfectivoAdelanto").val()) && tools.isNumeric($("#txtTarjetaAdelanto").val())) {
+                                    if ((parseFloat($("#txtTarjetaAdelanto").val())) > total_venta) {
+                                        tools.AlertWarning("", "El pago con tarjeta no debe ser mayor al total!!");
+                                        return;
+                                    }
+                                }
+                            }
+
+                            completeVenta(tipo, estado, efectivo, vuelto, tarjeta, deposito, numeroOperacion);
+                        }
+                        break;
                 }
             }
 
             function completeVenta(tipo, estado, efectivo, vuelto, tarjeta, deposito, numeroOperacion) {
-                tools.ModalDialog("Venta", '¿Está seguro de continuar?', function(value) {
+                tools.ModalDialog("Venta", '¿Está seguro de continuar?', async function(value) {
                     if (value == true) {
-                        tools.promiseFetchPost("../app/controller/VentaController.php", {
-                            "type": "crudventa",
-                            "TipoDocumento": $("#cbTipoDocumento").val(),
-                            "NumeroDocumento": $("#txtNumero").val().trim(),
-                            "Informacion": $("#txtCliente").val().trim(),
-                            "Telefono": "",
-                            "Celular": $("#txtCelular").val().trim(),
-                            "Email": $("#txtEmail").val().trim(),
-                            "Direccion": $("#txtDireccion").val().trim(),
-                            "Representante": "",
-                            "Estado": 1,
-                            "Predeterminado": false,
-                            "Sistema": false,
-                            "IdComprobante": $("#cbComprobante").val(),
-                            "IdEmpleado": idEmpleado,
-                            "IdMoneda": $("#cbMoneda").val(),
-                            "FechaVencimiento": tools.getCurrentDate(),
-                            "HoraVencimiento": tools.getCurrentTime(),
-                            "SubTotal": importeBruto,
-                            "Descuento": descuentoBruto,
-                            "Impuesto": impuestoNeto,
-                            "Total": importeNeto,
-                            "Tipo": tipo,
-                            "Estado": estado,
-                            "Efectivo": efectivo,
-                            "Vuelto": vuelto,
-                            "Tarjeta": tarjeta,
-                            "Deposito": deposito,
-                            "NumeroOperacion": numeroOperacion,
-                            "Lista": listaProductos
-
-                        }, function() {
-                            modalProcesoVenta.resetProcesoVenta();
-                            resetVenta();
-                            tools.ModalAlertInfo("Venta", "Se está procesando la información.");
-                        }).then(function(result) {
+                        try {
+                            let result = await tools.promiseFetchPost("../app/controller/VentaController.php", {
+                                "type": "crudventa",
+                                "TipoDocumento": $("#cbTipoDocumento").val(),
+                                "NumeroDocumento": $("#txtNumero").val().trim(),
+                                "Informacion": $("#txtCliente").val().trim(),
+                                "Telefono": "",
+                                "Celular": $("#txtCelular").val().trim(),
+                                "Email": $("#txtEmail").val().trim(),
+                                "Direccion": $("#txtDireccion").val().trim(),
+                                "Representante": "",
+                                "Estado": 1,
+                                "Predeterminado": false,
+                                "Sistema": false,
+                                "IdComprobante": $("#cbComprobante").val(),
+                                "IdEmpleado": idEmpleado,
+                                "IdMoneda": $("#cbMoneda").val(),
+                                "IdCotizacion": idCotizacion,
+                                "FechaVencimiento": tipo == 1 ? tools.getCurrentDate() : $("#txtFechaVencimiento").val(),
+                                "HoraVencimiento": tools.getCurrentTime(),
+                                "Total": importeNetoTotal,
+                                "Tipo": tipo,
+                                "Estado": estado,
+                                "Efectivo": efectivo,
+                                "Vuelto": vuelto,
+                                "Tarjeta": tarjeta,
+                                "Deposito": deposito,
+                                "NumeroOperacion": numeroOperacion,
+                                "Lista": listaProductos
+                            }, function() {
+                                modalProcesoVenta.resetProcesoVenta();
+                                resetVenta();
+                                tools.ModalAlertInfo("Venta", "Se está procesando la información.");
+                            });
                             tools.ModalAlertSuccess("Venta", result);
-                            console.log(result);
-                        }).catch(function(error) {
+                        } catch (error) {
                             tools.ErrorMessageServer("Venta", error);
-                        });
+                        }
                     }
                 });
             }
@@ -1106,6 +1148,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 subImporteNeto = 0;
                 impuestoNeto = 0;
                 importeNeto = 0;
+
+                idCotizacion = "";
 
                 listaComprobantes = [];
                 listaProductos = [];

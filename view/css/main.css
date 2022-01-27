@@ -292,6 +292,62 @@ table tbody:focus {
   outline: 1px solid var(--principal);
 }
 
+.th-porcent-5 {
+  width: 5%;
+}
+
+.th-porcent-6 {
+  width: 6%;
+}
+
+.th-porcent-7 {
+  width: 7%;
+}
+
+.th-porcent-8 {
+  width: 8%;
+}
+
+.th-porcent-9 {
+  width: 9%;
+}
+
+.th-porcent-10 {
+  width: 10%;
+}
+
+.th-porcent-15 {
+  width: 15%;
+}
+
+.th-porcent-20 {
+  width: 20%;
+}
+
+.th-porcent-25 {
+  width: 25%;
+}
+
+.th-porcent-30 {
+  width: 30%;
+}
+
+.th-porcent-35 {
+  width: 35%;
+}
+
+.th-porcent-40 {
+  width: 40%;
+}
+
+.th-porcent-45 {
+  width: 40%;
+}
+
+.th-porcent-50 {
+  width: 40%;
+}
+
 caption {
   padding-top: 0.75rem;
   padding-bottom: 0.75rem;
@@ -495,7 +551,7 @@ h4,
 
 h5,
 .h5 {
-  font-size: 1.0175rem;
+  font-size: 0.8875rem;
 }
 
 h6,

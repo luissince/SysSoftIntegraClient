@@ -62,15 +62,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     } else if ($_GET["type"] == "listarDetalleNotificaciones") {
         print json_encode(VentasADO::ListarDetalleNotificaciones(intval($_GET['posicionPagina']), intval($_GET['filasPorPagina'])));
         exit();
-    } else if ($_GET["type"] == "global") {
-        print json_encode(VentasADO::LoadDashboard($_GET["fechaActual"]));
-        exit();
-    } else if ($_GET["type"] == "productosAgotados") {
-        print json_encode(VentasADO::LoadProductosAgotados(intval($_GET["posicionPaginaAgotados"]), intval($_GET["filasPorPaginaAgotados"])));
-        exit();
-    } else if ($_GET["type"] == "productosPorAgotarse") {
-        print json_encode(VentasADO::LoadProductosPorAgotarse(intval($_GET["posicionPaginaPorAgotarse"]), intval($_GET["filasPorPaginaPorAgotarse"])));
-        exit();
     } else if ($_GET["type"] == "ventasEchas") {
         print json_encode(VentasADO::ListVentasMostrarLibres(intval($_GET["opcion"]), $_GET["buscar"], intval($_GET["posicionPagina"]), intval($_GET["filasPorPagina"])));
         exit();
@@ -83,8 +74,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     if ($body["type"] == "crudnotacredito") {
         print json_encode(VentasADO::RegistrarNotaCredito($body));
         exit();
-    } else if ($body["type"] == "crudventa") {
-        print json_encode(VentasADO::RegistrarVenta($body));
+    } else if ($body["type"] == "crudventa" && $body["Estado"] == 1) {
+        print json_encode(VentasADO::RegistrarVentaContado($body));
+        exit();
+    } else if ($body["type"] == "crudventa" && $body["Estado"] == 2) {
+        print json_encode(VentasADO::RegistrarVentaCredito($body));
+        exit();
+    } else if ($body["type"] == "crudventa" && $body["Estado"] == 4) {
+        print json_encode(VentasADO::RegistrarVentaAdelantado($body));
+        exit();
+    } else if ($body["type"] == "anularventa") {
+        print json_encode(VentasADO::AnularVenta($body));
         exit();
     }
 }

@@ -32,7 +32,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         </div>
 
                         <div class="modal-body">
-                            <div class="tile">
+                            <div class="tile border-0 p-0">
                                 <div class="overlay p-5" id="divOverlayIngreso">
                                     <div class="m-loader mr-4">
                                         <svg class="m-circular" viewBox="25 25 50 50">
@@ -47,8 +47,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                         <div class="form-group">
                                             <label>Cliente</label>
                                             <div class="input-group">
-                                                <select id="cbCliente" class="form-control">
-                                                    <option value="">- Seleccione -</option>
+                                                <select id="cbCliente" class="select2-selection__rendered form-control">
                                                 </select>
                                             </div>
                                         </div>
@@ -183,7 +182,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 <thead class="table-header-background">
                                     <tr>
                                         <th style="width:5%;">#</th>
-                                        <th style="width:5%;">Pdf</th>
                                         <th style="width:10%;">Fecha</th>
                                         <th style="width:15%;">Cliente</th>
                                         <th style="width:15%;">Detalle</th>
@@ -194,7 +192,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 </thead>
                                 <tbody id="tbList">
                                     <tr>
-                                        <td colspan="8" class="text-center">!Aún no has registrado ingresos¡</td>
+                                        <td colspan="7" class="text-center">!Aún no has registrado ingresos¡</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -388,40 +386,27 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         "posicionPagina": ((paginacion - 1) * filasPorPagina),
                         "filasPorPagina": filasPorPagina
                     }, function() {
-                        tbody.empty();
-                        tbody.append('<tr><td class="text-center" colspan="8"><img src="./images/loading.gif" id="imgLoad" width="34" height="34" /> <p>Cargando información...</p></td></tr>');
+                        tools.loadTable(tbody, 7);
                         totalPaginacion = 0;
                         state = true;
                     });
 
-                    tbody.empty();
+
                     if (result.data.length == 0) {
-                        tbody.append('<tr><td class="text-center" colspan="8"><p>No hay ingresos para mostrar.</p></td></tr>');
-                        ulPagination.html(`
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-double-left"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-left"></i>
-                            </button>
-                            <span class="btn btn-outline-secondary disabled" id="lblPaginacion">0 - 0</span>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-right"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-double-right"></i>
-                            </button>`);
+                        tools.loadTableMessage(tbody, 'No hay ingresos para mostrar.', 7, true);
+                        tools.paginationEmpty(ulPagination);
                         state = false;
                     } else {
+                        tbody.empty();
+
                         for (let value of result.data) {
                             tbody.append(`<tr>
                                 <td class="text-center">${value.Id}</td>
-                                <td><button class="btn btn-secondary btn-sm"><img src="./images/pdf.svg" width="26"></button></td>
-                                <td>${tools.getDateForma(value.Fecha)}<br>${tools.getTimeForma24(value.Hora)}</td>
+                                <td class="text-center">${tools.getDateForma(value.Fecha)}<br>${tools.getTimeForma24(value.Hora)}</td>
                                 <td>${value.NumeroDocumento}<br>${value.Informacion}</td>
                                 <td>${value.Detalle}</td>
-                                <td>${value.Procedencia}</td>
-                                <td>${value.Forma}</td>
+                                <td class="text-center">${value.Procedencia}</td>
+                                <td class="text-center">${value.Forma}</td>
                                 <td class="text-center">${tools.formatMoney(value.Monto)}</td>
                                 </tr>                                
                                 `);
@@ -458,22 +443,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         state = false;
                     }
                 } catch (error) {
-                    tbody.empty();
-                    ulPagination.html(`
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-double-left"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-left"></i>
-                            </button>
-                            <span class="btn btn-outline-secondary disabled" id="lblPaginacion">0 - 0</span>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-right"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-double-right"></i>
-                            </button>`);
-                    tbody.append('<tr><td class="text-center" colspan="8"><p>' + error.responseText + '</p></td></tr>');
+                    tools.loadTableMessage(tbody, tools.messageError(error), 7, true);
+                    tools.paginationEmpty(ulPagination);
                     state = false;
                 }
             }
@@ -516,36 +487,54 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
             async function NuevoPago() {
                 try {
-                    let result = await tools.promiseFetchGet("../app/controller/IngresoController.php", {
-                        "type": "listaCliente"
-                    }, function() {
-                        $("#cbCliente").empty();
-                    });
-
-                    $("#cbCliente").append('<option value="">- Seleccione -</option>');
-                    for (let value of result) {
-                        $("#cbCliente").append('<option value="' + value.IdCliente + '">' + value.NumeroDocumento + ' - ' + value.Informacion + '</option>');
-                    }
-
+                    selectCliente();
                     $("#divOverlayIngreso").addClass("d-none");
                 } catch (error) {
-                    $("#cbCliente").append('<option value="">- Seleccione -</option>');
                     $("#divOverlayIngreso").addClass("d-none");
                 }
             }
 
+            function selectCliente() {
+                $('#cbCliente').empty();
+                $('#cbCliente').select2({
+                    width: '100%',
+                    placeholder: "Buscar Cliente",
+                    ajax: {
+                        url: "../app/controller/ClienteController.php",
+                        type: "GET",
+                        dataType: 'json',
+                        delay: 250,
+                        data: function(params) {
+                            return {
+                                type: "fillcliente",
+                                search: params.term
+                            };
+                        },
+                        processResults: function(response) {
+                            let datafill = response.map((item, index) => {
+                                return {
+                                    id: item.IdCliente,
+                                    text: item.NumeroDocumento + ' - ' + item.Informacion
+                                };
+                            });
+                            return {
+                                results: datafill
+                            };
+                        },
+                        cache: true
+                    }
+                });
+            }
+
             function LimpiarModal() {
-                $("#cbCliente").val('');
+                selectCliente();
                 $("#txtObservacion").val('');
                 $("#txtMonto").val('');
                 $("#rbEfectivo").prop("checked", true);
             }
 
             function CrudPago() {
-                if ($("#cbCliente").val() == '') {
-                    tools.AlertWarning("", "Seleccione un cliente.");
-                    $("#cbCliente").focus();
-                } else if (!tools.isNumeric($("#txtMonto").val())) {
+                if (!tools.isNumeric($("#txtMonto").val())) {
                     tools.AlertWarning("", "Ingrese el monto.");
                     $("#txtMonto").focus();
                 } else {
@@ -573,7 +562,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 tools.ModalAlertSuccess("Pago", result);
 
                             } catch (error) {
-                                tools.ModalAlertError("Pago", error.responseText == null || error.responseText == "" ? "Se produjo un error interno intente nuevamente." : error.responseText);
+                                tools.ErrorMessageServer(error);
                             }
                         }
                     });

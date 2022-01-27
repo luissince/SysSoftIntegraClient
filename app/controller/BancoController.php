@@ -10,7 +10,7 @@ require __DIR__ . './../src/autoload.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     if ($_GET["type"] == "all") {
-        print json_encode(BancoADO::Listar_Bancos($_GET["buscar"]));
+        print json_encode(BancoADO::Listar_Bancos($_GET["buscar"], $_GET["posicionPagina"], $_GET["filasPorPagina"]));
         exit();
     } else if ($_GET["type"] == "getid") {
         print json_encode(BancoADO::Obtener_Banco_Por_Id($_GET["idBanco"]));
