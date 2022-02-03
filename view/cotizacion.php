@@ -334,21 +334,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
                     tbody.empty();
                     if (result.data.length == 0) {
-                        tools.loadTableMessage(tbody, "No hay datos para mostrar.", 11);
-                        ulPagination.html(`
-                        <button class="btn btn-outline-secondary">
-                            <i class="fa fa-angle-double-left"></i>
-                        </button>
-                        <button class="btn btn-outline-secondary">
-                            <i class="fa fa-angle-left"></i>
-                        </button>
-                        <span class="btn btn-outline-secondary disabled" id="lblPaginacion">0 - 0</span>
-                        <button class="btn btn-outline-secondary">
-                            <i class="fa fa-angle-right"></i>
-                        </button>
-                        <button class="btn btn-outline-secondary">
-                            <i class="fa fa-angle-double-right"></i>
-                        </button>`);
+                        tools.loadTableMessage(tbody, "No hay datos para mostrar.", 11, true);
+                        tools.paginationEmpty(ulPagination);
                         state = false;
                     } else {
                         for (let cotizacion of result.data) {
@@ -398,23 +385,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         state = false;
                     }
                 } catch (error) {
-                    tbody.empty();
-                    tools.loadTableMessage(tbody, tools.messageError(error), 11);
-                    ulPagination.html(`
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-double-left"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-left"></i>
-                            </button>
-                            <span class="btn btn-outline-secondary disabled" id="lblPaginacion">0 - 0</span>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-right"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-double-right"></i>
-                            </button>`);
-                    tbody.append('<tr><td class="text-center" colspan="10"><p>' + error.responseText + '</p></td></tr>');
+                    tools.loadTableMessage(tbody, tools.messageError(error), 11, true);
+                    tools.paginationEmpty(ulPagination);
                     state = false;
                 }
             }
@@ -431,8 +403,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         "type": "cotizaciondetalle",
                         "idCotizacion": idCotizacion
                     }, function() {
-                        $("#tbCotizacionDetalle").empty();
-                        $("#tbCotizacionDetalle").append(`<tr><td class="text-center" colspan="7"><img src="./images/loading.gif" id="imgLoad" width="34" height="34" /> <p>Cargando información...</p></td></tr>`);
+                        tools.loadTable($("#tbCotizacionDetalle"), 7);
                     });
                     $("#tbCotizacionDetalle").empty();
 
@@ -462,7 +433,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
                     $("#thTotal").html(cotizacion.Simbolo + " " + tools.formatMoney(total));
                 } catch (error) {
-                    $("#tbCotizacionDetalle").append(`<tr><td class="text-center" colspan="7">Se produjo un error interno, intente nuevamente por favor.</td></tr>`);
+                    tools.loadTableMessage($("#tbCotizacionDetalle"), tools.messageError(error), 7);
                 }
             }
 

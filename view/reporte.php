@@ -133,7 +133,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         </div>
                     </div>
 
-                    <!-- <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+                    <!-- 
+                    <div class="col-lg-3 col-md-3 col-sm-12 col-12">
                         <div class="card mb-3 card-default">
                             <button class="btn btn-link" id="">
                                 <h5 class="card-title">Compras</h5>
@@ -143,8 +144,24 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 <div class="card-footer border-0">Documento</div>
                             </button>
                         </div>
-                    </div> -->
+                    </div>
+                 -->
                 </div>
+
+                <div class="row">
+                    <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+                        <div class="card mb-3 card-default">
+                            <button class="btn btn-link" id="">
+                                <h5 class="card-title">Resumen General</h5>
+                                <div class="card-body">
+                                    <img src="./images/sitio-web.png" alt="Vender" width="54">
+                                </div>
+                                <div class="card-footer border-0">Documento</div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
 
                 <!-- <div class="row">
 
@@ -190,20 +207,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 <h5 class="card-title">Producción</h5>
                                 <div class="card-body">
                                     <img src="./images/produccion.png" alt="Vender" width="54">
-                                </div>
-                                <div class="card-footer border-0">Documento</div>
-                            </button>
-                        </div>
-                    </div>
-                </div> -->
-
-                <!-- <div class="row">
-                    <div class="col-lg-3 col-md-3 col-sm-12 col-12">
-                        <div class="card mb-3 card-default">
-                            <button class="btn btn-link" id="">
-                                <h5 class="card-title">Resumen General</h5>
-                                <div class="card-body">
-                                    <img src="./images/sitio-web.png" alt="Vender" width="54">
                                 </div>
                                 <div class="card-footer border-0">Documento</div>
                             </button>
@@ -263,10 +266,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 </div>
                             </div>
                         </button>
-                    </div> -->
-
-
-
+                    </div> 
+                -->
             </div>
         </main>
         <?php include "./layout/footer.php"; ?>

@@ -381,77 +381,63 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 }
             }
 
-            function fillNotaCreditoTable(opcion, search, fechaInicial, fechaFinal) {
-                tools.promiseFetchGet(
-                    "../app/controller/VentaController.php", {
-                        "type": "listaNotaCredito",
-                        "opcion": opcion,
-                        "search": search,
-                        "fechaInicial": fechaInicial,
-                        "fechaFinal": fechaFinal,
-                        "posicionPagina": ((paginacion - 1) * filasPorPagina),
-                        "filasPorPagina": filasPorPagina
-                    },
-                    function() {
+            async function fillNotaCreditoTable(opcion, search, fechaInicial, fechaFinal) {
+                try {
+                    let result = await tools.promiseFetchGet(
+                        "../app/controller/NotaCreditoController.php", {
+                            "type": "listaNotaCredito",
+                            "opcion": opcion,
+                            "search": search,
+                            "fechaInicial": fechaInicial,
+                            "fechaFinal": fechaFinal,
+                            "posicionPagina": ((paginacion - 1) * filasPorPagina),
+                            "filasPorPagina": filasPorPagina
+                        },
+                        function() {
+                            tools.loadTable(tbList, 9);
+                            state = true;
+                            totalPaginacion = 0;
+                            lblTotalNotaCredito.html('0.00');
+                        });
+
+                    if (result.data.length == 0) {
+                        tools.loadTableMessage(tbList, 'No hay datos para mostrar', 9, true);
+                        tools.paginationEmpty(ulPagination);
+                        state = false;
+                    } else {
                         tbList.empty();
-                        tbList.append('<tr><td class="text-center" colspan="9"><img src="./images/loading.gif" id="imgLoad" width="34" height="34" /> <p>Cargando información...</p></td></tr>');
-                        state = true;
-                        totalPaginacion = 0;
-                        lblTotalNotaCredito.html('0.00');
-                    }).then(result => {
-                    tbList.empty();
+                        for (let detalle of result.data) {
+                            let pdf = '<button class="btn btn-secondary btn-sm"  onclick="openPdf(\'' + detalle.IdNotaCredito + '\')"><img src="./images/pdf.svg" width="26" /> </button>';
+                            let ver = '<button class="btn btn-secondary btn-sm" onclick="opeModalDetalleIngreso(\'' + detalle.IdVenta + '\')"><img src="./images/file.svg" width="26" /></button>';
 
-                    if (result.estado == 1) {
-                        if (result.data.length == 0) {
-                            tbList.append('<tr><td class="text-center" colspan="9"><p>No hay datos para mostrar</p></td></tr>');
-                            ulPagination.html(`
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-double-left"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-left"></i>
-                            </button>
-                            <span class="btn btn-outline-secondary disabled" id="lblPaginacion">0 - 0</span>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-right"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-double-right"></i>
-                            </button>`);
-                            state = false;
-                        } else {
-                            for (let detalle of result.data) {
-                                let pdf = '<button class="btn btn-secondary btn-sm"  onclick="openPdf(\'' + detalle.IdNotaCredito + '\')"><img src="./images/pdf.svg" width="26" /> </button>';
-                                let ver = '<button class="btn btn-secondary btn-sm" onclick="opeModalDetalleIngreso(\'' + detalle.IdVenta + '\')"><img src="./images/file.svg" width="26" /></button>';
+                            let estado = detalle.Estado == "1" ? '<div class="badge badge-success">REGISTRADO</div>' : '<div class="badge badge-danger">ANULADO</div>';
 
-                                let estado = detalle.Estado == "1" ? '<div class="badge badge-success">REGISTRADO</div>' : '<div class="badge badge-danger">ANULADO</div>';
+                            tbList.append('<tr>' +
+                                '<td class="text-center">' + detalle.Id + '</td>' +
+                                '<td class="text-center">' + pdf + '</td>' +
+                                '<td class="text-center">' + ver + '</td>' +
+                                '<td class="text-left">' + tools.getDateForma(detalle.FechaNotaCredito) + '<br>' + tools.getTimeForma24(detalle.HoraNotaCredito) + '</td>' +
+                                '<td class="text-left">' + detalle.SerieNotaCredito + '-' + tools.formatNumber(detalle.NumeracionNotaCredito) + '</td>' +
+                                '<td class="text-left">' + detalle.NumeroDocumento + '<br>' + detalle.Informacion + '</td>' +
+                                '<td class="text-left">Comprobante Editado' + '<br>' + detalle.Serie + '-' + detalle.Numeracion + '</td>' +
+                                '<td class="text-center">' + estado + '</td>' +
+                                '<td class="text-right">' + detalle.Simbolo + " " + tools.formatMoney(detalle.Total) + '</td>' +
+                                '</tr>');
+                        }
+                        lblTotalNotaCredito.html(tools.formatMoney(result.suma));
 
-                                tbList.append('<tr>' +
-                                    '<td class="text-center">' + detalle.Id + '</td>' +
-                                    '<td class="text-center">' + pdf + '</td>' +
-                                    '<td class="text-center">' + ver + '</td>' +
-                                    '<td class="text-left">' + tools.getDateForma(detalle.FechaNotaCredito) + '<br>' + tools.getTimeForma24(detalle.HoraNotaCredito) + '</td>' +
-                                    '<td class="text-left">' + detalle.SerieNotaCredito + '-' + detalle.NumeracionNotaCredito + '</td>' +
-                                    '<td class="text-left">' + detalle.NumeroDocumento + '<br>' + detalle.Informacion + '</td>' +
-                                    '<td class="text-left">Comprobante Editado' + '<br>' + detalle.Serie + '-' + detalle.Numeracion + '</td>' +
-                                    '<td class="text-center">' + estado + '</td>' +
-                                    '<td class="text-right">' + detalle.Simbolo + " " + tools.formatMoney(detalle.Total) + '</td>' +
-                                    '</tr>');
-                            }
-                            lblTotalNotaCredito.html(tools.formatMoney(result.suma));
+                        totalPaginacion = parseInt(Math.ceil((parseFloat(result.total) / filasPorPagina)));
+                        let i = 1;
+                        let range = [];
+                        while (i <= totalPaginacion) {
+                            range.push(i);
+                            i++;
+                        }
 
-                            totalPaginacion = parseInt(Math.ceil((parseFloat(result.total) / filasPorPagina)));
-                            let i = 1;
-                            let range = [];
-                            while (i <= totalPaginacion) {
-                                range.push(i);
-                                i++;
-                            }
+                        let min = Math.min.apply(null, range);
+                        let max = Math.max.apply(null, range);
 
-                            let min = Math.min.apply(null, range);
-                            let max = Math.max.apply(null, range);
-
-                            let paginacionHtml = `
+                        let paginacionHtml = `
                             <button class="btn btn-outline-secondary" onclick="onEventPaginacionInicio(${min})">
                                 <i class="fa fa-angle-double-left"></i>
                             </button>
@@ -465,46 +451,14 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             <button class="btn btn-outline-secondary" onclick="onEventPaginacionFinal(${max})">
                                 <i class="fa fa-angle-double-right"></i>
                             </button>`;
-                            ulPagination.html(paginacionHtml);
-                            state = false;
-                        }
-                    } else {
-                        tbList.append('<tr><td class="text-center" colspan="9"><p>' + result.message + '</p></td></tr>');
-                        ulPagination.html(`
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-double-left"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-left"></i>
-                            </button>
-                            <span class="btn btn-outline-secondary disabled" id="lblPaginacion">0 - 0</span>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-right"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-double-right"></i>
-                            </button>`);
+                        ulPagination.html(paginacionHtml);
                         state = false;
                     }
-                }).catch(error => {
-                    tbList.empty();
-                    tbList.append('<tr><td class="text-center" colspan="9"><p>' + error.responseText + '</p></td></tr>');
-                    ulPagination.html(`
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-double-left"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-left"></i>
-                            </button>
-                            <span class="btn btn-outline-secondary disabled" id="lblPaginacion">0 - 0</span>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-right"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-double-right"></i>
-                            </button>`);
+                } catch (error) {
+                    tools.loadTableMessage(tbList, tools.messageError(error), 9, true);
+                    tools.paginationEmpty(ulPagination);
                     state = false;
-                });
+                }
             }
 
             function opeModalDetalleIngreso(idVenta) {
@@ -584,7 +538,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
             }
 
             function openPdf(idNotaCredito) {
-                window.open("../app/sunat/pdfnotacredito.php?idNotaCredito=" + idNotaCredito, "_blank");
+                window.open("../app/sunat/pdfnotacreditoA4.php?idNotaCredito=" + idNotaCredito, "_blank");
             }
 
             function onEventPaginacionInicio(value) {

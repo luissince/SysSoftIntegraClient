@@ -52,6 +52,12 @@ class Tools
         header($protocol . ' ' . 200 . ' ' . "OK");
     }
 
+    public static function httpStatus201()
+    {
+        $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+        header($protocol . ' ' . 201 . ' ' . "Created");
+    }
+
     public static function httpStatus400()
     {
         $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');

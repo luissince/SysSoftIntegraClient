@@ -10,12 +10,12 @@ header('Content-Type: application/json; charset=UTF-8');
 use SysSoftIntegra\Src\SoapResult;
 use SysSoftIntegra\Src\Sunat;
 use SysSoftIntegra\Src\NumberLleters;
-use SysSoftIntegra\Model\VentasADO;
+use SysSoftIntegra\Model\NotaCreditoADO;
 
 require __DIR__ . './../src/autoload.php';
 
 $idNotaCredito = $_GET["idNotaCredito"];
-$result = VentasADO::ObtenerNotaCreditoById($idNotaCredito);
+$result = NotaCreditoADO::ObtenerNotaCreditoById($idNotaCredito);
 $gcl = new NumberLleters();
 
 if (!is_array($result)) {
@@ -340,7 +340,7 @@ if (!is_array($result)) {
 
     if ($soapResult->isSuccess()) {
         if ($soapResult->isAccepted()) {
-            VentasADO::CambiarEstadoSunatNotaCredito($idNotaCredito,  $soapResult->getCode(), $soapResult->getDescription(), $soapResult->getHashCode(), Sunat::getXmlSign());
+            NotaCreditoADO::CambiarEstadoSunatNotaCredito($idNotaCredito,  $soapResult->getCode(), $soapResult->getDescription(), $soapResult->getHashCode(), Sunat::getXmlSign());
             echo json_encode(array(
                 "state" => $soapResult->isSuccess(),
                 "accept" => $soapResult->isAccepted(),
@@ -348,7 +348,7 @@ if (!is_array($result)) {
                 "description" => $soapResult->getDescription()
             ));
         } else {
-            VentasADO::CambiarEstadoSunatNotaCreditoUnico($idNotaCredito, $soapResult->getCode(), $soapResult->getDescription());
+            NotaCreditoADO::CambiarEstadoSunatNotaCreditoUnico($idNotaCredito, $soapResult->getCode(), $soapResult->getDescription());
             echo json_encode(array(
                 "state" => $soapResult->isSuccess(),
                 "accept" => $soapResult->isAccepted(),
@@ -358,14 +358,14 @@ if (!is_array($result)) {
         }
     } else {
         if ($soapResult->getCode() == "1033") {
-            VentasADO::CambiarEstadoSunatNotaCreditoUnico($idNotaCredito, "0", $soapResult->getDescription());
+            NotaCreditoADO::CambiarEstadoSunatNotaCreditoUnico($idNotaCredito, "0", $soapResult->getDescription());
             echo json_encode(array(
                 "state" => false,
                 "code" => $soapResult->getCode(),
                 "description" => $soapResult->getDescription()
             ));
         } else {
-            VentasADO::CambiarEstadoSunatNotaCreditoUnico($idNotaCredito, $soapResult->getCode(), $soapResult->getDescription());
+            NotaCreditoADO::CambiarEstadoSunatNotaCreditoUnico($idNotaCredito, $soapResult->getCode(), $soapResult->getDescription());
             echo json_encode(array(
                 "state" => false,
                 "code" => $soapResult->getCode(),

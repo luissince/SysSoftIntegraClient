@@ -12,8 +12,8 @@ function ModalngresoEgreso() {
             event.preventDefault();
         });
 
-        $("#cbSelectVIngresoEgreso").change(function () {
-            $("#cbVIngresoEgreso").prop('disabled', $("#cbSelectVIngresoEgreso").is(":checked"));
+        $("#cbSelectVendedorIngresoEgreso").change(function () {
+            $("#cbVendedorVIngresoEgreso").prop('disabled', $("#cbSelectVendedorIngresoEgreso").is(":checked"));
         });
     }
 
@@ -28,16 +28,21 @@ function ModalngresoEgreso() {
             selectEmpleado();
 
             $("#btnPdfIngresoEgreso").bind("click", function () {
-                let fechaInicial = $("#txtFIIngresoEgreso").val();
-                let fechaFinal = $("#txtFFIngresoEgreso").val();
-                if (tools.validateDate(fechaInicial) && tools.validateDate(fechaFinal)) {
-                    let params = new URLSearchParams({
-                        "txtFechaInicial": fechaInicial,
-                        "txtFechaFinal": fechaFinal,
-                        "usuario": $("#cbVIngresoEgreso").is(":checked") ? 0 : 1,
-                        "idUsuario": $('#cbVIngresoEgreso').val()
-                    });
-                    window.open("../app/sunat/pdfresumeningresos.php?" + params, "_blank");
+                if (!$("#cbSelectVendedorIngresoEgreso").is(":checked") && $('#cbVendedorVIngresoEgreso').val() == null) {
+                    tools.AlertWarning("", "Seleccione un vendedor.");
+                    $('#cbVendedorVIngresoEgreso').focus();
+                } else {
+                    let fechaInicial = $("#txtFIIngresoEgreso").val();
+                    let fechaFinal = $("#txtFFIngresoEgreso").val();
+                    if (tools.validateDate(fechaInicial) && tools.validateDate(fechaFinal)) {
+                        let params = new URLSearchParams({
+                            "txtFechaInicial": fechaInicial,
+                            "txtFechaFinal": fechaFinal,
+                            "usuario": $("#cbSelectVendedorIngresoEgreso").is(":checked") ? 0 : 1,
+                            "idUsuario": $("#cbSelectVendedorIngresoEgreso").is(":checked") ? '' : $('#cbVendedorVIngresoEgreso').val()
+                        });
+                        window.open("../app/sunat/pdfresumeningresos.php?" + params, "_blank");
+                    }
                 }
             });
 
@@ -63,8 +68,8 @@ function ModalngresoEgreso() {
     }
 
     function selectEmpleado() {
-        $('#cbVIngresoEgreso').empty();
-        $('#cbVIngresoEgreso').select2({
+        $('#cbVendedorVIngresoEgreso').empty();
+        $('#cbVendedorVIngresoEgreso').select2({
             width: '100%',
             placeholder: "Buscar Empleado",
             ajax: {

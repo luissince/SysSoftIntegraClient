@@ -12,6 +12,8 @@ class SoapResult
 {
     private $wsdlURL;
 
+    private $file;
+
     private $filename;
 
     private $success = false;
@@ -299,7 +301,7 @@ class SoapResult
                         throw new Exception("No se pudo extraer el contenido del archivo zip.");
                     }
 
-                    $xml = file_get_contents('../../files/R-' . $this->filename . '.xml');
+                    $xml = file_get_contents('../../files/' . $isExtract[0]);
                     $DOM = new DOMDocument('1.0', 'utf-8');
                     $DOM->preserveWhiteSpace = FALSE;
                     $DOM->loadXML($xml);
@@ -321,6 +323,7 @@ class SoapResult
                     $this->setMessage($message);
                     $this->setDescription($description);
                     $this->setSuccess(true);
+                    $this->setFile('R-' . $this->filename . '.zip');
                 } else {
                     $this->setAccepted(false);
                     $this->setCode($code);
@@ -460,5 +463,15 @@ class SoapResult
     public function setMessage($message)
     {
         $this->message = $message;
+    }
+
+    public function getFile()
+    {
+        return $this->file;
+    }
+
+    public function setFile($file)
+    {
+        $this->file = $file;
     }
 }

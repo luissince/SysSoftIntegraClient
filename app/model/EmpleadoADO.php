@@ -33,6 +33,7 @@ class EmpleadoADO
     }
 
 
+
     public static function GetClientePredetermined()
     {
         try {

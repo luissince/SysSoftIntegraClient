@@ -9,8 +9,6 @@ use SysSoftIntegra\Src\Tools;
 use Mpdf\Mpdf;
 
 $title = "RESUMEN DE INGRESOS";
-$fechaTransaccion = date("d-m-Y", strtotime($_GET["txtFechaInicial"])) . " AL " . date("d-m-Y", strtotime($_GET["txtFechaFinal"]));
-
 $result = IngresoADO::Reporte_Ingresos($_GET["txtFechaInicial"], $_GET["txtFechaFinal"],  $_GET["usuario"],  $_GET["idUsuario"]);
 
 if (!is_array($result)) {
@@ -18,8 +16,6 @@ if (!is_array($result)) {
 } else {
 
     $empresa = EmpresaADO::ReporteEmpresa();
-
-
     $photo = Tools::showImageReport($empresa->Image);
 
     $html = '
@@ -151,11 +147,16 @@ if (!is_array($result)) {
                     </span>
                     <br><br>
                     <span style="font-size: 11pt; color: black; font-family: sans;">
-                        <b>RESUMEN DE INGRESOS/EGRESOS</b>
+                        RESUMEN DE INGRESOS/EGRESOS
+                    </span>
+                    <br>
+                    <br>
+                    <span style="font-size: 10pt; color: black; font-family: sans;">
+                        PERIODO
                     </span>
                     <br>
                     <span style="font-size: 10pt; color: black; font-family: sans;">
-                        PERIODO:  ' . $fechaTransaccion . '
+                        DEL  ' . date("d/m/Y", strtotime($_GET["txtFechaInicial"])) . " AL " . date("d/m/Y", strtotime($_GET["txtFechaFinal"])) . '
                     </span>
                 </td>
             </tr>
@@ -186,15 +187,15 @@ if (!is_array($result)) {
     foreach ($result as $value) {
         $count++;
         $html .= '
-                    <tr>
-                        <td class="td-table-detailt text-center">' . $count . '</td>
-                        <td class="td-table-detailt">' . $value->Transaccion . '</td>
-                        <td class="td-table-detailt text-center">' . Tools::roundingValue($value->Cantidad) . '</td>
-                        <td class="td-table-detailt text-center">' . Tools::roundingValue($value->Efectivo) . '</td>
-                        <td class="td-table-detailt text-center">' . Tools::roundingValue($value->Tarjeta) . '</td>
-                        <td class="td-table-detailt text-center td-table-detailt-end">' . Tools::roundingValue($value->Deposito) . '</td>
-                    </tr>
-                    ';
+                            <tr>
+                                <td class="td-table-detailt text-center">' . $count . '</td>
+                                <td class="td-table-detailt">' . $value->Transaccion . '</td>
+                                <td class="td-table-detailt text-center">' . Tools::roundingValue($value->Cantidad) . '</td>
+                                <td class="td-table-detailt text-center">' . Tools::roundingValue($value->Efectivo) . '</td>
+                                <td class="td-table-detailt text-center">' . Tools::roundingValue($value->Tarjeta) . '</td>
+                                <td class="td-table-detailt text-center td-table-detailt-end">' . Tools::roundingValue($value->Deposito) . '</td>
+                            </tr>
+                            ';
 
         if ($value->FormaIngreso == "EFECTIVO") {
             if ($value->Transaccion == "COMPRAS" || $value->Transaccion == "EGRESO LIBRE"  || $value->Transaccion == "CUENTAS POR PAGAR") {
@@ -306,7 +307,7 @@ if (!is_array($result)) {
     ]);
 
     $mpdf->SetProtection(array('print'));
-    $mpdf->SetTitle("Resumen de Ingresos");
+    $mpdf->SetTitle("RESUMEN DE INGRESO DEL " . date("d-m-Y", strtotime($_GET["txtFechaInicial"])) . " AL " . date("d-m-Y", strtotime($_GET["txtFechaFinal"])));
     $mpdf->SetAuthor("Syssoft Integra");
     $mpdf->SetWatermarkText((""));   // anulada
     $mpdf->showWatermarkText = true;
@@ -316,5 +317,5 @@ if (!is_array($result)) {
     $mpdf->WriteHTML($html);
 
     // Output a PDF file directly to the browser
-    $mpdf->Output("Resumen de Ingresos.pdf", 'I');
+    $mpdf->Output("RESUMEN DE INGRESO DEL " . date("d-m-Y", strtotime($_GET["txtFechaInicial"])) . " AL " . date("d-m-Y", strtotime($_GET["txtFechaFinal"])) . ".pdf", 'I');
 }

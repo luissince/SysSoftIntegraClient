@@ -34,29 +34,60 @@ $arguments = [
 ];
 
 $soapResult = new SoapResult('../../resources/wsdl/billConsultService.wsdl', implode('-', $arguments));
-$soapResult->sendGetStatusValid(Sunat::xmlGetValidService($get));
 
-if ($soapResult->isSuccess()) {
-    if ($soapResult->isAccepted()) {
-        echo json_encode(array(
-            "state" => $soapResult->isSuccess(),
-            "accepted" => $soapResult->isAccepted(),
-            "code" => $soapResult->getCode(),
-            "message" => $soapResult->getMessage()
-        ));
+
+if ($get['cdr'] !== "") {
+    $soapResult->sendGetStatusCdr(Sunat::xmlGetStatusCdr($get));
+    if ($soapResult->isSuccess()) {
+        if ($soapResult->isAccepted()) {
+            echo json_encode(array(
+                "state" => $soapResult->isSuccess(),
+                "accepted" => $soapResult->isAccepted(),
+                "code" => $soapResult->getCode(),
+                "message" => $soapResult->getMessage(),
+                "description" => $soapResult->getDescription(),
+                "file" => $soapResult->getFile(),
+            ));
+        } else {
+            echo json_encode(array(
+                "state" => $soapResult->isSuccess(),
+                "accepted" => $soapResult->isAccepted(),
+                "code" => $soapResult->getCode(),
+                "message" => $soapResult->getMessage(),
+            ));
+        }
     } else {
         echo json_encode(array(
             "state" => $soapResult->isSuccess(),
-            "accepted" => $soapResult->isAccepted(),
             "code" => $soapResult->getCode(),
-            "message" => $soapResult->getMessage(),
+            "accepted" => $soapResult->isAccepted(),
+            "message" => $soapResult->getMessage()
         ));
     }
 } else {
-    echo json_encode(array(
-        "state" => $soapResult->isSuccess(),
-        "code" => $soapResult->getCode(),
-        "accepted" => $soapResult->isAccepted(),
-        "message" => $soapResult->getMessage()
-    ));
+    $soapResult->sendGetStatusValid(Sunat::xmlGetValidService($get));
+    if ($soapResult->isSuccess()) {
+        if ($soapResult->isAccepted()) {
+            echo json_encode(array(
+                "state" => $soapResult->isSuccess(),
+                "accepted" => $soapResult->isAccepted(),
+                "code" => $soapResult->getCode(),
+                "message" => $soapResult->getMessage()
+            ));
+        } else {
+            echo json_encode(array(
+                "state" => $soapResult->isSuccess(),
+                "accepted" => $soapResult->isAccepted(),
+                "code" => $soapResult->getCode(),
+                "message" => $soapResult->getMessage(),
+            ));
+        }
+    } else {
+        echo json_encode(array(
+            "state" => $soapResult->isSuccess(),
+            "code" => $soapResult->getCode(),
+            "accepted" => $soapResult->isAccepted(),
+            "message" => $soapResult->getMessage()
+        ));
+    }
 }

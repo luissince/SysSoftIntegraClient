@@ -74,7 +74,7 @@ if (isset($_GET["marca"]) && isset($_GET["categoria"]) && isset($_GET["presentac
 
                 <h1 style="text-align: center;">CATÁLOGO - ' . $empresa->NombreComercial . '</h1>
 
-                <h3 style="text-align: center;">01/01/2022</h3>
+                <h3 style="text-align: center;">' . date("d/m/Y") . '</h3>
 
                 <div style="background-color:#f7a5a5;margin-top:20mm;">              
                     <p>Razón Social: ' . $empresa->RazonSocial . '</p>

@@ -220,9 +220,37 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     loadInitMoneda();
                 });
 
+                tools.keyEnter($("#txtBuscar"), function() {
+                    if ($("#txtBuscar").val().trim() !== '') {
+                        if (!state) {
+                            paginacion = 1;
+                            fillTableMoneda(1, $("#txtBuscar").val().trim());
+                            opcion = 1;
+                        }
+                    }
+                });
+
+                $("#btnBuscar").click(function(event) {
+                    if ($("#txtBuscar").val().trim() !== '') {
+                        if (!state) {
+                            paginacion = 1;
+                            fillTableMoneda(1, $("#txtBuscar").val().trim());
+                            opcion = 1;
+                        }
+                    }
+                });
+
+                tools.keyEnter($("#btnBuscar"), function() {
+                    if ($("#txtBuscar").val().trim() !== '') {
+                        if (!state) {
+                            paginacion = 1;
+                            fillTableMoneda(1, $("#txtBuscar").val().trim());
+                            opcion = 1;
+                        }
+                    }
+                });
 
                 modalComponents();
-
                 loadInitMoneda();
             });
 
@@ -249,7 +277,10 @@ if (!isset($_SESSION['IdEmpleado'])) {
             function onEventPaginacion() {
                 switch (opcion) {
                     case 0:
-                        fillTableMoneda();
+                        fillTableMoneda(0, '');
+                        break;
+                    case 1:
+                        fillTableMoneda(1, $("#txtBuscar").val().trim());
                         break;
                 }
             }
@@ -257,28 +288,32 @@ if (!isset($_SESSION['IdEmpleado'])) {
             function loadInitMoneda() {
                 if (!state) {
                     paginacion = 1;
-                    fillTableMoneda();
+                    fillTableMoneda(0, '');
                     opcion = 0;
                 }
             }
 
-            async function fillTableMoneda() {
+            async function fillTableMoneda(opcion, buscar) {
                 try {
                     let result = await tools.promiseFetchGet("../app/controller/MonedaController.php", {
-                        "type": "all"
+                        "type": "all",
+                        "opcion": opcion,
+                        "search": buscar,
+                        "posicionPagina": ((paginacion - 1) * filasPorPagina),
+                        "filasPorPagina": filasPorPagina
                     }, function() {
                         tools.loadTable(tbody, 9);
                         totalPaginacion = 0;
                         state = true;
                     });
 
-                    tbody.empty();
-
                     if (result.data.length == 0) {
-                        tools.loadTableMessage(tbody, "No hay datos para mostrar.", 9);
+                        tools.loadTableMessage(tbody, "No hay datos para mostrar.", 9, true);
+                        tools.paginationEmpty(ulPagination);
                         totalPaginacion = 0;
                         state = false;
                     } else {
+                        tbody.empty();
                         for (let value of result.data) {
                             let predeterminado = value.Predeterminado == 1 ? './images/bandera.png' : './images/unchecked.png';
 
@@ -294,11 +329,40 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 <td class="text-center"><button class="btn btn-danger" onclick="removerMoneda('${value.IdMoneda}')"><i class="fa fa-trash"></i></button></td>
                             </tr>`);
                         }
+
+                        totalPaginacion = parseInt(Math.ceil((parseFloat(result.total) / filasPorPagina)));
+
+                        let i = 1;
+                        let range = [];
+                        while (i <= totalPaginacion) {
+                            range.push(i);
+                            i++;
+                        }
+
+                        let min = Math.min.apply(null, range);
+                        let max = Math.max.apply(null, range);
+
+                        let paginacionHtml = `
+                        <button class="btn btn-outline-secondary" onclick="onEventPaginacionInicio(${min})">
+                            <i class="fa fa-angle-double-left"></i>
+                        </button>
+                        <button class="btn btn-outline-secondary" onclick="onEventAnteriorPaginacion()">
+                            <i class="fa fa-angle-left"></i>
+                        </button>
+                        <span class="btn btn-outline-secondary disabled" id="lblPaginacion">${paginacion} - ${totalPaginacion}</span>
+                        <button class="btn btn-outline-secondary" onclick="onEventSiguientePaginacion()">
+                            <i class="fa fa-angle-right"></i>
+                        </button>
+                        <button class="btn btn-outline-secondary" onclick="onEventPaginacionFinal(${max})">
+                            <i class="fa fa-angle-double-right"></i>
+                        </button>`;
+
+                        ulPagination.html(paginacionHtml);
                         state = false;
                     }
                 } catch (error) {
-                    tbody.empty();
-                    tools.loadTableMessage(tbody, tools.messageError(error), 9);
+                    tools.loadTableMessage(tbody, tools.messageError(error), 9, true);
+                    tools.paginationEmpty(ulPagination);
                     state = false;
                 }
             }
@@ -380,7 +444,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 tools.ModalAlertInfo("Moneda", "Procesando petición..");
                             });
                             tools.ModalAlertSuccess("Moneda", result);
-                            onEventPaginacion();
+                            loadInitMoneda();
                         } catch (error) {
                             tools.ErrorMessageServer("Moneda", error);
                         }
