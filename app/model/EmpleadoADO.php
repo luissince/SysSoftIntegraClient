@@ -2,6 +2,7 @@
 
 namespace SysSoftIntegra\Model;
 
+use SysSoftIntegra\Src\Tools;
 use Database;
 use PDO;
 use PDOException;
@@ -32,6 +33,48 @@ class EmpleadoADO
         }
     }
 
+    public static function ListEmpleados(int $opcion, string $buscar, int $posicionPagina, int $filasPorPagina)
+    {
+        try {
+            $cmdEmpleado = Database::getInstance()->getDb()->prepare("{call Sp_Listar_Empleados(?,?,?,?)}");
+            $cmdEmpleado->bindParam(1, $opcion, PDO::PARAM_INT);
+            $cmdEmpleado->bindParam(2, $buscar, PDO::PARAM_STR);
+            $cmdEmpleado->bindParam(3, $posicionPagina, PDO::PARAM_INT);
+            $cmdEmpleado->bindParam(4, $filasPorPagina, PDO::PARAM_INT);
+            $cmdEmpleado->execute();
+
+            $count = 0;
+            $array = array();
+            while ($row = $cmdEmpleado->fetch()) {
+                $count++;
+                array_push($array, array(
+                    "Id" => $count + $posicionPagina,
+                    "IdEmpleado" => $row['IdEmpleado'],
+                    "NumeroDocumento" => $row['NumeroDocumento'],
+                    "Apellidos" => $row['Apellidos'],
+                    "Nombres" => $row['Nombres'],
+                    "Telefono" => $row['Telefono'],
+                    "Celular" => $row['Celular'],
+                    "Direccion" => $row['Direccion'],
+                    "Rol" => $row['Rol'],
+                    "Estado" => $row['Estado'],
+                ));
+            }
+
+            $cmdEmpleado = Database::getInstance()->getDb()->prepare("{call Sp_Listar_Empleados_Count(?,?)}");
+            $cmdEmpleado->bindParam(1, $opcion, PDO::PARAM_INT);
+            $cmdEmpleado->bindParam(2, $opcion, PDO::PARAM_STR);
+            $cmdEmpleado->execute();
+            $resultTotal = $cmdEmpleado->fetchColumn();
+
+            Tools::httpStatus200();
+            return array("data" => $array, "total" => $resultTotal);
+        } catch (Exception $ex) {
+            Tools::httpStatus500();
+
+            return $ex->getMessage();
+        }
+    }
 
 
     public static function GetClientePredetermined()

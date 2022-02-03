@@ -146,19 +146,18 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 <thead class="table-header-background">
                                     <tr>
                                         <th style="width:5%">N°</th>
-                                        <th style="width:20%">Moneda</th>
-                                        <th style="width:10%">Simbolo</th>
-                                        <th style="width:10%">Tipo de Cambio</th>
-                                        <th style="width:10%">Abr</th>
-                                        <th style="width:10%">Moneda Nacional</th>
-                                        <th style="width:5%">Predet.</th>
+                                        <th style="width:15%">Empleado</th>
+                                        <th style="width:10%">Teléfono/Celular</th>
+                                        <th style="width:10%">Dirección</th>
+                                        <th style="width:10%">Rol</th>
+                                        <th style="width:10%">Estado</th>
                                         <th style="width:5%">Editar</th>
                                         <th style="width:5%">Eliminar</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tbList">
                                     <tr>
-                                        <td colspan="7" class="text-center">!Aún no has registrado ningún usuario¡</td>
+                                        <td colspan="8" class="text-center">!Aún no has registrado ningún usuario¡</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -200,6 +199,156 @@ if (!isset($_SESSION['IdEmpleado'])) {
             let filasPorPagina = 10;
             let tbody = $("#tbList");
             let ulPagination = $("#ulPagination");
+
+            let idEmpleado = 0;
+
+            $(document).ready(function() {
+                $("#btnAgregar").click(function() {
+                    agregarUsuario();
+                });
+
+                tools.keyEnter($("#btnAgregar"), function() {
+                    agregarUsuario();
+                });
+
+                $("#btnReload").click(function() {
+                    loadInitUsuario();
+                });
+
+                tools.keyEnter($("#btnReload"), function() {
+                    loadInitUsuario();
+                });
+
+                tools.keyEnter($("#txtBuscar"), function() {
+                    if ($("#txtBuscar").val().trim() !== '') {
+                        if (!state) {
+                            paginacion = 1;
+                            fillTableUsuario(1, $("#txtBuscar").val().trim());
+                            opcion = 1;
+                        }
+                    }
+                });
+
+                $("#btnBuscar").click(function(event) {
+                    if ($("#txtBuscar").val().trim() !== '') {
+                        if (!state) {
+                            paginacion = 1;
+                            fillTableUsuario(1, $("#txtBuscar").val().trim());
+                            opcion = 1;
+                        }
+                    }
+                });
+
+                tools.keyEnter($("#btnBuscar"), function() {
+                    if ($("#txtBuscar").val().trim() !== '') {
+                        if (!state) {
+                            paginacion = 1;
+                            fillTableUsuario(1, $("#txtBuscar").val().trim());
+                            opcion = 1;
+                        }
+                    }
+                });
+
+                loadInitUsuario();
+            });
+
+            function onEventPaginacion() {
+                switch (opcion) {
+                    case 0:
+                        fillTableUsuario(0, '');
+                        break;
+                    case 1:
+                        fillTableUsuario(1, $("#txtBuscar").val().trim());
+                        break;
+                }
+            }
+
+            function loadInitUsuario() {
+                if (!state) {
+                    paginacion = 1;
+                    fillTableUsuario(0, '');
+                    opcion = 0;
+                }
+            }
+
+            async function fillTableUsuario(opcion, buscar) {
+                try {
+                    let result = await tools.promiseFetchGet("../app/controller/EmpleadoController.php", {
+                        "type": "all",
+                        "opcion": opcion,
+                        "search": buscar,
+                        "posicionPagina": ((paginacion - 1) * filasPorPagina),
+                        "filasPorPagina": filasPorPagina
+                    }, function() {
+                        tools.loadTable(tbody, 8);
+                        totalPaginacion = 0;
+                        state = true;
+                    });
+                    console.log(result);
+
+                    if (result.data.length == 0) {
+                        tools.loadTableMessage(tbody, "No hay datos para mostrar.", 8, true);
+                        tools.paginationEmpty(ulPagination);
+                        totalPaginacion = 0;
+                        state = false;
+                    } else {
+                        tbody.empty();
+                        for (let value of result.data) {
+
+                            tbody.append(`<tr>
+                                <td class="text-center">${value.Id}</td>
+                                <td class="text-left">${value.Apellidos+', '+value.Nombres}</td>
+                                <td class="text-left">${value.Telefono+'<br>'+value.Celular}</td>
+                                <td class="text-left">${value.Direccion}</td>
+                                <td class="text-left">${value.Rol}</td>
+                                <td class="text-center">${value.Estado}</td>
+                                <td class="text-center"><button class="btn btn-warning"><i class="fa fa-edit"></i></button></td>
+                                <td class="text-center"><button class="btn btn-danger"><i class="fa fa-trash"></i></button></td>
+                            </tr>`);
+                        }
+
+                        totalPaginacion = parseInt(Math.ceil((parseFloat(result.total) / filasPorPagina)));
+
+                        let i = 1;
+                        let range = [];
+                        while (i <= totalPaginacion) {
+                            range.push(i);
+                            i++;
+                        }
+
+                        let min = Math.min.apply(null, range);
+                        let max = Math.max.apply(null, range);
+
+                        let paginacionHtml = `
+                        <button class="btn btn-outline-secondary" onclick="onEventPaginacionInicio(${min})">
+                            <i class="fa fa-angle-double-left"></i>
+                        </button>
+                        <button class="btn btn-outline-secondary" onclick="onEventAnteriorPaginacion()">
+                            <i class="fa fa-angle-left"></i>
+                        </button>
+                        <span class="btn btn-outline-secondary disabled" id="lblPaginacion">${paginacion} - ${totalPaginacion}</span>
+                        <button class="btn btn-outline-secondary" onclick="onEventSiguientePaginacion()">
+                            <i class="fa fa-angle-right"></i>
+                        </button>
+                        <button class="btn btn-outline-secondary" onclick="onEventPaginacionFinal(${max})">
+                            <i class="fa fa-angle-double-right"></i>
+                        </button>`;
+
+                        ulPagination.html(paginacionHtml);
+                        state = false;
+                    }
+                } catch (error) {
+                    tools.loadTableMessage(tbody, tools.messageError(error), 8, true);
+                    tools.paginationEmpty(ulPagination);
+                    state = false;
+                }
+            }
+
+            function agregarUsuario() {
+                $("#lblTitleCrud").html('<i class="fa fa-money"></i> Registrar Usuario');
+                $("#modalCrudUsuario").modal("show");
+                $("#divOverlayUsuario").addClass("d-none");
+            }
         </script>
     </body>
 

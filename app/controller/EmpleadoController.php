@@ -10,7 +10,10 @@ use SysSoftIntegra\Model\EmpleadoADO;
 require __DIR__ . './../src/autoload.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-    if ($_GET["type"] == "login") {
+    if ($_GET["type"] == "all") {
+        echo json_encode(EmpleadoADO::ListEmpleados($_GET["opcion"], $_GET["search"], $_GET["posicionPagina"], $_GET["filasPorPagina"]));
+        exit();
+    } else if ($_GET["type"] == "login") {
         $usuario = $_GET['usuario'];
         $clave = $_GET['clave'];
         $result = EmpleadoADO::Login($usuario, $clave);
@@ -46,6 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         exit();
     } else if ($_GET["type"] == "fillempleado") {
         echo json_encode(EmpleadoADO::FillEmpleados($_GET["search"]));
+        exit();
     }
 } else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
