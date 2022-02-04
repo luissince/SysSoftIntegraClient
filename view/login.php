@@ -50,8 +50,8 @@ if (isset($_SESSION['IdEmpleado'])) {
                             </div>
 
                             <div class="form-group btn-container text-center">
-                                <span>Usuario: demo</span>
-                                <span>Clave: demo</span>
+                                <span>Usuario: admin</span>
+                                <span>Clave: admin</span>
                             </div>
                         </div>
                     </div>

@@ -11,7 +11,10 @@ require __DIR__ . './../src/autoload.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     if ($_GET["type"] == "all") {
-        echo json_encode(EmpleadoADO::ListEmpleados($_GET["opcion"], $_GET["search"], $_GET["posicionPagina"], $_GET["filasPorPagina"]));
+        print json_encode(EmpleadoADO::ListEmpleados($_GET["opcion"], $_GET["search"], $_GET["posicionPagina"], $_GET["filasPorPagina"]));
+        exit();
+    } else if ($_GET["type"] == "getid") {
+        print json_encode(EmpleadoADO::ObtenerEmpleadoById($_GET["idEmpleado"]));
         exit();
     } else if ($_GET["type"] == "login") {
         $usuario = $_GET['usuario'];
@@ -42,14 +45,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         }
         exit();
     } else if ($_GET["type"] == "predeterminate") {
-        echo json_encode(EmpleadoADO::GetClientePredetermined());
+        print json_encode(EmpleadoADO::GetClientePredetermined());
         exit();
     } else if ($_GET["type"] == "GetListEmpleados") {
-        echo json_encode(EmpleadoADO::GetListEmpleados());
+        print json_encode(EmpleadoADO::GetListEmpleados());
         exit();
     } else if ($_GET["type"] == "fillempleado") {
-        echo json_encode(EmpleadoADO::FillEmpleados($_GET["search"]));
+        print json_encode(EmpleadoADO::FillEmpleados($_GET["search"]));
         exit();
     }
 } else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $body = json_decode(file_get_contents("php://input"), true);
+    if ($body["type"] == 'crud') {
+        print json_encode(EmpleadoADO::CrudEmpleado($body));
+        exit();
+    } else if ($body["type"] == "delete") {
+        print json_encode(EmpleadoADO::DeleteEmpleado($body));
+        exit();
+    }
 }

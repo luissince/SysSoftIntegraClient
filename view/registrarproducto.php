@@ -463,7 +463,9 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                     <div class="col-md-12 col-sm-12 col-xs-12">
                                         <label>Descripción </label>
                                         <div class="form-group">
-                                            <input type="text" class="form-control" placeholder="Descripción" id="txtDescripcion" />
+                                            <textarea id="txtDescripcion" class="form-control" rows="5">
+
+                                            </textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -864,9 +866,9 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     }
                 });
 
-                tools.keyEnter($("#txtDescripcion"), function() {
-                    registrarProducto();
-                });
+                // tools.keyEnter($("#txtDescripcion"), function() {
+                //     registrarProducto();
+                // });
 
                 $("#btnRegistrar").click(function() {
                     registrarProducto();

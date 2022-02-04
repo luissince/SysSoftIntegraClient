@@ -32,8 +32,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         </div>
 
                         <div class="modal-body">
-
-                            <div class="tile">
+                            <div class="tile border-0 p-0">
                                 <div class="overlay p-5" id="divOverlayCrudCliente">
                                     <div class="m-loader mr-4">
                                         <svg class="m-circular" viewBox="25 25 50 50">
@@ -642,7 +641,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     tools.AlertWarning("", "Seleccione la Razón Social/Datos de Persona.");
                     $("#txtInformacion").focus();
                 } else {
-
                     tools.ModalDialog("Cliente", "¿Está seguro de continuar?", async function(value) {
                         if (value == true) {
                             try {
@@ -666,14 +664,11 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                         tools.ModalAlertInfo("Cliente", "Se está procesando la información.");
                                     });
 
-                                if (result.estado == 1) {
-                                    tools.ModalAlertSuccess("Cliente", result.message);
-                                    loadInitClientes();
-                                } else {
-                                    tools.ModalAlertWarning("Cliente", result.message);
-                                }
+                                tools.ModalAlertSuccess("Cliente", result);
+                                loadInitClientes();
+
                             } catch (error) {
-                                tools.ModalAlertError("Cliente", "Se produjo un error interno intente nuevamente.");
+                                tools.ErrorMessageServer("Cliente", error);
                             }
                         }
                     });

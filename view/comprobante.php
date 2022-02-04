@@ -439,34 +439,48 @@ if (!isset($_SESSION['IdEmpleado'])) {
             }
 
             async function crudComprobante() {
-                tools.ModalDialog("Comprobante", '¿Está seguro de continuar?', async function(value) {
-                    if (value == true) {
-                        try {
-                            let result = await tools.promiseFetchPost("../app/controller/TipoDocumentoController.php", {
-                                "type": "crud",
-                                "IdTipoDocumento": idTipoDocumento,
-                                "Nombre": $("#txtNombre").val().trim(),
-                                "Serie": $("#txtSerie").val().trim(),
-                                "Numeracion": $("#txtNumeracion").val().trim(),
-                                "CodigoAlterno": $("#txtCodigoAlterno").val().trim(),
-                                "Guia": $("#cbGuiaRemision").is(":checked") ? 1 : 0,
-                                "Facturacion": $("#cbFacturado").is(":checked") ? 1 : 0,
-                                "NotaCredito": $("#cbNotaCredito").is(":checked") ? 1 : 0,
-                                "Estado": $("#cbEstado").is(":checked") ? 1 : 0,
-                                "Campo": $("#cbUsaCaracteres").is(":checked") ? 1 : 0,
-                                "NumeroCampo": tools.isNumeric($("#txtCaracter").val()) ? $("#txtCaracter").val() : 0,
-                            }, function() {
-                                $("#modalCrudComprobante").modal('hide');
-                                clearComponents();
-                                tools.ModalAlertInfo("Comprobante", "Procesando petición..");
-                            });
-                            tools.ModalAlertSuccess("Comprobante", result);
-                            onEventPaginacion();
-                        } catch (error) {
-                            tools.ErrorMessageServer("Comprobante", error);
+                if ($("#txtNombre").val() == "") {
+                    tools.AlertWarning("", "Ingrese el nombre de comprobante.");
+                    $("#txtNombre").focus();
+                } else if ($("#txtSerie").val() == "") {
+                    tools.AlertWarning("", "Ingrese la serie.");
+                    $("#txtSerie").focus();
+                } else if ($("#txtNumeracion").val() == "") {
+                    tools.AlertWarning("", "Ingrese la numeración.");
+                    $("#txtNumeracion").focus();
+                } else if ($("#cbUsaCaracteres").is(":checked") && $("#txtCaracter").val() == "") {
+                    tools.AlertWarning("", "Ingrese el número de catacteres a usar");
+                    $("#txtCaracter").focus();
+                } else {
+                    tools.ModalDialog("Comprobante", '¿Está seguro de continuar?', async function(value) {
+                        if (value == true) {
+                            try {
+                                let result = await tools.promiseFetchPost("../app/controller/TipoDocumentoController.php", {
+                                    "type": "crud",
+                                    "IdTipoDocumento": idTipoDocumento,
+                                    "Nombre": $("#txtNombre").val().trim(),
+                                    "Serie": $("#txtSerie").val().trim(),
+                                    "Numeracion": $("#txtNumeracion").val().trim(),
+                                    "CodigoAlterno": $("#txtCodigoAlterno").val().trim(),
+                                    "Guia": $("#cbGuiaRemision").is(":checked") ? 1 : 0,
+                                    "Facturacion": $("#cbFacturado").is(":checked") ? 1 : 0,
+                                    "NotaCredito": $("#cbNotaCredito").is(":checked") ? 1 : 0,
+                                    "Estado": $("#cbEstado").is(":checked") ? 1 : 0,
+                                    "Campo": $("#cbUsaCaracteres").is(":checked") ? 1 : 0,
+                                    "NumeroCampo": tools.isNumeric($("#txtCaracter").val()) ? $("#txtCaracter").val() : 0,
+                                }, function() {
+                                    $("#modalCrudComprobante").modal('hide');
+                                    clearComponents();
+                                    tools.ModalAlertInfo("Comprobante", "Procesando petición..");
+                                });
+                                tools.ModalAlertSuccess("Comprobante", result);
+                                onEventPaginacion();
+                            } catch (error) {
+                                tools.ErrorMessageServer("Comprobante", error);
+                            }
                         }
-                    }
-                });
+                    });
+                }
             }
 
             function agregarComprobante() {
@@ -541,6 +555,42 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 idTipoDocumento = 0;
                 $("#divOverlayComprobante").removeClass("d-none");
                 $("#lblTextOverlayComprobante").html("Cargando información...");
+            }
+
+            function onEventPaginacionInicio(value) {
+                if (!state) {
+                    if (value !== paginacion) {
+                        paginacion = value;
+                        onEventPaginacion();
+                    }
+                }
+            }
+
+            function onEventPaginacionFinal(value) {
+                if (!state) {
+                    if (value !== paginacion) {
+                        paginacion = value;
+                        onEventPaginacion();
+                    }
+                }
+            }
+
+            function onEventAnteriorPaginacion() {
+                if (!state) {
+                    if (paginacion > 1) {
+                        paginacion--;
+                        onEventPaginacion();
+                    }
+                }
+            }
+
+            function onEventSiguientePaginacion() {
+                if (!state) {
+                    if (paginacion < totalPaginacion) {
+                        paginacion++;
+                        onEventPaginacion();
+                    }
+                }
             }
         </script>
     </body>
