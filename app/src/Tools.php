@@ -5,6 +5,17 @@ namespace SysSoftIntegra\Src;
 class Tools
 {
 
+    public static function validateDuplicateSuministro($array,$oject){
+        $ret = false;
+        foreach($array as $value){
+            if($value["IdSuministro"] == $oject["IdSuministro"]){
+                $ret = true;
+                break;
+            }
+        }
+        return $ret;
+    }
+
     public static function calculateTax(float $porcentaje, float $valor)
     {
         return (float) ($valor * ($porcentaje / 100.00));

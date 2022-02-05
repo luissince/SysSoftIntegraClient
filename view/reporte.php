@@ -26,6 +26,9 @@ if (!isset($_SESSION['IdEmpleado'])) {
         <!--  -->
         <?php include "./layout/reporte/modalngresoEgreso.php"; ?>
         <!--  -->
+        <!--  -->
+        <?php include "./layout/reporte/modalUtilidad.php"; ?>
+        <!--  -->
         <!-- modal generar excel nota credito-->
         <div class="row">
             <div class="modal fade" id="mdAlertNotaCredito" data-backdrop="static">
@@ -149,12 +152,24 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 </div>
 
                 <div class="row">
-                    <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+                    <!-- <div class="col-lg-3 col-md-3 col-sm-12 col-12">
                         <div class="card mb-3 card-default">
                             <button class="btn btn-link" id="">
                                 <h5 class="card-title">Resumen General</h5>
                                 <div class="card-body">
                                     <img src="./images/sitio-web.png" alt="Vender" width="54">
+                                </div>
+                                <div class="card-footer border-0">Documento</div>
+                            </button>
+                        </div>
+                    </div> -->
+
+                    <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+                        <div class="card mb-3 card-default">
+                            <button class="btn btn-link" id="btnUtilidad">
+                                <h5 class="card-title">Utilidad</h5>
+                                <div class="card-body">
+                                    <img src="./images/utilidad.png" alt="Vender" width="54">
                                 </div>
                                 <div class="card-footer border-0">Documento</div>
                             </button>
@@ -177,17 +192,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         </div>
                     </div>
 
-                    <div class="col-lg-3 col-md-3 col-sm-12 col-12">
-                        <div class="card mb-3 card-default">
-                            <button class="btn btn-link" id="">
-                                <h5 class="card-title">Utilidades</h5>
-                                <div class="card-body">
-                                    <img src="./images/utilidad.png" alt="Vender" width="54">
-                                </div>
-                                <div class="card-footer border-0">Documento</div>
-                            </button>
-                        </div>
-                    </div>
+                   
 
                     <div class="col-lg-3 col-md-3 col-sm-12 col-12">
                         <div class="card mb-3 card-default">
@@ -276,12 +281,15 @@ if (!isset($_SESSION['IdEmpleado'])) {
         <script src="js/reporte/modalVentaLibre.js"></script>
         <script src="js/reporte/modalVentaPos.js"></script>
         <script src="js/reporte/modalngresoEgreso.js"></script>
+        <script src="js/reporte/modalngresoEgreso.js"></script>
+        <script src="js/reporte/modalUtilidad.js"></script>
         <script>
             let tools = new Tools();
             let modalFacturados = new ModalFacturados();
             let modalVentaLibre = new ModalVentaLibre();
             let modalVentaPos = new ModalVentaPos();
             let modalIngresoEgreso = new ModalngresoEgreso();
+            let modalUtilidad = new ModalUtilidad();
 
             $(document).ready(function() {
 
@@ -303,6 +311,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 modalVentaLibre.init();
                 modalVentaPos.init();
                 modalIngresoEgreso.init();
+                modalUtilidad.init();
             });
         </script>
     </body>

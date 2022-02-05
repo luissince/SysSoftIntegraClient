@@ -308,65 +308,16 @@ class VentasADO
     }
 
 
-    public static function ResumenUtilidadPorFecha($fechaInicio, $fechaFinal)
+    public static function ListarUtilidad(string $fechaInicio, string $fechaFinal, string $idSuministro, int $idCategoria, int $idMarca, int $idPresentacion)
     {
         try {
-            $array = array();
-
-            $cmdEmpresa = Database::getInstance()->getDb()->prepare("SELECT TOP 1 
-            d.IdAuxiliar,e.NumeroDocumento,e.RazonSocial,e.NombreComercial,e.Domicilio,
-            e.Telefono,e.Email,e.Image
-            FROM EmpresaTB AS e INNER JOIN DetalleTB AS d ON e.TipoDocumento = d.IdDetalle AND d.IdMantenimiento = '0003'");
-            $cmdEmpresa->execute();
-            $rowEmpresa = $cmdEmpresa->fetch();
-            $empresa  = (object)array(
-                "IdAuxiliar" => $rowEmpresa['IdAuxiliar'],
-                "NumeroDocumento" => $rowEmpresa['NumeroDocumento'],
-                "RazonSocial" => $rowEmpresa['RazonSocial'],
-                "NombreComercial" => $rowEmpresa['NombreComercial'],
-                "Domicilio" => $rowEmpresa['Domicilio'],
-                "Telefono" => $rowEmpresa['Telefono'],
-                "Email" => $rowEmpresa['Email'],
-                "Image" => $rowEmpresa['Image'] == null ? "" : base64_encode($rowEmpresa['Image'])
-            );
-
-            $cmdUtilidad = Database::getInstance()->getDb()->prepare("SELECT 
-            a.IdSuministro,
-            a.Clave, 
-            a.NombreMarca,
-            v.Estado,
-            dbo.Fc_Obtener_Nombre_Detalle(a.UnidadCompra,'0013') as UnidadCompraNombre,
-            case
-                when a.ValorInventario = 1 then dv.Cantidad
-                when a.ValorInventario = 2 then dv.Cantidad
-                when a.ValorInventario = 3 then dv.Cantidad
-            end as Cantidad, 
-            dv.CostoVenta as Costo,
-            case
-                when a.ValorInventario = 1 then dv.Cantidad * dv.CostoVenta
-                when a.ValorInventario = 2 then dv.Cantidad * dv.CostoVenta
-                when a.ValorInventario = 3 then dv.Cantidad * dv.CostoVenta
-            end as CostoTotal,
-            dv.PrecioVenta as Precio, 
-            case 
-                when a.ValorInventario = 1 then dv.Cantidad * dv.PrecioVenta
-                when a.ValorInventario = 2 then dv.Cantidad * dv.PrecioVenta
-                when a.ValorInventario = 3 then dv.Cantidad * dv.PrecioVenta
-            end as PrecioTotal,
-            case
-                when a.ValorInventario = 1 then (dv.Cantidad * dv.PrecioVenta )- (dv.Cantidad * dv.CostoVenta )
-                when a.ValorInventario = 2 then (dv.Cantidad * dv.PrecioVenta )- (dv.Cantidad * dv.CostoVenta )
-                when a.ValorInventario = 3 then (dv.Cantidad * dv.PrecioVenta )- (dv.Cantidad * dv.CostoVenta )
-            end as Utilidad,a.ValorInventario, m.Simbolo
-                    from DetalleVentaTB as dv
-                    inner join SuministroTB as a on dv.IdArticulo = a.IdSuministro 
-                    inner join VentaTB as v on v.IdVenta = dv.IdVenta
-                    left join NotaCreditoTB as nc on nc.IdVenta = v.IdVenta
-                    inner join MonedaTB as m on m.IdMoneda = v.Moneda
-                    where v.FechaVenta between ? and ? and v.Estado <> 3 and nc.IdNotaCredito is null	
-                    order by a.NombreMarca asc");
+            $cmdUtilidad = Database::getInstance()->getDb()->prepare("{call Sp_Listar_Utilidad(?,?,?,?,?,?)}");
             $cmdUtilidad->bindValue(1, $fechaInicio, PDO::PARAM_STR);
             $cmdUtilidad->bindValue(2, $fechaFinal, PDO::PARAM_STR);
+            $cmdUtilidad->bindValue(3, $idSuministro, PDO::PARAM_INT);
+            $cmdUtilidad->bindValue(4, $idCategoria, PDO::PARAM_STR);
+            $cmdUtilidad->bindValue(5, $idMarca, PDO::PARAM_INT);
+            $cmdUtilidad->bindValue(6, $idPresentacion, PDO::PARAM_INT);
             $cmdUtilidad->execute();
 
             $arrayUtilidad = array();
@@ -375,23 +326,19 @@ class VentasADO
                     "IdSuministro" => $row["IdSuministro"],
                     "Clave" => $row["Clave"],
                     "NombreMarca" => $row["NombreMarca"],
-                    "Estado" => $row["Estado"],
+                    "Cantidad" => $row["Cantidad"],
                     "UnidadCompraNombre" => $row["UnidadCompraNombre"],
-
-                    "Cantidad" => floatval($row["Cantidad"]),
-
-                    "Costo" => floatval($row["Costo"]),
-                    "CostoTotal" => floatval($row["CostoTotal"]),
-
-                    "Precio" => floatval($row["Precio"]),
-                    "PrecioTotal" => floatval($row["PrecioTotal"]),
-
-                    "Utilidad" => floatval($row["Utilidad"])
+                    "Costo" =>floatval($row["Costo"]),
+                    "CostoTotal" =>floatval( $row["CostoTotal"]),
+                    "Precio" =>floatval( $row["Precio"]),
+                    "PrecioTotal" =>floatval( $row["PrecioTotal"]),
+                    "Utilidad" => floatval($row["Utilidad"]),
+                    "ValorInventario" => $row["ValorInventario"],
+                    "Simbolo" => $row["Simbolo"]
                 ));
             }
 
-            array_push($array, $empresa, $arrayUtilidad);
-            return $array;
+            return $arrayUtilidad;
         } catch (Exception $ex) {
             return $ex->getMessage();
         }
