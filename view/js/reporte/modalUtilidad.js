@@ -94,7 +94,7 @@ function ModalUtilidad() {
                 else {
                     let params = new URLSearchParams({
                         "fechaInicial": $("#txtFechaInicioUtilidad").val(),
-                        "fechaFinal": $("#txtFechaInicioUtilidad").val(),
+                        "fechaFinal": $("#txtFechaFinalUtilidad").val(),
 
                         "idSuministro": $("#rbSelectProductoUtilidad").is(":checked") ? "" : $('#cbProductoUtilidad').val(),
                         "nameProducto": $("#rbSelectProductoUtilidad").is(":checked") ? "TODOS" : $('#cbProductoUtilidad option:selected').html(),
