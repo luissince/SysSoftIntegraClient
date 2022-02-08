@@ -7,7 +7,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
 ?>
 
   <!DOCTYPE html>
-  <html lang="en">
+  <html lang="es">
 
   <head>
     <?php include './layout/head.php'; ?>
@@ -32,7 +32,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
       <div class="tile mb-4 pt-xl-3 pb-xl-3 pl-xl-5">
         <div class="row">
           <div class="col-lg-12">
-            <label for="f-inicio">Bienvenido al Sistema de SysSoft Integra, donde podrá realizar operaciones de venta, compras, cartera de cliente, gastos entre otras funcionalidad para llevar una mejor administración de su negocio. </label>
+            <label for="f-inicio">Bienvenido al Sistema de SysSoft Integra, donde podrá realizar operaciones de venta, compras, cartera de cliente, gastos entre otras funcionalidades para llevar a cabo una mejor administración de su negocio.</label>
           </div>
         </div>
 
