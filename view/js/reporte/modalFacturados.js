@@ -11,28 +11,16 @@ function ModalFacturados() {
             }
             event.preventDefault();
         });
+
+        loadInitFacturado();
     }
 
-    function openModalFacturado() {
-        $("#modaModalFacturado").modal("show");
-
+    function loadInitFacturado() {
         $("#modaModalFacturado").on("shown.bs.modal", async function () {
             $("#txtFIFacturado").val(tools.getFirstDayOfMoth());
             $("#txtFFFacturado").val(tools.getLastDayOfMonth());
 
             $("#txtFIFacturado").focus();
-
-            $("#btnExcelFacturado").bind("click", function () {
-                let fechaInicial = $("#txtFIFacturado").val();
-                let fechaFinal = $("#txtFFFacturado").val();
-                if (tools.validateDate(fechaInicial) && tools.validateDate(fechaFinal)) {
-                    let params = new URLSearchParams({
-                        "txtFechaInicial": fechaInicial,
-                        "txtFechaFinal": fechaFinal
-                    });
-                    window.open("../app/sunat/excelfacturado.php?" + params, "_blank");
-                }
-            });
 
             $("#btnPdfFacturado").bind("click", function () {
                 let fechaInicial = $("#txtFIFacturado").val();
@@ -45,12 +33,28 @@ function ModalFacturados() {
                     window.open("../app/sunat/pdffacturado.php?" + params, "_blank");
                 }
             });
+
+            $("#btnExcelFacturado").bind("click", function () {
+                let fechaInicial = $("#txtFIFacturado").val();
+                let fechaFinal = $("#txtFFFacturado").val();
+                if (tools.validateDate(fechaInicial) && tools.validateDate(fechaFinal)) {
+                    let params = new URLSearchParams({
+                        "txtFechaInicial": fechaInicial,
+                        "txtFechaFinal": fechaFinal
+                    });
+                    window.open("../app/sunat/excelfacturado.php?" + params, "_blank");
+                }
+            });
         });
 
         $("#modaModalFacturado").on("hide.bs.modal", async function () {
             $("#btnExcelFacturado").unbind();
             $("#btnPdfFacturado").unbind();
         });
+    }
+
+    function openModalFacturado() {
+        $("#modaModalFacturado").modal("show");
     }
 
 }

@@ -15,11 +15,11 @@ function ModalngresoEgreso() {
         $("#cbSelectVendedorIngresoEgreso").change(function () {
             $("#cbVendedorVIngresoEgreso").prop('disabled', $("#cbSelectVendedorIngresoEgreso").is(":checked"));
         });
+
+        loadInitIngresosEgresos();
     }
 
-    function openModalIngresosEgresos() {
-        $("#modalIngresoEgreso").modal("show");
-
+    function loadInitIngresosEgresos() {
         $("#modalIngresoEgreso").on("shown.bs.modal", async function () {
             $("#txtFIIngresoEgreso").val(tools.getCurrentDate());
             $("#txtFFIngresoEgreso").val(tools.getCurrentDate());
@@ -28,33 +28,35 @@ function ModalngresoEgreso() {
             selectEmpleado();
 
             $("#btnPdfIngresoEgreso").bind("click", function () {
-                if (!$("#cbSelectVendedorIngresoEgreso").is(":checked") && $('#cbVendedorVIngresoEgreso').val() == null) {
-                    tools.AlertWarning("", "Seleccione un vendedor.");
-                    $('#cbVendedorVIngresoEgreso').focus();
-                } else {
-                    let fechaInicial = $("#txtFIIngresoEgreso").val();
-                    let fechaFinal = $("#txtFFIngresoEgreso").val();
-                    if (tools.validateDate(fechaInicial) && tools.validateDate(fechaFinal)) {
-                        let params = new URLSearchParams({
-                            "txtFechaInicial": fechaInicial,
-                            "txtFechaFinal": fechaFinal,
-                            "usuario": $("#cbSelectVendedorIngresoEgreso").is(":checked") ? 0 : 1,
-                            "idUsuario": $("#cbSelectVendedorIngresoEgreso").is(":checked") ? '' : $('#cbVendedorVIngresoEgreso').val()
-                        });
-                        window.open("../app/sunat/pdfresumeningresos.php?" + params, "_blank");
+                if ($("#divOverlayIngresoEgreso").hasClass("d-none")) {
+                    if (!$("#cbSelectVendedorIngresoEgreso").is(":checked") && $('#cbVendedorVIngresoEgreso').val() == null) {
+                        tools.AlertWarning("", "Seleccione un vendedor.");
+                        $('#cbVendedorVIngresoEgreso').focus();
+                    } else if (!$("#rbSelectTransaccionesIngresoEgreso").is(":checked") && !$("#rbSelectMovimientoIngresoEgreso").is(":checked")) {
+                        tools.AlertWarning("", "Debe seleccionar las transacciones y/o movimientos de caja.");
+                        $('#rbSelectTransaccionesIngresoEgreso').focus();
+                    }
+                    else {
+                        let fechaInicial = $("#txtFIIngresoEgreso").val();
+                        let fechaFinal = $("#txtFFIngresoEgreso").val();
+                        if (tools.validateDate(fechaInicial) && tools.validateDate(fechaFinal)) {
+                            let params = new URLSearchParams({
+                                "txtFechaInicial": fechaInicial,
+                                "txtFechaFinal": fechaFinal,
+                                "usuario": $("#cbSelectVendedorIngresoEgreso").is(":checked") ? 0 : 1,
+                                "idUsuario": $("#cbSelectVendedorIngresoEgreso").is(":checked") ? '' : $('#cbVendedorVIngresoEgreso').val(),
+                                "transaccion": $("#rbSelectTransaccionesIngresoEgreso").is(":checked") ? 1 : 0,
+                                "movimientos": $("#rbSelectMovimientoIngresoEgreso").is(":checked") ? 1 : 0,
+                            });
+                            window.open("../app/sunat/pdfingresosegresos.php?" + params, "_blank");
+                        }
                     }
                 }
             });
 
             $("#btnExcelIngresoEgreso").bind("click", function () {
-                let fechaInicial = $("#txtFIIngresoEgreso").val();
-                let fechaFinal = $("#txtFFIngresoEgreso").val();
-                if (tools.validateDate(fechaInicial) && tools.validateDate(fechaFinal)) {
-                    let params = new URLSearchParams({
-                        "txtFechaInicial": fechaInicial,
-                        "txtFechaFinal": fechaFinal
-                    });
-                    window.open("../app/sunat/excelresumeningreso.php?" + params, "_blank");
+                if ($("#divOverlayIngresoEgreso").hasClass("d-none")) {
+                    
                 }
             });
 
@@ -64,7 +66,17 @@ function ModalngresoEgreso() {
         $("#modalIngresoEgreso").on("hide.bs.modal", async function () {
             $("#btnPdfIngresoEgreso").unbind();
             $("#btnExcelIngresoEgreso").unbind();
+
+            $("#cbSelectVendedorIngresoEgreso").prop("checked", true);
+            $("#rbSelectTransaccionesIngresoEgreso").prop("checked", true);
+            $("#rbSelectMovimientoIngresoEgreso").prop("checked", true);
+
+            $("#cbVendedorVIngresoEgreso").prop("disabled", true);
         });
+    }
+
+    function openModalIngresosEgresos() {
+        $("#modalIngresoEgreso").modal("show");
     }
 
     function selectEmpleado() {
@@ -80,7 +92,7 @@ function ModalngresoEgreso() {
                 data: function (params) {
                     return {
                         type: "fillempleado",
-                        search: params.term
+                        search: params.term == null ? "" : params.term,
                     };
                 },
                 processResults: function (response) {

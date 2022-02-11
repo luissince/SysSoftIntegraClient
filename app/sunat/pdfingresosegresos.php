@@ -1,24 +1,42 @@
 <?php
-
 require  './lib/mpdf/vendor/autoload.php';
 require  './../src/autoload.php';
 
 use SysSoftIntegra\Model\IngresoADO;
+use SysSoftIntegra\Model\CajaADO;
 use SysSoftIntegra\Model\EmpresaADO;
 use SysSoftIntegra\Src\Tools;
 use Mpdf\Mpdf;
 
 $title = "RESUMEN DE INGRESOS";
-$result = IngresoADO::Reporte_Ingresos($_GET["txtFechaInicial"], $_GET["txtFechaFinal"],  $_GET["usuario"],  $_GET["idUsuario"]);
+$resultTransaccion = IngresoADO::ReporteGeneralIngresosEgresos($_GET["txtFechaInicial"], $_GET["txtFechaFinal"],  $_GET["usuario"],  $_GET["idUsuario"]);
+$resultMovimiento = CajaADO::ReporteGeneralMovimientoCaja($_GET["txtFechaInicial"], $_GET["txtFechaFinal"],  $_GET["usuario"],  $_GET["idUsuario"]);
 
-if (!is_array($result)) {
-    echo $result;
-} else {
+if (!is_array($$resultTransaccion) && !is_array($resultMovimiento)) {
+    Tools::printErrorJson($resultTransaccion);
+    Tools::printErrorJson($resultMovimiento);
+    return;
+}
 
-    $empresa = EmpresaADO::ReporteEmpresa();
-    $photo = Tools::showImageReport($empresa->Image);
+date_default_timezone_set('America/Lima');
 
-    $html = '
+$result = array();
+if ($_GET["transaccion"] == 1) {
+    foreach ($resultTransaccion as $value) {
+        array_push($result, $value);
+    }
+}
+
+if ($_GET["movimientos"] == 1) {
+    foreach ($resultMovimiento as $value) {
+        array_push($result, $value);
+    }
+}
+
+$empresa = EmpresaADO::ReporteEmpresa();
+$photo = Tools::showImageReport($empresa->Image);
+
+$html = '
 <html>
     <head>
         <style>
@@ -125,7 +143,7 @@ if (!is_array($result)) {
                 Generado por SySoftIntegra
             </div>
             <div style="width:33%;float:left;text-align:center;color:#333;font-size: 9pt;">
-                ' . date("d/m/Y") . '
+                ' . date("d/m/Y") . ' '.date("h:m a") .'
             </div>  
         </htmlpagefooter>
         <sethtmlpageheader name="myheader" value="on" show-this-page="1" />
@@ -139,11 +157,11 @@ if (!is_array($result)) {
                 </td>
                 <td width="85%" style="border: 0mm solid #888888;text-align: center;vertical-align: middle;">
                     <span style="font-size: 12pt; color: black; font-family: sans;">
-                        <b>' . $empresa->NumeroDocumento . '</b>
+                        <b>' . $empresa->RazonSocial . '</b>
                     </span>
                     <br>
                     <span style="font-size: 12pt; color: black; font-family: sans;">
-                        <b>' . $empresa->RazonSocial . '</b>
+                        <b>R.U.C: ' . $empresa->NumeroDocumento . '</b>
                     </span>
                     <br><br>
                     <span style="font-size: 11pt; color: black; font-family: sans;">
@@ -176,17 +194,17 @@ if (!is_array($result)) {
                 </tr>
             </thead>
             <tbody>';
-    $count = 0;
+$count = 0;
 
-    $totalEfectivoIngreso = 0;
-    $totalEfectivoSalida = 0;
-    $totalTarjetaIngreso = 0;
-    $totalTarjetaSalida = 0;
-    $totalDepositoIngreso = 0;
-    $totalDepositoSalida = 0;
-    foreach ($result as $value) {
-        $count++;
-        $html .= '
+$totalEfectivoIngreso = 0;
+$totalEfectivoSalida = 0;
+$totalTarjetaIngreso = 0;
+$totalTarjetaSalida = 0;
+$totalDepositoIngreso = 0;
+$totalDepositoSalida = 0;
+foreach ($result as $value) {
+    $count++;
+    $html .= '
                             <tr>
                                 <td class="td-table-detailt text-center">' . $count . '</td>
                                 <td class="td-table-detailt">' . $value->Transaccion . '</td>
@@ -197,34 +215,34 @@ if (!is_array($result)) {
                             </tr>
                             ';
 
-        if ($value->FormaIngreso == "EFECTIVO") {
-            if ($value->Transaccion == "COMPRAS" || $value->Transaccion == "EGRESO LIBRE"  || $value->Transaccion == "CUENTAS POR PAGAR") {
-                $totalEfectivoIngreso += 0;
-                $totalEfectivoSalida += $value->Efectivo;
-            } else {
-                $totalEfectivoIngreso += $value->Efectivo;
-                $totalEfectivoSalida += 0;
-            }
-        } else if ($value->FormaIngreso == "TARJETA") {
-            if ($value->Transaccion == "COMPRAS" || $value->Transaccion == "EGRESO LIBRE"  || $value->Transaccion == "CUENTAS POR PAGAR") {
-                $totalTarjetaIngreso += 0;
-                $totalTarjetaSalida += $value->Tarjeta;
-            } else {
-                $totalTarjetaIngreso += $value->Tarjeta;
-                $totalTarjetaSalida += 0;
-            }
+    if ($value->FormaIngreso == "EFECTIVO") {
+        if ($value->Transaccion == "COMPRAS" || $value->Transaccion == "EGRESOS") {
+            $totalEfectivoIngreso += 0;
+            $totalEfectivoSalida += $value->Efectivo;
         } else {
-            if ($value->Transaccion == "COMPRAS" || $value->Transaccion == "EGRESO LIBRE"  || $value->Transaccion == "CUENTAS POR PAGAR") {
-                $totalDepositoIngreso += 0;
-                $totalDepositoSalida += $value->Deposito;
-            } else {
-                $totalDepositoIngreso += $value->Deposito;
-                $totalDepositoSalida += 0;
-            }
+            $totalEfectivoIngreso += $value->Efectivo;
+            $totalEfectivoSalida += 0;
+        }
+    } else if ($value->FormaIngreso == "TARJETA") {
+        if ($value->Transaccion == "COMPRAS" || $value->Transaccion == "EGRESOS") {
+            $totalTarjetaIngreso += 0;
+            $totalTarjetaSalida += $value->Tarjeta;
+        } else {
+            $totalTarjetaIngreso += $value->Tarjeta;
+            $totalTarjetaSalida += 0;
+        }
+    } else {
+        if ($value->Transaccion == "COMPRAS" || $value->Transaccion == "EGRESOS") {
+            $totalDepositoIngreso += 0;
+            $totalDepositoSalida += $value->Deposito;
+        } else {
+            $totalDepositoIngreso += $value->Deposito;
+            $totalDepositoSalida += 0;
         }
     }
+}
 
-    $html .= '</tbody>
+$html .= '</tbody>
         </table>
 
         <br>
@@ -290,32 +308,30 @@ if (!is_array($result)) {
         </div>
         
     </body>
-</html>
-';
+</html>';
 
 
-    $mpdf = new Mpdf([
-        'margin_left' => 10,
-        'margin_right' => 10,
-        'margin_top' => 10,
-        'margin_bottom' => 20,
-        'margin_header' => 10,
-        'margin_footer' => 10,
-        'mode' => 'utf-8',
-        'format' => 'A4',
-        'orientation' => 'P'
-    ]);
+$mpdf = new Mpdf([
+    'margin_left' => 10,
+    'margin_right' => 10,
+    'margin_top' => 10,
+    'margin_bottom' => 20,
+    'margin_header' => 10,
+    'margin_footer' => 10,
+    'mode' => 'utf-8',
+    'format' => 'A4',
+    'orientation' => 'P'
+]);
 
-    $mpdf->SetProtection(array('print'));
-    $mpdf->SetTitle("RESUMEN DE INGRESO DEL " . date("d-m-Y", strtotime($_GET["txtFechaInicial"])) . " AL " . date("d-m-Y", strtotime($_GET["txtFechaFinal"])));
-    $mpdf->SetAuthor("Syssoft Integra");
-    $mpdf->SetWatermarkText((""));   // anulada
-    $mpdf->showWatermarkText = true;
-    $mpdf->watermark_font = 'DejaVuSansCondensed';
-    $mpdf->watermarkTextAlpha = 0.1;
-    $mpdf->SetDisplayMode('fullpage');
-    $mpdf->WriteHTML($html);
+$mpdf->SetProtection(array('print'));
+$mpdf->SetTitle("RESUMEN DE INGRESO DEL " . date("d-m-Y", strtotime($_GET["txtFechaInicial"])) . " AL " . date("d-m-Y", strtotime($_GET["txtFechaFinal"])));
+$mpdf->SetAuthor("Syssoft Integra");
+$mpdf->SetWatermarkText((""));   // anulada
+$mpdf->showWatermarkText = true;
+$mpdf->watermark_font = 'DejaVuSansCondensed';
+$mpdf->watermarkTextAlpha = 0.1;
+$mpdf->SetDisplayMode('fullpage');
+$mpdf->WriteHTML($html);
 
-    // Output a PDF file directly to the browser
-    $mpdf->Output("RESUMEN DE INGRESO DEL " . date("d-m-Y", strtotime($_GET["txtFechaInicial"])) . " AL " . date("d-m-Y", strtotime($_GET["txtFechaFinal"])) . ".pdf", 'I');
-}
+// Output a PDF file directly to the browser
+$mpdf->Output("RESUMEN DE INGRESO DEL " . date("d-m-Y", strtotime($_GET["txtFechaInicial"])) . " AL " . date("d-m-Y", strtotime($_GET["txtFechaFinal"])) . ".pdf", 'I');

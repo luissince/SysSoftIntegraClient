@@ -9,11 +9,11 @@ function ModalInventario() {
         tools.keyEnter($("#btnInventario"), function (event){
             openModalInventario();
         });
+
+        loadInitInventario();
     }
 
-    function openModalInventario() {
-        $("#modalInventario").modal("show");
-
+    function loadInitInventario(){
         $("#modalInventario").on("shown.bs.modal", async function () {
 
         });
@@ -21,6 +21,10 @@ function ModalInventario() {
         $("#modalInventario").on("hide.bs.modal", async function () {
 
         });
+    }
+
+    function openModalInventario() {
+        $("#modalInventario").modal("show");
     }
 
 }

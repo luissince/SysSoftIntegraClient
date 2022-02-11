@@ -26,17 +26,10 @@ function ModalUtilidad() {
             $("#cbPresentacionUtilidad").prop("disabled", $("#rbSelectPresentacionUtilidad").is(":checked"));
         });
 
-        // $("#btnPdfUtilidad").click(function () {
-
-        // });
-
-        // tools.keyEnter($("#btnPdfUtilidad"), function (event) {
-
-        // });
+        loadInitUtilidad();
     }
 
-    function openModaUtilidad() {
-        $("#modalUtilidad").modal("show");
+    function loadInitUtilidad() {
         $("#modalUtilidad").on("shown.bs.modal", async function () {
             try {
                 let promiseFetchMarca = await tools.promiseFetchGet("../app/controller/DetalleController.php", {
@@ -78,54 +71,75 @@ function ModalUtilidad() {
             selectSuministro();
 
             $("#btnPdfUtilidad").bind("click", function () {
-                if (!$("#rbSelectProductoUtilidad").is(":checked") && $('#cbProductoUtilidad').val() == null) {
-                    tools.AlertWarning("", "Seleccione un producto.");
-                    $('#cbProductoUtilidad').focus();
-                } else if (!$("#rbSelectCategoriaUtilidad").is(":checked") && tools.validateComboBox($('#cbCategoriaUtilidad'))) {
-                    tools.AlertWarning("", "Seleccione un producto.");
-                    $('#cbCategoriaUtilidad').focus();
-                } else if (!$("#rbSelectMarcaUtilidad").is(":checked") && tools.validateComboBox($('#cbMarcaUtilidad'))) {
-                    tools.AlertWarning("", "Seleccione un producto.");
-                    $('#cbMarcaUtilidad').focus();
-                } else if (!$("#rbSelectPresentacionUtilidad").is(":checked") && tools.validateComboBox($('#cbPresentacionUtilidad'))) {
-                    tools.AlertWarning("", "Seleccione un producto.");
-                    $('#cbPresentacionUtilidad').focus();
-                }
-                else {
-                    let params = new URLSearchParams({
-                        "fechaInicial": $("#txtFechaInicioUtilidad").val(),
-                        "fechaFinal": $("#txtFechaFinalUtilidad").val(),
+                if ($("#divOverlayUtilidad").hasClass("d-none")) {
+                    if (!$("#rbSelectProductoUtilidad").is(":checked") && $('#cbProductoUtilidad').val() == null) {
+                        tools.AlertWarning("", "Seleccione un producto.");
+                        $('#cbProductoUtilidad').focus();
+                    } else if (!$("#rbSelectCategoriaUtilidad").is(":checked") && tools.validateComboBox($('#cbCategoriaUtilidad'))) {
+                        tools.AlertWarning("", "Seleccione un producto.");
+                        $('#cbCategoriaUtilidad').focus();
+                    } else if (!$("#rbSelectMarcaUtilidad").is(":checked") && tools.validateComboBox($('#cbMarcaUtilidad'))) {
+                        tools.AlertWarning("", "Seleccione un producto.");
+                        $('#cbMarcaUtilidad').focus();
+                    } else if (!$("#rbSelectPresentacionUtilidad").is(":checked") && tools.validateComboBox($('#cbPresentacionUtilidad'))) {
+                        tools.AlertWarning("", "Seleccione un producto.");
+                        $('#cbPresentacionUtilidad').focus();
+                    }
+                    else {
+                        let params = new URLSearchParams({
+                            "fechaInicial": $("#txtFechaInicioUtilidad").val(),
+                            "fechaFinal": $("#txtFechaFinalUtilidad").val(),
 
-                        "idSuministro": $("#rbSelectProductoUtilidad").is(":checked") ? "" : $('#cbProductoUtilidad').val(),
-                        "nameProducto": $("#rbSelectProductoUtilidad").is(":checked") ? "TODOS" : $('#cbProductoUtilidad option:selected').html(),
+                            "idSuministro": $("#rbSelectProductoUtilidad").is(":checked") ? "" : $('#cbProductoUtilidad').val(),
+                            "nameProducto": $("#rbSelectProductoUtilidad").is(":checked") ? "TODOS" : $('#cbProductoUtilidad option:selected').html(),
 
-                        "idCategoria": $("#rbSelectCategoriaUtilidad").is(":checked") ? 0 : $("#cbCategoriaUtilidad").val(),
-                        "nameCategoria": $("#rbSelectCategoriaUtilidad").is(":checked") ? "TODOS" : $('#cbCategoriaUtilidad option:selected').html(),
+                            "idCategoria": $("#rbSelectCategoriaUtilidad").is(":checked") ? 0 : $("#cbCategoriaUtilidad").val(),
+                            "nameCategoria": $("#rbSelectCategoriaUtilidad").is(":checked") ? "TODOS" : $('#cbCategoriaUtilidad option:selected').html(),
 
-                        "idMarca": $("#rbSelectMarcaUtilidad").is(":checked") ? 0 : $("#cbMarcaUtilidad").val(),
-                        "nameMarca": $("#rbSelectMarcaUtilidad").is(":checked") ? "TODOS" : $('#cbMarcaUtilidad option:selected').html(),
+                            "idMarca": $("#rbSelectMarcaUtilidad").is(":checked") ? 0 : $("#cbMarcaUtilidad").val(),
+                            "nameMarca": $("#rbSelectMarcaUtilidad").is(":checked") ? "TODOS" : $('#cbMarcaUtilidad option:selected').html(),
 
-                        "idPresentacion": $("#rbSelectPresentacionUtilidad").is(":checked") ? 0 : $("#cbPresentacionUtilidad").val(),
-                        "namePresentacion": $("#rbSelectPresentacionUtilidad").is(":checked") ? "TODOS" : $('#cbPresentacionUtilidad option:selected').html(),
+                            "idPresentacion": $("#rbSelectPresentacionUtilidad").is(":checked") ? 0 : $("#cbPresentacionUtilidad").val(),
+                            "namePresentacion": $("#rbSelectPresentacionUtilidad").is(":checked") ? "TODOS" : $('#cbPresentacionUtilidad option:selected').html(),
 
-                        "mostrarTodo": $("#rbSelectMostrarTodoUtilidad").is(":checked") ? 1 : 0
-                    });
-                    window.open("../app/sunat/pdfutilidadA4.php?" + params, "_blank");
+                            "mostrarTodo": $("#rbSelectMostrarTodoUtilidad").is(":checked") ? 1 : 0
+                        });
+                        window.open("../app/sunat/pdfutilidadA4.php?" + params, "_blank");
+                    }
                 }
             });
 
             $("#btnExcelUtilidad").bind("click", function () {
+                if ($("#divOverlayUtilidad").hasClass("d-none")) {
 
+                }
             });
         });
 
         $("#modalUtilidad").on("hide.bs.modal", async function () {
             $("#btnPdfUtilidad").unbind();
             $("#btnExcelUtilidad").unbind();
+
+            $("#rbSelectProductoUtilidad").prop("checked", true);
+            $("#rbSelectCategoriaUtilidad").prop("checked", true);
+            $("#rbSelectMarcaUtilidad").prop("checked", true);
+            $("#rbSelectPresentacionUtilidad").prop("checked", true);
+            $("#rbSelectMostrarTodoUtilidad").prop("checked", true);
+
+            $("#cbProductoUtilidad").prop("disabled", true);
+            $("#cbCategoriaUtilidad").prop("disabled", true);
+            $("#cbMarcaUtilidad").prop("disabled", true);
+            $("#cbPresentacionUtilidad").prop("disabled", true);
+
+            $("#cbProductoUtilidad").empty();
             $("#cbCategoriaUtilidad").empty();
             $("#cbMarcaUtilidad").empty();
             $("#cbPresentacionUtilidad").empty();
         });
+    }
+
+    function openModaUtilidad() {
+        $("#modalUtilidad").modal("show");
     }
 
     function selectSuministro() {

@@ -59,7 +59,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                         <div class="form-group">
                                             <label>Observación</label>
                                             <div class="input-group">
-                                                <input id="txtObservacion" class="form-control" type="text" placeholder="Ingrese alguna descripción">
+                                                <input id="txtObservacion" class="form-control" type="text" value="N/D" placeholder="Ingrese alguna descripción">
                                             </div>
                                         </div>
                                     </div>

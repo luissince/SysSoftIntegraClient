@@ -53,6 +53,24 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="row">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">                          
+                            <div class="form-group">
+                                <input id="rbSelectTransaccionesIngresoEgreso" type="checkbox" checked="">
+                                <label for="rbSelectTransaccionesIngresoEgreso">Todos las transacciones</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">                          
+                            <div class="form-group">
+                                <input id="rbSelectMovimientoIngresoEgreso" type="checkbox" checked="">
+                                <label for="rbSelectMovimientoIngresoEgreso">Todos los movimientos de caja</label>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
             </div>

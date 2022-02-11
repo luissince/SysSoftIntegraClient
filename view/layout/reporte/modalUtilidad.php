@@ -46,7 +46,6 @@
                         <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">                        
                             <div class="form-group">
                                 <select id="cbProductoUtilidad" class="select2-selection__rendered  form-control" disabled>
-                                    <option value="">- Seleccione -</option>
                                 </select>
                             </div>
                         </div>
@@ -62,7 +61,6 @@
                         <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">                            
                             <div class="form-group">
                                 <select id="cbCategoriaUtilidad" class="form-control" disabled>
-                                    <option value="">- Seleccione -</option>
                                 </select>
                             </div>
                         </div>
@@ -78,7 +76,6 @@
                         <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">                           
                             <div class="form-group">
                                 <select id="cbMarcaUtilidad" class="form-control" disabled>
-                                    <option value="">- Seleccione -</option>
                                 </select>
                             </div>
                         </div>
@@ -94,7 +91,6 @@
                         <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">                           
                             <div class="form-group">
                                 <select id="cbPresentacionUtilidad" class="form-control" disabled>
-                                    <option value="">- Seleccione -</option>
                                 </select>
                             </div>
                         </div>

@@ -403,34 +403,18 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         "posicionPagina": ((paginacion - 1) * filasPorPagina),
                         "filasPorPagina": filasPorPagina
                     }, function() {
-                        tbList.empty();
-                        tbList.append('<tr><td class="text-center" colspan="10"><img src="./images/loading.gif" id="imgLoad" width="34" height="34" /> <p>Cargando información...</p></td></tr>');
+                        tools.loadTable(tbList, 10);
                         state = true;
                         totalPaginacion = 0;
                     });
 
                     let object = result;
-                    tbList.empty();
-
                     if (object.data.length == 0) {
-                        tbList.append('<tr><td class="text-center" colspan="10"><p>No hay datos para mostrar.</p></td></tr>');
-                        ulPagination.html(`
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-double-left"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-left"></i>
-                            </button>
-                            <span class="btn btn-outline-secondary disabled" id="lblPaginacion">0 - 0</span>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-right"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-double-right"></i>
-                            </button>`);
+                        tools.loadTableMessage(tbList, "No hay datos para mostrar.", 10, true);
+                        tools.paginationEmpty(ulPagination);
                         state = false;
                     } else {
-
+                        tbList.empty();
                         for (let cliente of object.data) {
                             let predeterminado = cliente.Predeterminado == 1 ? './images/checked.png' : './images/unchecked.png';
 
@@ -478,22 +462,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     }
 
                 } catch (error) {
-                    tbList.empty();
-                    tbList.append('<tr><td class="text-center" colspan="10"><p>' + error.responseText + '</p></td></tr>');
-                    ulPagination.html(`
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-double-left"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-left"></i>
-                            </button>
-                            <span class="btn btn-outline-secondary disabled" id="lblPaginacion">0 - 0</span>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-right"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-double-right"></i>
-                            </button>`);
+                    tools.loadTableMessage(tbList, tools.messageError(error), 10, true);
+                    tools.paginationEmpty(ulPagination);
                     state = false;
                 }
             }

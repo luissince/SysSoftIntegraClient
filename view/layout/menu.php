@@ -183,6 +183,8 @@
                 "reporte",
                 "empresa",
                 "mantenimiento",
+                "almacen",
+                "impuesto",
                 "moneda",
                 "usuario",
                 "comprobante",
@@ -257,7 +259,7 @@
                         if (id == "tab-reporte") {
                                 document.getElementById("tab-reporte").setAttribute("class", "app-menu__item active");
                         }
-                } else if (id == "tab-empresa" || id == "tab-mantenimiento" || id == "tab-usuario" || id == "tab-moneda" || id == "tab-comprobante" || id == "tab-bancos") {
+                } else if (id == "tab-empresa" || id == "tab-mantenimiento" || id == "tab-usuario" || id == "tab-moneda" || id == "tab-comprobante" || id == "tab-bancos" || id == "tab-almacen" || id == "tab-impuesto") {
                         document.getElementById("treeview-configuracion").setAttribute("class", "treeview is-expanded");
                         if (id == "tab-empresa") {
                                 document.getElementById("tab-empresa").setAttribute("class", "app-menu__item active");
@@ -271,6 +273,10 @@
                                 document.getElementById("tab-bancos").setAttribute("class", "app-menu__item active");
                         } else if (id == "tab-usuario") {
                                 document.getElementById("tab-usuario").setAttribute("class", "app-menu__item active");
+                        } else if (id == "tab-almacen") {
+                                document.getElementById("tab-almacen").setAttribute("class", "app-menu__item active");
+                        } else if (id == "tab-impuesto") {
+                                document.getElementById("tab-impuesto").setAttribute("class", "app-menu__item active");
                         }
                 } else {
                         document.getElementById(id).setAttribute("class", "app-menu__item active");

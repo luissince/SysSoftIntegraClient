@@ -114,13 +114,13 @@ mpdf-->
 <table width="100%" style="font-family: arial;font-size: 9pt;" border="0" cellspacing="5">
   
         <tr>
-            <th style="text-align: left;">PRODUCTO: '.$_GET["nameProducto"].'</th>
-            <th style="text-align: left;">MARCA: '.$_GET["nameMarca"].'</th>
+            <th style="text-align: left;">PRODUCTO: ' . $_GET["nameProducto"] . '</th>
+            <th style="text-align: left;">MARCA: ' . $_GET["nameMarca"] . '</th>
         </tr>
 
         <tr>
-            <th style="text-align: left;">CATEGORÍA: '.$_GET["nameCategoria"].'</th>
-            <th style="text-align: left;">PRESENTACIÓN: '.$_GET["namePresentacion"].'</th>
+            <th style="text-align: left;">CATEGORÍA: ' . $_GET["nameCategoria"] . '</th>
+            <th style="text-align: left;">PRESENTACIÓN: ' . $_GET["namePresentacion"] . '</th>
         </tr>
        
 </table>
@@ -181,7 +181,7 @@ if ($_GET["mostrarTodo"] == 1) {
 
     foreach ($result as $value) {
         if (Tools::validateDuplicateSuministro($newArray, $value)) {
-            for($j = 0; $j < count($newArray); $j++) { 
+            for ($j = 0; $j < count($newArray); $j++) {
                 if ($newArray[$j]["IdSuministro"] == $value["IdSuministro"]) {
                     $newArray[$j]["Cantidad"] = $newArray[$j]["Cantidad"] + $value["Cantidad"];
 
@@ -199,7 +199,7 @@ if ($_GET["mostrarTodo"] == 1) {
         }
     }
 
-    for($j = 0; $j < count($newArray); $j++) { 
+    for ($j = 0; $j < count($newArray); $j++) {
         if ($newArray[$j]["Cantidad"] > 0) {
             $newArray[$j]["Costo"] = $newArray[$j]["CostoTotal"] / $newArray[$j]["Cantidad"];
             $newArray[$j]["Precio"] = $newArray[$j]["PrecioTotal"] / $newArray[$j]["Cantidad"];
@@ -225,7 +225,6 @@ if ($_GET["mostrarTodo"] == 1) {
         $precioTotal += $value["PrecioTotal"];
         $utilidadGenerada += $value["Utilidad"];
     }
-
 }
 
 $html .= '

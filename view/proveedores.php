@@ -414,34 +414,20 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         "posicionPagina": ((paginacion - 1) * filasPorPagina),
                         "filasPorPagina": filasPorPagina
                     }, function() {
-                        tbList.empty();
-                        tbList.append('<tr><td class="text-center" colspan="8"><img src="./images/loading.gif" id="imgLoad" width="34" height="34" /> <p>Cargando información...</p></td></tr>');
+                        tools.loadTable(tbList, 8);
                         state = true;
                         totalPaginacion = 0;
                     });
 
                     let object = result;
 
-                    tbList.empty();
+
                     if (object.data.length == 0) {
-                        tbList.append('<tr><td class="text-center" colspan="8"><p>No hay datos para mostrar.</p></td></tr>');
-                        ulPagination.html(`
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-double-left"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-left"></i>
-                            </button>
-                            <span class="btn btn-outline-secondary disabled" id="lblPaginacion">0 - 0</span>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-right"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-double-right"></i>
-                            </button>`);
+                        tools.loadTableMessage(tbList, "No hay datos para mostrar.", 8, true);
+                        tools.paginationEmpty(ulPagination);
                         state = false;
                     } else {
-
+                        tbList.empty();
                         for (let proveedor of object.data) {
 
                             tbList.append('<tr>' +
@@ -485,22 +471,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         state = false;
                     }
                 } catch (error) {
-                    tbList.empty();
-                    tbList.append('<tr><td class="text-center" colspan="8"><p>' + error.responseText + '</p></td></tr>');
-                    ulPagination.html(`
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-double-left"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-left"></i>
-                            </button>
-                            <span class="btn btn-outline-secondary disabled" id="lblPaginacion">0 - 0</span>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-right"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-double-right"></i>
-                            </button>`);
+                    tools.loadTableMessage(tbList, tools.messageError(error), 8, true);
+                    tools.paginationEmpty(ulPagination);
                     state = false;
                 }
             }

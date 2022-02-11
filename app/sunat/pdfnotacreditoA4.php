@@ -15,44 +15,41 @@ $result = NotaCreditoADO::ObtenerNotaCreditoById($idNotaCredito);
 $gcl = new NumberLleters();
 
 if (!is_array($result)) {
-    echo json_encode(array(
-        "state" => false,
-        "code" => "-1",
-        "description" => $result
-    ));
-} else {
+    Tools::printErrorJson($resultTransaccion);
+    return;
+}
 
-    $notacredito = $result[0];
-    $empresa = $result[1];
-    $detalle = $result[2];
-    $totales = $result[3];
-    $banco = $result[4];
+$notacredito = $result[0];
+$empresa = $result[1];
+$detalle = $result[2];
+$totales = $result[3];
+$banco = $result[4];
 
-    $photo = Tools::showImageReport($empresa->Image);
-    $gcl = new NumberLleters();
+$photo = Tools::showImageReport($empresa->Image);
+$gcl = new NumberLleters();
 
-    $codigoFormat = Tools::formatNumber($notacredito->NumeracionNotaCredito);
+$codigoFormat = Tools::formatNumber($notacredito->NumeracionNotaCredito);
 
-    $importeBrutoTotal = 0;
-    $descuentoTotal = 0;
-    $subImporteNetoTotal = 0;
-    $impuestoTotal = 0;
-    $importeNetoTotal = 0;
+$importeBrutoTotal = 0;
+$descuentoTotal = 0;
+$subImporteNetoTotal = 0;
+$impuestoTotal = 0;
+$importeNetoTotal = 0;
 
-    $textoCodBar =
-        '|' . $empresa->NumeroDocumento
-        . '|' . $notacredito->TipoDocumentoNotaCredito
-        . '|' . $notacredito->SerieNotaCredito
-        . '|' . $notacredito->NumeracionNotaCredito
-        . '|' . number_format(round($totales["totalconimpuesto"], 2, PHP_ROUND_HALF_UP), 2, '.', '')
-        . '|' . number_format(round($totales["totalimpuesto"], 2, PHP_ROUND_HALF_UP), 2, '.', '')
-        . '|' . $notacredito->FechaNotaCredito
-        . '|' . $notacredito->CodigoCliente
-        . '|' . $notacredito->NumeroDocumento
-        . '|';
+$textoCodBar =
+    '|' . $empresa->NumeroDocumento
+    . '|' . $notacredito->TipoDocumentoNotaCredito
+    . '|' . $notacredito->SerieNotaCredito
+    . '|' . $notacredito->NumeracionNotaCredito
+    . '|' . number_format(round($totales["totalconimpuesto"], 2, PHP_ROUND_HALF_UP), 2, '.', '')
+    . '|' . number_format(round($totales["totalimpuesto"], 2, PHP_ROUND_HALF_UP), 2, '.', '')
+    . '|' . $notacredito->FechaNotaCredito
+    . '|' . $notacredito->CodigoCliente
+    . '|' . $notacredito->NumeroDocumento
+    . '|';
 
 
-    $html .= '<html>
+$html .= '<html>
     <head>
     <style>
         body {
@@ -406,7 +403,7 @@ if (!is_array($result)) {
     </body>
     </html>';
 
-                                        $mpdf = new \Mpdf\Mpdf([
+                                        $mpdf = new Mpdf([
                                             'margin_left' => 10,
                                             'margin_right' => 10,
                                             'margin_top' => 10,
@@ -427,7 +424,5 @@ if (!is_array($result)) {
                                         $mpdf->watermarkTextAlpha = 0.1;
                                         $mpdf->SetDisplayMode('fullpage');
                                         $mpdf->WriteHTML($html);
-
                                         // Output a PDF file directly to the browser
                                         $mpdf->Output("SysSoft Integra.pdf", 'I');
-                                    }

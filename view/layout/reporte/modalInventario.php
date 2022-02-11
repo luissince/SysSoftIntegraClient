@@ -12,26 +12,22 @@
             </div>
             <div class="modal-body">
                 <div class="tile">
-                    <div class="overlay p-5" id="divOverlayUtilidad">
+                    <div class="overlay p-5" id="divOverlayInventario">
                         <div class="m-loader mr-4">
                             <svg class="m-circular" viewBox="25 25 50 50">
                                 <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="4" stroke-miterlimit="10"></circle>
                             </svg>
                         </div>
-                        <h4 class="l-text text-center text-white p-10" id="lblTextOverlayUtilidad">Cargando información...</h4>
+                        <h4 class="l-text text-center text-white p-10" id="lblTextOverlayInventario">Cargando información...</h4>
                     </div>
 
                     <div class="row">
-                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
-                            <label>Fecha de Inicio:</label>
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <label>Inventario:</label>
                             <div class="form-group">
-                                <input class="form-control" type="date" id="txtFechaInicioUtilidad" />
-                            </div>
-                        </div>
-                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
-                            <label>Fecha de Fin:</label>
-                            <div class="form-group">
-                                <input class="form-control" type="date" id="txtFechaFinalUtilidad" />
+                                <select class="form-control" id="cbAlmacenInventario">
+                                    <option value="">- Seleccionar</option>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -39,13 +35,13 @@
                     <div class="row">
                         <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">                          
                             <div class="form-group">
-                                <input id="rbSelectProductoUtilidad" type="checkbox" checked>
-                                <label for="rbSelectProductoUtilidad">Todos los productos</label>
+                                <input id="rbSelectUnidadInventario" type="checkbox" checked>
+                                <label for="rbSelectUnidadInventario">Todas las Unidades de Medida</label>
                             </div>
                         </div>
                         <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">                        
                             <div class="form-group">
-                                <select id="cbProductoUtilidad" class="select2-selection__rendered  form-control" disabled>
+                                <select id="cbUnidadInventario" class="form-control" disabled>
                                     <option value="">- Seleccione -</option>
                                 </select>
                             </div>
@@ -53,15 +49,15 @@
                     </div>
 
                     <div class="row">
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">                          
+                            <div class="form-group">
+                                <input id="rbSelectCategoriaInventario" type="checkbox" checked>
+                                <label for="rbSelectCategoriaInventario">Todas las Categorías</label>
+                            </div>
+                        </div>
                         <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">                        
                             <div class="form-group">
-                                <input id="rbSelectCategoriaUtilidad" type="checkbox" checked>
-                                <label for="rbSelectCategoriaUtilidad">Todas las categorias</label>
-                            </div>
-                        </div>
-                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">                            
-                            <div class="form-group">
-                                <select id="cbCategoriaUtilidad" class="form-control" disabled>
+                                <select id="cbCategoriaInventario" class="form-control" disabled>
                                     <option value="">- Seleccione -</option>
                                 </select>
                             </div>
@@ -69,15 +65,15 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">                            
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">                          
                             <div class="form-group">
-                                <input id="rbSelectMarcaUtilidad" type="checkbox" checked>
-                                <label for="rbSelectMarcaUtilidad">Todas las marcas</label>
+                                <input id="rbSelectMarcaInventario" type="checkbox" checked>
+                                <label for="rbSelectMarcaInventario">Todas las Marcas</label>
                             </div>
                         </div>
-                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">                           
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">                        
                             <div class="form-group">
-                                <select id="cbMarcaUtilidad" class="form-control" disabled>
+                                <select id="cbMarcaInventario" class="form-control" disabled>
                                     <option value="">- Seleccione -</option>
                                 </select>
                             </div>
@@ -85,15 +81,15 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">                           
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">                          
                             <div class="form-group">
-                                <input id="rbSelectPresentacionUtilidad" type="checkbox" checked>
-                                <label for="rbSelectPresentacionUtilidad">Todas las presentaciones</label>
+                                <input id="rbSelectPresentacionInventario" type="checkbox" checked>
+                                <label for="rbSelectPresentacionInventario">Todas las Presentaciones</label>
                             </div>
                         </div>
-                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">                           
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">                        
                             <div class="form-group">
-                                <select id="cbPresentacionUtilidad" class="form-control" disabled>
+                                <select id="cbPresentacionInventario" class="form-control" disabled>
                                     <option value="">- Seleccione -</option>
                                 </select>
                             </div>
@@ -101,10 +97,17 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">                          
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">                          
                             <div class="form-group">
-                                <input id="rbSelectMostrarTodoUtilidad" type="checkbox" checked>
-                                <label for="rbSelectMostrarTodoUtilidad">Mostrar detalle de cada producto</label>
+                                <input id="rbSelectExistenciaInventario" type="checkbox" checked>
+                                <label for="rbSelectExistenciaInventario">Todas las Existencia</label>
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">                        
+                            <div class="form-group">
+                                <select id="cbExistenciaInventario" class="form-control" disabled>
+                                    <option value="">- Seleccione -</option>
+                                </select>
                             </div>
                         </div>
                     </div>
