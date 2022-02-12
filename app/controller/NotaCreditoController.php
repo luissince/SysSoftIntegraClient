@@ -10,7 +10,7 @@ use SysSoftIntegra\Model\NotaCreditoADO;
 require __DIR__ . './../src/autoload.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-    if ($_GET["type"] == "listaNotaCredito") {
+    if ($_GET["type"] == "all") {
         $opcion = $_GET["opcion"];
         $buscar = $_GET["search"];
         $fechaInicio = $_GET["fechaInicial"];

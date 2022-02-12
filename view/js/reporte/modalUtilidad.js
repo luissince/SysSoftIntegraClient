@@ -117,6 +117,9 @@ function ModalUtilidad() {
         });
 
         $("#modalUtilidad").on("hide.bs.modal", async function () {
+            $("#divOverlayUtilidad").removeClass("d-none");
+            $("#lblTextOverlayUtilidad").html("Cargando información...");
+
             $("#btnPdfUtilidad").unbind();
             $("#btnExcelUtilidad").unbind();
 

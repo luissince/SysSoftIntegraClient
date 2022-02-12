@@ -107,10 +107,17 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     <h4 class="l-text text-center text-white p-10" id="lblTextOverlayNotaCredito">Cargando información...</h4>
                 </div>
 
+               
                 <div class="row">
                     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                         <div class="form-group">
-                            <h4> Notas de Crédito Emitidas</h4>
+                            <a href="notacreditoproceso.php" class=" btn btn-primary">
+                                <i class="fa fa-plus"></i> Nueva Nota Crédito
+                            </a>
+
+                            <button class="btn btn-secondary" id="btnReload">
+                                <i class="fa fa-refresh"></i> Recargar
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -157,25 +164,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 <div class="input-group-append">
                                     <button type="button" class="btn btn-success" id="btnBuscar"><i class="fa fa-search"></i> Buscar</button>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
-                        <label>Opción:</label>
-                        <div class="form-group">
-                            <button class="btn btn-secondary" id="btnReload">
-                                <i class="fa fa-refresh"></i> Recargar
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
-                        <label>Total de Nota de Crédito:</label>
-                        <div class="form-group">
-                            <div class="input-group">
-                                <div class="input-group-prepend"><span class="input-group-text">S/</span></div>
-                                <div class="input-group-append"><span class="input-group-text" id="lblTotalNotaCredito">0.00</span></div>
                             </div>
                         </div>
                     </div>
@@ -241,7 +229,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
             let tbList = $("#tbList");
 
             let ulPagination = $("#ulPagination");
-            let lblTotalNotaCredito = $("#lblTotalNotaCredito");
 
             $(document).ready(function() {
 
@@ -385,7 +372,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 try {
                     let result = await tools.promiseFetchGet(
                         "../app/controller/NotaCreditoController.php", {
-                            "type": "listaNotaCredito",
+                            "type": "all",
                             "opcion": opcion,
                             "search": search,
                             "fechaInicial": fechaInicial,
@@ -397,7 +384,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             tools.loadTable(tbList, 9);
                             state = true;
                             totalPaginacion = 0;
-                            lblTotalNotaCredito.html('0.00');
                         });
 
                     if (result.data.length == 0) {
@@ -424,7 +410,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 '<td class="text-right">' + detalle.Simbolo + " " + tools.formatMoney(detalle.Total) + '</td>' +
                                 '</tr>');
                         }
-                        lblTotalNotaCredito.html(tools.formatMoney(result.suma));
 
                         totalPaginacion = parseInt(Math.ceil((parseFloat(result.total) / filasPorPagina)));
                         let i = 1;

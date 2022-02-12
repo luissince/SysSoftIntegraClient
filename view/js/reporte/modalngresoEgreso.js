@@ -56,7 +56,7 @@ function ModalngresoEgreso() {
 
             $("#btnExcelIngresoEgreso").bind("click", function () {
                 if ($("#divOverlayIngresoEgreso").hasClass("d-none")) {
-                    
+
                 }
             });
 
@@ -64,6 +64,8 @@ function ModalngresoEgreso() {
         });
 
         $("#modalIngresoEgreso").on("hide.bs.modal", async function () {
+            $("#divOverlayIngresoEgreso").removeClass("d-none");
+
             $("#btnPdfIngresoEgreso").unbind();
             $("#btnExcelIngresoEgreso").unbind();
 

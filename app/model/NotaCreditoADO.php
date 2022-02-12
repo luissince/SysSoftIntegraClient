@@ -2,6 +2,7 @@
 
 namespace SysSoftIntegra\Model;
 
+use SysSoftIntegra\Src\Tools;
 use Database;
 use PDO;
 use PDOException;
@@ -34,7 +35,7 @@ class NotaCreditoADO
             while ($row = $cmdNotaCredito->fetch()) {
                 $count++;
                 array_push($arrayNotaCredito, array(
-                    "Id" => $count,
+                    "Id" => $count+ $posicionPagina,
                     "IdVenta" => $row["IdVenta"],
                     "IdNotaCredito" => $row["IdNotaCredito"],
                     "FechaNotaCredito" => $row["FechaRegistro"],
@@ -59,32 +60,12 @@ class NotaCreditoADO
             $cmdNotaCreditCount->execute();
             $resultTotal = $cmdNotaCreditCount->fetchColumn();
 
-            $cmdNotaCreditSuma = Database::getInstance()->getDb()->prepare("SELECT 
-            sum(ncd.Cantidad*ncd.Precio-ncd.Descuento) AS Total 
-            FROM 
-            NotaCreditoTB AS nc 
-            INNER JOIN NotaCreditoDetalleTB AS ncd ON ncd.IdNotaCredito = nc.IdNotaCredito
-            WHERE nc.FechaRegistro BETWEEN ? AND ?");
-            $cmdNotaCreditSuma->bindParam(1, $fechaInicio, PDO::PARAM_STR);
-            $cmdNotaCreditSuma->bindParam(2, $fechaFinal, PDO::PARAM_STR);
-            $cmdNotaCreditSuma->execute();
-            $resultSuma = 0;
-            if ($row = $cmdNotaCreditSuma->fetch()) {
-                $resultSuma = floatval(round($row["Total"], 2, PHP_ROUND_HALF_UP));
-            }
+            Tools::httpStatus200();
 
-            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-
-            header($protocol . ' ' . 200 . ' ' . "OK");
-            return array(
-                "estado" => 1,
-                "data" => $arrayNotaCredito,
-                "total" => $resultTotal,
-                "suma" => $resultSuma
-            );
+            return array("data" => $arrayNotaCredito, "total" => $resultTotal);
         } catch (Exception $ex) {
-            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+            Tools::httpStatus500();
+
             return $ex->getMessage();
         }
     }
@@ -289,8 +270,8 @@ class NotaCreditoADO
                     "Importe" => floatval($row["Cantidad"] * ($row["Precio"] - $row["Descuento"])),
                 ));
             }
-            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-            header($protocol . ' ' . 200 . ' ' . "OK");
+            
+            Tools::httpStatus200();
 
             return  array(
                 "nota" => $notacredito,
@@ -298,8 +279,7 @@ class NotaCreditoADO
                 "empresa" => $empresa
             );
         } catch (Exception $ex) {
-            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+            Tools::httpStatus500();
 
             return $ex->getMessage();
         }

@@ -260,7 +260,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 });
 
                 $("#modalCrudMoneda").on("hide.bs.modal", function() {
-
+                    clearComponents();
                 });
 
                 $("#btnSaveMoneda").click(function() {

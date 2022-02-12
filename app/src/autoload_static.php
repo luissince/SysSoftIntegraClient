@@ -11,6 +11,7 @@ class Autoload_Static
             'SysSoftIntegra\\Model\\AlmacenADO' => __DIR__  . '/../model/AlmacenADO.php',
             'SysSoftIntegra\\Model\\CajaADO' => __DIR__  . '/../model/CajaADO.php',
             'SysSoftIntegra\\Model\\EmpresaADO' => __DIR__  . '/../model/EmpresaADO.php',
+            'SysSoftIntegra\\Model\\ComprasADO' => __DIR__  . '/../model/ComprasADO.php',
             'SysSoftIntegra\\Model\\EmpleadoADO' => __DIR__  . '/../model/EmpleadoADO.php',
             'SysSoftIntegra\\Model\\MovimientoADO' => __DIR__  . '/../model/MovimientoADO.php',
             'SysSoftIntegra\\Model\\MonedaADO' => __DIR__  . '/../model/MonedaADO.php',
