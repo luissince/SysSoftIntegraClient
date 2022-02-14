@@ -26,7 +26,7 @@
                             <label>Inventario:</label>
                             <div class="form-group">
                                 <select class="form-control" id="cbAlmacenInventario">
-                                    <option value="">- Seleccionar</option>
+                                    
                                 </select>
                             </div>
                         </div>
@@ -42,7 +42,7 @@
                         <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">                        
                             <div class="form-group">
                                 <select id="cbUnidadInventario" class="form-control" disabled>
-                                    <option value="">- Seleccione -</option>
+                                    
                                 </select>
                             </div>
                         </div>
@@ -58,7 +58,7 @@
                         <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">                        
                             <div class="form-group">
                                 <select id="cbCategoriaInventario" class="form-control" disabled>
-                                    <option value="">- Seleccione -</option>
+                                   
                                 </select>
                             </div>
                         </div>
@@ -74,7 +74,7 @@
                         <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">                        
                             <div class="form-group">
                                 <select id="cbMarcaInventario" class="form-control" disabled>
-                                    <option value="">- Seleccione -</option>
+                                    
                                 </select>
                             </div>
                         </div>
@@ -90,7 +90,7 @@
                         <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">                        
                             <div class="form-group">
                                 <select id="cbPresentacionInventario" class="form-control" disabled>
-                                    <option value="">- Seleccione -</option>
+                                   
                                 </select>
                             </div>
                         </div>
@@ -106,7 +106,7 @@
                         <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">                        
                             <div class="form-group">
                                 <select id="cbExistenciaInventario" class="form-control" disabled>
-                                    <option value="">- Seleccione -</option>
+                                   
                                 </select>
                             </div>
                         </div>
@@ -115,9 +115,9 @@
 
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" id="btnPdfUtilidad">
+                <button type="button" class="btn btn-secondary" id="btnPdfInventario">
                     <i class="text-danger fa fa-file-pdf-o"></i> Pdf</button>
-                <button type="button" class="btn btn-secondary" id="btnExcelUtilidad">
+                <button type="button" class="btn btn-secondary" id="btnExcelInventario">
                     <i class="text-success fa fa-file-excel-o"></i> Excel</button>
                 <button type="button" class="btn btn-danger" data-dismiss="modal">
                     <i class="fa fa-close"></i> Cerrar</button>
