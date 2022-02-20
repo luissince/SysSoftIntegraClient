@@ -157,6 +157,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
             let modalProductos = new ModalProductos();
             let modalCotizacion = new ModalCotizacion();
 
+            let arrayMoneda = [];
             let monedaSimbolo = "M";
             let importeBrutoTotal = 0;
             let descuentoBrutoTotal = 0;
@@ -201,6 +202,16 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     }
                 });
 
+                $("#cbMoneda").change(function(event) {
+                    for (let value of arrayMoneda) {
+                        if (value.IdMoneda == $("#cbMoneda").val()) {
+                            monedaSimbolo = value.Simbolo;
+                            renderTableProductos();
+                            break;
+                        }
+                    }
+                });
+
                 tools.keyNumberFloat($("#txtCantidadEdit"));
                 tools.keyNumberFloat($("#txtPrecioEdit"));
 
@@ -211,6 +222,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 try {
                     $("#lblTextOverlayPuntoVenta").html("Cargando información...");
                     $("#cbMoneda").empty();
+                    arrayMoneda = [];
 
                     let promiseFetchMoneda = tools.promiseFetchGet("../app/controller/MonedaController.php", {
                         "type": "getmonedacombobox"
@@ -221,12 +233,13 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
                     let moneda = result[0];
 
-                    $("#cbMoneda").append('<option value="">- Seleccione -</option>')
-                    for (let value of moneda) {
+                    arrayMoneda = moneda;
+                    $("#cbMoneda").append('<option value="">- Seleccione -</option>');
+                    for (let value of arrayMoneda) {
                         $("#cbMoneda").append('<option value="' + value.IdMoneda + '">' + value.Nombre + '</option>');
                     }
 
-                    for (let value of moneda) {
+                    for (let value of arrayMoneda) {
                         if (value.Predeterminado == "1") {
                             $("#cbMoneda").val(value.IdMoneda);
                             monedaSimbolo = value.Simbolo;

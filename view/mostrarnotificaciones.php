@@ -26,32 +26,47 @@ if (!isset($_SESSION['IdEmpleado'])) {
             <div class="tile">
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="tile">
-                            <div class="table-responsive mailbox-messages">
-                                <table class="table table-hover">
-                                    <thead class="table-header-background">
-                                        <tr>
-                                            <th>#</th>
-                                            <th class="text-left">COMPROBANTE</th>
-                                            <th class="text-left">DETALLE</th>
-                                            <th>FECHA</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="divLineaTiempo">
+                        <div class="table-responsive mailbox-messages">
+                            <table class="table table-hover">
+                                <thead class="table-header-background">
+                                    <tr>
+                                        <th>#</th>
+                                        <th class="text-left">COMPROBANTE</th>
+                                        <th class="text-left">DETALLE</th>
+                                        <th>FECHA</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="divLineaTiempo">
 
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="text-right">
-                                <span class="text-muted mr-2" id="lblPaginacion">Mostrando 0 - 0 de 0</span>
-                                <div class="btn-group">
-                                    <button id="btnAnterior" class="btn btn-primary btn-sm" type="button"><i class="fa fa-chevron-left"></i></button>
-                                    <button id="btnSiguiente" class="btn btn-primary btn-sm" type="button"><i class="fa fa-chevron-right"></i></button>
-                                </div>
-                            </div>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
+
+                <div class="row">
+
+                    <div class="col-md-12 col-sm-12 col-xs-12 text-center">
+                        <label>Paginación</label>
+                        <div class="form-group" id="ulPagination">
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-double-left"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-left"></i>
+                            </button>
+                            <span class="btn btn-outline-secondary disabled" id="lblPaginacion">0 - 0</span>
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-right"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary">
+                                <i class="fa fa-angle-double-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
             </div>
         </main>
         <?php include "./layout/footer.php"; ?>
@@ -64,6 +79,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
             let opcion = 0;
             let totalPaginacion = 0;
             let filasPorPagina = 10;
+
+            let ulPagination = $("#ulPagination");
 
             $(document).ready(function() {
                 $("#btnAnterior").click(function() {
@@ -134,29 +151,58 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         "posicionPagina": ((paginacion - 1) * filasPorPagina),
                         "filasPorPagina": filasPorPagina
                     }, function() {
-                        $("#divLineaTiempo").empty();
-                        $("#lblPaginacion").html("Mostrando 0 - 0 de 0");
+                        tools.loadTableMessage($("#divLineaTiempo"), "No hay datos para mostrar.", 4, true);
+                        tools.paginationEmpty(ulPagination);
                     });
 
                     if (result.data.length == 0) {
-                        $("#lblPaginacion").html("Mostrando 0 - 0 de 0");
+                        tools.loadTableMessage($("#divLineaTiempo"), "No hay datos para mostrar.", 4, true);
+                        tools.paginationEmpty(ulPagination);
                     } else {
+                        $("#divLineaTiempo").empty();
                         let count = 0;
                         for (let value of result.data) {
                             count++;
                             $("#divLineaTiempo").append('<tr>' +
                                 '<td class="text-center">' + (count + (((paginacion - 1) * filasPorPagina))) + '</td>' +
                                 '<td class=""><h5 class="text-primary p-0">' + value.Nombre + ' ' + value.Serie + '-' + value.Numeracion + '</h5></td>' +
-                                '<td class=""><h5 class="text-primary p-0"><h6>' + value.Estado + '</h6></td>' +
-                                '<td class="text-center"><h6>' + tools.getDateForma(value.Fecha) + '</h6></td>' +
+                                '<td class=""><h5 class="text-primary p-0"><h5>' + value.Estado + '</h5></td>' +
+                                '<td class="text-center"><h5>' + tools.getDateForma(value.Fecha) + '</h5></td>' +
                                 '</tr>');
                         }
+
                         totalPaginacion = parseInt(Math.ceil((parseFloat(result.total) / filasPorPagina)));
-                        $("#lblPaginacion").html("Mostrando " + paginacion + " - " + totalPaginacion + " de " + filasPorPagina);
+
+                        let i = 1;
+                        let range = [];
+                        while (i <= totalPaginacion) {
+                            range.push(i);
+                            i++;
+                        }
+
+                        let min = Math.min.apply(null, range);
+                        let max = Math.max.apply(null, range);
+
+                        let paginacionHtml = `
+                        <button class="btn btn-outline-secondary" onclick="onEventPaginacionInicio(${min})">
+                            <i class="fa fa-angle-double-left"></i>
+                        </button>
+                        <button class="btn btn-outline-secondary" onclick="onEventAnteriorPaginacion()">
+                            <i class="fa fa-angle-left"></i>
+                        </button>
+                        <span class="btn btn-outline-secondary disabled" id="lblPaginacion">${paginacion} - ${totalPaginacion}</span>
+                        <button class="btn btn-outline-secondary" onclick="onEventSiguientePaginacion()">
+                            <i class="fa fa-angle-right"></i>
+                        </button>
+                        <button class="btn btn-outline-secondary" onclick="onEventPaginacionFinal(${max})">
+                            <i class="fa fa-angle-double-right"></i>
+                        </button>`;
+
+                        ulPagination.html(paginacionHtml);
                     }
                 } catch (error) {
-                    $("#lblPaginacion").html("Mostrando 0 - 0 de 0");
-                    $("#divLineaTiempo").append('<tr><td class="mail-subject">' + error.responseText + '</td></tr>');
+                    tools.loadTableMessage($("#divLineaTiempo"), tools.messageError(error), 4);
+                    tools.paginationEmpty(ulPagination);
                 }
             }
         </script>

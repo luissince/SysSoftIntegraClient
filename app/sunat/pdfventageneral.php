@@ -4,6 +4,7 @@ require  './lib/mpdf/vendor/autoload.php';
 require  './../src/autoload.php';
 
 use SysSoftIntegra\Model\VentasADO;
+use SysSoftIntegra\Src\Tools;
 use Mpdf\Mpdf;
 
 $procedencia = $_GET["procedencia"];
@@ -52,15 +53,20 @@ $html = '<html>
         text-align: left;
         font-size: 12px;
         font-weight: bold;
+        padding: 5px 10px;    
+    }
+
+    .td-sub-text{
+        text-align: left;
+        font-size: 12px;
+        font-weight: 100;
         padding: 5px 10px;
-        width: 50%;
     }
 
     .td-total-monto{
         text-align: left;
         font-size: 12px;
-        padding: 0px 10px 10px 10px;
-        width: 50%;
+        padding: 0px 10px 10px 10px;     
     }
 
     .td-title-left{
@@ -209,17 +215,18 @@ foreach ($venta as $value) {
         } else {
             if ($value["Tipo"] == 1 &&  $value["Estado"] == 1 || $value["Tipo"] == 1 &&  $value["Estado"] == 4) {
                 $totalcontado += $value["Total"];
-            } else if ($value["Tipo"] == 2 &&  $value["Estado"] == 1) {
-                $totalcreditopagado += $value["Total"];
             } else {
                 $totalcredito += $value["Total"];
+                if ($value["Tipo"] == 2 &&  $value["Estado"] == 1) {
+                    $totalcreditopagado += $value["Total"];
+                }
             }
         }
     }
 
     if ($value["IdNotaCredito"] == 0 && $value["Estado"] != 3) {
-        if ($value["Tipo"] == 2 &&  $value["Estado"] == 1) {
-            $efectivo += $value["Total"];
+        if ($value["Tipo"] == 2 &&  $value["Tipo"] == 2 && $value["Estado"] == 1) {
+            // $efectivo += $value["Total"];
         } else if ($value["Estado"] == 1 ||  $value["Estado"] == 4) {
             if ($value["FormaName"] == "EFECTIVO") {
                 $efectivo += $value["Total"];
@@ -240,79 +247,94 @@ $html .= '
 
     <br>
     
+    <div style="width: 100%;">
+        <div align="left" style="width: 50%;float: left;">
+            <table width="100%" border="0" cellspacing="0">
+                <tr>
+                    <td class="td-sub-text">
+                        VENTAS AL CONTADO
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div align="left" style="width: 50%;float: left;">
+            <table width="100%" border="0" cellspacing="0">
+                <tr>
+                    <td class="td-sub-text">
+                        VENTAS AL CRÉDITO
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
     <table width="100%" border="0" cellspacing="0">
-        <tr>
+       <tr>
             <td class="td-total-text">
-                <span>VENTAS COBRADAS</span>             
+            ' . Tools::roundingValue($totalcontado) . '
             </td>
-        
             <td class="td-total-text">
-                <span>EFECTIVO</span>                
+            ' . Tools::roundingValue($totalcredito) . '
             </td>
-        </tr>
-
-        <tr>
-            <td class="td-total-monto">
-                <span>' . number_format(round($totalcreditopagado, 2, PHP_ROUND_HALF_UP), 2, '.', '') . '</span>             
-            </td>
-
-            <td class="td-total-monto">
-                <span>' . number_format(round($efectivo, 2, PHP_ROUND_HALF_UP), 2, '.', '') . '</span>             
-            </td>
-        </tr>
-
-        <tr>
-            <td class="td-total-text">
-                <span>VENTAS AL CRÉDITO</span>             
-            </td>
-        
-            <td class="td-total-text">
-                <span>TARJETA</span>                
-            </td>
-        </tr>
-
-        <tr>
-            <td class="td-total-monto">
-                <span>' . number_format(round($totalcredito, 2, PHP_ROUND_HALF_UP), 2, '.', '') . '</span>             
-            </td>
-
-            <td class="td-total-monto">
-                <span>' . number_format(round($tarjeta, 2, PHP_ROUND_HALF_UP), 2, '.', '') . '</span>             
-            </td>
-        </tr>
-
-        <tr>
-            <td class="td-total-text">
-                <span>VENTAS ANULADAS</span>             
-            </td>
-        
-            <td class="td-total-text">
-                <span>DEPOSITO</span>                
-            </td>
-        </tr>
-
-        <tr>
-            <td class="td-total-monto">
-                <span>' . number_format(round($totalanulado, 2, PHP_ROUND_HALF_UP), 2, '.', '') . '</span>             
-            </td>
-
-            <td class="td-total-monto">
-                <span>' . number_format(round($deposito, 2, PHP_ROUND_HALF_UP), 2, '.', '') . '</span>             
-            </td>
-        </tr>
-
-        <tr>
-            <td class="td-total-text">
-                <span>VENTAS AL CONTADO</span>             
-            </td>
-        </tr>
-
-        <tr>
-            <td class="td-total-monto">
-                <span>' . number_format(round($totalcontado, 2, PHP_ROUND_HALF_UP), 2, '.', '') . '</span>             
-            </td>
-        </tr>
+       </tr>
     </table>
+
+    <div style="width: 100%;">
+        <div align="left" style="width: 50%;float: left;border-top: 1px solid #000000;">
+            <table width="100%" border="0" cellspacing="0">
+                <tr>
+                    <td class="td-sub-text">
+                        EFECTIVO
+                    </td>
+                    <td class="td-sub-text">
+                        TARJETA
+                    </td>
+                    <td class="td-sub-text">
+                        DEPOSITO
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div align="left" style="width: 50%;float: left;border-top: 1px solid #000000;">
+            <table width="100%" border="0" cellspacing="0">
+                <tr>
+                    <td class="td-sub-text">
+                        CRÉDITO COBRADO
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div style="width: 100%;">
+        <div align="left" style="width: 50%;float: left;">
+            <table width="100%" border="0" cellspacing="0">
+                <tr>
+                    <td class="td-total-text">
+                    ' . Tools::roundingValue($efectivo) . '
+                    </td>
+                    <td class="td-total-text">
+                    ' . Tools::roundingValue($tarjeta) . '
+                    </td>
+                    <td class="td-total-text">
+                    ' . Tools::roundingValue($deposito) . '
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div align="left" style="width: 50%;float: left;">
+            <table width="100%" border="0" cellspacing="0">
+                <tr>
+                    <td class="td-total-text">
+                        ' . Tools::roundingValue($totalcreditopagado) . '
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
 
 </body>
 </html>
@@ -331,7 +353,7 @@ $mpdf = new Mpdf([
 ]);
 
 $mpdf->SetProtection(array('print'));
-$mpdf->SetTitle("Reporte de Ventas");
+$mpdf->SetTitle("REPORTE DE VENTAS DEL " . date("d-m-Y", strtotime($fechaInicial)) . ' AL ' . date("d-m-Y", strtotime($fechaFinal)));
 $mpdf->SetAuthor("Syssoft Integra");
 $mpdf->showWatermarkText = true;
 $mpdf->watermark_font = 'DejaVuSansCondensed';
@@ -340,4 +362,4 @@ $mpdf->SetDisplayMode('fullpage');
 $mpdf->WriteHTML($html);
 
 // Output a PDF file directly to the browser
-$mpdf->Output("Reporte de Ventas.pdf", 'I');
+$mpdf->Output("REPORTE DE VENTAS DEL " . date("d-m-Y", strtotime($fechaInicial)) . ' AL ' . date("d-m-Y", strtotime($fechaFinal)) . ".pdf", 'I');

@@ -123,13 +123,19 @@
                                         </a>
                                 </li>
                                 <li>
+                                        <a class="app-menu__item" id="tab-usuario" href="usuario.php">
+                                                <i class="app-menu__icon fa fa-circle-o"></i>
+                                                <span class="app-menu__label">Usuario</span>
+                                        </a>
+                                </li>
+                                <li>
                                         <a class="app-menu__item" id="tab-almacen" href="almacen.php">
                                                 <i class="app-menu__icon fa fa-circle-o"></i>
                                                 <span class="app-menu__label">Almacen</span>
                                         </a>
                                 </li>
                                 <li>
-                                        <a class="app-menu__item" id="tab-almacen" href="bancos.php">
+                                        <a class="app-menu__item" id="tab-bancos" href="bancos.php">
                                                 <i class="app-menu__icon fa fa-circle-o"></i>
                                                 <span class="app-menu__label">Bancos</span>
                                         </a>
@@ -176,7 +182,13 @@
 
                 "reporte",
                 "empresa",
-                "mantenimiento"
+                "mantenimiento",
+                "almacen",
+                "impuesto",
+                "moneda",
+                "usuario",
+                "comprobante",
+                "bancos"
         ];
 
         tabs.forEach(e => {
@@ -247,12 +259,24 @@
                         if (id == "tab-reporte") {
                                 document.getElementById("tab-reporte").setAttribute("class", "app-menu__item active");
                         }
-                } else if (id == "tab-empresa" || id == "tab-mantenimiento") {
+                } else if (id == "tab-empresa" || id == "tab-mantenimiento" || id == "tab-usuario" || id == "tab-moneda" || id == "tab-comprobante" || id == "tab-bancos" || id == "tab-almacen" || id == "tab-impuesto") {
                         document.getElementById("treeview-configuracion").setAttribute("class", "treeview is-expanded");
                         if (id == "tab-empresa") {
                                 document.getElementById("tab-empresa").setAttribute("class", "app-menu__item active");
                         } else if (id == "tab-mantenimiento") {
                                 document.getElementById("tab-mantenimiento").setAttribute("class", "app-menu__item active");
+                        } else if (id == "tab-moneda") {
+                                document.getElementById("tab-moneda").setAttribute("class", "app-menu__item active");
+                        } else if (id == "tab-comprobante") {
+                                document.getElementById("tab-comprobante").setAttribute("class", "app-menu__item active");
+                        } else if (id == "tab-bancos") {
+                                document.getElementById("tab-bancos").setAttribute("class", "app-menu__item active");
+                        } else if (id == "tab-usuario") {
+                                document.getElementById("tab-usuario").setAttribute("class", "app-menu__item active");
+                        } else if (id == "tab-almacen") {
+                                document.getElementById("tab-almacen").setAttribute("class", "app-menu__item active");
+                        } else if (id == "tab-impuesto") {
+                                document.getElementById("tab-impuesto").setAttribute("class", "app-menu__item active");
                         }
                 } else {
                         document.getElementById(id).setAttribute("class", "app-menu__item active");

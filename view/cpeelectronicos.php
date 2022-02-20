@@ -882,7 +882,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     window.open("../app/sunat/pdfventaA4.php?idVenta=" + idComprobante, "_blank");
 
                 } else {
-                    window.open("../app/sunat/pdfnotacredito.php?idNotaCredito=" + idComprobante, "_blank");
+                    window.open("../app/sunat/pdfnotacreditoA4.php?idNotaCredito=" + idComprobante, "_blank");
                 }
             }
 

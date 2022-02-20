@@ -114,7 +114,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         <div class="col-md-6">
                             <div class="form-group">
                                 <button class="btn btn-success" id="consultarEstado"> Consultar Estado </button>
-                                <!-- <button class="btn btn-primary" id="consultarCdr"> Consultar CDR </button> -->
+                                <button class="btn btn-primary" id="consultarCdr"> Consultar CDR </button>
                                 <button class="btn btn-danger" id="limpiarConsulta"> Limpiar </button>
                             </div>
                         </div>
@@ -137,6 +137,12 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             <label>Respuesta:</label>
                             <label class="badge badge-light" id="lblRespuesta"></label>
 
+                        </div>
+
+                        <div class="col-md-12">
+                            <div style="font-size: 15px;">
+                                Ruta de descarga : <span id="lblRutaDescarga"></span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -241,12 +247,16 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         cdr: cdr
                     },
                     beforeSend: function() {
+                        $("#lblRutaDescarga").html('');
                         tools.ModalAlertInfo("Consultar Comprobante", "Procesando petición..");
                     },
                     success: function(result) {
                         if (result.state === true) {
                             if (result.accepted === true) {
                                 tools.ModalAlertSuccess("Consultar Comprobante", "Resultado: Código " + result.code + " " + result.message);
+                                if (cdr != "") {
+                                    $("#lblRutaDescarga").append('<a onclick="descargarCdr(\'' + result.file + '\')"" style="cursor:pointer">' + result.file + '</a>');
+                                }
                             } else {
                                 tools.ModalAlertWarning("Consultar Comprobante", "Resultado: Código " + result.code + " " + result.message);
                             }
@@ -269,6 +279,12 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 $("#txtTipo").focus();
                 $("#lblCodigo").html('');
                 $("#lblRespuesta").html('');
+                $("#lblRutaDescarga").html('');
+            }
+
+            function descargarCdr(ruta) {
+                let ruta_completa = "../app/files/" + ruta;
+                window.open(ruta_completa, 'Download');
             }
         </script>
     </body>

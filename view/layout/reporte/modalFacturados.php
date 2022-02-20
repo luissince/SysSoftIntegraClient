@@ -33,10 +33,10 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" id="btnExcelFacturado">
-                        <i class="text-success fa fa-file-excel-o"></i> Excel</button>
                     <button type="button" class="btn btn-secondary" id="btnPdfFacturado">
                         <i class="text-danger fa fa-file-pdf-o"></i> PDF</button>
+                    <button type="button" class="btn btn-secondary" id="btnExcelFacturado">
+                        <i class="text-success fa fa-file-excel-o"></i> Excel</button>
                     <button type="button" class="btn btn-danger" data-dismiss="modal">
                         <i class="fa fa-remove"></i> Cancelar</button>
                 </div>

@@ -1121,6 +1121,40 @@ class SuministrosADO
         }
     }
 
+    public static function FillSuministro($search)
+    {
+        try {
+            $cmdSuministro = Database::getInstance()->getDb()->prepare("SELECT 
+            IdSuministro,
+            Clave,
+            NombreMarca            
+            FROM SuministroTB
+            WHERE 
+            ? <> '' AND Clave LIKE CONCAT(?,'%') 
+            OR 
+            ? <> '' AND ClaveAlterna LIKE CONCAT(?,'%')
+            OR 
+            ? <> '' AND NombreMarca LIKE CONCAT(?,'%')
+            ");
+            $cmdSuministro->bindParam(1, $search, PDO::PARAM_STR);
+            $cmdSuministro->bindParam(2, $search, PDO::PARAM_STR);
+            $cmdSuministro->bindParam(3, $search, PDO::PARAM_STR);
+            $cmdSuministro->bindParam(4, $search, PDO::PARAM_STR);
+            $cmdSuministro->bindParam(5, $search, PDO::PARAM_STR);
+            $cmdSuministro->bindParam(6, $search, PDO::PARAM_STR);
+            $cmdSuministro->execute();
+
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 200 . ' ' . "OK");
+
+            return $cmdSuministro->fetchAll(PDO::FETCH_OBJ);
+        } catch (Exception $ex) {
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+            return $ex->getMessage();
+        }
+    }
+
     public static function Get_Suministro_By_Search(string $value)
     {
         try {

@@ -40,16 +40,34 @@
                         <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
                             <label>Todos los vendedores</label>
                             <div class="form-group">
-                                <input id="cbSelectVIngresoEgreso" type="checkbox" checked>
-                                <label for="cbSelectVIngresoEgreso">Vendedores</label>
+                                <input id="cbSelectVendedorIngresoEgreso" type="checkbox" checked>
+                                <label for="cbSelectVendedorIngresoEgreso">Vendedores</label>
                             </div>
                         </div>
                         <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
                             <label>Vendedor</label>
                             <div class="form-group">
-                                <select id="cbVIngresoEgreso" class="select2-selection__rendered  form-control" disabled>
+                                <select id="cbVendedorVIngresoEgreso" class="select2-selection__rendered  form-control" disabled>
                                     <option value="">- Seleccione -</option>
                                 </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">                          
+                            <div class="form-group">
+                                <input id="rbSelectTransaccionesIngresoEgreso" type="checkbox" checked="">
+                                <label for="rbSelectTransaccionesIngresoEgreso">Todos las transacciones</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">                          
+                            <div class="form-group">
+                                <input id="rbSelectMovimientoIngresoEgreso" type="checkbox" checked="">
+                                <label for="rbSelectMovimientoIngresoEgreso">Todos los movimientos de caja</label>
                             </div>
                         </div>
                     </div>

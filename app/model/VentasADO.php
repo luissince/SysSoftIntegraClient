@@ -215,72 +215,6 @@ class VentasADO
     }
 
 
-    public static function  ListarDetalleNotaCredito($idNotaCredito)
-    {
-        try {
-
-            $notacredito = null;
-            $empresa = null;
-            $notacreditodetalle = array();
-
-            $comandoNotaCredito = Database::getInstance()->getDb()->prepare("{CALL Sp_Obtener_NotaCredito_ById(?)}");
-            $comandoNotaCredito->bindParam(1, $idNotaCredito, PDO::PARAM_STR);
-            $comandoNotaCredito->execute();
-            $notacredito = $comandoNotaCredito->fetchObject();
-
-            $cmdEmpresa = Database::getInstance()->getDb()->prepare("SELECT TOP 1 
-            d.IdAuxiliar,e.NumeroDocumento,e.RazonSocial,e.NombreComercial,e.Domicilio,
-            e.Telefono,e.Celular,e.Email,e.Image
-            FROM EmpresaTB AS e INNER JOIN DetalleTB AS d ON e.TipoDocumento = d.IdDetalle AND d.IdMantenimiento = '0003'");
-            $cmdEmpresa->execute();
-            $rowEmpresa = $cmdEmpresa->fetch();
-            $empresa  = (object)array(
-                "IdAuxiliar" => $rowEmpresa['IdAuxiliar'],
-                "NumeroDocumento" => $rowEmpresa['NumeroDocumento'],
-                "RazonSocial" => $rowEmpresa['RazonSocial'],
-                "NombreComercial" => $rowEmpresa['NombreComercial'],
-                "Domicilio" => $rowEmpresa['Domicilio'],
-                "Telefono" => $rowEmpresa['Telefono'],
-                "Celular" => $rowEmpresa['Celular'],
-                "Email" => $rowEmpresa['Email'],
-                "Image" => $rowEmpresa['Image'] == null ? "" : base64_encode($rowEmpresa['Image'])
-            );
-
-            $comandoNotaCreditoDetalle = Database::getInstance()->getDb()->prepare("{CALL Sp_Obtener_NotaCredito_Detalle_ById(?)}");
-            $comandoNotaCreditoDetalle->bindParam(1, $idNotaCredito, PDO::PARAM_STR);
-            $comandoNotaCreditoDetalle->execute();
-            $count = 0;
-            while ($row = $comandoNotaCreditoDetalle->fetch()) {
-                $count++;
-                array_push($notacreditodetalle, array(
-                    "id" => $count,
-                    "Clave" => $row["Clave"],
-                    "NombreMarca" => $row["NombreMarca"],
-                    "Unidad" => $row["Unidad"],
-                    "Cantidad" => floatval($row["Cantidad"]),
-                    "Precio" => floatval($row["Precio"]),
-                    "Descuento" => floatval($row["Descuento"]),
-                    "NombreImpuesto" => $row["NombreImpuesto"],
-                    "ValorImpuesto" => floatval($row["ValorImpuesto"]),
-                    "Importe" => floatval($row["Cantidad"] * ($row["Precio"] - $row["Descuento"])),
-                ));
-            }
-            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-            header($protocol . ' ' . 200 . ' ' . "OK");
-
-            return  array(
-                "nota" => $notacredito,
-                "notadetalle" => $notacreditodetalle,
-                "empresa" => $empresa
-            );
-        } catch (Exception $ex) {
-            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
-
-            return $ex->getMessage();
-        }
-    }
-
     public static function ReporteVentaDetalle($idventa)
     {
         try {
@@ -374,65 +308,16 @@ class VentasADO
     }
 
 
-    public static function ResumenUtilidadPorFecha($fechaInicio, $fechaFinal)
+    public static function ListarUtilidad(string $fechaInicio, string $fechaFinal, string $idSuministro, int $idCategoria, int $idMarca, int $idPresentacion)
     {
         try {
-            $array = array();
-
-            $cmdEmpresa = Database::getInstance()->getDb()->prepare("SELECT TOP 1 
-            d.IdAuxiliar,e.NumeroDocumento,e.RazonSocial,e.NombreComercial,e.Domicilio,
-            e.Telefono,e.Email,e.Image
-            FROM EmpresaTB AS e INNER JOIN DetalleTB AS d ON e.TipoDocumento = d.IdDetalle AND d.IdMantenimiento = '0003'");
-            $cmdEmpresa->execute();
-            $rowEmpresa = $cmdEmpresa->fetch();
-            $empresa  = (object)array(
-                "IdAuxiliar" => $rowEmpresa['IdAuxiliar'],
-                "NumeroDocumento" => $rowEmpresa['NumeroDocumento'],
-                "RazonSocial" => $rowEmpresa['RazonSocial'],
-                "NombreComercial" => $rowEmpresa['NombreComercial'],
-                "Domicilio" => $rowEmpresa['Domicilio'],
-                "Telefono" => $rowEmpresa['Telefono'],
-                "Email" => $rowEmpresa['Email'],
-                "Image" => $rowEmpresa['Image'] == null ? "" : base64_encode($rowEmpresa['Image'])
-            );
-
-            $cmdUtilidad = Database::getInstance()->getDb()->prepare("SELECT 
-            a.IdSuministro,
-            a.Clave, 
-            a.NombreMarca,
-            v.Estado,
-            dbo.Fc_Obtener_Nombre_Detalle(a.UnidadCompra,'0013') as UnidadCompraNombre,
-            case
-                when a.ValorInventario = 1 then dv.Cantidad
-                when a.ValorInventario = 2 then dv.Cantidad
-                when a.ValorInventario = 3 then dv.Cantidad
-            end as Cantidad, 
-            dv.CostoVenta as Costo,
-            case
-                when a.ValorInventario = 1 then dv.Cantidad * dv.CostoVenta
-                when a.ValorInventario = 2 then dv.Cantidad * dv.CostoVenta
-                when a.ValorInventario = 3 then dv.Cantidad * dv.CostoVenta
-            end as CostoTotal,
-            dv.PrecioVenta as Precio, 
-            case 
-                when a.ValorInventario = 1 then dv.Cantidad * dv.PrecioVenta
-                when a.ValorInventario = 2 then dv.Cantidad * dv.PrecioVenta
-                when a.ValorInventario = 3 then dv.Cantidad * dv.PrecioVenta
-            end as PrecioTotal,
-            case
-                when a.ValorInventario = 1 then (dv.Cantidad * dv.PrecioVenta )- (dv.Cantidad * dv.CostoVenta )
-                when a.ValorInventario = 2 then (dv.Cantidad * dv.PrecioVenta )- (dv.Cantidad * dv.CostoVenta )
-                when a.ValorInventario = 3 then (dv.Cantidad * dv.PrecioVenta )- (dv.Cantidad * dv.CostoVenta )
-            end as Utilidad,a.ValorInventario, m.Simbolo
-                    from DetalleVentaTB as dv
-                    inner join SuministroTB as a on dv.IdArticulo = a.IdSuministro 
-                    inner join VentaTB as v on v.IdVenta = dv.IdVenta
-                    left join NotaCreditoTB as nc on nc.IdVenta = v.IdVenta
-                    inner join MonedaTB as m on m.IdMoneda = v.Moneda
-                    where v.FechaVenta between ? and ? and v.Estado <> 3 and nc.IdNotaCredito is null	
-                    order by a.NombreMarca asc");
+            $cmdUtilidad = Database::getInstance()->getDb()->prepare("{call Sp_Listar_Utilidad(?,?,?,?,?,?)}");
             $cmdUtilidad->bindValue(1, $fechaInicio, PDO::PARAM_STR);
             $cmdUtilidad->bindValue(2, $fechaFinal, PDO::PARAM_STR);
+            $cmdUtilidad->bindValue(3, $idSuministro, PDO::PARAM_INT);
+            $cmdUtilidad->bindValue(4, $idCategoria, PDO::PARAM_STR);
+            $cmdUtilidad->bindValue(5, $idMarca, PDO::PARAM_INT);
+            $cmdUtilidad->bindValue(6, $idPresentacion, PDO::PARAM_INT);
             $cmdUtilidad->execute();
 
             $arrayUtilidad = array();
@@ -441,23 +326,19 @@ class VentasADO
                     "IdSuministro" => $row["IdSuministro"],
                     "Clave" => $row["Clave"],
                     "NombreMarca" => $row["NombreMarca"],
-                    "Estado" => $row["Estado"],
+                    "Cantidad" => $row["Cantidad"],
                     "UnidadCompraNombre" => $row["UnidadCompraNombre"],
-
-                    "Cantidad" => floatval($row["Cantidad"]),
-
-                    "Costo" => floatval($row["Costo"]),
-                    "CostoTotal" => floatval($row["CostoTotal"]),
-
-                    "Precio" => floatval($row["Precio"]),
-                    "PrecioTotal" => floatval($row["PrecioTotal"]),
-
-                    "Utilidad" => floatval($row["Utilidad"])
+                    "Costo" =>floatval($row["Costo"]),
+                    "CostoTotal" =>floatval( $row["CostoTotal"]),
+                    "Precio" =>floatval( $row["Precio"]),
+                    "PrecioTotal" =>floatval( $row["PrecioTotal"]),
+                    "Utilidad" => floatval($row["Utilidad"]),
+                    "ValorInventario" => $row["ValorInventario"],
+                    "Simbolo" => $row["Simbolo"]
                 ));
             }
 
-            array_push($array, $empresa, $arrayUtilidad);
-            return $array;
+            return $arrayUtilidad;
         } catch (Exception $ex) {
             return $ex->getMessage();
         }
@@ -916,44 +797,6 @@ class VentasADO
         }
     }
 
-    public static function CambiarEstadoSunatNotaCredito($idNotaCredito, $codigo, $descripcion, $hash, $xmlgenerado)
-    {
-        try {
-            Database::getInstance()->getDb()->beginTransaction();
-            $comando = Database::getInstance()->getDb()->prepare("UPDATE NotaCreditoTB SET 
-            Xmlsunat = ? , Xmldescripcion = ?, CodigoHash = ?,Xmlgenerado = ?  WHERE IdNotaCredito = ?");
-            $comando->bindParam(1, $codigo, PDO::PARAM_STR);
-            $comando->bindParam(2, $descripcion, PDO::PARAM_STR);
-            $comando->bindParam(3, $hash, PDO::PARAM_STR);
-            $comando->bindParam(4, $xmlgenerado, PDO::PARAM_STR);
-            $comando->bindParam(5, $idNotaCredito, PDO::PARAM_STR);
-            $comando->execute();
-            Database::getInstance()->getDb()->commit();
-            return "updated";
-        } catch (Exception $ex) {
-            Database::getInstance()->getDb()->rollback();
-            return $ex->getMessage();
-        }
-    }
-
-    public static function CambiarEstadoSunatNotaCreditoUnico($idNotaCredito, $codigo, $descripcion)
-    {
-        try {
-            Database::getInstance()->getDb()->beginTransaction();
-            $comando = Database::getInstance()->getDb()->prepare("UPDATE NotaCreditoTB SET 
-            Xmlsunat = ? , Xmldescripcion = ?  WHERE IdNotaCredito = ?");
-            $comando->bindParam(1, $codigo, PDO::PARAM_STR);
-            $comando->bindParam(2, $descripcion, PDO::PARAM_STR);
-            $comando->bindParam(3, $idNotaCredito, PDO::PARAM_STR);
-            $comando->execute();
-            Database::getInstance()->getDb()->commit();
-            return "updated";
-        } catch (Exception $ex) {
-            Database::getInstance()->getDb()->rollback();
-            return $ex->getMessage();
-        }
-    }
-
     public static function CambiarEstadoSunatResumen($idVenta, $codigo, $descripcion, $correlativo, $fechaCorrelativo)
     {
         try {
@@ -1237,201 +1080,6 @@ class VentasADO
         }
     }
 
-    public static function ListaNotaCredito($opcion, $buscar, $fechaInicio, $fechaFinal, $posicionPagina, $filasPorPagina)
-    {
-        try {
-
-            $array = array();
-
-            $cmdNotaCredito = Database::getInstance()->getDb()->prepare("{CALL Sp_Listar_NotaCredito(?,?,?,?,?,?)}");
-            $cmdNotaCredito->bindParam(1, $opcion, PDO::PARAM_INT);
-            $cmdNotaCredito->bindParam(2, $buscar, PDO::PARAM_STR);
-            $cmdNotaCredito->bindParam(3, $fechaInicio, PDO::PARAM_STR);
-            $cmdNotaCredito->bindParam(4, $fechaFinal, PDO::PARAM_STR);
-            $cmdNotaCredito->bindParam(5, $posicionPagina, PDO::PARAM_INT);
-            $cmdNotaCredito->bindParam(6, $filasPorPagina, PDO::PARAM_INT);
-            $cmdNotaCredito->execute();
-
-            $arrayNotaCredito = array();
-            $count = 0;
-            while ($row = $cmdNotaCredito->fetch()) {
-                $count++;
-                array_push($arrayNotaCredito, array(
-                    "Id" => $count,
-                    "IdVenta" => $row["IdVenta"],
-                    "IdNotaCredito" => $row["IdNotaCredito"],
-                    "FechaNotaCredito" => $row["FechaRegistro"],
-                    "HoraNotaCredito" => $row["HoraRegistro"],
-                    "SerieNotaCredito" => $row["SerieNotaCredito"],
-                    "NumeracionNotaCredito" => $row["NumeracioNotaCredito"],
-                    "Serie" => $row["SerieVenta"],
-                    "Numeracion" => $row["NumeracionVenta"],
-                    "NumeroDocumento" => $row["NumeroDocumento"],
-                    "Informacion" => $row["Informacion"],
-                    "Estado" => $row["Estado"],
-                    "Simbolo" => $row["Simbolo"],
-                    "Total" => floatval($row["Total"])
-                ));
-            }
-
-            $cmdNotaCreditCount = Database::getInstance()->getDb()->prepare("{CALL Sp_Listar_NotaCredito_Count(?,?,?,?)}");
-            $cmdNotaCreditCount->bindParam(1, $opcion, PDO::PARAM_INT);
-            $cmdNotaCreditCount->bindParam(2, $buscar, PDO::PARAM_STR);
-            $cmdNotaCreditCount->bindParam(3, $fechaInicio, PDO::PARAM_STR);
-            $cmdNotaCreditCount->bindParam(4, $fechaFinal, PDO::PARAM_STR);
-            $cmdNotaCreditCount->execute();
-            $resultTotal = $cmdNotaCreditCount->fetchColumn();
-
-            $cmdNotaCreditSuma = Database::getInstance()->getDb()->prepare("SELECT 
-            sum(ncd.Cantidad*ncd.Precio-ncd.Descuento) AS Total 
-            FROM 
-            NotaCreditoTB AS nc 
-            INNER JOIN NotaCreditoDetalleTB AS ncd ON ncd.IdNotaCredito = nc.IdNotaCredito
-            WHERE nc.FechaRegistro BETWEEN ? AND ?");
-            $cmdNotaCreditSuma->bindParam(1, $fechaInicio, PDO::PARAM_STR);
-            $cmdNotaCreditSuma->bindParam(2, $fechaFinal, PDO::PARAM_STR);
-            $cmdNotaCreditSuma->execute();
-            $resultSuma = 0;
-            if ($row = $cmdNotaCreditSuma->fetch()) {
-                $resultSuma = floatval(round($row["Total"], 2, PHP_ROUND_HALF_UP));
-            }
-
-            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-
-            header($protocol . ' ' . 200 . ' ' . "OK");
-            return array(
-                "estado" => 1,
-                "data" => $arrayNotaCredito,
-                "total" => $resultTotal,
-                "suma" => $resultSuma
-            );
-        } catch (Exception $ex) {
-            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
-            return $ex->getMessage();
-        }
-    }
-
-    public static function ObtenerNotaCreditoById($idNotaCredito)
-    {
-        try {
-            $array = array();
-            $opegravada = 0;
-            $opeexogenerada = 0;
-            $totalsinimpuesto = 0;
-            $impuesto = 0;
-
-            $cmdNotaCredito = Database::getInstance()->getDb()->prepare("SELECT
-            n.IdNotaCredito, 
-            tdn.CodigoAlterno as TipoDocumentoNotaCredito,
-            n.Serie as SerieNotaCredito,
-            n.Numeracion as NumeracionNotaCredito,
-            n.FechaRegistro as FechaNotaCredito,
-            n.HoraRegistro as HoraNotaCredito,
-            tpv.CodigoAlterno,
-            v.Serie,
-            v.Numeracion,
-            dt.IdAuxiliar as CodigoAnulacion,
-            dt.Nombre as MotivoAnulacion,
-            m.Abreviado as NombreMoneda,
-            m.Abreviado as TipoMoneda,
-            dtc.IdAuxiliar as CodigoCliente,
-            c.NumeroDocumento,
-            c.Informacion,
-            c.Direccion
-            from NotaCreditoTB as n 
-            inner join TipoDocumentoTB as tdn on tdn.IdTipoDocumento = n.Comprobante
-            inner join VentaTB as v on v.IdVenta = n.IdVenta
-            inner join TipoDocumentoTB as tpv on tpv.IdTipoDocumento = v.Comprobante
-            inner join DetalleTB as dt on dt.IdDetalle = n.Motivo and dt.IdMantenimiento = '0019'
-            inner join MonedaTB as m on m.IdMoneda = n.Moneda
-            inner join ClienteTB as c on c.IdCliente = n.Cliente
-            inner join DetalleTB as dtc on dtc.IdDetalle = c.TipoDocumento and dtc.IdMantenimiento = '0003'
-            WHERE n.IdNotaCredito = ?");
-            $cmdNotaCredito->bindValue(1, $idNotaCredito, PDO::PARAM_STR);
-            $cmdNotaCredito->execute();
-            $resultNotaCredito = $cmdNotaCredito->fetchObject();
-
-            $cmdEmpresa = Database::getInstance()->getDb()->prepare("SELECT TOP 1 
-            d.IdAuxiliar,e.NumeroDocumento,e.RazonSocial,e.NombreComercial,e.Domicilio,
-            dbo.Fc_Obtener_Ubigeo(Ubigeo) as CodigoUbigeo,
-            dbo.Fc_Obtener_Departamento(Ubigeo) as Departamento,
-            dbo.Fc_Obtener_Provincia(Ubigeo) as Provincia,
-            dbo.Fc_Obtener_Distrito(Ubigeo) as Distrito,
-            e.Telefono,e.Email,
-            e.UsuarioSol,e.ClaveSol 
-            FROM EmpresaTB AS e INNER JOIN DetalleTB AS d ON e.TipoDocumento = d.IdDetalle AND d.IdMantenimiento = '0003'");
-            $cmdEmpresa->execute();
-            $resultEmpresa = $cmdEmpresa->fetchObject();
-
-            $cmdDetalleNotaCredito =  Database::getInstance()->getDb()->prepare("SELECT 
-            s.ClaveSat,
-            ISNULL(d.IdAuxiliar,'') as CodigoUnidad,
-            s.NombreMarca,
-            nd.Cantidad,
-            nd.Precio,
-            nd.Descuento,
-            nd.ValorImpuesto,
-            i.Codigo,
-            isnull(i.Numeracion,'') as Numeracion,
-	        isnull(i.Letra,'') as Letra,
-	        isnull(i.Categoria,'') as Categoria
-            from NotaCreditoDetalleTB nd 
-            inner join SuministroTB as s on s.IdSuministro = nd.IdSuministro
-            inner join ImpuestoTB as i on s.Impuesto = i.IdImpuesto
-            left join DetalleTB AS d ON d.IdDetalle = s.UnidadCompra AND d.IdMantenimiento = '0013'
-            where nd.IdNotaCredito = ?");
-            $cmdDetalleNotaCredito->bindValue(1, $idNotaCredito, PDO::PARAM_STR);
-            $cmdDetalleNotaCredito->execute();
-
-            $arrayDetalleNotaCredito = array();
-            while ($row = $cmdDetalleNotaCredito->fetch()) {
-                array_push($arrayDetalleNotaCredito, array(
-                    "ClaveSat" => $row["ClaveSat"],
-                    "CodigoUnidad" => $row["CodigoUnidad"],
-                    "NombreMarca" => $row["NombreMarca"],
-                    "Cantidad" => $row["Cantidad"],
-                    "Precio" => $row["Precio"],
-                    "Descuento" => $row["Descuento"],
-                    "ValorImpuesto" => $row["ValorImpuesto"],
-                    "Codigo" => $row["Codigo"],
-                    "Numeracion" => $row["Numeracion"],
-                    "Letra" => $row["Letra"],
-                    "Categoria" => $row["Categoria"]
-                ));
-            }
-
-
-            foreach ($arrayDetalleNotaCredito as $value) {
-                $cantidad = $value['Cantidad'];
-                $valorImpuesto = $value['ValorImpuesto'];
-                $precioBruto = $value['Precio'] / (($valorImpuesto / 100.00) + 1);
-
-                $opegravada +=  $valorImpuesto == 0 ? 0 : $cantidad * $precioBruto;
-                $opeexogenerada += $valorImpuesto == 0 ? $cantidad * $precioBruto : 0;
-
-                $totalsinimpuesto += $cantidad * $precioBruto;
-                $impuesto += $cantidad  * ($precioBruto * ($valorImpuesto / 100.00));
-            }
-
-            array_push(
-                $array,
-                $resultNotaCredito,
-                $resultEmpresa,
-                $arrayDetalleNotaCredito,
-                array(
-                    "opgravada" => $opegravada,
-                    "opexonerada" =>   $opeexogenerada,
-                    "totalsinimpuesto" => $totalsinimpuesto,
-                    "totalimpuesto" => $impuesto,
-                    "totalconimpuesto" => $totalsinimpuesto + $impuesto
-                )
-            );
-            return $array;
-        } catch (Exception $ex) {
-            return $ex->getMessage();
-        }
-    }
 
     public static function ListarNotificaciones()
     {

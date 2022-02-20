@@ -11,7 +11,7 @@ require __DIR__ . './../src/autoload.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     if ($_GET["type"] == "all") {
-        print json_encode(MonedaADO::Listar_Monedas());
+        print json_encode(MonedaADO::Listar_Monedas($_GET["opcion"], $_GET["search"], $_GET["posicionPagina"], $_GET["filasPorPagina"]));
         exit();
     } else if ($_GET["type"] == "getmonedacombobox") {
         print json_encode(MonedaADO::GetMonedasComboBox());

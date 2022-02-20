@@ -2,6 +2,7 @@
 
 namespace SysSoftIntegra\Model;
 
+use SysSoftIntegra\Src\Tools;
 use Database;
 use PDO;
 use PDOException;
@@ -96,10 +97,8 @@ class ClienteADO
                 $cmdValidate->execute();
                 if ($cmdValidate->fetch()) {
                     Database::getInstance()->getDb()->rollback();
-                    return array(
-                        "estado" => 3,
-                        "message" => "No se puede haber 2 personas con el mismo documento de identidad."
-                    );
+                    Tools::httpStatus400();
+                    return  "No se puede haber 2 personas con el mismo documento de identidad.";
                 } else {
 
                     $cmdValidate = Database::getInstance()->getDb()->prepare("SELECT NumeroDocumento FROM ClienteTB WHERE IdCliente <> ? AND Informacion = ?");
@@ -108,10 +107,8 @@ class ClienteADO
                     $cmdValidate->execute();
                     if ($cmdValidate->fetch()) {
                         Database::getInstance()->getDb()->rollback();
-                        return array(
-                            "estado" => 2,
-                            "message" => "No se puede haber 2 personas con la misma información."
-                        );
+                        Tools::httpStatus400();
+                        return "No se puede haber 2 personas con la misma información.";
                     } else {
                         $cmdCliente = Database::getInstance()->getDb()->prepare("UPDATE ClienteTB SET TipoDocumento=?,NumeroDocumento=?,Informacion=UPPER(?),Telefono=?,Celular=?,Email=?,Direccion=?,Representante=?,Estado=? WHERE IdCliente = ?");
                         $cmdCliente->bindParam(1, $body["TipoDocumento"], PDO::PARAM_STR);
@@ -127,10 +124,8 @@ class ClienteADO
                         $cmdCliente->execute();
 
                         Database::getInstance()->getDb()->commit();
-                        return array(
-                            "estado" => 1,
-                            "message" => "Se actualizó correctamente el cliente."
-                        );
+                        Tools::httpStatus201();
+                        return "Se actualizó correctamente el cliente.";
                     }
                 }
             } else {
@@ -140,10 +135,8 @@ class ClienteADO
                 $cmdValidate->execute();
                 if ($cmdValidate->fetch()) {
                     Database::getInstance()->getDb()->rollback();
-                    return array(
-                        "estado" => 3,
-                        "message" => "No se puede haber 2 personas con el mismo documento de identidad."
-                    );
+                    Tools::httpStatus400();
+                    return "No se puede haber 2 personas con el mismo documento de identidad.";
                 } else {
 
                     $cmdValidate = Database::getInstance()->getDb()->prepare("SELECT NumeroDocumento FROM ClienteTB WHERE Informacion = ?");
@@ -151,10 +144,8 @@ class ClienteADO
                     $cmdValidate->execute();
                     if ($cmdValidate->fetch()) {
                         Database::getInstance()->getDb()->rollback();
-                        return array(
-                            "estado" => 2,
-                            "message" => "No se puede haber 2 personas con la misma información."
-                        );
+                        Tools::httpStatus400();
+                        return  "No se puede haber 2 personas con la misma información.";
                     } else {
 
                         $codCliente = Database::getInstance()->getDb()->prepare("SELECT dbo.Fc_Cliente_Codigo_Alfanumerico();");
@@ -176,19 +167,15 @@ class ClienteADO
                         $cmdCliente->bindParam(12, $body["Sistema"], PDO::PARAM_BOOL);
                         $cmdCliente->execute();
                         Database::getInstance()->getDb()->commit();
-                        return array(
-                            "estado" => 1,
-                            "message" => "Se registró correctamente el cliente."
-                        );
+                        Tools::httpStatus201();
+                        return "Se registró correctamente el cliente.";
                     }
                 }
             }
         } catch (Exception $ex) {
             Database::getInstance()->getDb()->rollback();
-            return array(
-                "estado" => 0,
-                "message" => $ex->getMessage(),
-            );
+            Tools::httpStatus500();
+            return  $ex->getMessage();
         }
     }
 
@@ -202,8 +189,7 @@ class ClienteADO
             $cmdValidate->execute();
             if ($cmdValidate->fetch()) {
                 Database::getInstance()->getDb()->rollback();
-                $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-                header($protocol . ' ' . 400 . ' ' . "Bad Request");
+                Tools::httpStatus400();
 
                 return "No se puede eliminar al cliente porque tiene asociado ventas.";
             } else {
@@ -212,8 +198,7 @@ class ClienteADO
                 $cmdValidate->execute();
                 if ($cmdValidate->fetch()) {
                     Database::getInstance()->getDb()->rollback();
-                    $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-                    header($protocol . ' ' . 400 . ' ' . "Bad Request");
+                    Tools::httpStatus400();
 
                     return "No se puede eliminar el cliente porque es propio del sistema.";
                 } else {
@@ -222,16 +207,14 @@ class ClienteADO
                     $cmdCliente->execute();
 
                     Database::getInstance()->getDb()->commit();
-                    $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-                    header($protocol . ' ' . 201 . ' ' . "Created");
+                    Tools::httpStatus201();
 
                     return "Se elimino correctamente el cliente.";
                 }
             }
         } catch (Exception $ex) {
             Database::getInstance()->getDb()->rollback();
-            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+            Tools::httpStatus500();
 
             return $ex->getMessage();
         }
@@ -250,14 +233,12 @@ class ClienteADO
             $cmdPredeterminate->execute();
 
             Database::getInstance()->getDb()->commit();
-            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-            header($protocol . ' ' . 201 . ' ' . "Created");
+            Tools::httpStatus201();
 
             return  "Se puso al cliente como predeterminado correctamente.";
         } catch (Exception $ex) {
             Database::getInstance()->getDb()->rollback();
-            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+            Tools::httpStatus500();
 
             return  $ex->getMessage();
         }
@@ -282,13 +263,11 @@ class ClienteADO
             $cmdCliente = Database::getInstance()->getDb()->prepare("SELECT IdCliente,NumeroDocumento,Informacion FROM ClienteTB");
             $cmdCliente->execute();
 
-            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-            header($protocol . ' ' . 200 . ' ' . "OK");
+            Tools::httpStatus200();
 
             return  $cmdCliente->fetchAll(PDO::FETCH_OBJ);
         } catch (Exception $ex) {
-            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+            Tools::httpStatus500();
 
             return $ex->getMessage();
         }

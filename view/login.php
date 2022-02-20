@@ -42,11 +42,16 @@ if (isset($_SESSION['IdEmpleado'])) {
                                 <label class="control-label">Contraseña</label>
                                 <input class="form-control" type="password" placeholder="Dijite la contraseña" id="txtClave">
                             </div>
+                            <div class="form-group btn-container">
+                                <button class="btn btn-primary btn-block" id="btnAceptar"><i class="fa fa-sign-in fa-lg fa-fw"></i>ACEPTAR</button>
+                            </div>
                             <div class="form-group text-center">
                                 <label class="control-label text-danger" id="lblErrorMessage"></label>
                             </div>
-                            <div class="form-group btn-container">
-                                <button class="btn btn-primary btn-block" id="btnAceptar"><i class="fa fa-sign-in fa-lg fa-fw"></i>ACEPTAR</button>
+
+                            <div class="form-group btn-container text-center">
+                                <span>Usuario: admin</span>
+                                <span>Clave: admin</span>
                             </div>
                         </div>
                     </div>

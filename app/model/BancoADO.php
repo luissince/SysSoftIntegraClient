@@ -2,11 +2,10 @@
 
 namespace SysSoftIntegra\Model;
 
+use SysSoftIntegra\Src\Tools;
 use Database;
 use PDO;
-use PDOException;
 use Exception;
-use DateTime;
 
 require_once __DIR__ . './../database/DataBaseConexion.php';
 
@@ -50,13 +49,11 @@ class BancoADO
             $cmdTotal->execute();
             $resultTotal = $cmdTotal->fetchColumn();
 
-            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-            header($protocol . ' ' . 200 . ' ' . "OK");
+            Tools::httpStatus200();
 
             return array("data" => $arrayBanco, "total" => $resultTotal);
         } catch (Exception $ex) {
-            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+            Tools::httpStatus500();
 
             return $ex->getMessage();
         }
@@ -98,8 +95,7 @@ class BancoADO
                 $cmdValidate->execute();
                 if ($cmdValidate->fetch()) {
                     Database::getInstance()->getDb()->rollback();
-                    $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-                    header($protocol . ' ' . 400 . ' ' . "Bad Request");
+                    Tools::httpStatus400();
 
                     return "Existe una cuenta con el mismo nombre.";
                 } else {
@@ -144,8 +140,7 @@ class BancoADO
                         ));
                     }
                     Database::getInstance()->getDb()->commit();
-                    $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-                    header($protocol . ' ' . 201 . ' ' . "Created");
+                    Tools::httpStatus201();
 
                     return "Se actualizo correctamente la cuenta.";
                 }
@@ -155,8 +150,7 @@ class BancoADO
                 $cmdValidate->execute();
                 if ($cmdValidate->fetch()) {
                     Database::getInstance()->getDb()->rollback();
-                    $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-                    header($protocol . ' ' . 400 . ' ' . "Bad Request");
+                    Tools::httpStatus400();
 
                     return "Existe una cuenta con el mismo nombre.";
                 } else {
@@ -209,16 +203,15 @@ class BancoADO
                         ));
                     }
                     Database::getInstance()->getDb()->commit();
-                    $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-                    header($protocol . ' ' . 201 . ' ' . "Created");
+                    Tools::httpStatus201();
 
                     return "Se registro correctamente la cuenta.";
                 }
             }
         } catch (Exception $ex) {
             Database::getInstance()->getDb()->rollback();
-            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+            Tools::httpStatus500();
+
             return $ex->getMessage();
         }
     }
@@ -232,8 +225,7 @@ class BancoADO
             $cmdValidate->execute();
             if ($cmdValidate->fetch()) {
                 Database::getInstance()->getDb()->rollback();
-                $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-                header($protocol . ' ' . 400 . ' ' . "Bad Request");
+                Tools::httpStatus400();
 
                 return "La cuenta no se puede eliminar es propio del sistema.";
             } else {
@@ -242,8 +234,7 @@ class BancoADO
                 $cmdValidate->execute();
                 if ($cmdValidate->fetch()) {
                     Database::getInstance()->getDb()->rollback();
-                    $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-                    header($protocol . ' ' . 400 . ' ' . "Bad Request");
+                    Tools::httpStatus400();
 
                     return "La cuenta no se puede eliminar porque tiene asociado un historial.";
                 } else {
@@ -252,16 +243,15 @@ class BancoADO
                     $cmdBanco->execute();
 
                     Database::getInstance()->getDb()->commit();
-                    $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-                    header($protocol . ' ' . 201 . ' ' . "Created");
+                    Tools::httpStatus201();
 
                     return "Se eliminó correctamente la cuenta.";
                 }
             }
         } catch (Exception $ex) {
             Database::getInstance()->getDb()->rollback();
-            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+            Tools::httpStatus500();
+
             return $ex->getMessage();
         }
     }

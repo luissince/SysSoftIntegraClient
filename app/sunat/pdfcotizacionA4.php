@@ -290,12 +290,12 @@ $count = 0;
 foreach ($detalle as $value) {
     $count++;
     $html .= '<tr>
-    <td class="background-primary plr-2 ptb-1 font-size-8 text-center">' . $count . '</td>
-    <td class="background-seconday plr-2 ptb-1 font-size-8">' . $value["Clave"] . '<br>' . $value["NombreMarca"] . '</td>
-    <td class="background-seconday plr-2 ptb-1 font-size-8">' . Tools::roundingValue($value["Cantidad"]) . '</td>
-    <td class="background-seconday plr-2 ptb-1 font-size-8">' . Tools::roundingValue($value["Precio"]) . '</td>
-    <td class="background-seconday plr-2 ptb-1 font-size-8">' . $value["UnidadCompraName"] . '</td>
-    <td class="background-primary plr-2 ptb-1 font-size-8 text-right">' . Tools::roundingValue($value["Precio"] * $value["Cantidad"]) . '</td>
+    <td class="background-primary plr-2 ptb-1 font-size-9 text-center">' . $count . '</td>
+    <td class="background-seconday plr-2 ptb-1 font-size-9">' . $value["Clave"] . '<br>' . $value["NombreMarca"] . '<br>' . $value["Descripcion"] . '</td>
+    <td class="background-seconday plr-2 ptb-1 font-size-9">' . Tools::roundingValue($value["Cantidad"]) . '</td>
+    <td class="background-seconday plr-2 ptb-1 font-size-9">' . Tools::roundingValue($value["Precio"]) . '</td>
+    <td class="background-seconday plr-2 ptb-1 font-size-9">' . $value["UnidadCompraName"] . '</td>
+    <td class="background-primary plr-2 ptb-1 font-size-9 text-right">' . Tools::roundingValue($value["Precio"] * $value["Cantidad"]) . '</td>
     </tr>';
 
     $importeBruto = $value["Precio"] * $value["Cantidad"];
@@ -315,30 +315,49 @@ foreach ($detalle as $value) {
 $html .= '</tbody>
     </table>
 
-    <table style="margin: 0 0 0 auto;" border="0" cellspacing="1">
-        <tbody>
-            <tr>
-                <th class="th-total-title font-size-9">IMPORTE BRUTO:</th>
-                <th class="th-total-valor font-size-9">' . $cotizacion->Simbolo . ' ' . Tools::roundingValue($importeBrutoTotal)  . ' </th>
-            </tr>
-            <tr>
-                <th class="th-total-title font-size-9">DESCUENTO:</th>
-                <th class="th-total-valor font-size-9"> ' . $cotizacion->Simbolo . ' ' . Tools::roundingValue($descuentoTotal) . '</th>
-            </tr>
-            <tr>
-                <th class="th-total-title font-size-9">SUB IMPORTE:</th>
-                <th class="th-total-valor font-size-9">' . $cotizacion->Simbolo . ' ' . Tools::roundingValue($subImporteNetoTotal) . ' </th>
-            </tr>
-            <tr>
-                <th class="th-total-title font-size-9">IGV(18%):</th>
-                <th class="th-total-valor font-size-9"> ' . $cotizacion->Simbolo . ' ' . Tools::roundingValue($impuestoTotal) . '</th>
-            </tr>
-            <tr>
-                <th class="th-total-title font-size-9">IMPORTE NETO :</th>
-                <th class="th-total-valor font-size-9">' . $cotizacion->Simbolo . ' ' . Tools::roundingValue($importeNetoTotal) . '</th>
-            </tr>
-        <tbody>
-    </table> 
+    <div style="width: 100%;">
+        <div align="left" style="width: 50%;float: left;">
+            <table border="0" cellspacing="0">
+                <tr>
+                    <th class="text-left">
+                    OBSERVACIÓN:
+                    </th>
+                </tr>
+                <tr>
+                    <th class="font-normal text-left">
+                    ' . $cotizacion->Observaciones . '
+                    </th>
+                </tr>
+            </table>
+        </div>
+
+        <div align="left" style="width: 50%;float: left;">
+            <table width="100%"  border="0"  cellspacing="1">
+                <tbody>
+                    <tr>
+                        <th class="th-total-title font-size-9">IMPORTE BRUTO:</th>
+                        <th class="th-total-valor font-size-9">' . $cotizacion->Simbolo . ' ' . Tools::roundingValue($importeBrutoTotal)  . ' </th>
+                    </tr>
+                    <tr>
+                        <th class="th-total-title font-size-9">DESCUENTO:</th>
+                        <th class="th-total-valor font-size-9"> ' . $cotizacion->Simbolo . ' ' . Tools::roundingValue($descuentoTotal) . '</th>
+                    </tr>
+                    <tr>
+                        <th class="th-total-title font-size-9">SUB IMPORTE:</th>
+                        <th class="th-total-valor font-size-9">' . $cotizacion->Simbolo . ' ' . Tools::roundingValue($subImporteNetoTotal) . ' </th>
+                    </tr>
+                    <tr>
+                        <th class="th-total-title font-size-9">IGV(18%):</th>
+                        <th class="th-total-valor font-size-9"> ' . $cotizacion->Simbolo . ' ' . Tools::roundingValue($impuestoTotal) . '</th>
+                    </tr>
+                    <tr>
+                        <th class="th-total-title font-size-9">IMPORTE NETO :</th>
+                        <th class="th-total-valor font-size-9">' . $cotizacion->Simbolo . ' ' . Tools::roundingValue($importeNetoTotal) . '</th>
+                    </tr>
+                <tbody>
+            </table> 
+        </div>
+    </div>
 
     <div class="border-bottom"></div>
 
@@ -349,10 +368,10 @@ $html .= '</tbody>
     <div style="border-left: 2mm solid #b3b1b1; width:100%;">
           <div class="div-footer text-center">
             <h3 class="mb-2">Terminos y Condiciones</h3>                       
-            <p class="font-normal font-size-9 mb-1">
+            <p class="font-normal font-size-8 mb-1">
             ' . $empresa->Terminos . '
             </p> 
-            <p style="font-size:9pt;">
+            <p class="font-size-8 ">
             ' . $empresa->Condiciones . '
             </p> 
           </div>
@@ -360,7 +379,7 @@ $html .= '</tbody>
           <h3 class="mb-2">Numero de Cuentas</h3>';
 foreach ($banco as $value) {
     $html .= '
-             <p class="font-normal font-size-9 mb-1">
+             <p class="font-normal font-size-8 mb-1">
              <b>' . $value->NombreCuenta . '</b>
              ' . $value->Moneda . '
              <b>N°</b>

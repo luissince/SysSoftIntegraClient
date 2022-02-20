@@ -168,11 +168,10 @@ class IngresoADO
         }
     }
 
-    public static function Reporte_Ingresos(string $fechaInico, string $fechaFinal, int $empleado, string $idUsuario)
+    public static function ReporteGeneralIngresosEgresos(string $fechaInico, string $fechaFinal, int $empleado, string $idUsuario)
     {
         try {
-
-            $cmdIngreso = Database::getInstance()->getDb()->prepare("{call Sp_Reporte_Ingresos(?,?,?,?)}");
+            $cmdIngreso = Database::getInstance()->getDb()->prepare("{call Sp_Reporte_General_Ingresos_Egresos(?,?,?,?)}");
             $cmdIngreso->bindParam(1, $fechaInico, PDO::PARAM_STR);
             $cmdIngreso->bindParam(2, $fechaFinal, PDO::PARAM_INT);
             $cmdIngreso->bindParam(3, $empleado, PDO::PARAM_STR);

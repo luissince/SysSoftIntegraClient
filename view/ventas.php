@@ -315,32 +315,26 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
                 $("#btnBuscar").click(function() {
                     let value = $("#txtSearch").val();
-                    if (event.keyCode !== 9 && event.keyCode !== 18) {
-                        if (value.trim().length != 0) {
-                            if (!state) {
-                                paginacion = 1;
-                                fillVentasTable(2, value.trim(), "", "", 0, 0);
-                                opcion = 2;
-                            }
+                    if (value.trim().length != 0) {
+                        if (!state) {
+                            paginacion = 1;
+                            fillVentasTable(2, value.trim(), "", "", 0, 0);
+                            opcion = 2;
                         }
                     }
                 });
 
-                $("#btnBuscar").keypress(function(event) {
-                    if (event.keyCode == 13) {
-                        let value = $("#txtSearch").val();
-                        if (event.keyCode !== 9 && event.keyCode !== 18) {
-                            if (value.trim().length != 0) {
-                                if (!state) {
-                                    paginacion = 1;
-                                    fillVentasTable(2, value.trim(), "", "", 0, 0);
-                                    opcion = 2;
-                                }
-                            }
+                tools.keyEnter($("#btnBuscar"), function() {
+                    let value = $("#txtSearch").val();
+                    if (value.trim().length != 0) {
+                        if (!state) {
+                            paginacion = 1;
+                            fillVentasTable(2, value.trim(), "", "", 0, 0);
+                            opcion = 2;
                         }
-                        event.preventDefault();
                     }
                 });
+
 
                 $("#btnReload").click(function() {
                     loadInitVentas();
@@ -394,7 +388,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     $("#divOverlayVentas").addClass("d-none");
                     loadInitVentas();
                 } catch (error) {
-                    $("#lblTextOverlayVentas").html(error.responseText);
+                    $("#lblTextOverlayVentas").html(tools.messageError(error));
                 }
             }
 
@@ -456,8 +450,9 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     } else {
 
                         for (let venta of arrayVentas) {
+                            let anular = '<button class="btn btn-danger btn-sm" onclick="anularVenta(\'' + venta.IdVenta + '\')"><i class="fa fa-ban"></i></button>';
                             let pdf = '<button class="btn btn-secondary btn-sm"  onclick="openPdf(\'' + venta.IdVenta + '\')"><img src="./images/pdf.svg" width="26" /> </button>';
-                            let ver = '<button class="btn btn-secondary btn-sm" onclick="opeModalDetalleIngreso(\'' + venta.IdVenta + '\')"><img src="./images/file.svg" width="26" /></button>';
+                            let ver = '<button class="btn btn-secondary btn-sm" onclick="opeModalDetalleVenta(\'' + venta.IdVenta + '\')"><img src="./images/file.svg" width="26" /></button>';
 
                             let datetime = tools.getDateForma(venta.FechaVenta) + "<br>" + tools.getTimeForma24(venta.HoraVenta, true);
                             let comprobante = venta.Comprobante + " <br/>" + (venta.Serie + "-" + venta.Numeracion) + (venta.IdNotaCredito == 1 ? "<br> <span class='text-danger'>" + "Modificado(" + venta.SerieNotaCredito + "-" + venta.NumeracionNotaCredito + ")</span>" : "");
@@ -485,7 +480,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
                             tbody.append('<tr>' +
                                 ' <td class="text-center">' + venta.id + '</td >' +
-                                ' <td class="text-center"><button class="btn btn-danger" onclick="anularVenta(\'' + venta.IdVenta + '\')"><i class="fa fa-ban"></i></button></td>' +
+                                ' <td class="text-center">' + anular + '</td>' +
                                 ' <td class="text-center">' + pdf + '</td>' +
                                 ' <td class="text-centerr">' + ver + '</td>' +
                                 ' <td class="text-left">' + datetime + '</td>' +
@@ -566,7 +561,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 });
             }
 
-            async function opeModalDetalleIngreso(idVenta) {
+            async function opeModalDetalleVenta(idVenta) {
                 $("#id-modal-productos").modal("show");
                 $("#btnCloseModal").unbind();
                 $("#btnCloseModal").bind("click", function(event) {

@@ -164,7 +164,7 @@ class DashboardADO
             FROM VentaTB AS v
             LEFT JOIN NotaCreditoTB AS n ON v.IdVenta = n.IdVenta
             INNER JOIN DetalleVentaTB AS dv ON dv.IdVenta = v.IdVenta
-            WHERE MONTH(v.FechaVenta) = MONTH(GETDATE())
+            WHERE MONTH(v.FechaVenta) = MONTH(GETDATE()) AND YEAR(v.FechaVenta) = YEAR(GETDATE())
             GROUP BY             
             v.Tipo,
             v.Estado,
@@ -193,7 +193,7 @@ class DashboardADO
             LEFT JOIN DetalleTB AS dc ON dc.IdDetalle = s.Categoria AND dc.IdMantenimiento = '0006'
             LEFT JOIN DetalleTB AS dm ON dm.IdDetalle = s.Marca AND dm.IdMantenimiento = '0007'
             LEFT JOIN DetalleTB AS du ON du.IdDetalle = s.UnidadCompra AND du.IdMantenimiento = '0013'
-            WHERE MONTH(FechaVenta) = MONTH(GETDATE())
+            WHERE MONTH(FechaVenta) = MONTH(GETDATE()) AND YEAR(FechaVenta) = YEAR(GETDATE())
             GROUP BY
             s.IdSuministro,
             s.Clave,
@@ -220,7 +220,7 @@ class DashboardADO
             LEFT JOIN DetalleTB AS dc ON dc.IdDetalle = s.Categoria AND dc.IdMantenimiento = '0006'
             LEFT JOIN DetalleTB AS dm ON dm.IdDetalle = s.Marca AND dm.IdMantenimiento = '0007'
             LEFT JOIN DetalleTB AS du ON du.IdDetalle = s.UnidadCompra AND du.IdMantenimiento = '0013'
-            WHERE MONTH(FechaVenta) = MONTH(GETDATE())
+            WHERE MONTH(FechaVenta) = MONTH(GETDATE()) AND YEAR(FechaVenta) = YEAR(GETDATE())
             GROUP BY
             s.IdSuministro,
             s.Clave,

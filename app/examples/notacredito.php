@@ -10,12 +10,12 @@ header('Content-Type: application/json; charset=UTF-8');
 use SysSoftIntegra\Src\SoapResult;
 use SysSoftIntegra\Src\Sunat;
 use SysSoftIntegra\Src\NumberLleters;
-use SysSoftIntegra\Model\VentasADO;
+use SysSoftIntegra\Model\NotaCreditoADO;
 
 require __DIR__ . './../src/autoload.php';
 
 $idNotaCredito = $_GET["idNotaCredito"];
-$result = VentasADO::ObtenerNotaCreditoById($idNotaCredito);
+$result = NotaCreditoADO::ObtenerNotaCreditoById($idNotaCredito);
 $gcl = new NumberLleters();
 
 if (!is_array($result)) {
@@ -343,7 +343,7 @@ if (!is_array($result)) {
 
     if ($soapResult->isSuccess()) {
         if ($soapResult->isAccepted()) {
-            VentasADO::CambiarEstadoSunatNotaCredito($idNotaCredito,  $soapResult->getCode(), $soapResult->getDescription(), $soapResult->getHashCode(), Sunat::getXmlSign());
+            NotaCreditoADO::CambiarEstadoSunatNotaCredito($idNotaCredito,  $soapResult->getCode(), $soapResult->getDescription(), $soapResult->getHashCode(), Sunat::getXmlSign());
             $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
             header($protocol . ' ' . 200 . ' ' . "OK");
 
@@ -354,7 +354,7 @@ if (!is_array($result)) {
                 "description" => $soapResult->getDescription()
             ));
         } else {
-            VentasADO::CambiarEstadoSunatNotaCreditoUnico($idNotaCredito, $soapResult->getCode(), $soapResult->getDescription());
+            NotaCreditoADO::CambiarEstadoSunatNotaCreditoUnico($idNotaCredito, $soapResult->getCode(), $soapResult->getDescription());
             $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
             header($protocol . ' ' . 200 . ' ' . "OK");
 
@@ -367,7 +367,7 @@ if (!is_array($result)) {
         }
     } else {
         if ($soapResult->getCode() == "1033") {
-            VentasADO::CambiarEstadoSunatNotaCreditoUnico($idNotaCredito, "0", $soapResult->getDescription());
+            NotaCreditoADO::CambiarEstadoSunatNotaCreditoUnico($idNotaCredito, "0", $soapResult->getDescription());
             $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
             header($protocol . ' ' . 200 . ' ' . "OK");
 
@@ -377,7 +377,7 @@ if (!is_array($result)) {
                 "description" => $soapResult->getDescription()
             ));
         } else {
-            VentasADO::CambiarEstadoSunatNotaCreditoUnico($idNotaCredito, $soapResult->getCode(), $soapResult->getDescription());
+            NotaCreditoADO::CambiarEstadoSunatNotaCreditoUnico($idNotaCredito, $soapResult->getCode(), $soapResult->getDescription());
             $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
             header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
 

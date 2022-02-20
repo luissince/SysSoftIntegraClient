@@ -2,6 +2,7 @@
 
 namespace SysSoftIntegra\Model;
 
+use SysSoftIntegra\Src\Tools;
 use Database;
 use PDO;
 use PDOException;
@@ -17,11 +18,15 @@ class MonedaADO
     {
     }
 
-    public static function Listar_Monedas()
+    public static function Listar_Monedas(int $opcion, string $buscar, int $posicionPagina, int $filasPorPagina)
     {
         try {
 
-            $cmdMoneda = Database::getInstance()->getDb()->prepare("{CALL Sp_Listar_Monedas()}");
+            $cmdMoneda = Database::getInstance()->getDb()->prepare("{CALL Sp_Listar_Monedas(?,?,?,?)}");
+            $cmdMoneda->bindParam(1, $opcion, PDO::PARAM_INT);
+            $cmdMoneda->bindParam(2, $buscar, PDO::PARAM_STR);
+            $cmdMoneda->bindParam(3, $posicionPagina, PDO::PARAM_INT);
+            $cmdMoneda->bindParam(4, $filasPorPagina, PDO::PARAM_INT);
             $cmdMoneda->execute();
 
             $arrayMoneda = array();
@@ -39,13 +44,17 @@ class MonedaADO
                 ));
             }
 
-            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-            header($protocol . ' ' . 200 . ' ' . "OK");
+            $cmdMoneda = Database::getInstance()->getDb()->prepare("{CALL Sp_Listar_Monedas_Count(?,?)}");
+            $cmdMoneda->bindParam(1, $opcion, PDO::PARAM_INT);
+            $cmdMoneda->bindParam(2, $buscar, PDO::PARAM_STR);
+            $cmdMoneda->execute();
+            $resultTotal = $cmdMoneda->fetchColumn();
 
-            return array("data" => $arrayMoneda, "total" => 0);
+            Tools::httpStatus200();
+
+            return array("data" => $arrayMoneda, "total" => $resultTotal);
         } catch (Exception $ex) {
-            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+            Tools::httpStatus500();
 
             return $ex->getMessage();
         }

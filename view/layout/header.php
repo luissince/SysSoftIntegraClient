@@ -7,13 +7,13 @@
     <ul class="app-nav">
         <li class="dropdown">
             <a class="app-nav__item" href="puntoventa.php">
-                <i class="fa fa fa-shopping-cart fa-lg"></i>
+                <i class="fa fa fa-shopping-cart fa-sm"></i>
                 <span class="app-nav_text">&nbsp Punto de Venta<span>
             </a>
         </li>
         <li class="dropdown">
             <a class="app-nav__item" href="#" data-toggle="dropdown" aria-label="Show notifications">
-                <i class="fa fa-bell-o fa-lg"></i>
+                <i class="fa fa-bell-o fa-sm"></i>
                 <span id="lblNumeroNotificaciones" class="pl-1 pr-1 badge-warning rounded h7 icon-absolute ">0</span>
             </a>
             <ul class="app-notification dropdown-menu dropdown-menu-right">
@@ -39,12 +39,12 @@
                 <li class="user-footer">
                     <div class="pull-left">
                         <a href="perfil.php" class="btn btn-secondary btn-flat">
-                            <i class="fa fa-user fa-lg"></i> Perfil Usuario
+                            <i class="fa fa-user fa-sm"></i> Perfil Usuario
                         </a>
                     </div>
                     <div class="pull-right">
                         <a href="logout.php" id="btnCloseSesion" class="btn btn-secondary btn-flat">
-                            <i class="fa fa-sign-out fa-lg"></i> Cerrar Sesión
+                            <i class="fa fa-sign-out fa-sm"></i> Cerrar Sesión
                         </a>
                     </div>
                 </li>

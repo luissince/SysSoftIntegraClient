@@ -5,6 +5,17 @@ namespace SysSoftIntegra\Src;
 class Tools
 {
 
+    public static function validateDuplicateSuministro($array,$oject){
+        $ret = false;
+        foreach($array as $value){
+            if($value["IdSuministro"] == $oject["IdSuministro"]){
+                $ret = true;
+                break;
+            }
+        }
+        return $ret;
+    }
+
     public static function calculateTax(float $porcentaje, float $valor)
     {
         return (float) ($valor * ($porcentaje / 100.00));
@@ -50,6 +61,12 @@ class Tools
     {
         $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
         header($protocol . ' ' . 200 . ' ' . "OK");
+    }
+
+    public static function httpStatus201()
+    {
+        $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+        header($protocol . ' ' . 201 . ' ' . "Created");
     }
 
     public static function httpStatus400()

@@ -63,9 +63,13 @@ class Sunat
     {
         $zip = new ZipArchive();
         if ($zip->open($fileintput) === TRUE) {
+            $result = array();
+            for ($i = 0; $i < $zip->numFiles; $i++) {
+                array_push($result, $zip->getNameIndex($i));
+            }
             $zip->extractTo($directoryextract);
             $zip->close();
-            return true;
+            return $result;
         } else {
             return false;
         }

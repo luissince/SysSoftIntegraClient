@@ -2,11 +2,10 @@
 
 namespace SysSoftIntegra\Model;
 
+use SysSoftIntegra\Src\Tools;
 use Database;
 use PDO;
-use PDOException;
 use Exception;
-use DateTime;
 
 require_once __DIR__ . './../database/DataBaseConexion.php';
 
@@ -30,13 +29,11 @@ class EmpresaADO
             FROM EmpresaTB");
             $cmdEmpresa->execute();
 
-            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-            header($protocol . ' ' . 200 . ' ' . "OK");
+            Tools::httpStatus200();
 
             return $cmdEmpresa->fetch(PDO::FETCH_OBJ);
         } catch (Exception $ex) {
-            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+            Tools::httpStatus500();
 
             return $ex->getMessage();
         }
@@ -83,13 +80,11 @@ class EmpresaADO
                 "CertificadoClave" => $row['CertificadoClave']
             );
 
-            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-            header($protocol . ' ' . 200 . ' ' . "OK");
+            Tools::httpStatus200();
 
             return $resultEmpresa;
         } catch (Exception $ex) {
-            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+            Tools::httpStatus500();
 
             return $ex->getMessage();
         }
@@ -142,13 +137,11 @@ class EmpresaADO
             $cmdUbigeo = Database::getInstance()->getDb()->prepare("{CALL Sp_Obtener_Ubigeo_BySearch(?)}");
             $cmdUbigeo->bindParam(1, $search, PDO::PARAM_STR);
             $cmdUbigeo->execute();
-            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-            header($protocol . ' ' . 200 . ' ' . "OK");
+            Tools::httpStatus200();
 
             return $cmdUbigeo->fetchAll(PDO::FETCH_OBJ);
         } catch (Exception $ex) {
-            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+            Tools::httpStatus500();
 
             return $ex->getMessage();
         }
@@ -264,8 +257,7 @@ class EmpresaADO
 
             Database::getInstance()->getDb()->commit();
 
-            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-            header($protocol . ' ' . 200 . ' ' . "OK");
+            Tools::httpStatus201();
 
             return array(
                 "state" => 1,
@@ -275,8 +267,7 @@ class EmpresaADO
             unlink('../resources/' . $file_path);
             Database::getInstance()->getDb()->rollback();
 
-            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+            Tools::httpStatus500();
 
             return $ex->getMessage();
         }

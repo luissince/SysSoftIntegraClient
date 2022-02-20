@@ -32,8 +32,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         </div>
 
                         <div class="modal-body">
-
-                            <div class="tile">
+                            <div class="tile border-0 p-0">
                                 <div class="overlay p-5" id="divOverlayCrudCliente">
                                     <div class="m-loader mr-4">
                                         <svg class="m-circular" viewBox="25 25 50 50">
@@ -404,34 +403,18 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         "posicionPagina": ((paginacion - 1) * filasPorPagina),
                         "filasPorPagina": filasPorPagina
                     }, function() {
-                        tbList.empty();
-                        tbList.append('<tr><td class="text-center" colspan="10"><img src="./images/loading.gif" id="imgLoad" width="34" height="34" /> <p>Cargando información...</p></td></tr>');
+                        tools.loadTable(tbList, 10);
                         state = true;
                         totalPaginacion = 0;
                     });
 
                     let object = result;
-                    tbList.empty();
-
                     if (object.data.length == 0) {
-                        tbList.append('<tr><td class="text-center" colspan="10"><p>No hay datos para mostrar.</p></td></tr>');
-                        ulPagination.html(`
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-double-left"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-left"></i>
-                            </button>
-                            <span class="btn btn-outline-secondary disabled" id="lblPaginacion">0 - 0</span>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-right"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-double-right"></i>
-                            </button>`);
+                        tools.loadTableMessage(tbList, "No hay datos para mostrar.", 10, true);
+                        tools.paginationEmpty(ulPagination);
                         state = false;
                     } else {
-
+                        tbList.empty();
                         for (let cliente of object.data) {
                             let predeterminado = cliente.Predeterminado == 1 ? './images/checked.png' : './images/unchecked.png';
 
@@ -479,22 +462,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     }
 
                 } catch (error) {
-                    tbList.empty();
-                    tbList.append('<tr><td class="text-center" colspan="10"><p>' + error.responseText + '</p></td></tr>');
-                    ulPagination.html(`
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-double-left"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-left"></i>
-                            </button>
-                            <span class="btn btn-outline-secondary disabled" id="lblPaginacion">0 - 0</span>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-right"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary">
-                                <i class="fa fa-angle-double-right"></i>
-                            </button>`);
+                    tools.loadTableMessage(tbList, tools.messageError(error), 10, true);
+                    tools.paginationEmpty(ulPagination);
                     state = false;
                 }
             }
@@ -642,7 +611,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     tools.AlertWarning("", "Seleccione la Razón Social/Datos de Persona.");
                     $("#txtInformacion").focus();
                 } else {
-
                     tools.ModalDialog("Cliente", "¿Está seguro de continuar?", async function(value) {
                         if (value == true) {
                             try {
@@ -666,14 +634,11 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                         tools.ModalAlertInfo("Cliente", "Se está procesando la información.");
                                     });
 
-                                if (result.estado == 1) {
-                                    tools.ModalAlertSuccess("Cliente", result.message);
-                                    loadInitClientes();
-                                } else {
-                                    tools.ModalAlertWarning("Cliente", result.message);
-                                }
+                                tools.ModalAlertSuccess("Cliente", result);
+                                loadInitClientes();
+
                             } catch (error) {
-                                tools.ModalAlertError("Cliente", "Se produjo un error interno intente nuevamente.");
+                                tools.ErrorMessageServer("Cliente", error);
                             }
                         }
                     });
