@@ -8,7 +8,7 @@
 <script src="js/plugins/chart.js"></script>
 <script src="js/tools.js?v=<?php echo (rand()); ?>"></script>
 <!-- Page specific javascripts-->
-<script src="js/plugins/moment.min.js"></script>
-<script src="js/plugins/jquery-ui.custom.min.js"></script>
-<script src="js/plugins/fullcalendar.min.js"></script>
+<!-- <script src="js/plugins/moment.min.js"></script> -->
+<!-- <script src="js/plugins/jquery-ui.custom.min.js"></script> -->
+<!-- <script src="js/plugins/fullcalendar.min.js"></script> -->
 <script src="js/plugins/select2.min.js?v=<?php echo (rand()); ?>"></script>

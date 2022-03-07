@@ -393,12 +393,18 @@ $empresa = EmpresaADO::Index();
                 const renderPageNumbers = pageNumbers.map(number => {
                     if (number === 1 && paginacion === 1) {
                         return (
-                            `<li><a href="javascript:void(0)" id=${number} class="active-input" onclick="handleClick(this)">${number}</a></li>`
+                            `<li><a href="javascript:void(0)" id=${number} class="active-input">${number}</a></li>`
                         )
                     } else if ((number < upperPageBound + 1) && number > lowerPageBound) {
-                        return (
-                            `<li><a href="javascript:void(0)" id=${number} onclick="handleClick(this)">${number}</a></li>`
-                        )
+                        if (number === paginacion) {
+                            return (
+                                `<li><a href="javascript:void(0)" id=${number} class="active-input" >${number}</a></li>`
+                            )
+                        } else {
+                            return (
+                                `<li><a href="javascript:void(0)" id=${number} onclick="handleClick(this)">${number}</a></li>`
+                            )
+                        }
                     }
                 });
 
@@ -434,8 +440,6 @@ $empresa = EmpresaADO::Index();
                 $("#myPager").append(pageIncrementBtn);
                 $("#myPager").append(renderNextBtn);
 
-                $("#myPager li a.active-input").removeClass('active-input');
-                $('#myPager li a#' + paginacion).addClass('active-input');
                 state = false;
             } catch (error) {
                 divCatalogo.empty();
@@ -514,8 +518,6 @@ $empresa = EmpresaADO::Index();
         function handleClick(event) {
             let listid = parseInt(event.id);
             paginacion = listid;
-            $("#myPager li a.active-input").removeClass('active-input');
-            $('#myPager li a#' + listid).addClass('active-input');
             setPrevAndNextBtnClass(listid);
         }
 
