@@ -130,29 +130,15 @@ function ModalCotizacion() {
                 "posicionPagina": ((paginacionCotizacion - 1) * filasPorPaginaCotizacion),
                 "filasPorPagina": filasPorPaginaCotizacion
             }, function () {
-                tbListCotizacion.empty();
-                tbListCotizacion.append('<tr><td class="text-center" colspan="7"><img src="./images/loading.gif" id="imgLoad" width="34" height="34" /> <p>Cargando información...</p></td></tr>');
+                tools.loadTable(tbListCotizacion, 7);
                 stateCotizacion = true;
                 totalPaginacionCotizacion = 0;
             });
 
             tbListCotizacion.empty();
             if (result.data.length == 0) {
-                tbListCotizacion.append('<tr><td class="text-center" colspan="7"><p>!No hay datos para mostrar¡</p></td></tr>');
-                ulPaginationCotizacion.html(`
-                <button class="btn btn-outline-secondary">
-                    <i class="fa fa-angle-double-left"></i>
-                </button>
-                <button class="btn btn-outline-secondary">
-                    <i class="fa fa-angle-left"></i>
-                </button>
-                <span class="btn btn-outline-secondary disabled">0 - 0</span>
-                <button class="btn btn-outline-secondary">
-                    <i class="fa fa-angle-right"></i>
-                </button>
-                <button class="btn btn-outline-secondary">
-                    <i class="fa fa-angle-double-right"></i>
-                </button>`);
+                tools.loadTableMessage(tbListCotizacion, "No hay datos para mostrar.", 7);
+                tools.paginationEmpty(ulPaginationCotizacion);
                 stateCotizacion = false;
             } else {
                 for (let value of result.data) {
@@ -199,30 +185,14 @@ function ModalCotizacion() {
                 stateCotizacion = false;
             }
         } catch (error) {
-            tbListCotizacion.empty();
-            tbListCotizacion.append('<tr><td class="text-center" colspan="7"><p>' + error.responseText + '</p></td></tr>');
-
-            ulPaginationCotizacion.html(`
-            <button class="btn btn-outline-secondary">
-                <i class="fa fa-angle-double-left"></i>
-            </button>
-            <button class="btn btn-outline-secondary">
-                <i class="fa fa-angle-left"></i>
-            </button>
-            <span class="btn btn-outline-secondary disabled">0 - 0</span>
-            <button class="btn btn-outline-secondary">
-                <i class="fa fa-angle-right"></i>
-            </button>
-            <button class="btn btn-outline-secondary">
-                <i class="fa fa-angle-double-right"></i>
-            </button>`);
+            tools.loadTableMessage(tbListCotizacion, tools.messageError(error), 7, true);
+            tools.paginationEmpty(ulPaginationCotizacion);
             stateCotizacion = false;
         }
     }
 
     loadAddCotizacion = async function (idCotizacion) {
         try {
-
             let result = await tools.promiseFetchGet("../app/controller/CotizacionController.php", {
                 "type": "cotizacionventa",
                 "idCotizacion": idCotizacion
@@ -253,6 +223,9 @@ function ModalCotizacion() {
                     "cantidad": cantidad,
                     "costoCompra": parseFloat(value.PrecioCompra),
                     "bonificacion": 0,
+                    "unidadCompra": value.IdMedida,
+                    "unidadCompraName": value.UnidadCompraName,
+
                     "descuento": 0,
                     "descuentoCalculado": 0,
                     "descuentoSumado": 0,

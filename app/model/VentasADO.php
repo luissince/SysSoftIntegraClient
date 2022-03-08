@@ -328,10 +328,10 @@ class VentasADO
                     "NombreMarca" => $row["NombreMarca"],
                     "Cantidad" => $row["Cantidad"],
                     "UnidadCompraNombre" => $row["UnidadCompraNombre"],
-                    "Costo" =>floatval($row["Costo"]),
-                    "CostoTotal" =>floatval( $row["CostoTotal"]),
-                    "Precio" =>floatval( $row["Precio"]),
-                    "PrecioTotal" =>floatval( $row["PrecioTotal"]),
+                    "Costo" => floatval($row["Costo"]),
+                    "CostoTotal" => floatval($row["CostoTotal"]),
+                    "Precio" => floatval($row["Precio"]),
+                    "PrecioTotal" => floatval($row["PrecioTotal"]),
                     "Utilidad" => floatval($row["Utilidad"]),
                     "ValorInventario" => $row["ValorInventario"],
                     "Simbolo" => $row["Simbolo"]
@@ -544,7 +544,8 @@ class VentasADO
                         "NombreMarca" => $rowd["NombreMarca"],
                         "Inventario" => $rowd["Inventario"],
                         "ValorInventario" => $rowd["ValorInventario"],
-                        "UnidadCompra" => $rowd["UnidadCompra"],
+                        "UnidadCompra" => $rowd["IdUnidadCompra"],
+                        "UnidadCompraName" => $rowd["UnidadCompra"],
                         "Estado" => $rowd["Estado"],
                         "PorLlevar" => $rowd["PorLlevar"],
                         "Cantidad" => $rowd["Cantidad"],
@@ -1373,9 +1374,10 @@ class VentasADO
             ,ValorImpuesto          
             ,Bonificacion
             ,PorLlevar
-            ,Estado)
+            ,Estado
+            ,IdMedida)
             VALUES
-            (?,?,?,?,?,?,?,?,?,?,?,?,?)");
+            (?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
 
             $cmdSuministroUpdate = Database::getInstance()->getDb()->prepare("UPDATE SuministroTB SET Cantidad = Cantidad - ? WHERE IdSuministro = ?");
 
@@ -1413,7 +1415,8 @@ class VentasADO
                     $value["impuestoValor"],
                     $value["bonificacion"],
                     $cantidad,
-                    "C"
+                    "C",
+                    $value["unidadCompra"]
                 ));
 
                 if ($value["inventario"] == "1" && $value["valorInventario"] == "1") {
@@ -1647,9 +1650,10 @@ class VentasADO
             ,ValorImpuesto          
             ,Bonificacion
             ,PorLlevar
-            ,Estado)
+            ,Estado
+            ,IdMedida)
             VALUES
-            (?,?,?,?,?,?,?,?,?,?,?,?,?)");
+            (?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
 
             $cmdSuministroUpdate = Database::getInstance()->getDb()->prepare("UPDATE SuministroTB SET Cantidad = Cantidad - ? WHERE IdSuministro = ?");
 
@@ -1687,7 +1691,8 @@ class VentasADO
                     $value["impuestoValor"],
                     $value["bonificacion"],
                     $cantidad,
-                    "C"
+                    "C",
+                    $value["unidadCompra"]
                 ));
 
                 if ($value["inventario"] == "1" && $value["valorInventario"] == "1") {
@@ -1877,9 +1882,10 @@ class VentasADO
             ,ValorImpuesto          
             ,Bonificacion
             ,PorLlevar
-            ,Estado)
+            ,Estado
+            ,IdMedida)
             VALUES
-            (?,?,?,?,?,?,?,?,?,?,?,?,?)");
+            (?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
 
             foreach ($body["Lista"] as $value) {
                 // $cantidad = $value["valorInventario"] == 2 ? $value["importeNeto"] / $value["precioVentaGeneralAuxiliar"] : $value["cantidad"];
@@ -1901,7 +1907,8 @@ class VentasADO
                     $value["impuestoValor"],
                     $value["bonificacion"],
                     0,
-                    "L"
+                    "L",
+                    $value["unidadCompra"]
                 ));
             }
 

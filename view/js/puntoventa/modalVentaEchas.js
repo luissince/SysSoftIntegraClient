@@ -87,29 +87,15 @@ function ModalVentaEchas() {
                 "posicionPagina": ((paginacionVentasEchas - 1) * filasPorPaginaVentasEchas),
                 "filasPorPagina": filasPorPaginaVentasEchas
             }, function () {
-                tbListVentasEchas.empty();
-                tbListVentasEchas.append('<tr><td class="text-center" colspan="8"><img src="./images/loading.gif" id="imgLoad" width="34" height="34" /> <p>Cargando información...</p></td></tr>');
+                tools.loadTable(tbListVentasEchas, 8);
                 stateVentasEchas = true;
                 totalPaginacionVentasEchas = 0;
             });
 
             tbListVentasEchas.empty();
             if (result.data.length == 0) {
-                tbListVentasEchas.append('<tr><td class="text-center" colspan="8"><p>!No hay datos para mostrar¡</p></td></tr>');
-                ulPaginationVentasEchas.html(`
-                <button class="btn btn-outline-secondary">
-                    <i class="fa fa-angle-double-left"></i>
-                </button>
-                <button class="btn btn-outline-secondary">
-                    <i class="fa fa-angle-left"></i>
-                </button>
-                <span class="btn btn-outline-secondary disabled">0 - 0</span>
-                <button class="btn btn-outline-secondary">
-                    <i class="fa fa-angle-right"></i>
-                </button>
-                <button class="btn btn-outline-secondary">
-                    <i class="fa fa-angle-double-right"></i>
-                </button>`);
+                tools.loadTableMessage(tbListVentasEchas, "No hay datos para mostrar.", 8);
+                tools.paginationEmpty(ulPaginationVentasEchas);
                 stateVentasEchas = false;
             } else {
                 for (let value of result.data) {
@@ -156,22 +142,8 @@ function ModalVentaEchas() {
                 stateVentasEchas = false;
             }
         } catch (error) {
-            tbListVentasEchas.empty();
-            tbListVentasEchas.append('<tr><td class="text-center" colspan="8"><p>' + error.responseText + '</p></td></tr>');
-            ulPaginationVentasEchas.html(`
-            <button class="btn btn-outline-secondary">
-                <i class="fa fa-angle-double-left"></i>
-            </button>
-            <button class="btn btn-outline-secondary">
-                <i class="fa fa-angle-left"></i>
-            </button>
-            <span class="btn btn-outline-secondary disabled">0 - 0</span>
-            <button class="btn btn-outline-secondary">
-                <i class="fa fa-angle-right"></i>
-            </button>
-            <button class="btn btn-outline-secondary">
-                <i class="fa fa-angle-double-right"></i>
-            </button>`);
+            tools.loadTableMessage(tbListVentasEchas, tools.messageError(error), 8, true);
+            tools.paginationEmpty(ulPaginationVentasEchas);
             stateVentasEchas = false;
         }
     }
@@ -208,6 +180,9 @@ function ModalVentaEchas() {
                     "cantidad": cantidad,
                     "costoCompra": parseFloat(value.CostoVenta),
                     "bonificacion": 0,
+                    "unidadCompra": value.UnidadCompra,
+                    "unidadCompraName": value.UnidadCompraName,
+
                     "descuento": 0,
                     "descuentoCalculado": 0,
                     "descuentoSumado": 0,

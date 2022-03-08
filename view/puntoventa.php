@@ -856,6 +856,9 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 "cantidad": cantidad,
                                 "costoCompra": suministro.PrecioCompra,
                                 "bonificacion": 0,
+                                "unidadCompra": suministro.UnidadCompra,
+                                "unidadCompraName": suministro.UnidadCompraName,
+
                                 "descuento": 0,
                                 "descuentoCalculado": 0,
                                 "descuentoSumado": 0,
