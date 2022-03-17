@@ -21,6 +21,7 @@ $venta = $result["venta"];
 $detalleVenta = $result["ventadetalle"];
 $empresa = $result["empresa"];
 $banco = $result["banco"];
+$credito = $result["credito"];
 
 $photo = Tools::showImageReport($empresa->Image);
 $gcl = new NumberLleters();
@@ -223,10 +224,10 @@ $html = '<html>
 <body>
     <!--mpdf
     <htmlpagefooter name="myfooter">        
-        <div style="width:50%;float:left;text-align:center; color:#333;">
+        <div style="width:50%;float:left; text-align:center; color:#333; font-size: 9pt;">
             Generado por SySoftIntegra
         </div>
-        <div style="width:50%;float:left;text-align:center;color:#333;">
+        <div style="width:50%;float:left; text-align:center;color:#333; font-size: 9pt;">
             www.syssoftintegra.com
         </div>  
     </htmlpagefooter>
@@ -266,35 +267,46 @@ $html = '<html>
     </table>
 
     <div class="border-bottom mb-2"></div>
+
+    <div style="width: 100%;">
+        <div align="left" style="width: 50%;float: left;">
+            <table border="0" cellspacing="0" cellpadding="1" class="mb-2">
+                <thead>
+                    <tr>
+                        <th class="th-text-head">D.N.I./R.U.C.</th>    
+                        <th class="th-text-head font-normal">: ' . $venta->NumeroDocumento . '</th>     
+                    </tr>
+                    <tr>
+                        <th class="th-text-head">NOMBRES</th>      
+                        <th class="th-text-head font-normal">: ' . $venta->Informacion . '</th>        
+                    </tr>
+                    <tr>
+                        <th class="th-text-head">DIRECCIÓN</th>            
+                        <th class="th-text-head font-normal">: ' . $venta->Direccion . '</th>  
+                    </tr>                    
+                </thead>
+            </table>            
+        </div>
     
-    <table border="0" cellspacing="0" cellpadding="1" class="mb-2">
-        <thead>
-            <tr>
-                <th class="th-text-head">D.N.I./R.U.C.</th>    
-                <th class="th-text-head font-normal">: ' . $venta->NumeroDocumento . '</th>     
-            </tr>
-            <tr>
-                <th class="th-text-head">NOMBRES</th>      
-                <th class="th-text-head font-normal">: ' . $venta->Informacion . '</th>        
-            </tr>
-            <tr>
-                <th class="th-text-head">DIRECCIÓN</th>            
-                <th class="th-text-head font-normal">: ' . $venta->Direccion . '</th>  
-            </tr>
-            <tr>
-                <th class="th-text-head">FECHA EMISIÓN</th>            
-                <th class="th-text-head font-normal">: ' . date("d/m/Y", strtotime($venta->FechaVenta)) . '</th>  
-            </tr>
-            <tr>
-                <th class="th-text-head">MONEDA</th>            
-                <th class="th-text-head font-normal">: ' . $venta->Nombre . ' - ' . $venta->Abreviado . '</th>  
-            </tr>
-            <tr>
-                <th class="th-text-head">FORMA PAGO</th>            
-                <th class="th-text-head font-normal">: ' . ($venta->Tipo == "1" ? "CONTADO" : "CRÉDITO") . '</th>  
-            </tr>
-        </thead>
-    </table>
+        <div align="left" style="width: 50%;float: left;">
+            <table border="0" cellspacing="0" cellpadding="1" class="mb-2">
+                <thead>                   
+                    <tr>
+                        <th class="th-text-head">FECHA EMISIÓN</th>            
+                        <th class="th-text-head font-normal">: ' . date("d/m/Y", strtotime($venta->FechaVenta)) . '</th>  
+                    </tr>
+                    <tr>
+                        <th class="th-text-head">MONEDA</th>            
+                        <th class="th-text-head font-normal">: ' . $venta->Nombre . ' - ' . $venta->Abreviado . '</th>  
+                    </tr>
+                    <tr>
+                        <th class="th-text-head">FORMA PAGO</th>            
+                        <th class="th-text-head font-normal">: ' . ($venta->Tipo == "1" ? "CONTADO" : "CRÉDITO") . '</th>  
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
 
     <table width="100%" border="0" cellspacing="0" class="mb-2">
         <thead>
@@ -338,30 +350,70 @@ $html = '<html>
                             $html  .= '</tbody>
     </table>
 
-    <table width="" style="margin: 0 0 0 auto;" border="0" cellspacing="1">
-        <tbody>
-            <tr>
-                <th class="th-total-title font-size-9">IMPORTE BRUTO:</th>
-                <th class="th-total-valor font-size-9"> ' . $venta->Simbolo . ' ' . Tools::roundingValue($importeBrutoTotal) . '</th>
-            </tr>
-            <tr>
-                <th class="th-total-title font-size-9">DESCUENTO:</th>
-                <th class="th-total-valor font-size-9"> ' . $venta->Simbolo . ' ' . Tools::roundingValue($descuentoTotal) . '</th>
-            </tr>
-            <tr>
-                <th class="th-total-title font-size-9">SUB IMPORTE:</th>
-                <th class="th-total-valor font-size-9"> ' . $venta->Simbolo . ' ' . Tools::roundingValue($subImporteNetoTotal) . '</th>
-            </tr>
-            <tr>
-                <th class="th-total-title font-size-9">IGV(18%):</th>
-                <th class="th-total-valor font-size-9"> ' . $venta->Simbolo . ' ' . Tools::roundingValue($impuestoTotal) . '</th>
-            </tr>
-            <tr>
-                <th class="th-total-title font-size-9">IMPORTE NETO :</th>
-                <th class="th-total-valor font-size-9"> ' . $venta->Simbolo . ' ' . Tools::roundingValue($importeNetoTotal) . '</th>
-            </tr>
-        <tbody>
-    </table> 
+    <div style="width: 100%;">
+        <div align="left" style="width: 50%;float: left;">';
+                            if ($venta->Tipo == 2) {
+                                $html .= '
+                                <p class="font-normal font-size-9 mb-1">
+                                    LISTA DE CRÉDITOS
+                                <p>';
+                                if (is_array($credito)) {
+                                    if (count($credito)) {
+                                        foreach ($credito as $value) {
+                                            $html .= '
+                                            <p class="font-normal font-size-9 mb-1">
+                                              FECHA DE PAGO <strong>' . date("d/m/Y", strtotime($value->FechaPago)) . '</strong> MONTO <strong>' . $venta->Simbolo . ' ' . Tools::roundingValue($value->Monto) . '</strong> <strong>' . ($value->Estado == 1 ? "PAGADO" : "PENDIENTE") . '</strong> 
+                                            <p>
+                                            ';
+                                        }
+                                    } else {
+                                        $html .= '
+                                    <p class="font-normal font-size-9 mb-1">
+                                        PAGO EN EFECTIVO
+                                    <p>';
+                                    }
+                                } else {
+                                    $html .= '
+                                <p class="font-normal font-size-9 mb-1">
+                                    PAGO EN EFECTIVO
+                                <p>';
+                                }
+                            } else {
+                                $html .= '
+                            <p class="font-normal font-size-9 mb-1">
+                                PAGO EN EFECTIVO
+                            <p>';
+                            }
+
+                            $html .= '</div>
+
+        <div align="right" style="width: 50%;float: left;">
+            <table width="" style="margin: 0 0 0 auto;" border="0" cellspacing="1">
+                <tbody>
+                    <tr>
+                        <th class="th-total-title font-size-9">IMPORTE BRUTO:</th>
+                        <th class="th-total-valor font-size-9"> ' . $venta->Simbolo . ' ' . Tools::roundingValue($importeBrutoTotal) . '</th>
+                    </tr>
+                    <tr>
+                        <th class="th-total-title font-size-9">DESCUENTO:</th>
+                        <th class="th-total-valor font-size-9"> ' . $venta->Simbolo . ' ' . Tools::roundingValue($descuentoTotal) . '</th>
+                    </tr>
+                    <tr>
+                        <th class="th-total-title font-size-9">SUB IMPORTE:</th>
+                        <th class="th-total-valor font-size-9"> ' . $venta->Simbolo . ' ' . Tools::roundingValue($subImporteNetoTotal) . '</th>
+                    </tr>
+                    <tr>
+                        <th class="th-total-title font-size-9">IGV(18%):</th>
+                        <th class="th-total-valor font-size-9"> ' . $venta->Simbolo . ' ' . Tools::roundingValue($impuestoTotal) . '</th>
+                    </tr>
+                    <tr>
+                        <th class="th-total-title font-size-9">IMPORTE NETO :</th>
+                        <th class="th-total-valor font-size-9"> ' . $venta->Simbolo . ' ' . Tools::roundingValue($importeNetoTotal) . '</th>
+                    </tr>
+                <tbody>
+            </table> 
+        </div>        
+    </div>
 
     <div class="border-bottom"></div>
 
@@ -370,25 +422,37 @@ $html = '<html>
     <p>
 
      <div style="border-left: 2mm solid #b3b1b1; width:100%;">
-        <div class="div-footer text-center">
-            <h3 class="mb-2">Terminos y Condiciones</h3>                       
-            <p class="font-normal font-size-9 mb-1">
-            ' . $empresa->Terminos . '
-            </p> 
-            <p style="font-size:9pt;">
-            ' . $empresa->Condiciones . '
-            </p> 
-            <br>
-            <h3 class="mb-2">Numero de Cuentas</h3>';
-                            foreach ($banco as $value) {
-                                $html .= '
-                    <p class="font-normal font-size-9 mb-1">
-                    <b>' . $value->NombreCuenta . '</b>
-                    ' . $value->Moneda . '
-                    <b>N°</b>
-                    ' . $value->NumeroCuenta . '
-                    </p>';
+        <div class="div-footer">';
+                            if ($empresa->Terminos !== null && $empresa->Terminos !== "") {
+                                $html .= '<h4 class="mb-2">Terminos y Condiciones</h4>                       
+                <p class="font-normal font-size-9 mb-1">
+                    ' . $empresa->Terminos . '
+                </p> 
+                <p style="font-size:9pt;">
+                    ' . $empresa->Condiciones . '
+                </p> 
+                <br>';
                             }
+
+
+
+                            if (is_array($banco)) {
+                                if (count($banco)) {
+                                    $cuenta = "CUENTAS BANCARIAS " . $empresa->NombreComercial;
+                                    $html .= '<h4 class="mb-2"> ' .  $cuenta . '</h4>';
+
+                                    foreach ($banco as $value) {
+                                        $html .= '
+                        <p class="font-normal font-size-9 mb-1">
+                        <b>' . $value->NombreCuenta . '</b>
+                        ' . $value->Moneda . '
+                        <b>N°</b>
+                        ' . $value->NumeroCuenta . '
+                        </p>';
+                                    }
+                                }
+                            }
+
                             $html .= '
         </div>
         <div class="div-footer text-center">
@@ -419,7 +483,7 @@ $html = '<html>
                             $mpdf->SetProtection(array('print'));
                             $mpdf->SetTitle($venta->Comprobante . " " . $venta->Serie . '-' . $codigoFormat);
                             $mpdf->SetAuthor("Syssoft Integra");
-                            $mpdf->SetWatermarkText("PAGADO");
+                            $mpdf->SetWatermarkText($venta->Estado == 3 ? "ANULADO" : "PAGADO");
                             $mpdf->showWatermarkText = true;
                             $mpdf->watermark_font = 'DejaVuSansCondensed';
                             $mpdf->watermarkTextAlpha = 0.1;
