@@ -32,7 +32,9 @@ if (isset($_SESSION['IdEmpleado'])) {
                 <div class="tile-body">
                     <div class="login-box">
                         <div class="login-form">
-                            <h4 class="login-head"><img class="img-fluid" src="./images/logo.png" alt="Logo" width="140" /></h4>
+                            <h4 class="text-center mb-3">
+                                <img class="img-fluid" src="./images/logo.png" alt="Logo" />
+                            </h4>
                             <h4 class="login-head"><i class="fa fa-lg fa-fw fa-user"></i>Credenciales de Acceso</h4>
                             <div class="form-group">
                                 <label class="control-label">Usuario</label>
