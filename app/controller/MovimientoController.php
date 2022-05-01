@@ -34,5 +34,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     } else if ($body["type"] == "restarkardex") {
         print json_encode(MovimientoADO::RestablecerInventario($body));
         exit();
+    } else if ($body["type"] == "anularmovimiento") {
+        print json_encode(MovimientoADO::CancelarMovimiento($body));
+        exit();
     }
 }

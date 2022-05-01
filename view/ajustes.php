@@ -160,6 +160,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                         <th scope="col" class="th-porcent-20">Información</th>
                                         <th scope="col" class="th-porcent-10">Estado</th>
                                         <th scope="col" class="th-porcent-7">Detalle</th>
+                                        <th scope="col" class="th-porcent-7">Anular</th>
                                         <th scope="col" class="th-porcent-7">Excel</th>
                                     </tr>
                                 </thead>
@@ -218,6 +219,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
             let lblEstadoMovimiento = $("#lblEstadoMovimiento");
             let lblCodigoVerificacion = $("#lblCodigoVerificacion");
             let tbMovimientos = $("#tbMovimientos");
+
+            let idEmpleado = "<?= $_SESSION['IdEmpleado'] ?>";
 
             $(document).ready(function() {
 
@@ -336,14 +339,14 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         "posicionPagina": ((paginacion - 1) * filasPorPagina),
                         "filasPorPagina": filasPorPagina
                     }, function() {
-                        tools.loadTable(tbody, 8);
+                        tools.loadTable(tbody, 9);
                         state = true;
                     });
 
                     let object = result;
                     let movimientos = object.data;
                     if (movimientos.length == 0) {
-                        tools.loadTableMessage(tbody, 'No hay datos para mostrar', 8, true);
+                        tools.loadTableMessage(tbody, 'No hay datos para mostrar', 9, true);
                         tools.paginationEmpty(ulPagination);
                         state = false;
                     } else {
@@ -358,6 +361,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 '<td>' + moviminento.Informacion + '</td>' +
                                 '<td>' + '<div class="' + estadoStyle + '">' + moviminento.Estado + '</div>' + '</td>' +
                                 '<td class="text-center"><button class="btn btn-warning btn-sm" onclick="loadDetalleMovimiento(\'' + moviminento.IdMovimientoInventario + '\')"><i class="fa fa-search fa-lg"></i><span></span></button></td>' +
+                                '<td class="text-center"><button class="btn btn-danger btn-sm" onclick="anularMovimiento(\'' + moviminento.IdMovimientoInventario + '\')"><i class="fa fa-trash fa-lg"></i><span></span></button></td>' +
                                 '<td class="text-center"><button class="btn btn-success btn-sm" onclick="generarExcel(\'' + moviminento.IdMovimientoInventario + '\')"><i class="fa fa-file-excel-o fa-lg"></i><span></span></button></td>' +
                                 '</tr>');
                         }
@@ -431,6 +435,31 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 } catch (error) {
                     tools.loadTableMessage(tbMovimientos, tools.messageError(error), 3, true);
                 }
+            }
+
+            function anularMovimiento(idMovimientoInventario) {
+                tools.ModalDialog("Ajuste", "¿Está seguro de eliminar el ajuste?", async function(value) {
+                    if (value) {
+                        try {
+                            let result = await tools.promiseFetchPost("../app/controller/MovimientoController.php", {
+                                "type": "anularmovimiento",
+                                "idMovimientoInventario": idMovimientoInventario,
+                                "idEmpleado": idEmpleado,
+                            }, function() {
+                                tools.ModalAlertInfo("Ajuste", "Se está procesando la información.");
+                            });
+                            tools.ModalAlertSuccess("Ajuste", result, function() {
+                                onEventPaginacion();
+                            });
+                        } catch (error) {
+                            if (error.responseText == '' || error.responseText == null) {
+                                tools.ModalAlertError("Ajuste", "Se produjo un interno intente nuevamente, por favor.");
+                            } else {
+                                tools.ModalAlertWarning("Ajuste", error.responseJSON);
+                            }
+                        }
+                    }
+                });
             }
 
             function onEventPaginacionInicio(value) {

@@ -244,6 +244,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
             let arrayProductos = [];
             let cbTipoMovimiento = $("#cbTipoMovimiento");
 
+            let idEmpleado = "<?= $_SESSION['IdEmpleado'] ?>";
+
             $(document).ready(function() {
 
                 $("#btnGuardar").on("click", function(event) {
@@ -611,6 +613,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 "estado": $("#cbEstadoMivimiento")[0].checked,
                                 "codigoVerificacion": $("#txtCodigoVerificacion").val().trim(),
                                 "idAlmacen": $("#cbAlmacen").val(),
+                                "idEmpleado": idEmpleado,
                                 "lista": newArrayProductos
                             }, function() {
                                 tools.ModalAlertInfo("Movimiento", "Se está procesando la información.");
