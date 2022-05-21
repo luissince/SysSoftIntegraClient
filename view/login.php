@@ -51,10 +51,10 @@ if (isset($_SESSION['IdEmpleado'])) {
                                 <label class="control-label text-danger" id="lblErrorMessage"></label>
                             </div>
 
-                            <div class="form-group btn-container text-center">
+                            <!-- <div class="form-group btn-container text-center">
                                 <span>Usuario: admin</span>
                                 <span>Clave: admin</span>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
                 </div>
