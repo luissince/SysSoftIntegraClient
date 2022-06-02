@@ -13,7 +13,7 @@ if (isset($_SESSION['IdEmpleado'])) {
     </head>
 
     <body>
-        <section class="material-half-bg">
+        <section class="material-half-bg-white">
             <div class="cover"></div>
         </section>
         <section class="login-content">
