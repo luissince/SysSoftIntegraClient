@@ -20,7 +20,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
         <?php include "./layout/cotizacion/modalProductos.php"; ?>
         <!--  -->
         <!--  -->
-        <?php include "./layout/cotizacion/modalCotizacion.php"; ?>
         <!--  -->
         <main class="app-content">
 
@@ -61,7 +60,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
                         <label><img src="./images/calendar.png" width="22" height="22"> Fecha:</label>
                         <div class="form-group">
-                            <input class="form-control" type="date" id="txtFechaRegistro" disabled>
+                            <input class="form-control" type="date" id="txtFechaRegistro">
                         </div>
                     </div>
                 </div>
@@ -75,6 +74,19 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         </div>
                     </div>
                     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                        <label><img src="./images/recibo.png" width="22" height="22"> Comprobante:</label>
+                        <div class="form-group">
+                            <select class=" form-control" id="cbComprobante">
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                        
+                    </div>
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
                         <label><img src="./images/tipodocumento.png" width="22" height="22"> Serie y Numeracion:</label>
                         <div class="form-group">
                             <div class="d-flex">
@@ -83,7 +95,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             </div>
                         </div>
                     </div>
-                    
                 </div>
 
                 <div class="row">
@@ -92,12 +103,12 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             <table class="table table-hover">
                                 <thead class="table-header-background">
                                     <tr role="row">
+                                        <th width="5%">Accion</th>
                                         <th width="15%">Cantidad</th>
                                         <th width="30%">Clave/Descripción</th>
                                         <th width="15%">Costo Unitario</th>
                                         <th width="15%">Impuesto %</th>
                                         <th width="20%">Importe</th>
-                                        <th width="5%">Accion</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tbList">
@@ -149,13 +160,13 @@ if (!isset($_SESSION['IdEmpleado'])) {
         </main>
         <?php include "./layout/footer.php"; ?>
         <script src="./js/notificaciones.js"></script>
-        <script src="js/cotizacion/modalProductos.js"></script>
-        <script src="js/cotizacion/modalCotizacion.js"></script>
+        <script src="js/compra/modalProductos.js"></script>
+        <!-- <script src="js/cotizacion/modalCotizacion.js"></script> -->
 
         <script>
             let tools = new Tools();
             let modalProductos = new ModalProductos();
-            // let modalCotizacion = new ModalCotizacion();
+            
 
             let monedaSimbolo = "M";
             let importeBruto = 0;
@@ -171,7 +182,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
             let idCotizacion = 0;
 
             $(document).ready(function() {
-                //modalProductos.init();
+                
+                modalProductos.init();
                 // modalCotizacion.init();
                 // select2_();
 
@@ -352,10 +364,9 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             '<td class="text-center"><button class="btn btn-danger" onclick="removeDetalleProducto(\'' + value.idSuministro + '\')"><i class="fa fa-trash"></i></button></td>' +
                             '<td><input readonly id="c-' + value.idSuministro + '" type="text" class="form-control" placeholder="0" onkeypress="onKeyPressTable(this)" onkeydown="onKeyDownTableCantidad(this,\'' + value.idSuministro + '\')" value="' + tools.formatMoney(value.cantidad) + '" onfocusout="onFocusOutTable()" ondblclick="onClickTable(\'' + "c-" + value.idSuministro + '\')" autocomplete="off" /></td>' +
                             '<td>' + value.clave + '<br>' + value.nombreMarca + '</td>' +
+                            '<td><input readonly id="p-' + value.idSuministro + '" type="text" class="form-control" placeholder="0" onkeypress="onKeyPressTable(this)"  onkeydown="onKeyDownTablePrecio(this,\'' + value.idSuministro + '\')" value="' + tools.formatMoney(value.costoCompra) + '" onfocusout="onFocusOutTable()" ondblclick="onClickTable(\'' + "p-" + value.idSuministro + '\')" autocomplete="off" /></td>' +
                             '<td class="text-center">' + value.impuestoNombre + '</td>' +
-                            '<td><input readonly id="p-' + value.idSuministro + '" type="text" class="form-control" placeholder="0" onkeypress="onKeyPressTable(this)"  onkeydown="onKeyDownTablePrecio(this,\'' + value.idSuministro + '\')" value="' + tools.formatMoney(value.precioVentaGeneral) + '" onfocusout="onFocusOutTable()" ondblclick="onClickTable(\'' + "p-" + value.idSuministro + '\')" autocomplete="off" /></td>' +
-                            '<td><select class="form-control"><option>'+value.unidadCompra+'</option><select></td>'+
-                            '<td class="text-center">' + tools.formatMoney(value.cantidad * value.precioVentaGeneral) + '</td>' +
+                            '<td class="text-center">' + tools.formatMoney(value.cantidad * value.costoCompra) + '</td>' +
                             '</tr>');
 
                         importeBruto += value.importeBruto;
