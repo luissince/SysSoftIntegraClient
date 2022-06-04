@@ -30,6 +30,7 @@ if (!is_array($detalleventa)) {
     $empresa = $detalleventa[1];
     $cliente = $detalleventa[2];
     $venta = $detalleventa[3];
+    $credito = $detalleventa[5];
 
     $xml = new DomDocument('1.0', 'utf-8');
     // $xml->standalone         = true;
@@ -163,12 +164,66 @@ if (!is_array($detalleventa)) {
     $cbc = $PartyLegalEntity->appendChild($cbc);
 
     //FORMA PAGO
-    $PaymentTerms = $xml->createElement('cac:PaymentTerms'); //
-    $PaymentTerms = $Invoice->appendChild($PaymentTerms);
-    $cbc = $xml->createElement('cbc:ID', "FormaPago");
-    $cbc = $PaymentTerms->appendChild($cbc);
-    $cbc = $xml->createElement('cbc:PaymentMeansID', "Contado");
-    $cbc = $PaymentTerms->appendChild($cbc);
+    if ($venta->Tipo == 2) {
+        if ($venta->TipoCredito == 1) {
+            $PaymentTerms = $xml->createElement('cac:PaymentTerms');
+            $PaymentTerms = $Invoice->appendChild($PaymentTerms);
+            $cbc = $xml->createElement('cbc:ID', "FormaPago");
+            $cbc = $PaymentTerms->appendChild($cbc);
+            $cbc = $xml->createElement('cbc:PaymentMeansID', "Credito");
+            $cbc = $PaymentTerms->appendChild($cbc);
+            $cbc = $xml->createElement('cbc:Amount', number_format(round($detalleventa[0]['totalconimpuesto'], 2, PHP_ROUND_HALF_UP), 2, '.', ''));
+            $cbc->setAttribute('currencyID', $venta->TipoMoneda);
+            $cbc = $PaymentTerms->appendChild($cbc);
+
+            $countPm = 0;
+            foreach ($credito as $value) {
+                $countPm++;
+                $cuotaV = $countPm <= 9 ? "Cuota00" . $countPm : "Cuota" . $countPm;
+                $PaymentTerms = $xml->createElement('cac:PaymentTerms');
+                $PaymentTerms = $Invoice->appendChild($PaymentTerms);
+                $cbc = $xml->createElement('cbc:ID', "FormaPago");
+                $cbc = $PaymentTerms->appendChild($cbc);
+                $cbc = $xml->createElement('cbc:PaymentMeansID', $cuotaV);
+                $cbc = $PaymentTerms->appendChild($cbc);
+                $cbc = $xml->createElement('cbc:Amount', number_format(round($value->Monto, 2, PHP_ROUND_HALF_UP), 2, '.', ''));
+                $cbc->setAttribute('currencyID', $venta->TipoMoneda);
+                $cbc = $PaymentTerms->appendChild($cbc);
+                $cbc = $xml->createElement('cbc:PaymentDueDate', date("Y-m-d", strtotime($value->FechaPago)));
+                $cbc = $PaymentTerms->appendChild($cbc);
+            }
+        } else {
+            $PaymentTerms = $xml->createElement('cac:PaymentTerms');
+            $PaymentTerms = $Invoice->appendChild($PaymentTerms);
+            $cbc = $xml->createElement('cbc:ID', "FormaPago");
+            $cbc = $PaymentTerms->appendChild($cbc);
+            $cbc = $xml->createElement('cbc:PaymentMeansID', "Credito");
+            $cbc = $PaymentTerms->appendChild($cbc);
+            $cbc = $xml->createElement('cbc:Amount', number_format(round($detalleventa[0]['totalconimpuesto'], 2, PHP_ROUND_HALF_UP), 2, '.', ''));
+            $cbc->setAttribute('currencyID', $venta->TipoMoneda);
+            $cbc = $PaymentTerms->appendChild($cbc);
+
+            $PaymentTerms = $xml->createElement('cac:PaymentTerms');
+            $PaymentTerms = $Invoice->appendChild($PaymentTerms);
+            $cbc = $xml->createElement('cbc:ID', "FormaPago");
+            $cbc = $PaymentTerms->appendChild($cbc);
+            $cbc = $xml->createElement('cbc:PaymentMeansID', "Cuota001");
+            $cbc = $PaymentTerms->appendChild($cbc);
+            $cbc = $xml->createElement('cbc:Amount', number_format(round($detalleventa[0]['totalconimpuesto'], 2, PHP_ROUND_HALF_UP), 2, '.', ''));
+            $cbc->setAttribute('currencyID', $venta->TipoMoneda);
+            $cbc = $PaymentTerms->appendChild($cbc);
+            $cbc = $xml->createElement('cbc:PaymentDueDate', date("Y-m-d", strtotime($venta->FechaVencimiento)));
+            $cbc = $PaymentTerms->appendChild($cbc);
+        }
+    } else {
+        $PaymentTerms = $xml->createElement('cac:PaymentTerms');
+        $PaymentTerms = $Invoice->appendChild($PaymentTerms);
+        $cbc = $xml->createElement('cbc:ID', "FormaPago");
+        $cbc = $PaymentTerms->appendChild($cbc);
+        $cbc = $xml->createElement('cbc:PaymentMeansID', "Contado");
+        $cbc = $PaymentTerms->appendChild($cbc);
+    }
+
 
     // TOTALES 
     $cac_TaxTotal = $xml->createElement('cac:TaxTotal');

@@ -222,16 +222,16 @@ class VentasADO
             $venta = null;
             $ventadetalle = array();
 
-            $comandoVenta = Database::getInstance()->getDb()->prepare("{CALL Sp_Obtener_Venta_ById(?)}");
-            $comandoVenta->bindParam(1, $idventa, PDO::PARAM_STR);
-            $comandoVenta->execute();
-            $venta = $comandoVenta->fetchObject();
+            $cmdVenta = Database::getInstance()->getDb()->prepare("{CALL Sp_Obtener_Venta_ById(?)}");
+            $cmdVenta->bindParam(1, $idventa, PDO::PARAM_STR);
+            $cmdVenta->execute();
+            $venta = $cmdVenta->fetchObject();
 
-            $comandoVentaDetalle = Database::getInstance()->getDb()->prepare("{CALL Sp_Listar_Ventas_Detalle_By_Id(?)}");
-            $comandoVentaDetalle->bindParam(1, $idventa, PDO::PARAM_STR);
-            $comandoVentaDetalle->execute();
+            $cmdVentaDetalle = Database::getInstance()->getDb()->prepare("{CALL Sp_Listar_Ventas_Detalle_By_Id(?)}");
+            $cmdVentaDetalle->bindParam(1, $idventa, PDO::PARAM_STR);
+            $cmdVentaDetalle->execute();
             $count = 0;
-            while ($row = $comandoVentaDetalle->fetch()) {
+            while ($row = $cmdVentaDetalle->fetch()) {
                 $count++;
                 array_push($ventadetalle, array(
                     "id" => $count,
@@ -253,6 +253,16 @@ class VentasADO
                     "Codigo" => $row["Codigo"]
                 ));
             }
+
+            $cmdVentaCredito = Database::getInstance()->getDb()->prepare("SELECT 
+            FechaPago,
+            Monto,
+            Estado 
+            FROM VentaCreditoTB 
+            WHERE IdVenta = ?");
+            $cmdVentaCredito->bindParam(1, $idventa, PDO::PARAM_STR);
+            $cmdVentaCredito->execute();
+            $credito = $cmdVentaCredito->fetchAll(PDO::FETCH_OBJ);
 
             $cmdEmpresa = Database::getInstance()->getDb()->prepare("SELECT TOP 1 
             d.IdAuxiliar,
@@ -295,12 +305,14 @@ class VentasADO
             INNER JOIN MonedaTB AS m ON m.IdMoneda = b.IdMoneda 
             WHERE Mostrar = 1");
             $cmdBanco->execute();
+            $banco = $cmdBanco->fetchAll(PDO::FETCH_OBJ);
 
             return array(
                 "venta" => $venta,
                 "ventadetalle" => $ventadetalle,
                 "empresa" => $empresa,
-                "banco" => $cmdBanco->fetchAll(PDO::FETCH_OBJ)
+                "banco" => $banco,
+                "credito" => $credito
             );
         } catch (Exception $ex) {
             return $ex->getMessage();
@@ -328,10 +340,10 @@ class VentasADO
                     "NombreMarca" => $row["NombreMarca"],
                     "Cantidad" => $row["Cantidad"],
                     "UnidadCompraNombre" => $row["UnidadCompraNombre"],
-                    "Costo" =>floatval($row["Costo"]),
-                    "CostoTotal" =>floatval( $row["CostoTotal"]),
-                    "Precio" =>floatval( $row["Precio"]),
-                    "PrecioTotal" =>floatval( $row["PrecioTotal"]),
+                    "Costo" => floatval($row["Costo"]),
+                    "CostoTotal" => floatval($row["CostoTotal"]),
+                    "Precio" => floatval($row["Precio"]),
+                    "PrecioTotal" => floatval($row["PrecioTotal"]),
                     "Utilidad" => floatval($row["Utilidad"]),
                     "ValorInventario" => $row["ValorInventario"],
                     "Simbolo" => $row["Simbolo"]
@@ -421,35 +433,6 @@ class VentasADO
         }
     }
 
-    public static function ResumenGeneral($fechaInicial, $fechaFinal)
-    {
-        try {
-            $array = array();
-
-            $cmdEmpresa = Database::getInstance()->getDb()->prepare("SELECT TOP 1 
-            d.IdAuxiliar,e.NumeroDocumento,e.RazonSocial,e.NombreComercial,e.Domicilio,
-            e.Telefono,e.Email,e.Image
-            FROM EmpresaTB AS e INNER JOIN DetalleTB AS d ON e.TipoDocumento = d.IdDetalle AND d.IdMantenimiento = '0003'");
-            $cmdEmpresa->execute();
-            $rowEmpresa = $cmdEmpresa->fetch();
-            $empresa  = (object)array(
-                "IdAuxiliar" => $rowEmpresa['IdAuxiliar'],
-                "NumeroDocumento" => $rowEmpresa['NumeroDocumento'],
-                "RazonSocial" => $rowEmpresa['RazonSocial'],
-                "NombreComercial" => $rowEmpresa['NombreComercial'],
-                "Domicilio" => $rowEmpresa['Domicilio'],
-                "Telefono" => $rowEmpresa['Telefono'],
-                "Email" => $rowEmpresa['Email'],
-                "Image" => $rowEmpresa['Image'] == null ? "" : base64_encode($rowEmpresa['Image'])
-            );
-
-            array_push($array, $empresa);
-            return $array;
-        } catch (Exception $ex) {
-            return $ex->getMessage();
-        }
-    }
-
     public static function ListVentasMostrarLibres($opcion, $search, $posicionPagina, $filasPorPagina)
     {
         try {
@@ -507,7 +490,6 @@ class VentasADO
     public static function VentaAgregarTerminar(string $idVenta)
     {
         try {
-
             $cmdVenta = Database::getInstance()->getDb()->prepare("{CALL Sp_Obtener_Venta_ById(?)}");
             $cmdVenta->bindParam(1, $idVenta, PDO::PARAM_STR);
             $cmdVenta->execute();
@@ -544,7 +526,8 @@ class VentasADO
                         "NombreMarca" => $rowd["NombreMarca"],
                         "Inventario" => $rowd["Inventario"],
                         "ValorInventario" => $rowd["ValorInventario"],
-                        "UnidadCompra" => $rowd["UnidadCompra"],
+                        "UnidadCompra" => $rowd["IdUnidadCompra"],
+                        "UnidadCompraName" => $rowd["UnidadCompra"],
                         "Estado" => $rowd["Estado"],
                         "PorLlevar" => $rowd["PorLlevar"],
                         "Cantidad" => $rowd["Cantidad"],
@@ -662,19 +645,28 @@ class VentasADO
             $resultCliente = null;
 
             $cmdVenta = Database::getInstance()->getDb()->prepare("SELECT 
-                dbo.Fc_Obtener_Nombre_Moneda(v.Moneda) as NombreMoneda,
-		        dbo.Fc_Obtener_Abreviatura_Moneda(v.Moneda) as TipoMoneda,
-                td.CodigoAlterno as TipoComprobante,
-                v.Serie,v.Numeracion,v.FechaVenta,v.HoraVenta,
-                ISNULL(v.Correlativo,0) as Correlativo
-                FROM VentaTB as v inner join TipoDocumentoTB as td 
-                on v.Comprobante = td.IdTipoDocumento
+                dbo.Fc_Obtener_Nombre_Moneda(v.Moneda) AS NombreMoneda,
+		        dbo.Fc_Obtener_Abreviatura_Moneda(v.Moneda) AS TipoMoneda,
+                td.CodigoAlterno AS TipoComprobante,
+                v.Serie,
+                v.Numeracion,
+                v.FechaVenta,
+                v.HoraVenta,
+                v.FechaVencimiento,
+                ISNULL(v.Correlativo,0) AS Correlativo,
+                v.Tipo,
+                v.Estado,
+                v.TipoCredito
+                FROM VentaTB AS v 
+                INNER JOIN TipoDocumentoTB AS td ON v.Comprobante = td.IdTipoDocumento
                 WHERE v.IdVenta = ?");
             $cmdVenta->bindParam(1, $idVenta, PDO::PARAM_STR);
             $cmdVenta->execute();
             $resultVenta = $cmdVenta->fetchObject();
 
-            $cmdCorrelativo = Database::getInstance()->getDb()->prepare("SELECT MAX(ISNULL(Correlativo,0)) as Correlativo FROM VentaTB WHERE FechaCorrelativo = CAST(GETDATE() AS DATE)");
+            $cmdCorrelativo = Database::getInstance()->getDb()->prepare("SELECT MAX(ISNULL(Correlativo,0)) as Correlativo 
+            FROM VentaTB 
+            WHERE FechaCorrelativo = CAST(GETDATE() AS DATE)");
             $cmdCorrelativo->execute();
             $resultCorrelativo = $cmdCorrelativo->fetchColumn();
 
@@ -682,6 +674,16 @@ class VentasADO
             $cmdDetail->bindParam(1, $idVenta, PDO::PARAM_STR);
             $cmdDetail->execute();
             $count = 0;
+
+            $cmdVentaCredito = Database::getInstance()->getDb()->prepare("SELECT 
+            FechaPago,
+            Monto,
+            Estado 
+            FROM VentaCreditoTB 
+            WHERE IdVenta = ?");
+            $cmdVentaCredito->bindParam(1, $idVenta, PDO::PARAM_STR);
+            $cmdVentaCredito->execute();
+            $resultCredito = $cmdVentaCredito->fetchAll(PDO::FETCH_OBJ);
 
             while ($rowdetailt = $cmdDetail->fetch()) {
                 $count++;
@@ -717,20 +719,29 @@ class VentasADO
             }
 
             $cmdEmpresa = Database::getInstance()->getDb()->prepare("SELECT TOP 1 
-            d.IdAuxiliar,e.NumeroDocumento,e.RazonSocial,e.NombreComercial,e.Domicilio,
+            d.IdAuxiliar,
+            e.NumeroDocumento,
+            e.RazonSocial,
+            e.NombreComercial,
+            e.Domicilio,
             dbo.Fc_Obtener_Ubigeo(Ubigeo) as CodigoUbigeo,
             dbo.Fc_Obtener_Departamento(Ubigeo) as Departamento,
             dbo.Fc_Obtener_Provincia(Ubigeo) as Provincia,
             dbo.Fc_Obtener_Distrito(Ubigeo) as Distrito,
             e.Telefono,e.Email,
             e.UsuarioSol,e.ClaveSol 
-            FROM EmpresaTB AS e INNER JOIN DetalleTB AS d ON e.TipoDocumento = d.IdDetalle AND d.IdMantenimiento = '0003'");
+            FROM EmpresaTB AS e 
+            INNER JOIN DetalleTB AS d ON e.TipoDocumento = d.IdDetalle AND d.IdMantenimiento = '0003'");
             $cmdEmpresa->execute();
             $resultEmpresa = $cmdEmpresa->fetchObject();
 
-            $cmdCliente = Database::getInstance()->getDb()->prepare("SELECT d.IdAuxiliar,c.NumeroDocumento,c.Informacion
-            FROM ClienteTB AS c INNER JOIN VentaTB AS v ON c.IdCliente = v.Cliente
-            INNER JOIN DetalleTB as d on c.TipoDocumento = d.IdDetalle and d.IdMantenimiento = '0003'
+            $cmdCliente = Database::getInstance()->getDb()->prepare("SELECT 
+            d.IdAuxiliar,
+            c.NumeroDocumento,
+            c.Informacion
+            FROM ClienteTB AS c 
+            INNER JOIN VentaTB AS v ON c.IdCliente = v.Cliente
+            INNER JOIN DetalleTB AS d ON c.TipoDocumento = d.IdDetalle AND d.IdMantenimiento = '0003'
             WHERE v.IdVenta = ? ");
             $cmdCliente->bindParam(1, $idVenta, PDO::PARAM_STR);
             $cmdCliente->execute();
@@ -750,7 +761,8 @@ class VentasADO
                 $resultEmpresa,
                 $resultCliente,
                 $resultVenta,
-                $resultCorrelativo
+                $resultCorrelativo,
+                $resultCredito
             );
 
             return $lista;
@@ -867,7 +879,6 @@ class VentasADO
             return $ex->getMessage();
         }
     }
-
 
     public static function ListarComprobanteParaNotaCredito($comprobante)
     {
@@ -1080,7 +1091,6 @@ class VentasADO
         }
     }
 
-
     public static function ListarNotificaciones()
     {
         try {
@@ -1224,7 +1234,6 @@ class VentasADO
             return $ex->getMessage();
         }
     }
-
 
     public static function GetDetalleId($idMantenimiento)
     {
@@ -1373,9 +1382,10 @@ class VentasADO
             ,ValorImpuesto          
             ,Bonificacion
             ,PorLlevar
-            ,Estado)
+            ,Estado
+            ,IdMedida)
             VALUES
-            (?,?,?,?,?,?,?,?,?,?,?,?,?)");
+            (?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
 
             $cmdSuministroUpdate = Database::getInstance()->getDb()->prepare("UPDATE SuministroTB SET Cantidad = Cantidad - ? WHERE IdSuministro = ?");
 
@@ -1413,7 +1423,8 @@ class VentasADO
                     $value["impuestoValor"],
                     $value["bonificacion"],
                     $cantidad,
-                    "C"
+                    "C",
+                    $value["unidadCompra"]
                 ));
 
                 if ($value["inventario"] == "1" && $value["valorInventario"] == "1") {
@@ -1647,9 +1658,10 @@ class VentasADO
             ,ValorImpuesto          
             ,Bonificacion
             ,PorLlevar
-            ,Estado)
+            ,Estado
+            ,IdMedida)
             VALUES
-            (?,?,?,?,?,?,?,?,?,?,?,?,?)");
+            (?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
 
             $cmdSuministroUpdate = Database::getInstance()->getDb()->prepare("UPDATE SuministroTB SET Cantidad = Cantidad - ? WHERE IdSuministro = ?");
 
@@ -1687,7 +1699,8 @@ class VentasADO
                     $value["impuestoValor"],
                     $value["bonificacion"],
                     $cantidad,
-                    "C"
+                    "C",
+                    $value["unidadCompra"]
                 ));
 
                 if ($value["inventario"] == "1" && $value["valorInventario"] == "1") {
@@ -1877,9 +1890,10 @@ class VentasADO
             ,ValorImpuesto          
             ,Bonificacion
             ,PorLlevar
-            ,Estado)
+            ,Estado
+            ,IdMedida)
             VALUES
-            (?,?,?,?,?,?,?,?,?,?,?,?,?)");
+            (?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
 
             foreach ($body["Lista"] as $value) {
                 // $cantidad = $value["valorInventario"] == 2 ? $value["importeNeto"] / $value["precioVentaGeneralAuxiliar"] : $value["cantidad"];
@@ -1901,7 +1915,8 @@ class VentasADO
                     $value["impuestoValor"],
                     $value["bonificacion"],
                     0,
-                    "L"
+                    "L",
+                    $value["unidadCompra"]
                 ));
             }
 

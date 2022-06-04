@@ -6,7 +6,7 @@
                 </div>
 
                 <div class="m-1">
-                        <p class="app-sidebar__user-name"><?php echo $_SESSION["RolName"] ?></p>
+                        <p class="app-sidebar__user-name">TIENDA FRANCIA</p>
                 </div>
         </div>
         <ul class="app-menu">

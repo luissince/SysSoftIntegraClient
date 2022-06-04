@@ -13,7 +13,7 @@ if (isset($_SESSION['IdEmpleado'])) {
     </head>
 
     <body>
-        <section class="material-half-bg">
+        <section class="material-half-bg-white">
             <div class="cover"></div>
         </section>
         <section class="login-content">
@@ -32,7 +32,9 @@ if (isset($_SESSION['IdEmpleado'])) {
                 <div class="tile-body">
                     <div class="login-box">
                         <div class="login-form">
-                            <h4 class="login-head"><img class="img-fluid" src="./images/logo.png" alt="Logo" width="140" /></h4>
+                            <h4 class="text-center mb-3">
+                                <img class="img-fluid" src="./images/logo.png" alt="Logo" />
+                            </h4>
                             <h4 class="login-head"><i class="fa fa-lg fa-fw fa-user"></i>Credenciales de Acceso</h4>
                             <div class="form-group">
                                 <label class="control-label">Usuario</label>
@@ -49,10 +51,10 @@ if (isset($_SESSION['IdEmpleado'])) {
                                 <label class="control-label text-danger" id="lblErrorMessage"></label>
                             </div>
 
-                            <div class="form-group btn-container text-center">
+                            <!-- <div class="form-group btn-container text-center">
                                 <span>Usuario: admin</span>
                                 <span>Clave: admin</span>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
                 </div>

@@ -78,7 +78,7 @@
                     Copyright ©
                     <script>
                         document.write(new Date().getFullYear());
-                    </script>2021 Todos los derechos reservados |
+                    </script> Todos los derechos reservados |
                     Desarrollado por <a href="index.html" target="_blank" class="text-creator">SysSoft Integra</a>
                 </span>
             </div>

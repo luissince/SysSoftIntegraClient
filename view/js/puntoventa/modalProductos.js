@@ -107,20 +107,7 @@ function ModalProductos() {
             arrayProductos = object.data;
             if (arrayProductos.length === 0) {
                 tools.loadTableMessage(tbListProductos, "No hay datos para mostrar", 7);
-                ulPaginationProductos.html(`
-                <button class="btn btn-outline-secondary">
-                    <i class="fa fa-angle-double-left"></i>
-                </button>
-                <button class="btn btn-outline-secondary">
-                    <i class="fa fa-angle-left"></i>
-                </button>
-                <span class="btn btn-outline-secondary disabled">0 - 0</span>
-                <button class="btn btn-outline-secondary">
-                    <i class="fa fa-angle-right"></i>
-                </button>
-                <button class="btn btn-outline-secondary">
-                    <i class="fa fa-angle-double-right"></i>
-                </button>`);
+                tools.paginationEmpty(ulPaginationProductos);
                 stateProductos = false;
             } else {
                 for (let producto of arrayProductos) {
@@ -167,20 +154,7 @@ function ModalProductos() {
             }
         } catch (error) {
             tools.loadTableMessage(tbListProductos, tools.messageError(error), 7, true);
-            ulPaginationProductos.html(`
-                <button class="btn btn-outline-secondary">
-                    <i class="fa fa-angle-double-left"></i>
-                </button>
-                <button class="btn btn-outline-secondary">
-                    <i class="fa fa-angle-left"></i>
-                </button>
-                <span class="btn btn-outline-secondary disabled">0 - 0</span>
-                <button class="btn btn-outline-secondary">
-                    <i class="fa fa-angle-right"></i>
-                </button>
-                <button class="btn btn-outline-secondary">
-                    <i class="fa fa-angle-double-right"></i>
-                </button>`);
+            tools.paginationEmpty(ulPaginationProductos);
             stateProductos = false;
         }
     }
@@ -200,6 +174,9 @@ function ModalProductos() {
                         "cantidad": cantidad,
                         "costoCompra": parseFloat(suministro.PrecioCompra),
                         "bonificacion": 0,
+                        "unidadCompra": suministro.UnidadCompra,
+                        "unidadCompraName": suministro.UnidadCompraName,
+
                         "descuento": 0,
                         "descuentoCalculado": 0,
                         "descuentoSumado": 0,

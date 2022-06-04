@@ -205,6 +205,42 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     tools.paginationEmpty(ulPagination);
                 }
             }
+
+            function onEventPaginacionInicio(value) {
+                if (!state) {
+                    if (value !== paginacion) {
+                        paginacion = value;
+                        onEventPaginacion();
+                    }
+                }
+            }
+
+            function onEventPaginacionFinal(value) {
+                if (!state) {
+                    if (value !== paginacion) {
+                        paginacion = value;
+                        onEventPaginacion();
+                    }
+                }
+            }
+
+            function onEventAnteriorPaginacion() {
+                if (!state) {
+                    if (paginacion > 1) {
+                        paginacion--;
+                        onEventPaginacion();
+                    }
+                }
+            }
+
+            function onEventSiguientePaginacion() {
+                if (!state) {
+                    if (paginacion < totalPaginacion) {
+                        paginacion++;
+                        onEventPaginacion();
+                    }
+                }
+            }
         </script>
     </body>
 

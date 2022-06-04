@@ -15054,7 +15054,7 @@ be a descendant of the grid when it is being dragged.
   width: 230px;
   overflow: auto;
   z-index: 10;
-  background-color: var(--dark);
+  background-color: var(--white);
   -webkit-box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2);
   box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2);
   -webkit-transition: left 0.3s ease, width 0.3s ease;
@@ -15108,7 +15108,7 @@ be a descendant of the grid when it is being dragged.
 .app-sidebar__user-name {
   font-size: 14px;
   line-height: 1.3;
-  color: var(--white);
+  color: var(--dark);
   text-align: center;
   margin-top: 5px;
 }
@@ -15141,7 +15141,7 @@ be a descendant of the grid when it is being dragged.
   -webkit-transition: border-left-color 0.3s ease, background-color 0.3s ease;
   -o-transition: border-left-color 0.3s ease, background-color 0.3s ease;
   transition: border-left-color 0.3s ease, background-color 0.3s ease;
-  color: var(--gray);
+  color: var(--dark);
 }
 
 .app-menu__item.active,
@@ -15169,8 +15169,8 @@ be a descendant of the grid when it is being dragged.
 
 .treeview.is-expanded [data-toggle="treeview"] {
   border-left-color: #fe104c;
-  background: #0d1214;
-  color: white;
+  background: var(--gray);
+  color: var(--dark);
 }
 
 .treeview.is-expanded .treeview-menu {
@@ -15189,7 +15189,7 @@ be a descendant of the grid when it is being dragged.
   -webkit-transition: max-height 0.3s ease;
   -o-transition: max-height 0.3s ease;
   transition: max-height 0.3s ease;
-  background: #0d1214;
+  background: var(--gray-light);
 }
 
 .treeview-item {

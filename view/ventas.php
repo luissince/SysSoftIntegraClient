@@ -450,7 +450,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     } else {
 
                         for (let venta of arrayVentas) {
-                            let anular = '<button class="btn btn-danger btn-sm" onclick="anularVenta(\'' + venta.IdVenta + '\')"><i class="fa fa-ban"></i></button>';
+                            let anular = '<button class="btn btn-danger" onclick="anularVenta(\'' + venta.IdVenta + '\')"><i class="fa fa-ban"></i></button>';
                             let pdf = '<button class="btn btn-secondary btn-sm"  onclick="openPdf(\'' + venta.IdVenta + '\')"><img src="./images/pdf.svg" width="26" /> </button>';
                             let ver = '<button class="btn btn-secondary btn-sm" onclick="opeModalDetalleVenta(\'' + venta.IdVenta + '\')"><img src="./images/file.svg" width="26" /></button>';
 
