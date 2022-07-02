@@ -3,3 +3,5 @@
 app/files
 app/cache
 resource/catalogo
+
+.env

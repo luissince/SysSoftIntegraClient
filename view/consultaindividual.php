@@ -248,7 +248,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     },
                     beforeSend: function() {
                         $("#lblRutaDescarga").html('');
-                        tools.ModalAlertInfo("Consultar Comprobante", "Procesando petición..");
+                        tools.ModalAlertInfo("Consultar Comprobante", "Procesando petición...");
                     },
                     success: function(result) {
                         if (result.state === true) {
