@@ -5,6 +5,14 @@ namespace SysSoftIntegra\Src;
 class Tools
 {
 
+    public static function log($texto)
+    {
+        $ddf = fopen('error.log', 'a');
+        fopen('error.log', 'a');
+        fwrite($ddf,"[".date("r")."]: $texto\r\n"); 
+        fclose($ddf);
+    }
+
     public static function validateDuplicateSuministro($array, $oject)
     {
         $ret = false;

@@ -1,14 +1,12 @@
 <?php
 
-require './lib/mpdf/vendor/autoload.php';
-require './lib/phpqrcode/vendor/autoload.php';
-require './../src/autoload.php';
-
 use SysSoftIntegra\Model\NotaCreditoADO;
 use SysSoftIntegra\Src\NumberLleters;
 use SysSoftIntegra\Src\Tools;
 use chillerlan\QRCode\QRCode;
 use Mpdf\Mpdf;
+
+require './../src/autoload.php';
 
 $idNotaCredito = $_GET["idNotaCredito"];
 $result = NotaCreditoADO::ObtenerNotaCreditoById($idNotaCredito);

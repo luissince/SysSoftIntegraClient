@@ -1,17 +1,15 @@
 <?php
 
-require  './lib/mpdf/vendor/autoload.php';
-require  './lib/phpqrcode/vendor/autoload.php';
-require  './../src/autoload.php';
 ini_set('max_execution_time', '500');
 ini_set("pcre.backtrack_limit", "10000000");
 ini_set('memory_limit', '-1');
-
 
 use SysSoftIntegra\Model\SuministrosADO;
 use SysSoftIntegra\Model\EmpresaADO;
 use SysSoftIntegra\Src\Tools;
 use Mpdf\Mpdf;
+
+require  './../src/autoload.php';
 
 if (isset($_GET["marca"]) && isset($_GET["categoria"]) && isset($_GET["presentacion"]) && isset($_GET["unidad"])) {
     $empresa = EmpresaADO::ObtenerEmpresa();

@@ -1,12 +1,11 @@
 <?php
 
 define('_MPDF_PATH', '/lib');
-require('./lib/mpdf/vendor/autoload.php');
-require_once("./lib/phpqrcode/qrlib.php");
-require  './../src/autoload.php';
 
 use SysSoftIntegra\Src\NumberLleters;
 use SysSoftIntegra\Model\VentasADO;
+
+require  './../src/autoload.php';
 
 $ventaDatos = VentasADO::ListVentaDetalle($_GET["idVenta"]);
 
@@ -32,7 +31,7 @@ if ($ventaDatos["estado"] == 1) {
         . '|' . $venta->NumeroDocumento
         . '|';
 
-    $qrCode = QrCode::png($textoCodBar, 'codbar.png', 'L', 4, 2);
+    // $qrCode = QrCode::png($textoCodBar, 'codbar.png', 'L', 4, 2);
 
     $html .= '<html>
         <head>

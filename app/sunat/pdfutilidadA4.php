@@ -1,12 +1,11 @@
 <?php
 
-require './lib/mpdf/vendor/autoload.php';
-require './../src/autoload.php';
-
 use SysSoftIntegra\Model\VentasADO;
 use SysSoftIntegra\Model\EmpresaADO;
 use SysSoftIntegra\Src\Tools;
 use Mpdf\Mpdf;
+
+require './../src/autoload.php';
 
 $result = VentasADO::ListarUtilidad($_GET["fechaInicial"], $_GET["fechaFinal"], $_GET["idSuministro"], $_GET["idCategoria"], $_GET["idMarca"], $_GET["idPresentacion"]);
 if (!is_array($result)) {

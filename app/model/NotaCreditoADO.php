@@ -3,13 +3,10 @@
 namespace SysSoftIntegra\Model;
 
 use SysSoftIntegra\Src\Tools;
-use Database;
+use SysSoftIntegra\DataBase\Database;
 use PDO;
-use PDOException;
 use Exception;
-use DateTime;
 
-require_once __DIR__ . './../database/DataBaseConexion.php';
 
 class NotaCreditoADO
 {

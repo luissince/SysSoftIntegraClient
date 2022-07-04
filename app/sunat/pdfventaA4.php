@@ -1,14 +1,12 @@
 <?php
 
-require './lib/mpdf/vendor/autoload.php';
-require './lib/phpqrcode/vendor/autoload.php';
-require './../src/autoload.php';
-
 use SysSoftIntegra\Model\VentasADO;
 use SysSoftIntegra\Src\NumberLleters;
 use SysSoftIntegra\Src\Tools;
 use chillerlan\QRCode\QRCode;
 use Mpdf\Mpdf;
+
+require './../src/autoload.php';
 
 $result = VentasADO::ReporteVentaDetalle($_GET["idVenta"]);
 

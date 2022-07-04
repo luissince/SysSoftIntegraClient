@@ -2,15 +2,14 @@
 
 set_time_limit(300); //evita el error 20 segundos de peticion
 
-require  "/lib/phpspreadsheet/vendor/autoload.php";
-require './../src/autoload.php';
-
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use SysSoftIntegra\Model\VentasADO;
+
+require './../src/autoload.php';
 
 $result = VentasADO::ResumenProductoVendidos($_GET["fechaInicio"], $_GET["fechaFinal"], intval($_GET["marca"]), intval($_GET["categoria"]));
 if (!is_array($result)) {

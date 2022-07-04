@@ -2,18 +2,11 @@
 
 namespace SysSoftIntegra\Model;
 
-use Database;
+use Intervention\Image\ImageManagerStatic;
+use SysSoftIntegra\DataBase\Database;
 use PDO;
-use PDOException;
 use Exception;
 use DateTime;
-
-require __DIR__ . './../sunat/lib/interventionimage/vendor/autoload.php';
-
-use Intervention\Image\ImageManagerStatic as Image;
-
-require_once __DIR__ . './../database/DataBaseConexion.php';
-
 
 class SuministrosADO
 {
@@ -596,12 +589,12 @@ class SuministrosADO
                             $filename = $idSuministro . $date->format('Ymd') . $date->format('His') . "." . $suministro["Ext"];
                             $path = $fileDir . '/' . $filename;
 
-                            $img = Image::make($image);
+                            $img = ImageManagerStatic::make($image);
                             $img->save($path);
                             // $imagedetails = getimagesize($path);
                             // $width = $imagedetails[0];
                             // if ($width > 600) {
-                            $img = Image::make($path);
+                            $img = ImageManagerStatic::make($path);
                             $img->resize(600, 600, function ($const) {
                                 $const->aspectRatio();
                                 $const->upsize();
@@ -846,12 +839,12 @@ class SuministrosADO
                                     unlink($remove);
                                 }
 
-                                $img = Image::make($image);
+                                $img = ImageManagerStatic::make($image);
                                 $img->save($path);
                                 // $imagedetails = getimagesize($path);
                                 // $width = $imagedetails[0];
                                 // if ($width > 600) {
-                                $img = Image::make($path);
+                                $img = ImageManagerStatic::make($path);
                                 $img->resize(600, 600, function ($const) {
                                     $const->aspectRatio();
                                     $const->upsize();

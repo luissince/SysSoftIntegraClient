@@ -34,8 +34,8 @@ class Autoload_Static
             'SysSoftIntegra\\Src\\SoapBuilder' => __DIR__  . '/SoapBuilder.php',
             'SysSoftIntegra\\Src\\NumberLleters' => __DIR__  . '/NumberLleters.php',
             'SysSoftIntegra\\Src\\GenerateXml' => __DIR__  . '/GenerateXml.php',
-            'SysSoftIntegra\\Src\\GenerateXml' => __DIR__  . '/GenerateXml.php',
-            'Phpspreadsheet\\Vendor\\Autload' => __DIR__ . '/../sunat/lib/phpspreadsheet/vendor/autoload.php',
+            'SysSoftIntegra\\DataBase\\Database' => __DIR__  . '/../database/DataBaseConexion.php',
+            'SysSoftIntegra\\Src\\ConfigHeader' => __DIR__  . '/ConfigHeader.php',
             'RobRichards\\XMLSecLibs\\XMLSecurityDSig' => __DIR__ . '/../sunat/lib/robrichards/src/XMLSecurityDSig.php',
             'RobRichards\\XMLSecLibs\\XMLSecurityKey' => __DIR__ . '/../sunat/lib/robrichards/src/XMLSecurityKey.php'
         );

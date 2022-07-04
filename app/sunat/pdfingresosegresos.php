@@ -1,12 +1,12 @@
 <?php
-require  './lib/mpdf/vendor/autoload.php';
-require  './../src/autoload.php';
 
 use SysSoftIntegra\Model\IngresoADO;
 use SysSoftIntegra\Model\CajaADO;
 use SysSoftIntegra\Model\EmpresaADO;
 use SysSoftIntegra\Src\Tools;
 use Mpdf\Mpdf;
+
+require  './../src/autoload.php';
 
 $title = "RESUMEN DE INGRESOS";
 $resultTransaccion = IngresoADO::ReporteGeneralIngresosEgresos($_GET["txtFechaInicial"], $_GET["txtFechaFinal"],  $_GET["usuario"],  $_GET["idUsuario"]);

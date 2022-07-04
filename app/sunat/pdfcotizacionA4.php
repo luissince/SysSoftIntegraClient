@@ -1,12 +1,11 @@
 <?php
 
-require './lib/mpdf/vendor/autoload.php';
-require './../src/autoload.php';
-
 use SysSoftIntegra\Model\CotizacionADO;
 use SysSoftIntegra\Src\NumberLleters;
 use SysSoftIntegra\Src\Tools;
 use Mpdf\Mpdf;
+
+require './../src/autoload.php';
 
 $result = CotizacionADO::ReporteCotizacionDetalle($_GET["idCotizacion"]);
 

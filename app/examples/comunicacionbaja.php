@@ -1,18 +1,15 @@
 <?php
 
 set_time_limit(300);
-session_start();
-
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
-header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
-header('Content-Type: application/json; charset=UTF-8');
 
 use SysSoftIntegra\Src\SoapResult;
 use SysSoftIntegra\Src\Sunat;
 use SysSoftIntegra\Model\VentasADO;
+use SysSoftIntegra\Src\ConfigHeader;
 
 require __DIR__ . './../src/autoload.php';
+
+new ConfigHeader();
 
 $idventa = $_GET['idventa'];
 $detalleventa = VentasADO::ListarDetalleVentPorId($idventa);
