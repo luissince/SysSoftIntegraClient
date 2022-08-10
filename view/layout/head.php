@@ -1,4 +1,4 @@
-<meta name="description" content="Sistema para el control de cliente y pagos del Gimnasio Apple Gym">
+<meta name="description" content="Sistema de ventas">
 <!-- Open Graph Meta-->
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
