@@ -82,8 +82,10 @@ function ModalVentaEchas() {
         try {
             let result = await tools.promiseFetchGet("../app/controller/VentaController.php", {
                 "type": "ventasEchas",
+                "tipo": true,
                 "opcion": opcion,
                 "buscar": buscar,
+                "empleado": idEmpleado,
                 "posicionPagina": ((paginacionVentasEchas - 1) * filasPorPaginaVentasEchas),
                 "filasPorPagina": filasPorPaginaVentasEchas
             }, function () {

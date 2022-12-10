@@ -66,7 +66,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                     <label class="form-text">Nombre Comercial: <i class="fa fa-fw fa-asterisk text-danger"></i></label>
                                     <div class="form-group">
                                         <input id="txtNomComercial" class="form-control" type="text" placeholder="Nombre Comercial">
-
                                     </div>
                                 </div>
                             </div>

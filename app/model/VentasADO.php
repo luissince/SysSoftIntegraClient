@@ -3,6 +3,7 @@
 namespace SysSoftIntegra\Model;
 
 use SysSoftIntegra\DataBase\Database;
+use SysSoftIntegra\Src\Response;
 use PDO;
 use PDOException;
 use Exception;
@@ -68,43 +69,22 @@ class VentasADO
             $comandoTotal->execute();
             $resultTotal = $comandoTotal->fetchColumn();
 
-            $comandoSuma = Database::getInstance()->getDb()->prepare("SELECT 
-            ISNULL(sum(dv.Cantidad*(dv.PrecioVenta-dv.Descuento)),0) AS Total
-            FROM VentaTB as v 
-            INNER JOIN DetalleVentaTB as dv on dv.IdVenta = v.IdVenta
-            LEFT JOIN NotaCreditoTB as nc on nc.IdVenta = v.IdVenta
-            WHERE 
-            CAST(v.FechaVenta AS DATE) BETWEEN ? AND ? AND v.Tipo = 1 AND v.Estado = 1 and nc.IdNotaCredito is null
-            OR
-            CAST(v.FechaVenta AS DATE) BETWEEN ? AND ? AND v.Tipo = 2 AND v.Estado = 1 and nc.IdNotaCredito is null
-            OR
-            CAST(v.FechaVenta AS DATE) BETWEEN ? AND ? AND v.Tipo = 1 AND v.Estado = 4 and nc.IdNotaCredito is null
-            ");
+            $comandoSuma = Database::getInstance()->getDb()->prepare("{CALL Sp_Sumar_Ventas_Realizadas_All(?,?)}");
             $comandoSuma->bindParam(1, $fechaInicial, PDO::PARAM_STR);
             $comandoSuma->bindParam(2, $fechaFinal, PDO::PARAM_STR);
-            $comandoSuma->bindParam(3, $fechaInicial, PDO::PARAM_STR);
-            $comandoSuma->bindParam(4, $fechaFinal, PDO::PARAM_STR);
-            $comandoSuma->bindParam(5, $fechaInicial, PDO::PARAM_STR);
-            $comandoSuma->bindParam(6, $fechaFinal, PDO::PARAM_STR);
             $comandoSuma->execute();
             $resultSuma = 0;
             if ($row = $comandoSuma->fetch()) {
                 $resultSuma = floatval(round($row["Total"], 2, PHP_ROUND_HALF_UP));
             }
 
-            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-            header($protocol . ' ' . 200 . ' ' . "OK");
-
-            return array(
+            Response::sendSuccess([
                 "data" => $arrayVenta,
                 "total" => $resultTotal,
                 "suma" => $resultSuma
-            );
+            ]);
         } catch (Exception $ex) {
-            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
-
-            return $ex->getMessage();
+            Response::sendError($ex->getMessage());
         }
     }
 
@@ -194,19 +174,12 @@ class VentasADO
                 ));
             }
 
-
-            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-            header($protocol . ' ' . 200 . ' ' . "OK");
-
-            return array(
+            Response::sendSuccess([
                 "venta" => $venta,
                 "ventadetalle" => $ventadetalle
-            );
+            ]);
         } catch (Exception $ex) {
-            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
-
-            return $ex->getMessage();
+            Response::sendError($ex->getMessage());
         }
     }
 
@@ -429,15 +402,17 @@ class VentasADO
         }
     }
 
-    public static function ListVentasMostrarLibres($opcion, $search, $posicionPagina, $filasPorPagina)
+    public static function ListVentasMostrarLibres($tipo, $opcion, $search, $empleado, $posicionPagina, $filasPorPagina)
     {
         try {
 
-            $cmdVenta = Database::getInstance()->getDb()->prepare("{CALL Sp_Listar_Ventas_Mostrar(?,?,?,?)}");
-            $cmdVenta->bindParam(1, $opcion, PDO::PARAM_INT);
-            $cmdVenta->bindParam(2, $search, PDO::PARAM_STR);
-            $cmdVenta->bindParam(3, $posicionPagina, PDO::PARAM_INT);
-            $cmdVenta->bindParam(4, $filasPorPagina, PDO::PARAM_INT);
+            $cmdVenta = Database::getInstance()->getDb()->prepare("{CALL Sp_Listar_Ventas_Mostrar(?,?,?,?,?,?)}");
+            $cmdVenta->bindParam(1, $tipo, PDO::PARAM_BOOL);
+            $cmdVenta->bindParam(2, $opcion, PDO::PARAM_INT);
+            $cmdVenta->bindParam(3, $search, PDO::PARAM_STR);
+            $cmdVenta->bindParam(4, $empleado, PDO::PARAM_STR);
+            $cmdVenta->bindParam(5, $posicionPagina, PDO::PARAM_INT);
+            $cmdVenta->bindParam(6, $filasPorPagina, PDO::PARAM_INT);
             $cmdVenta->execute();
 
             $count = 0;
@@ -462,24 +437,20 @@ class VentasADO
                 ));
             }
 
-            $cmdTotal = Database::getInstance()->getDb()->prepare("{CALL Sp_Listar_Ventas_Mostrar_Count(?,?)}");
-            $cmdTotal->bindParam(1, $opcion, PDO::PARAM_INT);
-            $cmdTotal->bindParam(2, $search, PDO::PARAM_STR);
+            $cmdTotal = Database::getInstance()->getDb()->prepare("{CALL Sp_Listar_Ventas_Mostrar_Count(?,?,?,?)}");
+            $cmdTotal->bindParam(1, $tipo, PDO::PARAM_BOOL);
+            $cmdTotal->bindParam(2, $opcion, PDO::PARAM_INT);
+            $cmdTotal->bindParam(3, $search, PDO::PARAM_STR);
+            $cmdTotal->bindParam(4, $empleado, PDO::PARAM_STR);
             $cmdTotal->execute();
             $resultTotal = $cmdTotal->fetchColumn();
 
-            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-            header($protocol . ' ' . 200 . ' ' . "OK");
-
-            return array(
+            Response::sendSuccess([
                 "data" => $arrayVenta,
                 "total" => $resultTotal
-            );
+            ]);
         } catch (Exception $ex) {
-            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
-
-            return $ex->getMessage();
+            Response::sendError($ex->getMessage());
         }
     }
 

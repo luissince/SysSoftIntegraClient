@@ -1,4 +1,5 @@
 <?php
+
 use SysSoftIntegra\Model\VentasADO;
 use SysSoftIntegra\Src\ConfigHeader;
 
@@ -16,11 +17,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         $estado = $_GET['estado'];
         $posicionPagina = $_GET['posicionPagina'];
         $filasPorPagina = $_GET['filasPorPagina'];
-        print json_encode(VentasADO::ListVentas($opcion, $busqueda, $fechaInicial, $fechaFinal, $comprobante, $estado, $posicionPagina, $filasPorPagina));
-        exit();
+        VentasADO::ListVentas($opcion, $busqueda, $fechaInicial, $fechaFinal, $comprobante, $estado, $posicionPagina, $filasPorPagina);
     } else if ($_GET["type"] == "ventadetalle") {
-        print json_encode(VentasADO::ListVentaDetalle($_GET['idVenta']));
-        exit();
+        VentasADO::ListVentaDetalle($_GET['idVenta']);
     } else if ($_GET["type"] == "listComprobantes") {
         $opcion = $_GET['opcion'];
         $busqueda = $_GET['busqueda'];
@@ -48,8 +47,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         print json_encode(VentasADO::ListarDetalleNotificaciones(intval($_GET['posicionPagina']), intval($_GET['filasPorPagina'])));
         exit();
     } else if ($_GET["type"] == "ventasEchas") {
-        print json_encode(VentasADO::ListVentasMostrarLibres(intval($_GET["opcion"]), $_GET["buscar"], intval($_GET["posicionPagina"]), intval($_GET["filasPorPagina"])));
-        exit();
+        VentasADO::ListVentasMostrarLibres(
+            $_GET["tipo"],
+            intval($_GET["opcion"]),
+            $_GET["buscar"],
+            $_GET["empleado"],
+            intval($_GET["posicionPagina"]),
+            intval($_GET["filasPorPagina"])
+        );
     } else if ($_GET["type"] == "ventaAgregar") {
         print json_encode(VentasADO::VentaAgregarTerminar($_GET["idVenta"]));
         exit();

@@ -27,13 +27,17 @@ class Autoload_Static
             'SysSoftIntegra\\Model\\RolADO' => __DIR__  . '/../model/RolADO.php',
             'SysSoftIntegra\\Model\\NotaCreditoADO' => __DIR__  . '/../model/NotaCreditoADO.php',
             'SysSoftIntegra\\Model\\DashboardADO' => __DIR__  . '/../model/DashboardADO.php',
+            
             'SysSoftIntegra\\Controller\\BaseController' => __DIR__  . '/../controller/BaseController.php',
+           
             'SysSoftIntegra\\Src\\Sunat' => __DIR__  . '/Sunat.php',
             'SysSoftIntegra\\Src\\Tools' => __DIR__  . '/Tools.php',
             'SysSoftIntegra\\Src\\SoapResult' => __DIR__  . '/SoapResult.php',
             'SysSoftIntegra\\Src\\SoapBuilder' => __DIR__  . '/SoapBuilder.php',
             'SysSoftIntegra\\Src\\NumberLleters' => __DIR__  . '/NumberLleters.php',
             'SysSoftIntegra\\Src\\GenerateXml' => __DIR__  . '/GenerateXml.php',
+            'SysSoftIntegra\\Src\\Response' => __DIR__  . '/Response.php',
+
             'SysSoftIntegra\\DataBase\\Database' => __DIR__  . '/../database/DataBaseConexion.php',
             'SysSoftIntegra\\Src\\ConfigHeader' => __DIR__  . '/ConfigHeader.php',
             'RobRichards\\XMLSecLibs\\XMLSecurityDSig' => __DIR__ . '/../sunat/lib/robrichards/src/XMLSecurityDSig.php',
