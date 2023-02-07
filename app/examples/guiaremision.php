@@ -164,7 +164,7 @@ $cac_party_legal_entity = $xml->createElement('cac:PartyLegalEntity');
 $cbc = $xml->createElement('cbc:RegistrationName');
 $cbc->appendChild($xml->createCDATASection("TRANSPORTES S.A.C"));
 $cbc = $cac_party_legal_entity->appendChild($cbc);
-$cbc = $xml->createElement('cbc:CompanyID','0001');
+$cbc = $xml->createElement('cbc:CompanyID', '0001');
 $cbc = $cac_party_legal_entity->appendChild($cbc);
 $cac_party_legal_entity = $cac_carrier_party->appendChild($cac_party_legal_entity);
 
@@ -172,12 +172,12 @@ $cac_party_legal_entity = $cac_carrier_party->appendChild($cac_party_legal_entit
 $cac_delivery = $xml->createElement('cac:Delivery');
 $cac_delivery = $cac_shipment->appendChild($cac_delivery);
 $cac_delivery_address = $xml->createElement('cac:DeliveryAddress');
-$cbc = $xml->createElement('cbc:ID','150101');
+$cbc = $xml->createElement('cbc:ID', '150101');
 $cbc->setAttribute('schemeAgencyName', "PE:INEI");
 $cbc->setAttribute('schemeName', "Ubigeos");
 $cbc = $cac_delivery_address->appendChild($cbc);
 $cac_address_line = $xml->createElement('cac:AddressLine');
-$cbc = $xml->createElement('cbc:Line','AV LIMA');
+$cbc = $xml->createElement('cbc:Line', 'AV LIMA');
 $cbc = $cac_address_line->appendChild($cbc);
 $cac_address_line = $cac_delivery_address->appendChild($cac_address_line);
 $cac_delivery_address = $cac_delivery->appendChild($cac_delivery_address);
@@ -185,25 +185,25 @@ $cac_delivery_address = $cac_delivery->appendChild($cac_delivery_address);
 $cac_despatch = $xml->createElement('cac:Despatch');
 $cac_despatch = $cac_delivery->appendChild($cac_despatch);
 $cac_despatch_address = $xml->createElement('cac:DespatchAddress');
-$cbc = $xml->createElement('cbc:ID','150203');
+$cbc = $xml->createElement('cbc:ID', '150203');
 $cbc->setAttribute('schemeAgencyName', "PE:INEI");
 $cbc->setAttribute('schemeName', "Ubigeos");
 $cbc = $cac_despatch_address->appendChild($cbc);
 $cac_address_line = $xml->createElement('cac:AddressLine');
-$cbc = $xml->createElement('cbc:Line','AV ITALIA');
+$cbc = $xml->createElement('cbc:Line', 'AV ITALIA');
 $cbc = $cac_address_line->appendChild($cbc);
 $cac_address_line = $cac_despatch_address->appendChild($cac_address_line);
 $cac_despatch_address = $cac_despatch->appendChild($cac_despatch_address);
 
 $cac_despatch_line = $xml->createElement('cac:DespatchLine');
-$cbc = $xml->createElement('cbc:ID','1');
+$cbc = $xml->createElement('cbc:ID', '1');
 $cbc = $cac_despatch_line->appendChild($cbc);
-$cbc = $xml->createElement('cbc:DeliveredQuantity','2');
+$cbc = $xml->createElement('cbc:DeliveredQuantity', '2');
 $cbc->setAttribute('unitCode', "ZZ");
 $cbc = $cac_despatch_line->appendChild($cbc);
 
 $cac_order_line_reference = $xml->createElement('cac:OrderLineReference');
-$cbc = $xml->createElement('cbc:LineID','1');
+$cbc = $xml->createElement('cbc:LineID', '1');
 $cbc = $cac_order_line_reference->appendChild($cbc);
 $cac_order_line_reference = $cac_despatch_line->appendChild($cac_order_line_reference);
 
@@ -213,7 +213,7 @@ $cbc->appendChild($xml->createCDATASection("PROD 1"));
 $cbc = $cac_item->appendChild($cbc);
 
 $cac_sellers_item_identification = $xml->createElement('cac:SellersItemIdentification');
-$cbc = $xml->createElement('cbc:ID','PROD1');
+$cbc = $xml->createElement('cbc:ID', 'PROD1');
 $cbc = $cac_sellers_item_identification->appendChild($cbc);
 $cac_sellers_item_identification = $cac_item->appendChild($cac_sellers_item_identification);
 
@@ -251,8 +251,11 @@ if (!file_exists($fileDir)) {
 }
 
 
-$filename = "guia de remision";
+$filename = "20161515648-09-T001-121";
 $xml->save('../files/' . $filename . '.xml');
 chmod('../files/' . $filename . '.xml', 0777);
 
 Sunat::signDocument($filename);
+
+Sunat::createZip("../files/" . $filename . ".zip", "../files/" . $filename . ".xml", "" . $filename . ".xml");
+

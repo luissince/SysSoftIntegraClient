@@ -777,19 +777,19 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             let result = await tools.promiseFetchGet("../app/examples/guiaremision.php", {
                                 "idGuiaRemision": IdGuiaRemision
                             }, function() {
-                                tools.ModalAlertInfo("Guía remisión", "Firmando xml y enviando a la sunat.");
+                                // tools.ModalAlertInfo("Guía remisión", "Firmando xml y enviando a la sunat.");
                             });
-
-                            let object = result;
-                            if (object.state === true) {
-                                if (object.accept === true) {
-                                    tools.ModalAlertSuccess("Guía remisión", "Código " + object.code + " " + object.description);
-                                } else {
-                                    tools.ModalAlertWarning("Guía remisión", "Código " + object.code + " " + object.description);
-                                }
-                            } else {
-                                tools.ModalAlertWarning("Guía remisión", "Código " + object.code + " " + object.description);
-                            }
+                            console.log(result)
+                            // let object = result;
+                            // if (object.state === true) {
+                            //     if (object.accept === true) {
+                            //         tools.ModalAlertSuccess("Guía remisión", "Código " + object.code + " " + object.description);
+                            //     } else {
+                            //         tools.ModalAlertWarning("Guía remisión", "Código " + object.code + " " + object.description);
+                            //     }
+                            // } else {
+                            //     tools.ModalAlertWarning("Guía remisión", "Código " + object.code + " " + object.description);
+                            // }
                         } catch (error) {
                             tools.ModalAlertWarning("Guía remisión", error.responseText == "" || error.responseText == null ? "Se produjo un error interno, intente nuevamente por favor." : error.responseText);
                         }

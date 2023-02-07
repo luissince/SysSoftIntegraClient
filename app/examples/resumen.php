@@ -12,7 +12,7 @@ require __DIR__ . './../src/autoload.php';
 new ConfigHeader();
 
 $idventa = $_GET['idventa'];
-$detalleventa = VentasADO::ListarDetalleVentPorId($idventa);
+$detalleventa = VentasADO::ListarDetalleVentaPorId($idventa);
 
 if (!is_array($detalleventa)) {
     echo json_encode(array(

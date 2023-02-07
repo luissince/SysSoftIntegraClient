@@ -28,6 +28,8 @@ class SoapResult
 
     private $message = "";
 
+    private $code = "";
+
     public function __construct($wsdlURL, $filename)
     {
         $this->wsdlURL = $wsdlURL;
