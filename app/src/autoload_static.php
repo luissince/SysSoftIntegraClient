@@ -27,6 +27,7 @@ class Autoload_Static
             'SysSoftIntegra\\Model\\RolADO' => __DIR__  . '/../model/RolADO.php',
             'SysSoftIntegra\\Model\\NotaCreditoADO' => __DIR__  . '/../model/NotaCreditoADO.php',
             'SysSoftIntegra\\Model\\DashboardADO' => __DIR__  . '/../model/DashboardADO.php',
+            'SysSoftIntegra\\Model\\GuiaRemisionADO' => __DIR__  . '/../model/GuiaRemisionADO.php',
             
             'SysSoftIntegra\\Controller\\BaseController' => __DIR__  . '/../controller/BaseController.php',
            

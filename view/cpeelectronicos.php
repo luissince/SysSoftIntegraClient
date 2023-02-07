@@ -504,7 +504,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             let ver = '<button class="btn btn-secondary btn-sm" onclick="opeModalDetalle(\'' + venta.Tipo + '\',\'' + venta.IdComprobante + '\')"><img src="./images/file.svg" width="26" /></button>';
                             let resumen = '<button class="btn btn-secondary btn-sm" onclick="resumenDiarioXml(\'' + venta.IdComprobante + '\',\'' + venta.Serie + "-" + venta.Numeracion + '\',\'' + tools.getDateYYMMDD(venta.Fecha) + '\')"><img src="./images/documentoanular.svg" width="26" /></button>';
                             let comunicacion = '<button class="btn btn-secondary btn-sm" onclick="comunicacionBajaXml(\'' + venta.IdComprobante + '\',\'' + venta.Serie + "-" + venta.Numeracion + '\')"><img src="./images/documentoanular.svg" width="26" /></button>';
-                            let anular = venta.Tipo == "nc" ? "-" : venta.Serie.toUpperCase().includes("B") ? resumen : comunicacion;
+                            let anular = venta.Tipo == "nc" ? "-" : venta.Tipo == "gui" ? "-" : venta.Serie.toUpperCase().includes("B") ? resumen : comunicacion;
 
                             let datetime = tools.getDateForma(venta.Fecha) + "<br>" + tools.getTimeForma24(venta.Hora, true);
                             let comprobante = venta.Nombre + " <br/>" + (venta.Serie + "-" + venta.Numeracion) + "</span>";
@@ -708,117 +708,146 @@ if (!isset($_SESSION['IdEmpleado'])) {
             function firmarXml(tipo, idComprobante) {
                 if (tipo == "v") {
                     firmarXmlBoleta(idComprobante);
-                } else {
+                } else if (tipo == "nc") {
                     firmarXmlNotaCredito(idComprobante);
+                } else {
+                    firmarXmlGuiaRemision(idComprobante);
                 }
             }
 
             function firmarXmlBoleta(idventa) {
-                tools.ModalDialog("Comprobante", "¿Está seguro de enviar la boleta/factura?", async function(value) {
+                tools.ModalDialog("Factura/Boleta", "¿Está seguro de enviar la boleta/factura?", async function(value) {
                     if (value == true) {
                         try {
                             let result = await tools.promiseFetchGet("../app/examples/boleta.php", {
                                 "idventa": idventa
                             }, function() {
-                                tools.ModalAlertInfo("Comprobante", "Firmando xml y enviando a la sunat.");
+                                tools.ModalAlertInfo("Factura/Boleta", "Firmando xml y enviando a la sunat.");
                             });
 
                             let object = result;
                             if (object.state === true) {
                                 if (object.accept === true) {
-                                    tools.ModalAlertSuccess("Comprobante", "Código " + object.code + " " + object.description);
+                                    tools.ModalAlertSuccess("Factura/Boleta", "Código " + object.code + " " + object.description);
                                     onEventPaginacion();
                                 } else {
-                                    tools.ModalAlertWarning("Comprobante", "Código " + object.code + " " + object.description);
+                                    tools.ModalAlertWarning("Factura/Boleta", "Código " + object.code + " " + object.description);
                                 }
                             } else {
-                                tools.ModalAlertWarning("Comprobante", "Código " + object.code + " " + object.description);
+                                tools.ModalAlertWarning("Factura/Boleta", "Código " + object.code + " " + object.description);
                             }
                         } catch (error) {
-                            tools.ModalAlertWarning("Comprobante", error.responseText == "" || error.responseText == null ? "Se produjo un error interno, intente nuevamente por favor." : error.responseText);
+                            tools.ModalAlertWarning("Factura/Boleta", error.responseText == "" || error.responseText == null ? "Se produjo un error interno, intente nuevamente por favor." : error.responseText);
                         }
                     }
                 });
             }
 
             function firmarXmlNotaCredito(idNotaCredito) {
-                tools.ModalDialog("Comprobante", "¿Está seguro de enviar la nota de crédito?", async function(value) {
+                tools.ModalDialog("Nota de Crédito", "¿Está seguro de enviar la nota de crédito?", async function(value) {
                     if (value == true) {
                         try {
                             let result = await tools.promiseFetchGet("../app/examples/notacredito.php", {
                                 "idNotaCredito": idNotaCredito
                             }, function() {
-                                tools.ModalAlertInfo("Comprobante", "Firmando xml y enviando a la sunat.");
+                                tools.ModalAlertInfo("Nota de Crédito", "Firmando xml y enviando a la sunat.");
                             });
 
                             let object = result;
                             if (object.state === true) {
                                 if (object.accept === true) {
-                                    tools.ModalAlertSuccess("Comprobante", "Código " + object.code + " " + object.description);
+                                    tools.ModalAlertSuccess("Nota de Crédito", "Código " + object.code + " " + object.description);
                                 } else {
-                                    tools.ModalAlertWarning("Comprobante", "Código " + object.code + " " + object.description);
+                                    tools.ModalAlertWarning("Nota de Crédito", "Código " + object.code + " " + object.description);
                                 }
                             } else {
-                                tools.ModalAlertWarning("Comprobante", "Código " + object.code + " " + object.description);
+                                tools.ModalAlertWarning("Nota de Crédito", "Código " + object.code + " " + object.description);
                             }
                         } catch (error) {
-                            tools.ModalAlertWarning("Comprobante", error.responseText == "" || error.responseText == null ? "Se produjo un error interno, intente nuevamente por favor." : error.responseText);
+                            tools.ModalAlertWarning("Nota de Crédito", error.responseText == "" || error.responseText == null ? "Se produjo un error interno, intente nuevamente por favor." : error.responseText);
+                        }
+                    }
+                });
+            }
+
+            function firmarXmlGuiaRemision(IdGuiaRemision) {
+                tools.ModalDialog("Guía remisión", "¿Está seguro de enviar la guía de remisión?", async function(value) {
+                    if (value == true) {
+                        try {
+                            let result = await tools.promiseFetchGet("../app/examples/guiaremision.php", {
+                                "idGuiaRemision": IdGuiaRemision
+                            }, function() {
+                                tools.ModalAlertInfo("Guía remisión", "Firmando xml y enviando a la sunat.");
+                            });
+
+                            let object = result;
+                            if (object.state === true) {
+                                if (object.accept === true) {
+                                    tools.ModalAlertSuccess("Guía remisión", "Código " + object.code + " " + object.description);
+                                } else {
+                                    tools.ModalAlertWarning("Guía remisión", "Código " + object.code + " " + object.description);
+                                }
+                            } else {
+                                tools.ModalAlertWarning("Guía remisión", "Código " + object.code + " " + object.description);
+                            }
+                        } catch (error) {
+                            tools.ModalAlertWarning("Guía remisión", error.responseText == "" || error.responseText == null ? "Se produjo un error interno, intente nuevamente por favor." : error.responseText);
                         }
                     }
                 });
             }
 
             function resumenDiarioXml(idventa, comprobante, resumen) {
-                tools.ModalDialog("Emitir resumen díario", "¿Se anulará el documento: " + comprobante + ", y se creará el siguiente resumen individual: RC-" + resumen + "-1, estás seguro de anular el documento? los cambios no se podrán revertir!", async function(value) {
+                tools.ModalDialog("Resumen díario", "¿Se anulará el documento: " + comprobante + ", y se creará el siguiente resumen individual: RC-" + resumen + "-1, estás seguro de anular el documento? los cambios no se podrán revertir!", async function(value) {
                     if (value == true) {
                         try {
                             let result = await tools.promiseFetchGet("../app/examples/resumen.php", {
                                 "idventa": idventa
                             }, function() {
-                                tools.ModalAlertInfo("Emitir resumen díario", "Firmando xml y enviando a la sunat.");
+                                tools.ModalAlertInfo("Resumen díario", "Firmando xml y enviando a la sunat.");
                             });
 
                             let object = result;
                             if (object.state === true) {
                                 if (object.accept === true) {
-                                    tools.ModalAlertSuccess("Emitir resumen díario", "Código " + object.code + " " + object.description);
+                                    tools.ModalAlertSuccess("Resumen díario", "Código " + object.code + " " + object.description);
                                     onEventPaginacion();
                                 } else {
-                                    tools.ModalAlertWarning("Emitir resumen díario", "Código " + object.code + " " + object.description);
+                                    tools.ModalAlertWarning("Resumen díario", "Código " + object.code + " " + object.description);
                                 }
                             } else {
-                                tools.ModalAlertWarning("Emitir resumen díario", "Código " + object.code + " " + object.description);
+                                tools.ModalAlertWarning("Resumen díario", "Código " + object.code + " " + object.description);
                             }
                         } catch (error) {
-                            tools.ModalAlertWarning("Comprobante", error.responseText == "" || error.responseText == null ? "Se produjo un error interno, intente nuevamente por favor." : error.responseText);
+                            tools.ModalAlertWarning("Resumen díario", error.responseText == "" || error.responseText == null ? "Se produjo un error interno, intente nuevamente por favor." : error.responseText);
                         }
                     }
                 });
             }
 
             function comunicacionBajaXml(idventa, comprobante) {
-                tools.ModalDialog("Emitir comunicación de baja", "¿Se anulará el documento " + comprobante + "?", async function(value) {
+                tools.ModalDialog("Comunicación de baja", "¿Se anulará el documento " + comprobante + "?", async function(value) {
                     if (value == true) {
                         try {
                             let result = await tools.promiseFetchGet("../app/examples/comunicacionbaja.php", {
                                 "idventa": idventa
                             }, function() {
-                                tools.ModalAlertInfo("Emitir comunicación de baja", "Firmando xml y enviando a la sunat.");
+                                tools.ModalAlertInfo("Comunicación de baja", "Firmando xml y enviando a la sunat.");
                             });
 
                             let object = result;
                             if (object.state === true) {
                                 if (object.accept === true) {
-                                    tools.ModalAlertSuccess("Emitir comunicación de baja", "Código " + object.code + " " + object.description);
+                                    tools.ModalAlertSuccess("Comunicación de baja", "Código " + object.code + " " + object.description);
                                     onEventPaginacion();
                                 } else {
-                                    tools.ModalAlertWarning("Emitir comunicación de baja", "Código " + object.code + " " + object.description);
+                                    tools.ModalAlertWarning("Comunicación de baja", "Código " + object.code + " " + object.description);
                                 }
                             } else {
-                                tools.ModalAlertWarning("Emitir comunicación de baja", "Código " + object.code + " " + object.description);
+                                tools.ModalAlertWarning("Comunicación de baja", "Código " + object.code + " " + object.description);
                             }
                         } catch (error) {
-                            tools.ModalAlertWarning("Comprobante", error.responseText == "" || error.responseText == null ? "Se produjo un error interno, intente nuevamente por favor." : error.responseText);
+                            tools.ModalAlertWarning("Comunicación de baja", error.responseText == "" || error.responseText == null ? "Se produjo un error interno, intente nuevamente por favor." : error.responseText);
                         }
                     }
                 });
@@ -859,11 +888,21 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                         }
                                     }
                                 }
-                            } else {
+                            } else if (value.Tipo == "nc") {
                                 if (value.Xmlsunat !== "0") {
                                     try {
                                         await tools.promiseFetchGet("../app/examples/notacredito.php", {
                                             "idNotaCredito": value.IdComprobante
+                                        });
+                                    } catch (error) {
+
+                                    }
+                                }
+                            } else {
+                                if (value.Xmlsunat !== "0") {
+                                    try {
+                                        await tools.promiseFetchGet("../app/examples/guiaremision.php", {
+                                            "idGuiaRemision": value.IdGuiaRemision
                                         });
                                     } catch (error) {
 
@@ -881,8 +920,10 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 if (tipo == "v") {
                     window.open("../app/sunat/pdfventaA4.php?idVenta=" + idComprobante, "_blank");
 
-                } else {
+                } else if (tipo == "nc") {
                     window.open("../app/sunat/pdfnotacreditoA4.php?idNotaCredito=" + idComprobante, "_blank");
+                } else {
+
                 }
             }
 

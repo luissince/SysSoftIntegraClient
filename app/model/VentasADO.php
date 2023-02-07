@@ -597,7 +597,7 @@ class VentasADO
         return $ret;
     }
 
-    public static function ListarDetalleVentPorId($idVenta)
+    public static function ListarDetalleVentaPorId($idVenta)
     {
         try {
             $lista = array();
