@@ -43,7 +43,11 @@ $cbc = $xml->createElement('cbc:CustomizationID', '2.0');
 $cbc = $Invoice->appendChild($cbc);
 $cbc = $xml->createElement('cbc:ID', "T001-121");  // numero de factura
 $cbc = $Invoice->appendChild($cbc);
-$cbc = $xml->createElement('cbc:IssueDate', "2023-02-06");   // fecha de emision
+
+/**
+ * FECHA Y HORA DE EMISIÓN
+ */
+$cbc = $xml->createElement('cbc:IssueDate', "2023-02-19");   // fecha de emision
 $cbc = $Invoice->appendChild($cbc);
 $cbc = $xml->createElement('cbc:IssueTime', "11:25:55");   // hora de emision
 $cbc = $Invoice->appendChild($cbc);
@@ -53,21 +57,54 @@ $cbc->setAttribute('listName', "Tipo de Documento");
 $cbc->setAttribute('listURI', "urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo01");
 $cbc = $Invoice->appendChild($cbc);
 
-// DATOS DE FIRMA
+/**
+ * DOCUMENTOS RELACIONADOS (Catalogo)
+ */
+$cac_additional_document_reference = $xml->createElement('cac:AdditionalDocumentReference');
+$cac_additional_document_reference = $Invoice->appendChild($cac_additional_document_reference);
+
+$cbc = $xml->createElement('cbc:ID', "F001-3303");
+$cbc = $cac_additional_document_reference->appendChild($cbc);
+
+$cbc = $xml->createElement('cbc:DocumentTypeCode', "01");
+$cbc->setAttribute('listAgencyName', "PE:SUNAT");
+$cbc->setAttribute('listName', "Documento relacionado al transporte");
+$cbc->setAttribute('listURI', "urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo61");
+$cbc = $cac_additional_document_reference->appendChild($cbc);
+
+$cbc = $xml->createElement('cbc:DocumentType', "Factura");
+$cbc = $cac_additional_document_reference->appendChild($cbc);
+
+$cac_issuer_party = $xml->createElement('cac:IssuerParty');
+$cac_issuer_party = $cac_additional_document_reference->appendChild($cac_issuer_party);
+
+$cac_party_identification = $xml->createElement('cac:PartyIdentification');
+$cac_party_identification = $cac_issuer_party->appendChild($cac_party_identification);
+
+$cbc = $xml->createElement('cbc:ID', "20547848307");
+$cbc->setAttribute('schemeID', "6");
+$cbc->setAttribute('schemeAgencyName', "PE:SUNAT");
+$cbc->setAttribute('schemeName', "Documento de Identidad");
+$cbc->setAttribute('schemeURI', "urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06");
+$cbc = $cac_party_identification->appendChild($cbc);
+
+/**
+ * DATOS DE FIRMA
+ */
 $cac_signature = $xml->createElement('cac:Signature');
 $cac_signature = $Invoice->appendChild($cac_signature);
-$cbc = $xml->createElement('cbc:ID', "20161515648");
+$cbc = $xml->createElement('cbc:ID', "20547848307");
 $cbc = $cac_signature->appendChild($cbc);
 $cac_signatory = $xml->createElement('cac:SignatoryParty');
 $cac_signatory = $cac_signature->appendChild($cac_signatory);
 $cac = $xml->createElement('cac:PartyIdentification');
 $cac = $cac_signatory->appendChild($cac);
-$cbc = $xml->createElement('cbc:ID', "20161515648");
+$cbc = $xml->createElement('cbc:ID', "20547848307");
 $cbc = $cac->appendChild($cbc);
 $cac = $xml->createElement('cac:PartyName');
 $cac = $cac_signatory->appendChild($cac);
 $cbc = $xml->createElement('cbc:Name');
-$cbc->appendChild($xml->createCDATASection("GREENTER S.A.C."));
+$cbc->appendChild($xml->createCDATASection("SYSSOFT INTEGRA S.A.C."));
 $cbc = $cac->appendChild($cbc);
 $cac = $xml->createElement('cac:ExternalReference');
 $cac_digital = $xml->createElement('cac:DigitalSignatureAttachment');
@@ -76,14 +113,16 @@ $cac = $cac_digital->appendChild($cac);
 $cbc = $xml->createElement('cbc:URI', '#SysSoftIntegra');
 $cbc = $cac->appendChild($cbc);
 
-// DATOS DEL EMISOR
+/**
+ * DATOS DEL EMISOR (REMITENTE)
+ */
 $cac_despatch_supplier_party = $xml->createElement('cac:DespatchSupplierParty');
 $cac_despatch_supplier_party = $Invoice->appendChild($cac_despatch_supplier_party);
 $cac_party = $xml->createElement('cac:Party');
 $cac_party = $cac_despatch_supplier_party->appendChild($cac_party);
 
 $cac_party_identification = $xml->createElement('cac:PartyIdentification');
-$cbc = $xml->createElement('cbc:ID', "20161515648");
+$cbc = $xml->createElement('cbc:ID', "20547848307");
 $cbc->setAttribute('schemeID', "6");
 $cbc->setAttribute('schemeName', "Documento de Identidad");
 $cbc->setAttribute('schemeAgencyName', "PE:SUNAT");
@@ -97,7 +136,9 @@ $cbc->appendChild($xml->createCDATASection("GREENTER S.A.C."));
 $cbc = $cac_party_legal_entity->appendChild($cbc);
 $cac_party_legal_entity = $cac_party->appendChild($cac_party_legal_entity);
 
-// DATOS DEL RECEPTOR
+/**
+ * DATOS DEL RECEPTOR (DESTINATARIO)
+ */
 $cac_delivery_customer_party = $xml->createElement('cac:DeliveryCustomerParty');
 $cac_delivery_customer_party = $Invoice->appendChild($cac_delivery_customer_party);
 $cac_party = $xml->createElement('cac:Party');
@@ -153,21 +194,20 @@ $cbc = $cac_transit_period->appendChild($cbc);
 $cac_carrier_party = $xml->createElement('cac:CarrierParty');
 $cac_carrier_party = $cac_shipment_stage->appendChild($cac_carrier_party);
 
-$cac_party_identification = $xml->createElement('cac:PartyIdentification');
-$cbc = $xml->createElement('cbc:ID', '20000000002');
-$cbc->setAttribute('schemeID', "6");
-$cbc = $cac_party_identification->appendChild($cbc);
-$cac_party_identification = $cac_carrier_party->appendChild($cac_party_identification);
+// $cac_party_identification = $xml->createElement('cac:PartyIdentification');
+// $cbc = $xml->createElement('cbc:ID', '20000000002');
+// $cbc->setAttribute('schemeID', "6");
+// $cbc = $cac_party_identification->appendChild($cbc);
+// $cac_party_identification = $cac_carrier_party->appendChild($cac_party_identification);
 
 
-$cac_party_legal_entity = $xml->createElement('cac:PartyLegalEntity');
-$cbc = $xml->createElement('cbc:RegistrationName');
-$cbc->appendChild($xml->createCDATASection("TRANSPORTES S.A.C"));
-$cbc = $cac_party_legal_entity->appendChild($cbc);
-$cbc = $xml->createElement('cbc:CompanyID', '0001');
-$cbc = $cac_party_legal_entity->appendChild($cbc);
-$cac_party_legal_entity = $cac_carrier_party->appendChild($cac_party_legal_entity);
-
+// $cac_party_legal_entity = $xml->createElement('cac:PartyLegalEntity');
+// $cbc = $xml->createElement('cbc:RegistrationName');
+// $cbc->appendChild($xml->createCDATASection("TRANSPORTES S.A.C"));
+// $cbc = $cac_party_legal_entity->appendChild($cbc);
+// $cbc = $xml->createElement('cbc:CompanyID', '0001');
+// $cbc = $cac_party_legal_entity->appendChild($cbc);
+// $cac_party_legal_entity = $cac_carrier_party->appendChild($cac_party_legal_entity);
 
 $cac_delivery = $xml->createElement('cac:Delivery');
 $cac_delivery = $cac_shipment->appendChild($cac_delivery);
@@ -194,6 +234,15 @@ $cbc = $xml->createElement('cbc:Line', 'AV ITALIA');
 $cbc = $cac_address_line->appendChild($cbc);
 $cac_address_line = $cac_despatch_address->appendChild($cac_address_line);
 $cac_despatch_address = $cac_despatch->appendChild($cac_despatch_address);
+
+$cac_transport_handling_unit= $xml->createElement('cac:TransportHandlingUnit');
+$cac_transport_handling_unit = $cac_shipment->appendChild($cac_transport_handling_unit);
+
+$cac_transport_handling_equipment= $xml->createElement('cac:TransportEquipment');
+$cbc = $xml->createElement('cbc:ID', 'W6M863');
+$cbc = $cac_transport_handling_equipment->appendChild($cbc);
+
+$cac_transport_handling_equipment = $cac_transport_handling_unit->appendChild($cac_transport_handling_equipment);
 
 $cac_despatch_line = $xml->createElement('cac:DespatchLine');
 $cbc = $xml->createElement('cbc:ID', '1');
@@ -251,7 +300,7 @@ if (!file_exists($fileDir)) {
 }
 
 
-$filename = "20161515648-09-T001-121";
+$filename = "20547848307-09-T001-121";
 $xml->save('../files/' . $filename . '.xml');
 chmod('../files/' . $filename . '.xml', 0777);
 
@@ -259,3 +308,43 @@ Sunat::signDocument($filename);
 
 Sunat::createZip("../files/" . $filename . ".zip", "../files/" . $filename . ".xml", "" . $filename . ".xml");
 
+$soapResult = new SoapResult('', $filename);
+$soapResult->setConfigGuiaRemision("../files/" . $filename . ".zip");
+$soapResult->sendGuiaRemision([
+    "numRucEmisor"=>"20547848307",
+    "codCpe"=>"09",
+    "numSerie"=>"T001",
+    "numCpe"=>"121",
+]);
+
+if ($soapResult->isSuccess()) {
+    if ($soapResult->isAccepted()) {
+        // VentasADO::CambiarEstadoSunatVenta($idventa, $soapResult->getCode(), $soapResult->getDescription(), $soapResult->getHashCode(), Sunat::getXmlSign());
+        $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+        header($protocol . ' ' . 200 . ' ' . "OK");
+
+        echo json_encode(array(
+            "state" => $soapResult->isSuccess(),
+            "accept" => $soapResult->isAccepted(),
+            "code" => $soapResult->getCode(),
+            "description" => $soapResult->getMessage()
+        ));
+    } else {
+        // VentasADO::CambiarEstadoSunatVentaUnico($idventa, $soapResult->getCode(), $soapResult->getDescription());
+        $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+        header($protocol . ' ' . 200 . ' ' . "OK");
+
+        echo json_encode(array(
+            "state" => $soapResult->isSuccess(),
+            "accept" => $soapResult->isAccepted(),
+            "code" => $soapResult->getCode(),
+            "description" => $soapResult->getMessage()
+        ));
+    }
+} else {
+    // VentasADO::CambiarEstadoSunatVentaUnico($idventa, $soapResult->getCode(), $soapResult->getDescription());
+    $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+    header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+
+    echo json_encode($soapResult->getMessage());
+}

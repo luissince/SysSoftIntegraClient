@@ -75,6 +75,14 @@ class Sunat
         }
     }
 
+    public static function generateHashFile(string $algoritmo = 'sha256', string $path){
+        return hash_file($algoritmo, $path);
+    }
+
+    public static function generateBase64File(string $filename){
+        return base64_encode(file_get_contents($filename));
+    }
+
     public static function xmlSendBill($NumeroDocumento, $UsuarioSol, $ClaveSol, $filename, $fileencode)
     {
 
@@ -96,6 +104,7 @@ class Sunat
         </soapenv:Body>
         </soapenv:Envelope>';
     }
+    
 
     public static function xmlSendSummary($NumeroDocumento, $UsuarioSol, $ClaveSol, $filename, $fileencode)
     {

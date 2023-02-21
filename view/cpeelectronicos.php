@@ -774,23 +774,24 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 tools.ModalDialog("Guía remisión", "¿Está seguro de enviar la guía de remisión?", async function(value) {
                     if (value == true) {
                         try {
-                            let result = await tools.promiseFetchGet("../app/examples/guiaremision.php", {
+                            const result = await tools.promiseFetchGet("../app/examples/guiaremision.php", {
                                 "idGuiaRemision": IdGuiaRemision
                             }, function() {
-                                // tools.ModalAlertInfo("Guía remisión", "Firmando xml y enviando a la sunat.");
+                                tools.ModalAlertInfo("Guía remisión", "Firmando xml y enviando a la sunat.");
                             });
-                            console.log(result)
-                            // let object = result;
-                            // if (object.state === true) {
-                            //     if (object.accept === true) {
-                            //         tools.ModalAlertSuccess("Guía remisión", "Código " + object.code + " " + object.description);
-                            //     } else {
-                            //         tools.ModalAlertWarning("Guía remisión", "Código " + object.code + " " + object.description);
-                            //     }
-                            // } else {
-                            //     tools.ModalAlertWarning("Guía remisión", "Código " + object.code + " " + object.description);
-                            // }
+                            
+                            const object = result;
+                            if (object.state === true) {
+                                if (object.accept === true) {
+                                    tools.ModalAlertSuccess("Guía remisión", "Código " + object.code + " " + object.description);
+                                } else {
+                                    tools.ModalAlertWarning("Guía remisión", "Código " + object.code + " " + object.description);
+                                }
+                            } else {
+                                tools.ModalAlertWarning("Guía remisión", "Código " + object.code + " " + object.description);
+                            }
                         } catch (error) {
+                            console.log(error);
                             tools.ModalAlertWarning("Guía remisión", error.responseText == "" || error.responseText == null ? "Se produjo un error interno, intente nuevamente por favor." : error.responseText);
                         }
                     }

@@ -30,6 +30,11 @@ class SoapResult
 
     private $code = "";
 
+    private $filebase64 = "";
+
+    private $hashZip = "";
+
+
     public function __construct($wsdlURL, $filename)
     {
         $this->wsdlURL = $wsdlURL;
@@ -395,6 +400,332 @@ class SoapResult
             $this->setCode("-1");
             $this->setMessage($ex->getMessage());
         }
+    }
+
+    public function sendGuiaRemision(array $uri)
+    {
+        try {
+            $headers = array(
+                'Content-Type: application/x-www-form-urlencoded'
+            );
+
+            $data = array(
+                'grant_type' => 'password',
+                'scope' => urlencode('https://api-cpe.sunat.gob.pe'),
+                'client_id' => urlencode('test-85e5b0ae-255c-4891-a595-0b98c65c9854'),
+                'client_secret' => urlencode('test-Hty/M6QshYvPgItX2P0+Kw=='),
+                'username' => '20547848307MODDATOS',
+                'password' => 'MODDATOS',
+            );
+
+            $fields = "";
+            $index = 0;
+            foreach ($data as $key => $val) {
+                $index++;
+                $fields .= $index == count($data) ? $key . "=" . $val : $key . "=" . $val . "&";
+            }
+
+            $curl = curl_init();
+            curl_setopt($curl, CURLOPT_URL, 'https://gre-test.nubefact.com/v1/clientessol/test-85e5b0ae-255c-4891-a595-0b98c65c9854/oauth2/token');
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($curl, CURLOPT_ENCODING, '');
+            curl_setopt($curl, CURLOPT_MAXREDIRS, 10);
+            curl_setopt($curl, CURLOPT_TIMEOUT, 0);
+            curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+            curl_setopt($curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
+
+            curl_setopt($curl, CURLOPT_POSTFIELDS, $fields);
+            curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
+            curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+
+            $response = curl_exec($curl);
+
+            $http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+            curl_close($curl);
+
+            error_log(json_encode($http_code));
+            if ($http_code == 200) {
+                $result = (object)json_decode($response);
+
+                $this->sendApiSunatGuiaRemision($result->access_token, implode("-", $uri));
+            } else {
+                if ($response) {
+                    if (file_exists('../files/' . $this->filename . '.xml')) {
+                        unlink('../files/' . $this->filename . '.xml');
+                    }
+                    if (file_exists('../files/' . $this->filename . '.zip')) {
+                        unlink('../files/' . $this->filename . '.zip');
+                    }
+
+                    $result = (object)json_decode($response);
+                    
+                    error_log("sendGuiaRemision:");
+                    error_log($result->msg);
+                    error_log("");
+                    $this->setSuccess(false);
+                    $this->setCode($result->cod);
+                    $this->setMessage($result->msg);
+                } else {
+                    if (file_exists('../files/' . $this->filename . '.xml')) {
+                        unlink('../files/' . $this->filename . '.xml');
+                    }
+                    if (file_exists('../files/' . $this->filename . '.zip')) {
+                        unlink('../files/' . $this->filename . '.zip');
+                    }
+
+                    error_log("sendGuiaRemision:");
+                    error_log("Se presento una condicion inesperada que impidio completar el
+                    Request");
+                    error_log("");
+
+                    $this->setSuccess(false);
+                    $this->setCode("-1");
+                    $this->setMessage("Se presento una condicion inesperada que impidio completar el
+                    Request");
+                }
+            }
+        } catch (Exception $ex) {
+            error_log("sendGuiaRemision Exception:");
+            error_log($ex->getMessage());
+            error_log("");
+            if (file_exists('../files/' . $this->filename . '.xml')) {
+                unlink('../files/' . $this->filename . '.xml');
+            }
+            if (file_exists('../files/' . $this->filename . '.zip')) {
+                unlink('../files/' . $this->filename . '.zip');
+            }
+
+            $this->setSuccess(false);
+            $this->setCode("-1");
+            $this->setMessage($ex->getMessage());
+        }
+    }
+
+    private function sendApiSunatGuiaRemision(string $token, string $uri)
+    {
+        try {
+            $headers = array(
+                'Content-Type: application/json',
+                'Authorization: Bearer ' . $token . ''
+            );
+
+            $data = array(
+                'archivo' => array(
+                    'nomArchivo' => '' . $this->filename . '.zip',
+                    'arcGreZip' => $this->filebase64,
+                    'hashZip' => $this->hashZip,
+                )
+            );
+
+            $data_string = json_encode($data);
+
+            $curl = curl_init();
+            curl_setopt($curl, CURLOPT_URL, 'https://gre-test.nubefact.com/v1/contribuyente/gem/comprobantes/' . $uri . '');
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($curl, CURLOPT_ENCODING, '');
+            curl_setopt($curl, CURLOPT_MAXREDIRS, 10);
+            curl_setopt($curl, CURLOPT_TIMEOUT, 0);
+            curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+            curl_setopt($curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
+
+            curl_setopt($curl, CURLOPT_POSTFIELDS, $data_string);
+            curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
+            curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+
+            $response = curl_exec($curl);
+
+            $http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+            curl_close($curl);
+
+            if ($http_code == 200) {
+                $result = (object)json_decode($response);
+                $this->ticket = $result->numTicket;
+                $this->sendGetStatusGuiaRemision($token);
+            } else {
+                if ($response) {
+                    if (file_exists('../files/' . $this->filename . '.xml')) {
+                        unlink('../files/' . $this->filename . '.xml');
+                    }
+                    if (file_exists('../files/' . $this->filename . '.zip')) {
+                        unlink('../files/' . $this->filename . '.zip');
+                    }
+
+                    $result = (object)json_decode($response);
+                    error_log("sendApiSunatGuiaRemision:");
+                    error_log($response);
+                    error_log("");
+                    $this->setSuccess(false);
+                    $this->setCode($result->cod);
+                    $this->setMessage($result->msg);
+                } else {
+                    if (file_exists('../files/' . $this->filename . '.xml')) {
+                        unlink('../files/' . $this->filename . '.xml');
+                    }
+                    if (file_exists('../files/' . $this->filename . '.zip')) {
+                        unlink('../files/' . $this->filename . '.zip');
+                    }
+
+                    error_log("sendApiSunatGuiaRemision:");
+                    error_log("Se presento una condicion inesperada que impidio completar el
+                    Request");
+                    error_log("");
+
+                    $this->setSuccess(false);
+                    $this->setCode("-1");
+                    $this->setMessage("Se presento una condicion inesperada que impidio completar el
+                    Request");
+                }
+            }
+        } catch (Exception $ex) {
+            if (file_exists('../files/' . $this->filename . '.xml')) {
+                unlink('../files/' . $this->filename . '.xml');
+            }
+            if (file_exists('../files/' . $this->filename . '.zip')) {
+                unlink('../files/' . $this->filename . '.zip');
+            }
+            error_log("sendApiSunatGuiaRemision Exception:");
+            error_log($ex->getMessage());
+            error_log("");
+            $this->setSuccess(false);
+            $this->setCode("-1");
+            $this->setMessage($ex->getMessage());
+        }
+    }
+
+    private function sendGetStatusGuiaRemision(string $token)
+    {
+        try {
+            $headers = array(
+                'Content-Type: application/json',
+                'Authorization: Bearer ' . $token . ''
+            );
+
+            $curl = curl_init();
+            curl_setopt($curl, CURLOPT_URL, 'https://gre-test.nubefact.com/v1/contribuyente/gem/comprobantes/envios/' .  $this->ticket . '');
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($curl, CURLOPT_ENCODING, '');
+            curl_setopt($curl, CURLOPT_MAXREDIRS, 10);
+            curl_setopt($curl, CURLOPT_TIMEOUT, 0);
+            curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+            curl_setopt($curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
+
+            curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "GET");
+            curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+
+            $response = curl_exec($curl);
+
+            $http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+            curl_close($curl);
+
+            if ($http_code == 200) {
+                $result = (object)json_decode($response);
+                if ($result->codRespuesta == "0") {
+                    $cdr = base64_decode($result->arcCdr);
+                    $archivo = fopen('../files/R-' . $this->filename . '.zip', 'w+');
+                    fputs($archivo, $cdr);
+                    fclose($archivo);
+                    chmod('../files/R-' . $this->filename . '.zip', 0777);
+
+                    $isExtract = Sunat::extractZip('../files/R-' . $this->filename . '.zip', '../files/');
+                    if (!$isExtract) {
+                        throw new Exception("No se pudo extraer el contenido del archivo zip.");
+                    }
+
+                    if (file_exists('../files/' . $this->filename . '.zip')) {
+                        unlink('../files/' . $this->filename . '.zip');
+                    }
+                    if (file_exists('../files/R-' . $this->filename . '.zip')) {
+                        unlink('../files/R-' . $this->filename . '.zip');
+                    }
+
+                    $this->setAccepted(true);
+                    $this->setCode($result->codRespuesta);
+                    $this->setMessage("La Guía de remisión fue declarada correctamente.");
+                    $this->setSuccess(true);
+                } else if ($result->codRespuesta == "98") {
+                    if (file_exists('../files/' . $this->filename . '.zip')) {
+                        unlink('../files/' . $this->filename . '.zip');
+                    }
+                    if (file_exists('../files/R-' . $this->filename . '.zip')) {
+                        unlink('../files/R-' . $this->filename . '.zip');
+                    }
+
+                    $this->setAccepted(true);
+                    $this->setCode($result->codRespuesta);
+                    $this->setMessage("El proceso de envío, consulte en un par de minutos nuevamente.");
+                    $this->setSuccess(true);
+                } else if ($result->codRespuesta == "99") {
+                    // if (file_exists('../files/' . $this->filename . '.xml')) {
+                    //     unlink('../files/' . $this->filename . '.xml');
+                    // }
+                    // if (file_exists('../files/' . $this->filename . '.zip')) {
+                    //     unlink('../files/' . $this->filename . '.zip');
+                    // }
+
+                    error_log($response);
+
+                    $this->setAccepted(false);
+                    $this->setCode($result->codRespuesta);
+                    $this->setMessage("Se genero un problema, comuníquese con su proveedor del software.");
+                    $this->setSuccess(true);
+                } else {
+                    if (file_exists('../files/' . $this->filename . '.xml')) {
+                        unlink('../files/' . $this->filename . '.xml');
+                    }
+                    if (file_exists('../files/' . $this->filename . '.zip')) {
+                        unlink('../files/' . $this->filename . '.zip');
+                    }
+                    
+                    $this->setAccepted(false);
+                    $this->setCode($result->codRespuesta);
+                    $this->setMessage("Se genero un problema, comuníquese con su proveedor del software.");
+                    $this->setSuccess(true);
+                }
+            } else {
+                if ($response) {
+                    if (file_exists('../files/' . $this->filename . '.xml')) {
+                        unlink('../files/' . $this->filename . '.xml');
+                    }
+                    if (file_exists('../files/' . $this->filename . '.zip')) {
+                        unlink('../files/' . $this->filename . '.zip');
+                    }
+
+                    $result = (object)json_decode($response);
+                    $this->setSuccess(false);
+                    $this->setCode($result->cod);
+                    $this->setMessage($result->msg);
+                } else {
+                    if (file_exists('../files/' . $this->filename . '.xml')) {
+                        unlink('../files/' . $this->filename . '.xml');
+                    }
+                    if (file_exists('../files/' . $this->filename . '.zip')) {
+                        unlink('../files/' . $this->filename . '.zip');
+                    }
+
+                    $this->setSuccess(false);
+                    $this->setCode("-1");
+                    $this->setMessage("Se presento una condicion inesperada que impidio completar el
+                    Request");
+                }
+            }
+        } catch (Exception $ex) {
+            if (file_exists('../files/' . $this->filename . '.xml')) {
+                unlink('../files/' . $this->filename . '.xml');
+            }
+            if (file_exists('../files/' . $this->filename . '.zip')) {
+                unlink('../files/' . $this->filename . '.zip');
+            }
+
+            $this->setSuccess(false);
+            $this->setCode("-1");
+            $this->setMessage($ex->getMessage());
+        }
+    }
+
+    public function setConfigGuiaRemision(string $filezip)
+    {
+        $this->filebase64 = Sunat::generateBase64File($filezip);
+        $this->hashZip = Sunat::generateHashFile("sha256", $filezip);
     }
 
     public function isSuccess()
