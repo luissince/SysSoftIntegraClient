@@ -190,9 +190,32 @@ $cac_transit_period = $cac_shipment_stage->appendChild($cac_transit_period);
 $cbc = $xml->createElement('cbc:StartDate', '2023-02-06');
 $cbc = $cac_transit_period->appendChild($cbc);
 
+$cac_driver_person = $xml->createElement('cac:DriverPerson');
 
-$cac_carrier_party = $xml->createElement('cac:CarrierParty');
-$cac_carrier_party = $cac_shipment_stage->appendChild($cac_carrier_party);
+$cbc = $xml->createElement('cbc:ID', '47932424');
+$cbc->setAttribute('schemeID', "1");
+$cbc->setAttribute('schemeName', "Documento de Identidad");
+$cbc->setAttribute('schemeAgencyName', "PE:SUNAT");
+$cbc->setAttribute('schemeURI', "urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06");
+$cbc = $cac_driver_person->appendChild($cbc);
+
+$cbc = $xml->createElement('cbc:FirstName', 'SANCHEZ CAYETANO NOE JOSE');
+$cbc = $cac_driver_person->appendChild($cbc);
+
+$cbc = $xml->createElement('cbc:FamilyName', 'SANCHEZ CAYETANO NOE JOSE');
+$cbc = $cac_driver_person->appendChild($cbc);
+
+$cbc = $xml->createElement('cbc:JobTitle', 'Principal');
+$cbc = $cac_driver_person->appendChild($cbc);
+
+$cac_identity_document_reference = $xml->createElement('cac:IdentityDocumentReference');
+$cbc = $xml->createElement('cbc:ID', 'P47932424');
+$cbc = $cac_identity_document_reference->appendChild($cbc);
+$cac_identity_document_reference = $cac_driver_person->appendChild($cac_identity_document_reference);
+
+$cac_driver_person = $cac_shipment_stage->appendChild($cac_driver_person);
+// $cac_carrier_party = $xml->createElement('cac:CarrierParty');
+// $cac_carrier_party = $cac_shipment_stage->appendChild($cac_carrier_party);
 
 // $cac_party_identification = $xml->createElement('cac:PartyIdentification');
 // $cbc = $xml->createElement('cbc:ID', '20000000002');

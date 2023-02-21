@@ -779,7 +779,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             }, function() {
                                 tools.ModalAlertInfo("Guía remisión", "Firmando xml y enviando a la sunat.");
                             });
-                            
+
                             const object = result;
                             if (object.state === true) {
                                 if (object.accept === true) {

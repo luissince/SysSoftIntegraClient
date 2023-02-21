@@ -134,6 +134,28 @@ if (!is_array($detalleventa)) {
     $TotalAmount = $SummaryDocumentsLine->appendChild($TotalAmount);
     $TotalAmount->setAttribute('currencyID',  $venta->TipoMoneda);
 
+    if ($detalleventa[0]['totalimpuesto'] > 0) {
+        $BillingPayment = $xml->createElement('sac:BillingPayment');
+        $cbc = $xml->createElement('cbc:PaidAmount', number_format(round($detalleventa[0]['opgravada'], 2, PHP_ROUND_HALF_UP), 2, '.', ''));
+        $cbc->setAttribute('currencyID', "PEN");
+        $cbc = $BillingPayment->appendChild($cbc);
+
+        $cbc = $xml->createElement('cbc:InstructionID', '01');
+        $cbc = $BillingPayment->appendChild($cbc);
+
+        $BillingPayment = $SummaryDocumentsLine->appendChild($BillingPayment);
+    }else{
+        $BillingPayment = $xml->createElement('sac:BillingPayment');
+        $cbc = $xml->createElement('cbc:PaidAmount', number_format(round($detalleventa[0]['opexonerada'], 2, PHP_ROUND_HALF_UP), 2, '.', ''));
+        $cbc->setAttribute('currencyID', "PEN");
+        $cbc = $BillingPayment->appendChild($cbc);
+
+        $cbc = $xml->createElement('cbc:InstructionID', '02');
+        $cbc = $BillingPayment->appendChild($cbc);
+
+        $BillingPayment = $SummaryDocumentsLine->appendChild($BillingPayment);
+    }
+
     $cac_TaxTotal = $xml->createElement('cac:TaxTotal');
     $cac_TaxTotal = $SummaryDocumentsLine->appendChild($cac_TaxTotal);
     $cbc = $xml->createElement('cbc:TaxAmount', number_format(round($detalleventa[0]['totalimpuesto'], 2, PHP_ROUND_HALF_UP), 2, '.', ''));
