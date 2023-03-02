@@ -144,7 +144,7 @@ if (!is_array($detalleventa)) {
         $cbc = $BillingPayment->appendChild($cbc);
 
         $BillingPayment = $SummaryDocumentsLine->appendChild($BillingPayment);
-    }else{
+    } else {
         $BillingPayment = $xml->createElement('sac:BillingPayment');
         $cbc = $xml->createElement('cbc:PaidAmount', number_format(round($detalleventa[0]['opexonerada'], 2, PHP_ROUND_HALF_UP), 2, '.', ''));
         $cbc->setAttribute('currencyID', "PEN");
@@ -221,7 +221,7 @@ if (!is_array($detalleventa)) {
     Sunat::createZip("../files/" . $filename . ".zip", "../files/" . $filename . ".xml", "" . $filename . ".xml");
 
     $soapResult = new SoapResult('../resources/wsdl/billService.wsdl', $filename);
-    $soapResult->sendSumary(Sunat::xmlSendSummary($empresa->NumeroDocumento, $empresa->UsuarioSol, $empresa->ClaveSol, $filename . '.zip', base64_encode(file_get_contents('../files/' . $filename . '.zip'))));
+    $soapResult->sendSumary(Sunat::xmlSendSummary($empresa->NumeroDocumento, $empresa->UsuarioSol, $empresa->ClaveSol, $filename . '.zip', Sunat::generateBase64File('../files/' . $filename . '.zip')));
 
     if ($soapResult->isSuccess()) {
         $soapResult->sendGetStatus(Sunat::xmlGetStatus($empresa->NumeroDocumento, $empresa->UsuarioSol, $empresa->ClaveSol, $soapResult->getTicket()));

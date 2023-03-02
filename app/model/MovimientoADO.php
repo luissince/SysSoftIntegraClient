@@ -334,7 +334,9 @@ class MovimientoADO
     {
         try {
             Database::getInstance()->getDb()->beginTransaction();
-            $suministroUpdate = Database::getInstance()->getDb()->prepare("UPDATE SuministroTB SET Cantidad = ? WHERE IdSuministro = ?");
+            $suministroUpdate = Database::getInstance()->getDb()->prepare("UPDATE SuministroTB 
+            SET Cantidad = ? 
+            WHERE IdSuministro = ?");
 
             $suministroKardex = Database::getInstance()->getDb()->prepare("INSERT INTO KardexSuministroTB
             (IdSuministro,

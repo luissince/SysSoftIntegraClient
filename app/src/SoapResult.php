@@ -443,7 +443,6 @@ class SoapResult
             $http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
             curl_close($curl);
 
-            error_log(json_encode($http_code));
             if ($http_code == 200) {
                 $result = (object)json_decode($response);
 
@@ -458,10 +457,7 @@ class SoapResult
                     }
 
                     $result = (object)json_decode($response);
-                    
-                    error_log("sendGuiaRemision:");
-                    error_log($result->msg);
-                    error_log("");
+
                     $this->setSuccess(false);
                     $this->setCode($result->cod);
                     $this->setMessage($result->msg);
@@ -473,11 +469,6 @@ class SoapResult
                         unlink('../files/' . $this->filename . '.zip');
                     }
 
-                    error_log("sendGuiaRemision:");
-                    error_log("Se presento una condicion inesperada que impidio completar el
-                    Request");
-                    error_log("");
-
                     $this->setSuccess(false);
                     $this->setCode("-1");
                     $this->setMessage("Se presento una condicion inesperada que impidio completar el
@@ -485,9 +476,6 @@ class SoapResult
                 }
             }
         } catch (Exception $ex) {
-            error_log("sendGuiaRemision Exception:");
-            error_log($ex->getMessage());
-            error_log("");
             if (file_exists('../files/' . $this->filename . '.xml')) {
                 unlink('../files/' . $this->filename . '.xml');
             }
@@ -551,12 +539,14 @@ class SoapResult
                     }
 
                     $result = (object)json_decode($response);
-                    error_log("sendApiSunatGuiaRemision:");
-                    error_log($response);
-                    error_log("");
+
                     $this->setSuccess(false);
                     $this->setCode($result->cod);
-                    $this->setMessage($result->msg);
+                    if (isset($result->exc)) {
+                        $this->setMessage($result->exc);
+                    } else {
+                        $this->setMessage($result->msg);
+                    }
                 } else {
                     if (file_exists('../files/' . $this->filename . '.xml')) {
                         unlink('../files/' . $this->filename . '.xml');
@@ -564,11 +554,6 @@ class SoapResult
                     if (file_exists('../files/' . $this->filename . '.zip')) {
                         unlink('../files/' . $this->filename . '.zip');
                     }
-
-                    error_log("sendApiSunatGuiaRemision:");
-                    error_log("Se presento una condicion inesperada que impidio completar el
-                    Request");
-                    error_log("");
 
                     $this->setSuccess(false);
                     $this->setCode("-1");
@@ -583,9 +568,7 @@ class SoapResult
             if (file_exists('../files/' . $this->filename . '.zip')) {
                 unlink('../files/' . $this->filename . '.zip');
             }
-            error_log("sendApiSunatGuiaRemision Exception:");
-            error_log($ex->getMessage());
-            error_log("");
+
             $this->setSuccess(false);
             $this->setCode("-1");
             $this->setMessage($ex->getMessage());
@@ -643,11 +626,11 @@ class SoapResult
                     $this->setMessage("La Guía de remisión fue declarada correctamente.");
                     $this->setSuccess(true);
                 } else if ($result->codRespuesta == "98") {
+                    if (file_exists('../files/' . $this->filename . '.xml')) {
+                        unlink('../files/' . $this->filename . '.xml');
+                    }
                     if (file_exists('../files/' . $this->filename . '.zip')) {
                         unlink('../files/' . $this->filename . '.zip');
-                    }
-                    if (file_exists('../files/R-' . $this->filename . '.zip')) {
-                        unlink('../files/R-' . $this->filename . '.zip');
                     }
 
                     $this->setAccepted(true);
@@ -655,18 +638,20 @@ class SoapResult
                     $this->setMessage("El proceso de envío, consulte en un par de minutos nuevamente.");
                     $this->setSuccess(true);
                 } else if ($result->codRespuesta == "99") {
-                    // if (file_exists('../files/' . $this->filename . '.xml')) {
-                    //     unlink('../files/' . $this->filename . '.xml');
-                    // }
-                    // if (file_exists('../files/' . $this->filename . '.zip')) {
-                    //     unlink('../files/' . $this->filename . '.zip');
-                    // }
-
-                    error_log($response);
-
+                    if (file_exists('../files/' . $this->filename . '.xml')) {
+                        unlink('../files/' . $this->filename . '.xml');
+                    }
+                    if (file_exists('../files/' . $this->filename . '.zip')) {
+                        unlink('../files/' . $this->filename . '.zip');
+                    }
+                    
                     $this->setAccepted(false);
                     $this->setCode($result->codRespuesta);
-                    $this->setMessage("Se genero un problema, comuníquese con su proveedor del software.");
+                    if (isset($result->error)) {
+                        $this->setMessage($result->error->desError);
+                    } else {
+                        $this->setMessage("Se genero un problema, comuníquese con su proveedor del software.");
+                    }
                     $this->setSuccess(true);
                 } else {
                     if (file_exists('../files/' . $this->filename . '.xml')) {
@@ -675,7 +660,7 @@ class SoapResult
                     if (file_exists('../files/' . $this->filename . '.zip')) {
                         unlink('../files/' . $this->filename . '.zip');
                     }
-                    
+
                     $this->setAccepted(false);
                     $this->setCode($result->codRespuesta);
                     $this->setMessage("Se genero un problema, comuníquese con su proveedor del software.");
@@ -691,6 +676,7 @@ class SoapResult
                     }
 
                     $result = (object)json_decode($response);
+                    
                     $this->setSuccess(false);
                     $this->setCode($result->cod);
                     $this->setMessage($result->msg);
@@ -715,7 +701,7 @@ class SoapResult
             if (file_exists('../files/' . $this->filename . '.zip')) {
                 unlink('../files/' . $this->filename . '.zip');
             }
-
+            
             $this->setSuccess(false);
             $this->setCode("-1");
             $this->setMessage($ex->getMessage());

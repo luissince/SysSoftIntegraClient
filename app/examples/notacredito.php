@@ -335,9 +335,8 @@ if (!is_array($result)) {
 
     Sunat::createZip("../files/" . $filename . ".zip", "../files/" . $filename . ".xml", "" . $filename . ".xml");
 
-
     $soapResult = new SoapResult('../resources/wsdl/billService.wsdl', $filename);
-    $soapResult->sendBill(Sunat::xmlSendBill($empresa->NumeroDocumento, $empresa->UsuarioSol, $empresa->ClaveSol, $filename . '.zip', base64_encode(file_get_contents('../files/' . $filename . '.zip'))));
+    $soapResult->sendBill(Sunat::xmlSendBill($empresa->NumeroDocumento, $empresa->UsuarioSol, $empresa->ClaveSol, $filename . '.zip',Sunat::generateBase64File('../files/' . $filename . '.zip')));
 
     if ($soapResult->isSuccess()) {
         if ($soapResult->isAccepted()) {

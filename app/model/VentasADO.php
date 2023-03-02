@@ -612,21 +612,21 @@ class VentasADO
             $resultCliente = null;
 
             $cmdVenta = Database::getInstance()->getDb()->prepare("SELECT 
-                dbo.Fc_Obtener_Nombre_Moneda(v.Moneda) AS NombreMoneda,
-		        dbo.Fc_Obtener_Abreviatura_Moneda(v.Moneda) AS TipoMoneda,
-                td.CodigoAlterno AS TipoComprobante,
-                v.Serie,
-                v.Numeracion,
-                v.FechaVenta,
-                v.HoraVenta,
-                v.FechaVencimiento,
-                ISNULL(v.Correlativo,0) AS Correlativo,
-                v.Tipo,
-                v.Estado,
-                v.TipoCredito
-                FROM VentaTB AS v 
-                INNER JOIN TipoDocumentoTB AS td ON v.Comprobante = td.IdTipoDocumento
-                WHERE v.IdVenta = ?");
+            dbo.Fc_Obtener_Nombre_Moneda(v.Moneda) AS NombreMoneda,
+		    dbo.Fc_Obtener_Abreviatura_Moneda(v.Moneda) AS TipoMoneda,
+            td.CodigoAlterno AS TipoComprobante,
+            v.Serie,
+            v.Numeracion,
+            v.FechaVenta,
+            v.HoraVenta,
+            v.FechaVencimiento,
+            ISNULL(v.Correlativo,0) AS Correlativo,
+            v.Tipo,
+            v.Estado,
+            v.TipoCredito
+            FROM VentaTB AS v 
+            INNER JOIN TipoDocumentoTB AS td ON v.Comprobante = td.IdTipoDocumento
+            WHERE v.IdVenta = ?");
             $cmdVenta->bindParam(1, $idVenta, PDO::PARAM_STR);
             $cmdVenta->execute();
             $resultVenta = $cmdVenta->fetchObject();
