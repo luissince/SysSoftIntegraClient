@@ -1109,6 +1109,52 @@ class VentasADO
                 ));
             }
 
+            $cmdNotificaciones = Database::getInstance()->getDb()->prepare("SELECT 
+            nc.Serie,
+            td.Nombre,
+            case nc.Estado 
+            when 3
+            then 'Dar de Baja'
+            else 'Por Declarar' end as Estado,
+            count(nc.Serie) AS Cantidad
+            FROM NotaCreditoTB AS nc
+            INNER JOIN TipoDocumentoTB AS td ON td.IdTipoDocumento = nc.Comprobante            
+            WHERE
+            td.Facturacion = 1 AND ISNULL(nc.Xmlsunat,'') <> '0' AND ISNULL(nc.Xmlsunat,'') <> '1032'
+            GROUP BY nc.Serie,td.Nombre,nc.Estado");
+            $cmdNotificaciones->execute();
+            while ($row =  $cmdNotificaciones->fetch()) {
+                array_push($array, array(
+                    "Nombre" => $row["Nombre"],
+                    "Estado" => $row["Estado"],
+                    "Cantidad" => $row["Cantidad"]
+                ));
+            }
+
+            $cmdNotificaciones = Database::getInstance()->getDb()->prepare("SELECT 
+            v.Serie,
+            td.Nombre,
+            case v.Estado 
+            when 3 
+            then 'Dar de Baja'
+            else 'Por Declarar' end as Estado,
+            count(v.Serie) AS Cantidad
+            FROM GuiaRemisionTB AS v 
+            INNER JOIN TipoDocumentoTB AS td ON td.IdTipoDocumento = v.Comprobante            
+            WHERE
+            td.Facturacion = 1 AND ISNULL(v.Xmlsunat,'') <> '0' AND ISNULL(v.Xmlsunat,'') <> '1032'
+            OR
+            td.Facturacion = 1 AND ISNULL(v.Xmlsunat,'') = '0' AND v.Estado = 3
+            GROUP BY v.Serie,td.Nombre,v.Estado");
+            $cmdNotificaciones->execute();
+            while ($row =  $cmdNotificaciones->fetch()) {
+                array_push($array, array(
+                    "Nombre" => $row["Nombre"],
+                    "Estado" => $row["Estado"],
+                    "Cantidad" => $row["Cantidad"]
+                ));
+            }
+
             return array(
                 "estado" => 1,
                 "data" => $array
@@ -1156,6 +1202,23 @@ class VentasADO
 			INNER JOIN TipoDocumentoTB AS td ON td.IdTipoDocumento = nc.Comprobante			
 			WHERE
 			td.Facturacion = 1 AND ISNULL(nc.Xmlsunat,'') <> '0' AND ISNULL(nc.Xmlsunat,'') <> '1032'
+
+            UNION
+            
+            SELECT
+			nc.FechaRegistro AS Fecha,
+			nc.HoraRegistro AS Hora,
+            nc.Serie,
+            nc.Numeracion,
+            td.Nombre,
+            CASE nc.Estado 
+            WHEN 3 THEN 'Dar de Baja'
+            ELSE 'Por Declarar' END AS Estado
+			FROM GuiaRemisionTB AS nc
+			INNER JOIN TipoDocumentoTB AS td ON td.IdTipoDocumento = nc.Comprobante			
+			WHERE
+			td.Facturacion = 1 AND ISNULL(nc.Xmlsunat,'') <> '0' AND ISNULL(nc.Xmlsunat,'') <> '1032'
+
             ORDER BY Fecha DESC,Hora DESC
             offset ? ROWS FETCH NEXT ? ROWS only");
             $cmdNotificaciones->bindParam(1, $posicionPagina, PDO::PARAM_INT);
@@ -1172,11 +1235,21 @@ class VentasADO
 			td.Facturacion = 1 AND ISNULL(v.Xmlsunat,'') <> '0' AND ISNULL(v.Xmlsunat,'') <> '1032'
 			OR
 			td.Facturacion = 1 AND ISNULL(v.Xmlsunat,'') = '0' AND v.Estado = 3 
+
 			UNION
 
 			SELECT
 			count(nc.IdNotaCredito) as Total
 			FROM NotaCreditoTB AS nc
+			INNER JOIN TipoDocumentoTB AS td ON td.IdTipoDocumento = nc.Comprobante			
+			WHERE
+			td.Facturacion = 1 AND ISNULL(nc.Xmlsunat,'') <> '0' AND ISNULL(nc.Xmlsunat,'') <> '1032'
+
+            UNION
+            
+            SELECT
+			count(nc.IdGuiaRemision) as Total
+			FROM GuiaRemisionTB AS nc
 			INNER JOIN TipoDocumentoTB AS td ON td.IdTipoDocumento = nc.Comprobante			
 			WHERE
 			td.Facturacion = 1 AND ISNULL(nc.Xmlsunat,'') <> '0' AND ISNULL(nc.Xmlsunat,'') <> '1032'");

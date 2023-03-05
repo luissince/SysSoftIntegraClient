@@ -507,7 +507,15 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             let anular = venta.Tipo == "nc" ? "-" : venta.Tipo == "gui" ? "-" : venta.Serie.toUpperCase().includes("B") ? resumen : comunicacion;
 
                             let datetime = tools.getDateForma(venta.Fecha) + "<br>" + tools.getTimeForma24(venta.Hora, true);
-                            let comprobante = venta.Nombre + " <br/>" + (venta.Serie + "-" + venta.Numeracion) + "</span>";
+
+                            let imagen = "sales.png";
+                            if (venta.Tipo == "gui") {
+                                imagen = "guia_remision.png";
+                            } else if (venta.Tipo == "nc") {
+                                imagen = "note.png";
+                            }
+
+                            let comprobante = venta.Nombre + " <br/>" + `<img width="22" src="./images/${imagen}"> ` + (venta.Serie + "-" + venta.Numeracion) + "</span>";
                             let cliente = venta.Documento + " - " + venta.NumeroDocumento + "<br>" + venta.Informacion;
                             let estado = "";
 
@@ -517,7 +525,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 estado = '<div class="badge badge-success">DECLARAR</div>';
                             }
 
-                            let total = venta.Simbolo + " " + tools.formatMoney(venta.Total);
+                            let total = venta.Tipo == "gui" ? "" : venta.Simbolo + " " + tools.formatMoney(venta.Total);
 
                             let estadosunat = venta.Estado == 3 ?
                                 ('<button class="btn btn-secondary btn-sm" onclick="firmarXml(\'' + venta.Tipo + '\',\'' + venta.IdComprobante + '\')"><img src="./images/error.svg" width="26" /></button>') :
@@ -576,7 +584,6 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         state = false;
                     }
                 } catch (error) {
-                    console.log(error);
                     tbody.empty();
                     ulPagination.html(`
                             <button class="btn btn-outline-secondary">
@@ -757,6 +764,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             if (object.state === true) {
                                 if (object.accept === true) {
                                     tools.ModalAlertSuccess("Nota de Crédito", "Código " + object.code + " " + object.description);
+                                    onEventPaginacion();
                                 } else {
                                     tools.ModalAlertWarning("Nota de Crédito", "Código " + object.code + " " + object.description);
                                 }
@@ -784,6 +792,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                             if (object.state === true) {
                                 if (object.accept === true) {
                                     tools.ModalAlertSuccess("Guía remisión", "Código " + object.code + " " + object.description);
+                                    onEventPaginacion();
                                 } else {
                                     tools.ModalAlertWarning("Guía remisión", "Código " + object.code + " " + object.description);
                                 }

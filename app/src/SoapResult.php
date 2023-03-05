@@ -402,7 +402,7 @@ class SoapResult
         }
     }
 
-    public function sendGuiaRemision(array $uri)
+    public function sendGuiaRemision(array $credenciales, array $uri)
     {
         try {
             $headers = array(
@@ -412,10 +412,10 @@ class SoapResult
             $data = array(
                 'grant_type' => 'password',
                 'scope' => urlencode('https://api-cpe.sunat.gob.pe'),
-                'client_id' => urlencode('test-85e5b0ae-255c-4891-a595-0b98c65c9854'),
-                'client_secret' => urlencode('test-Hty/M6QshYvPgItX2P0+Kw=='),
-                'username' => '20547848307MODDATOS',
-                'password' => 'MODDATOS',
+                'client_id' => urlencode($credenciales["IdApiSunat"]),
+                'client_secret' => urlencode($credenciales["ClaveApiSunat"]),
+                'username' => $credenciales["NumeroDocumento"] . "" . $credenciales["UsuarioSol"],
+                'password' => $credenciales["ClaveSol"],
             );
 
             $fields = "";
@@ -644,7 +644,7 @@ class SoapResult
                     if (file_exists('../files/' . $this->filename . '.zip')) {
                         unlink('../files/' . $this->filename . '.zip');
                     }
-                    
+
                     $this->setAccepted(false);
                     $this->setCode($result->codRespuesta);
                     if (isset($result->error)) {
@@ -676,7 +676,7 @@ class SoapResult
                     }
 
                     $result = (object)json_decode($response);
-                    
+
                     $this->setSuccess(false);
                     $this->setCode($result->cod);
                     $this->setMessage($result->msg);
@@ -701,7 +701,7 @@ class SoapResult
             if (file_exists('../files/' . $this->filename . '.zip')) {
                 unlink('../files/' . $this->filename . '.zip');
             }
-            
+
             $this->setSuccess(false);
             $this->setCode("-1");
             $this->setMessage($ex->getMessage());

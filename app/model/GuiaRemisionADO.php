@@ -44,6 +44,13 @@ class GuiaRemisionADO
 
             gui.FechaTraslado,
 		    gui.HoraTraslado,
+
+			ddc.IdAuxiliar AS CodigoConducto,
+			con.NumeroDocumento AS NumeroDocumentoConducto,
+			con.Informacion AS InformacionConducto,
+			con.LicenciaConducir AS LicenciaConducirConducto,
+
+            ISNULL(veh.NumeroPlaca, '') AS NumeroPlaca,
     
             tdv.CodigoAlterno AS CodigoComRl,
             vt.Serie AS SerieComRl,
@@ -62,6 +69,10 @@ class GuiaRemisionADO
 			INNER JOIN ModalidadTrasladoTB AS md ON md.IdModalidadTraslado = gui.IdModalidadTraslado
             INNER JOIN DetalleTB AS mtd ON mtd.IdDetalle = gui.IdMotivoTraslado AND mtd.IdMantenimiento = '0017'            
             INNER JOIN DetalleTB AS mpc ON mpc.IdDetalle = gui.IdPesoCarga AND mpc.IdMantenimiento = '0021'
+
+			LEFT JOIN ConductorTB AS con ON con.IdConductor = gui.IdConductor
+			INNER JOIN DetalleTB AS ddc ON ddc.IdDetalle = con.IdTipoDocumento AND ddc.IdMantenimiento = '0003'
+			LEFT JOIN VehiculoTB AS veh ON veh.IdVehiculo = gui.IdVehiculo
     
             INNER JOIN VentaTB AS vt ON vt.IdVenta = gui.IdVenta
             INNER JOIN TipoDocumentoTB AS tdv ON tdv.IdTipoDocumento = vt.Comprobante
@@ -93,7 +104,11 @@ class GuiaRemisionADO
             d.IdAuxiliar,
             e.NumeroDocumento,
             e.RazonSocial,
-            e.Domicilio
+            e.Domicilio,
+            e.UsuarioSol,
+            e.ClaveSol,
+            e.IdApiSunat,
+            e.ClaveApiSunat
             FROM EmpresaTB AS e 
             INNER JOIN DetalleTB AS d ON e.TipoDocumento = d.IdDetalle AND d.IdMantenimiento = '0003'");
             $cmdEmpresa->execute();

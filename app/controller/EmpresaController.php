@@ -79,6 +79,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
     $body["txtClaveCertificado"] = $_POST["txtClaveCertificado"];
 
+    $body["txtIdApiSunat"] = $_POST["txtIdApiSunat"];
+    $body["txtClaveApiSunat"] = $_POST["txtClaveApiSunat"];
+
     echo json_encode(EmpresaADO::CrudEmpresa($body));
     exit();
 }

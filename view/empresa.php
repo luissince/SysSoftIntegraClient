@@ -186,6 +186,24 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     </div>
 
                     <div class="row">
+
+                        <div class="col-md-6">
+                            <label class="form-text">Id (Api Sunat):</label>
+                            <div class="form-group">
+                                <input id="txtIdApiSunat" class="form-control" type="text" placeholder="Contraseña de tu Certificado" />
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-text">Clave (Api Sunat):</label>
+                            <div class="form-group">
+                                <input id="txtClaveApiSunat" class="form-control" type="text" placeholder="Contraseña de tu Certificado" />
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label class="form-text text-left text-danger">Todos los campos marcados con <i class="fa fa-fw fa-asterisk text-danger"></i> son obligatorios</label>
@@ -227,6 +245,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
             let lblNameCertificado = $("#lblNameCertificado");
             let fileCertificado = $("#fileCertificado");
             let txtClaveCertificado = $("#txtClaveCertificado");
+            let txtIdApiSunat = $("#txtIdApiSunat");
+            let txtClaveApiSunat = $("#txtClaveApiSunat");
             $(document).ready(function() {
 
                 cbUbigeo.select2({
@@ -291,6 +311,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
                     txtClaveSol.val(empresa.ClaveSol);
                     lblNameCertificado.html(empresa.CertificadoRuta);
                     txtClaveCertificado.val(empresa.CertificadoClave);
+                    txtIdApiSunat.val(empresa.IdApiSunat);
+                    txtClaveApiSunat.val(empresa.ClaveApiSunat);
 
                     var data = [{
                             id: 0,
@@ -366,12 +388,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 formData.append("certificadoType", fileCertificado[0].files.length);
                 formData.append("certificado", fileCertificado[0].files[0]);
                 formData.append("txtClaveCertificado", txtClaveCertificado.val());
-
-                // console.log(fileCertificado[0].files.length)
-                // console.log(fileCertificado[0].files[0])
-                // console.log(txtClaveCertificado.val())
-                // console.log(cbUbigeo.val() == 0 && tools.validateComboBox(cbUbigeo))
-                // console.log(cbUbigeo.val())
+                formData.append("txtIdApiSunat", txtIdApiSunat.val());
+                formData.append("txtClaveApiSunat", txtClaveApiSunat.val());
 
                 tools.ModalDialog("Mi Empresa", "¿Está seguro de continuar?", function(value) {
                     if (value == true) {

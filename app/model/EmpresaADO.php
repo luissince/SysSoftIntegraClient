@@ -75,7 +75,9 @@ class EmpresaADO
                 "UsuarioSol" => $row['UsuarioSol'],
                 "ClaveSol" => $row['ClaveSol'],
                 "CertificadoRuta" => $row['CertificadoRuta'],
-                "CertificadoClave" => $row['CertificadoClave']
+                "CertificadoClave" => $row['CertificadoClave'],
+                "IdApiSunat" => $row['IdApiSunat'],
+                "ClaveApiSunat" => $row['ClaveApiSunat']
             );
 
             Tools::httpStatus200();
@@ -196,7 +198,9 @@ class EmpresaADO
                 UsuarioSol=?,
                 ClaveSol=?,
                 CertificadoRuta=?,
-                CertificadoClave=?
+                CertificadoClave=?,
+                IdApiSunat=?,
+                ClaveApiSunat=?
                 WHERE IdEmpresa = ?");
                 $comando->bindParam(1, $body['txtNumDocumento'], PDO::PARAM_STR);
                 $comando->bindParam(2, $body['txtRazonSocial'], PDO::PARAM_STR);
@@ -214,7 +218,9 @@ class EmpresaADO
                 $comando->bindParam(14, $body['txtClaveSol'], PDO::PARAM_STR);
                 $comando->bindParam(15, $path, PDO::PARAM_STR);
                 $comando->bindParam(16, $body['txtClaveCertificado'], PDO::PARAM_STR);
-                $comando->bindParam(17, $body['idEmpresa'], PDO::PARAM_INT);
+                $comando->bindParam(17, $body['txtIdApiSunat'], PDO::PARAM_STR);
+                $comando->bindParam(18, $body['txtClaveApiSunat'], PDO::PARAM_STR);
+                $comando->bindParam(19, $body['idEmpresa'], PDO::PARAM_INT);
                 $comando->execute();
             } else {
                 $comando = Database::getInstance()->getDb()->prepare("UPDATE EmpresaTB SET 
@@ -232,7 +238,9 @@ class EmpresaADO
                 UsuarioSol=?,
                 ClaveSol=?,
                 CertificadoRuta=?,
-                CertificadoClave=?
+                CertificadoClave=?,
+                IdApiSunat=?,
+                ClaveApiSunat=?
                 WHERE IdEmpresa = ?");
                 $comando->bindParam(1, $body['txtNumDocumento'], PDO::PARAM_STR);
                 $comando->bindParam(2, $body['txtRazonSocial'], PDO::PARAM_STR);
@@ -249,7 +257,9 @@ class EmpresaADO
                 $comando->bindParam(13, $body['txtClaveSol'], PDO::PARAM_STR);
                 $comando->bindParam(14, $path, PDO::PARAM_STR);
                 $comando->bindParam(15, $body['txtClaveCertificado'], PDO::PARAM_STR);
-                $comando->bindParam(16, $body['idEmpresa'], PDO::PARAM_INT);
+                $comando->bindParam(16, $body['txtIdApiSunat'], PDO::PARAM_STR);
+                $comando->bindParam(17, $body['txtClaveApiSunat'], PDO::PARAM_STR);
+                $comando->bindParam(18, $body['idEmpresa'], PDO::PARAM_INT);
                 $comando->execute();
             }
 
