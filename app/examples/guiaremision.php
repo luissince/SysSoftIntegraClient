@@ -465,9 +465,21 @@ if ($soapResult->isSuccess()) {
         ));
     }
 } else {
-    GuiaRemisionADO::CambiarEstadoSunatGuiaRemisionUnico($idGuiaRemision, $soapResult->getCode(), $soapResult->getMessage());
-    $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-    header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+    if ($soapResult->getCode() == "1033") {
+        GuiaRemisionADO::CambiarEstadoSunatGuiaRemisionUnico($idGuiaRemision, "0", $soapResult->getMessage());
+        $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+        header($protocol . ' ' . 200 . ' ' . "OK");
 
-    echo json_encode($soapResult->getMessage());
+        echo json_encode(array(
+            "state" => false,
+            "code" => $soapResult->getCode(),
+            "description" => $soapResult->getMessage()
+        ));
+    } else {
+        GuiaRemisionADO::CambiarEstadoSunatGuiaRemisionUnico($idGuiaRemision, $soapResult->getCode(), $soapResult->getMessage());
+        $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+        header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+
+        echo json_encode($soapResult->getMessage());
+    }
 }

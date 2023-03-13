@@ -426,7 +426,8 @@ class SoapResult
             }
 
             $curl = curl_init();
-            curl_setopt($curl, CURLOPT_URL, 'https://gre-test.nubefact.com/v1/clientessol/test-85e5b0ae-255c-4891-a595-0b98c65c9854/oauth2/token');
+            curl_setopt($curl, CURLOPT_URL, 'https://gre-test.nubefact.com/v1/clientessol/' . $credenciales["IdApiSunat"] . '/oauth2/token');
+            // curl_setopt($curl, CURLOPT_URL, 'https://api-seguridad.sunat.gob.pe/v1/clientessol/' . $credenciales["IdApiSunat"] . '/oauth2/token/');
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($curl, CURLOPT_ENCODING, '');
             curl_setopt($curl, CURLOPT_MAXREDIRS, 10);
@@ -509,6 +510,7 @@ class SoapResult
 
             $curl = curl_init();
             curl_setopt($curl, CURLOPT_URL, 'https://gre-test.nubefact.com/v1/contribuyente/gem/comprobantes/' . $uri . '');
+            // curl_setopt($curl, CURLOPT_URL, 'https://api-cpe.sunat.gob.pe/v1/contribuyente/gem/comprobantes/' . $uri . '');
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($curl, CURLOPT_ENCODING, '');
             curl_setopt($curl, CURLOPT_MAXREDIRS, 10);
@@ -585,6 +587,7 @@ class SoapResult
 
             $curl = curl_init();
             curl_setopt($curl, CURLOPT_URL, 'https://gre-test.nubefact.com/v1/contribuyente/gem/comprobantes/envios/' .  $this->ticket . '');
+            //curl_setopt($curl, CURLOPT_URL, 'https://api-cpe.sunat.gob.pe/v1/contribuyente/gem/comprobantes/envios/' .  $this->ticket . '');
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($curl, CURLOPT_ENCODING, '');
             curl_setopt($curl, CURLOPT_MAXREDIRS, 10);
@@ -633,10 +636,19 @@ class SoapResult
                         unlink('../files/' . $this->filename . '.zip');
                     }
 
+                    $logFile = fopen("log.txt", 'a') or die("Error creando archivo");
+                    fwrite($logFile, "\n" . date("d/m/Y H:i:s") . "N° TICKET: ". $this->ticket ."\r\n") or die("Error escribiendo en el archivo");
+                    fclose($logFile);
+
+                    $logFile = fopen("log.txt", 'a') or die("Error creando archivo");
+                    fwrite($logFile, "\n" . date("d/m/Y H:i:s") . $response."\r\n") or die("Error escribiendo en el archivo");
+                    fclose($logFile);
+
+
                     $this->setAccepted(true);
                     $this->setCode($result->codRespuesta);
                     $this->setMessage("El proceso de envío, consulte en un par de minutos nuevamente.");
-                    $this->setSuccess(true);
+                    $this->setSuccess(false);
                 } else if ($result->codRespuesta == "99") {
                     if (file_exists('../files/' . $this->filename . '.xml')) {
                         unlink('../files/' . $this->filename . '.xml');
@@ -648,11 +660,12 @@ class SoapResult
                     $this->setAccepted(false);
                     $this->setCode($result->codRespuesta);
                     if (isset($result->error)) {
+                        $this->setCode($result->error->numError);
                         $this->setMessage($result->error->desError);
                     } else {
                         $this->setMessage("Se genero un problema, comuníquese con su proveedor del software.");
                     }
-                    $this->setSuccess(true);
+                    $this->setSuccess(false);
                 } else {
                     if (file_exists('../files/' . $this->filename . '.xml')) {
                         unlink('../files/' . $this->filename . '.xml');
@@ -664,7 +677,7 @@ class SoapResult
                     $this->setAccepted(false);
                     $this->setCode($result->codRespuesta);
                     $this->setMessage("Se genero un problema, comuníquese con su proveedor del software.");
-                    $this->setSuccess(true);
+                    $this->setSuccess(false);
                 }
             } else {
                 if ($response) {

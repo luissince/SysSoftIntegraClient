@@ -63,8 +63,8 @@ class GuiaRemisionADO
             FROM GuiaRemisionTB  AS gui 
             INNER JOIN ClienteTB AS cl ON gui.IdCliente = cl.IdCliente
             INNER JOIN EmpleadoTB AS em ON em.IdEmpleado = gui.IdVendedor
-            INNER JOIN UbigeoTB AS ub1 ON gui.IdUbigeoLlegada  = ub1.IdUbigeo
-            INNER JOIN UbigeoTB AS ub2 ON gui.IdUbigeoPartida = ub2.IdUbigeo
+            INNER JOIN UbigeoTB AS ub1 ON gui.IdUbigeoPartida = ub1.IdUbigeo
+            INNER JOIN UbigeoTB AS ub2 ON gui.IdUbigeoLlegada = ub2.IdUbigeo
             INNER JOIN TipoDocumentoTB AS td ON td.IdTipoDocumento = gui.Comprobante
 			INNER JOIN ModalidadTrasladoTB AS md ON md.IdModalidadTraslado = gui.IdModalidadTraslado
             INNER JOIN DetalleTB AS mtd ON mtd.IdDetalle = gui.IdMotivoTraslado AND mtd.IdMantenimiento = '0017'            
@@ -150,7 +150,7 @@ class GuiaRemisionADO
             Xmlsunat = ? , Xmldescripcion = ? WHERE IdGuiaRemision = ?");
             $comando->bindParam(1, $codigo, PDO::PARAM_STR);
             $comando->bindParam(2, $descripcion, PDO::PARAM_STR);
-            $comando->bindParam(5, $idGuiaRemision, PDO::PARAM_STR);
+            $comando->bindParam(3, $idGuiaRemision, PDO::PARAM_STR);
             $comando->execute();
             Database::getInstance()->getDb()->commit();
             return "updated";
