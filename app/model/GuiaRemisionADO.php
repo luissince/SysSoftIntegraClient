@@ -58,7 +58,9 @@ class GuiaRemisionADO
             CONCAT(SUBSTRING(tdv.Nombre, 1, 1),'',LOWER(SUBSTRING(tdv.Nombre, 2, LEN(tdv.Nombre)))) AS NombreComRl,
             dd.IdAuxiliar AS CodigoCliRl,
             clv.NumeroDocumento AS NumeroCliRl,
-            clv.Informacion AS InformacionCliRl
+            clv.Informacion AS InformacionCliRl,
+
+            ISNULL(gui.NumeroTicketSunat,'') AS NumeroTicketSunat
             
             FROM GuiaRemisionTB  AS gui 
             INNER JOIN ClienteTB AS cl ON gui.IdCliente = cl.IdCliente
@@ -124,26 +126,38 @@ class GuiaRemisionADO
         }
     }
 
-    public static function CambiarEstadoSunatGuiaRemision(string $idGuiaRemision, string $codigo, string $descripcion, $hash, string $xmlgenerado){
+    public static function CambiarEstadoSunatGuiaRemision(string $idGuiaRemision, string $codigo, string $descripcion, string $hash, string $xmlgenerado, string $numeroTicket)
+    {
         try {
-            Database::getInstance()->getDb()->beginTransaction();
-            $comando = Database::getInstance()->getDb()->prepare("UPDATE GuiaRemisionTB SET 
-            Xmlsunat = ? , Xmldescripcion = ?, CodigoHash = ?,Xmlgenerado = ? WHERE IdGuiaRemision = ?");
-            $comando->bindParam(1, $codigo, PDO::PARAM_STR);
-            $comando->bindParam(2, $descripcion, PDO::PARAM_STR);
-            $comando->bindParam(3, $hash, PDO::PARAM_STR);
-            $comando->bindParam(4, $xmlgenerado, PDO::PARAM_STR);
-            $comando->bindParam(5, $idGuiaRemision, PDO::PARAM_STR);
-            $comando->execute();
-            Database::getInstance()->getDb()->commit();
-            return "updated";
+            if ($xmlgenerado == "") {
+                Database::getInstance()->getDb()->beginTransaction();
+                $comando = Database::getInstance()->getDb()->prepare("UPDATE GuiaRemisionTB SET 
+                Xmlsunat = ?, Xmldescripcion = ? WHERE IdGuiaRemision = ?");
+                $comando->bindParam(1, $codigo, PDO::PARAM_STR);
+                $comando->bindParam(2, $descripcion, PDO::PARAM_STR);
+                $comando->bindParam(3, $idGuiaRemision, PDO::PARAM_STR);
+                $comando->execute();
+                Database::getInstance()->getDb()->commit();
+            } else {
+                Database::getInstance()->getDb()->beginTransaction();
+                $comando = Database::getInstance()->getDb()->prepare("UPDATE GuiaRemisionTB SET 
+                Xmlsunat = ?, Xmldescripcion = ?, CodigoHash = ?, Xmlgenerado = ?,NumeroTicketSunat = ? WHERE IdGuiaRemision = ?");
+                $comando->bindParam(1, $codigo, PDO::PARAM_STR);
+                $comando->bindParam(2, $descripcion, PDO::PARAM_STR);
+                $comando->bindParam(3, $hash, PDO::PARAM_STR);
+                $comando->bindParam(4, $xmlgenerado, PDO::PARAM_STR);
+                $comando->bindParam(5, $numeroTicket, PDO::PARAM_STR);
+                $comando->bindParam(6, $idGuiaRemision, PDO::PARAM_STR);
+                $comando->execute();
+                Database::getInstance()->getDb()->commit();
+            }
         } catch (Exception $ex) {
-            Database::getInstance()->getDb()->rollback();
-            return $ex->getMessage();
+            Database::getInstance()->getDb()->rollback();          
         }
     }
 
-    public static function CambiarEstadoSunatGuiaRemisionUnico(string $idGuiaRemision, string $codigo, string $descripcion){
+    public static function CambiarEstadoSunatGuiaRemisionUnico(string $idGuiaRemision, string $codigo, string $descripcion)
+    {
         try {
             Database::getInstance()->getDb()->beginTransaction();
             $comando = Database::getInstance()->getDb()->prepare("UPDATE GuiaRemisionTB SET 
@@ -152,11 +166,9 @@ class GuiaRemisionADO
             $comando->bindParam(2, $descripcion, PDO::PARAM_STR);
             $comando->bindParam(3, $idGuiaRemision, PDO::PARAM_STR);
             $comando->execute();
-            Database::getInstance()->getDb()->commit();
-            return "updated";
+            Database::getInstance()->getDb()->commit();          
         } catch (Exception $ex) {
-            Database::getInstance()->getDb()->rollback();
-            return $ex->getMessage();
+            Database::getInstance()->getDb()->rollback();          
         }
     }
 }
