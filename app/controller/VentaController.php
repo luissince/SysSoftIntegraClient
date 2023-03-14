@@ -58,6 +58,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     } else if ($_GET["type"] == "ventaAgregar") {
         print json_encode(VentasADO::VentaAgregarTerminar($_GET["idVenta"]));
         exit();
+    } else if ($_GET["type"] == "listComprobantesExternal"){
+        print json_encode(VentasADO::ListCpeComprobantesExternal());
+        exit();
     }
 } else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $body = json_decode(file_get_contents("php://input"), true);
