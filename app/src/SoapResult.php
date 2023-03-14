@@ -446,8 +446,24 @@ class SoapResult
 
             if ($http_code == 200) {
                 $result = (object)json_decode($response);
+                if (isset($result->access_token)) {
+                    if ($this->ticket) {
+                        $this->sendGetStatusGuiaRemision($result->access_token);
+                    } else {
+                        $this->sendApiSunatGuiaRemision($result->access_token, implode("-", $uri));
+                    }
+                } else {
+                    if (file_exists('../files/' . $this->filename . '.xml')) {
+                        unlink('../files/' . $this->filename . '.xml');
+                    }
+                    if (file_exists('../files/' . $this->filename . '.zip')) {
+                        unlink('../files/' . $this->filename . '.zip');
+                    }
 
-                $this->sendApiSunatGuiaRemision($result->access_token, implode("-", $uri));
+                    $this->setSuccess(false);
+                    $this->setCode($result->cod);
+                    $this->setMessage($result->msg);
+                }
             } else {
                 if ($response) {
                     if (file_exists('../files/' . $this->filename . '.xml')) {
@@ -529,8 +545,11 @@ class SoapResult
 
             if ($http_code == 200) {
                 $result = (object)json_decode($response);
-                $this->ticket = $result->numTicket;
-                $this->sendGetStatusGuiaRemision($token);
+                $this->setTicket($result->numTicket);
+                $this->setAccepted(true);
+                $this->setCode("");
+                $this->setMessage("La Guía de remisión se envío correctamente, estado en proceso verique en un par de minutos.");
+                $this->setSuccess(true);
             } else {
                 if ($response) {
                     if (file_exists('../files/' . $this->filename . '.xml')) {
@@ -637,13 +656,12 @@ class SoapResult
                     }
 
                     $logFile = fopen("log.txt", 'a') or die("Error creando archivo");
-                    fwrite($logFile, "\n" . date("d/m/Y H:i:s") . "N° TICKET: ". $this->ticket ."\r\n") or die("Error escribiendo en el archivo");
+                    fwrite($logFile, "\n" . date("d/m/Y H:i:s") . "N° TICKET: " . $this->ticket . "\r\n") or die("Error escribiendo en el archivo");
                     fclose($logFile);
 
                     $logFile = fopen("log.txt", 'a') or die("Error creando archivo");
-                    fwrite($logFile, "\n" . date("d/m/Y H:i:s") . $response."\r\n") or die("Error escribiendo en el archivo");
+                    fwrite($logFile, "\n" . date("d/m/Y H:i:s") . $response . "\r\n") or die("Error escribiendo en el archivo");
                     fclose($logFile);
-
 
                     $this->setAccepted(true);
                     $this->setCode($result->codRespuesta);
