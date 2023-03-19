@@ -2235,4 +2235,35 @@ class VentasADO
             return array("estado" => 0, "message" => $ex->getMessage());
         }
     }
+
+    public static function ListCpeBoletaFactura(){
+        try{
+            $cmd = Database::getInstance()->getDb()->prepare("{CALL Sp_Lista_Cpe_Boleta_Factura}");
+            $cmd->execute();
+            $arrayCpe = array();
+            while($row = $cmd->fetch(PDO::FETCH_OBJ)){
+                array_push($arrayCpe, $row);
+            }
+            
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 200 . ' ' . "OK");
+
+            return $arrayCpe;
+
+        }
+        catch(PDOException $ex){
+            Database::getInstance()->getDb()->rollback();
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+
+            return array("estado" => 0, "message" => $ex->getMessage());
+        }
+        catch(Exception $ex){
+            Database::getInstance()->getDb()->rollback();
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+
+            return array("estado" => 0, "message" => $ex->getMessage());
+        }
+    }
 }
