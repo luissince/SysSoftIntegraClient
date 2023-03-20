@@ -554,58 +554,59 @@ class SuministrosADO
                 header($protocol . ' ' . 400 . ' ' . "Bad Request");
 
                 return "No se puede haber 2 producto con la misma clave.";
-            } else {
+            }
 
-                $cmdValidate = Database::getInstance()->getDb()->prepare("SELECT NombreMarca FROM SuministroTB WHERE NombreMarca = ?");
-                $cmdValidate->bindParam(1, $suministro["NombreMarca"], PDO::PARAM_STR);
-                $cmdValidate->execute();
-                if ($cmdValidate->fetch()) {
-                    Database::getInstance()->getDb()->rollback();
-                    $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-                    header($protocol . ' ' . 400 . ' ' . "Bad Request");
+            $cmdValidate = Database::getInstance()->getDb()->prepare("SELECT NombreMarca FROM SuministroTB WHERE NombreMarca = ?");
+            $cmdValidate->bindParam(1, $suministro["NombreMarca"], PDO::PARAM_STR);
+            $cmdValidate->execute();
+            if ($cmdValidate->fetch()) {
+                Database::getInstance()->getDb()->rollback();
+                $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+                header($protocol . ' ' . 400 . ' ' . "Bad Request");
 
-                    return "No se puede haber 2 producto con el mismo nombre.";
+                return "No se puede haber 2 producto con el mismo nombre.";
+            }
+
+
+            $codigoSuministro = Database::getInstance()->getDb()->prepare("SELECT dbo.Fc_Suministro_Codigo_Alfanumerico();");
+            $codigoSuministro->execute();
+            $idSuministro = $codigoSuministro->fetchColumn();
+
+            // $image = $suministro['Imagen'] == null ? null : base64_decode($suministro['Imagen']);
+
+            $fileDir = "../../resource/catalogo";
+            if (!file_exists($fileDir)) {
+                mkdir($fileDir, 0777, true);
+            }
+
+            $filename = '';
+
+            $image = $suministro['Imagen'] == null ? null : $suministro['Imagen'];
+            if ($image != null) {
+                if ($suministro['Ext'] == "") {
+                    $filename = $image;
                 } else {
+                    $date = new DateTime('now');
+                    $filename = $idSuministro . $date->format('Ymd') . $date->format('His') . "." . $suministro["Ext"];
+                    $path = $fileDir . '/' . $filename;
 
-                    $codigoSuministro = Database::getInstance()->getDb()->prepare("SELECT dbo.Fc_Suministro_Codigo_Alfanumerico();");
-                    $codigoSuministro->execute();
-                    $idSuministro = $codigoSuministro->fetchColumn();
+                    $img = ImageManagerStatic::make($image);
+                    $img->save($path);
+                    // $imagedetails = getimagesize($path);
+                    // $width = $imagedetails[0];
+                    // if ($width > 600) {
+                    $img = ImageManagerStatic::make($path);
+                    $img->resize(600, 600, function ($const) {
+                        $const->aspectRatio();
+                        $const->upsize();
+                    });
 
-                    // $image = $suministro['Imagen'] == null ? null : base64_decode($suministro['Imagen']);
+                    $img->resizeCanvas(600, 600, 'center')->save($path);
+                    // }
+                }
+            }
 
-                    $fileDir = "../../resource/catalogo";
-                    if (!file_exists($fileDir)) {
-                        mkdir($fileDir, 0777, true);
-                    }
-
-                    $filename = '';
-
-                    $image = $suministro['Imagen'] == null ? null : $suministro['Imagen'];
-                    if ($image != null) {
-                        if ($suministro['Ext'] == "") {
-                            $filename = $image;
-                        } else {
-                            $date = new DateTime('now');
-                            $filename = $idSuministro . $date->format('Ymd') . $date->format('His') . "." . $suministro["Ext"];
-                            $path = $fileDir . '/' . $filename;
-
-                            $img = ImageManagerStatic::make($image);
-                            $img->save($path);
-                            // $imagedetails = getimagesize($path);
-                            // $width = $imagedetails[0];
-                            // if ($width > 600) {
-                            $img = ImageManagerStatic::make($path);
-                            $img->resize(600, 600, function ($const) {
-                                $const->aspectRatio();
-                                $const->upsize();
-                            });
-
-                            $img->resizeCanvas(600, 600, 'center')->save($path);
-                            // }
-                        }
-                    }
-
-                    $cmdSuministro = Database::getInstance()->getDb()->prepare("INSERT INTO SuministroTB(
+            $cmdSuministro = Database::getInstance()->getDb()->prepare("INSERT INTO SuministroTB(
                     IdSuministro,
                     Origen,
                     Clave,
@@ -662,71 +663,69 @@ class SuministrosADO
                         ?--DESCRIPCION
                         )");
 
-                    $cmdSuministro->bindParam(1, $idSuministro, PDO::PARAM_STR);
-                    $cmdSuministro->bindParam(2, $suministro["Origen"], PDO::PARAM_STR);
-                    $cmdSuministro->bindParam(3, $suministro["Clave"], PDO::PARAM_STR);
-                    $cmdSuministro->bindParam(4, $suministro["ClaveAlterna"], PDO::PARAM_STR);
-                    $cmdSuministro->bindParam(5, $suministro["NombreMarca"], PDO::PARAM_STR);
-                    $cmdSuministro->bindParam(6, $suministro["NombreGenerico"], PDO::PARAM_STR);
+            $cmdSuministro->bindParam(1, $idSuministro, PDO::PARAM_STR);
+            $cmdSuministro->bindParam(2, $suministro["Origen"], PDO::PARAM_STR);
+            $cmdSuministro->bindParam(3, $suministro["Clave"], PDO::PARAM_STR);
+            $cmdSuministro->bindParam(4, $suministro["ClaveAlterna"], PDO::PARAM_STR);
+            $cmdSuministro->bindParam(5, $suministro["NombreMarca"], PDO::PARAM_STR);
+            $cmdSuministro->bindParam(6, $suministro["NombreGenerico"], PDO::PARAM_STR);
 
-                    $cmdSuministro->bindParam(7, $suministro["Categoria"], PDO::PARAM_STR);
-                    $cmdSuministro->bindParam(8, $suministro["Marca"], PDO::PARAM_STR);
-                    $cmdSuministro->bindParam(9, $suministro["Presentacion"], PDO::PARAM_STR);
-                    $cmdSuministro->bindParam(10, $suministro["UnidadCompra"], PDO::PARAM_INT);
-                    $cmdSuministro->bindParam(11, $suministro["UnidadVenta"], PDO::PARAM_INT);
+            $cmdSuministro->bindParam(7, $suministro["Categoria"], PDO::PARAM_STR);
+            $cmdSuministro->bindParam(8, $suministro["Marca"], PDO::PARAM_STR);
+            $cmdSuministro->bindParam(9, $suministro["Presentacion"], PDO::PARAM_STR);
+            $cmdSuministro->bindParam(10, $suministro["UnidadCompra"], PDO::PARAM_INT);
+            $cmdSuministro->bindParam(11, $suministro["UnidadVenta"], PDO::PARAM_INT);
 
-                    $cmdSuministro->bindParam(12, $suministro["Estado"], PDO::PARAM_INT);
-                    $cmdSuministro->bindParam(13, $suministro["StockMinimo"], PDO::PARAM_STR);
-                    $cmdSuministro->bindParam(14, $suministro["StockMaximo"], PDO::PARAM_STR);
-                    $cmdSuministro->bindParam(15, $suministro["Cantidad"], PDO::PARAM_STR);
+            $cmdSuministro->bindParam(12, $suministro["Estado"], PDO::PARAM_INT);
+            $cmdSuministro->bindParam(13, $suministro["StockMinimo"], PDO::PARAM_STR);
+            $cmdSuministro->bindParam(14, $suministro["StockMaximo"], PDO::PARAM_STR);
+            $cmdSuministro->bindParam(15, $suministro["Cantidad"], PDO::PARAM_STR);
 
-                    $cmdSuministro->bindParam(16, $suministro["Impuesto"], PDO::PARAM_INT);
-                    $cmdSuministro->bindParam(17, $suministro["TipoPrecio"], PDO::PARAM_BOOL);
-                    $cmdSuministro->bindParam(18, $suministro["PrecioCompra"], PDO::PARAM_STR);
-                    $cmdSuministro->bindParam(19, $suministro["PrecioVentaGeneral"], PDO::PARAM_STR);
-                    $cmdSuministro->bindParam(20, $suministro["Lote"], PDO::PARAM_BOOL);
-                    $cmdSuministro->bindParam(21, $suministro["Inventario"], PDO::PARAM_BOOL);
-                    $cmdSuministro->bindParam(22, $suministro["ValorInventario"], PDO::PARAM_INT);
+            $cmdSuministro->bindParam(16, $suministro["Impuesto"], PDO::PARAM_INT);
+            $cmdSuministro->bindParam(17, $suministro["TipoPrecio"], PDO::PARAM_BOOL);
+            $cmdSuministro->bindParam(18, $suministro["PrecioCompra"], PDO::PARAM_STR);
+            $cmdSuministro->bindParam(19, $suministro["PrecioVentaGeneral"], PDO::PARAM_STR);
+            $cmdSuministro->bindParam(20, $suministro["Lote"], PDO::PARAM_BOOL);
+            $cmdSuministro->bindParam(21, $suministro["Inventario"], PDO::PARAM_BOOL);
+            $cmdSuministro->bindParam(22, $suministro["ValorInventario"], PDO::PARAM_INT);
 
-                    $cmdSuministro->bindParam(23, $filename, PDO::PARAM_STR);
-                    $cmdSuministro->bindParam(24, $suministro["ClaveUnica"], PDO::PARAM_STR);
-                    $cmdSuministro->bindParam(25, $suministro["Descripcion"], PDO::PARAM_STR);
-                    // $cmdSuministro->bindParam(24, $image, PDO::PARAM_LOB, 0, PDO::SQLSRV_ENCODING_BINARY);
-                    $cmdSuministro->execute();
+            $cmdSuministro->bindParam(23, $filename, PDO::PARAM_STR);
+            $cmdSuministro->bindParam(24, $suministro["ClaveUnica"], PDO::PARAM_STR);
+            $cmdSuministro->bindParam(25, $suministro["Descripcion"], PDO::PARAM_STR);
+            // $cmdSuministro->bindParam(24, $image, PDO::PARAM_LOB, 0, PDO::SQLSRV_ENCODING_BINARY);
+            $cmdSuministro->execute();
 
-                    $cmdPrecios = Database::getInstance()->getDb()->prepare("INSERT INTO PreciosTB(IdArticulo, IdSuministro, Nombre, Valor, Factor, Estado) VALUES(?,?,?,?,?,?)");
-                    foreach ($suministro["ListaPrecios"] as $value) {
-                        $cmdPrecios->execute(array(
-                            "",
-                            $idSuministro,
-                            $value["nombre"],
-                            $value["valor"],
-                            ($value["factor"] <= 0 ? 1 : $value["factor"]),
-                            true
-                        ));
-                    }
+            $cmdPrecios = Database::getInstance()->getDb()->prepare("INSERT INTO PreciosTB(IdArticulo, IdSuministro, Nombre, Valor, Factor, Estado) VALUES(?,?,?,?,?,?)");
+            foreach ($suministro["ListaPrecios"] as $value) {
+                $cmdPrecios->execute(array(
+                    "",
+                    $idSuministro,
+                    $value["nombre"],
+                    $value["valor"],
+                    ($value["factor"] <= 0 ? 1 : $value["factor"]),
+                    true
+                ));
+            }
 
-                    $cmdAlmacen = Database::getInstance()->getDb()->prepare("SELECT IdAlmacen FROM AlmacenTB");
-                    $cmdAlmacen->execute();
-                    while ($row = $cmdAlmacen->fetch()) {
-                        if ($row["IdAlmacen"] != 0) {
-                            $cmdCantidad = Database::getInstance()->getDb()->prepare("INSERT INTO CantidadTB(IdAlmacen,IdSuministro,StockMinimo,StockMaximo,Cantidad) VALUES(?,?,?,?,0)");
-                            $cmdCantidad->execute(array(
-                                $row["IdAlmacen"],
-                                $idSuministro,
-                                $suministro["StockMinimo"],
-                                $suministro["StockMaximo"]
-                            ));
-                        }
-                    }
-
-                    Database::getInstance()->getDb()->commit();
-                    $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-                    header($protocol . ' ' . 201 . ' ' . "Created");
-
-                    return "Se registró correctamente el producto.";
+            $cmdAlmacen = Database::getInstance()->getDb()->prepare("SELECT IdAlmacen FROM AlmacenTB");
+            $cmdAlmacen->execute();
+            while ($row = $cmdAlmacen->fetch()) {
+                if ($row["IdAlmacen"] != 0) {
+                    $cmdCantidad = Database::getInstance()->getDb()->prepare("INSERT INTO CantidadTB(IdAlmacen,IdSuministro,StockMinimo,StockMaximo,Cantidad) VALUES(?,?,?,?,0)");
+                    $cmdCantidad->execute(array(
+                        $row["IdAlmacen"],
+                        $idSuministro,
+                        $suministro["StockMinimo"],
+                        $suministro["StockMaximo"]
+                    ));
                 }
             }
+
+            Database::getInstance()->getDb()->commit();
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 201 . ' ' . "Created");
+
+            return "Se registró correctamente el producto.";
         } catch (Exception $ex) {
             Database::getInstance()->getDb()->rollback();
             $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');

@@ -611,6 +611,8 @@ class VentasADO
             $resultEmpresa = null;
             $resultCliente = null;
 
+            
+
             $cmdVenta = Database::getInstance()->getDb()->prepare("SELECT 
             dbo.Fc_Obtener_Nombre_Moneda(v.Moneda) AS NombreMoneda,
 		    dbo.Fc_Obtener_Abreviatura_Moneda(v.Moneda) AS TipoMoneda,

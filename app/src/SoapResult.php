@@ -62,8 +62,8 @@ class SoapResult
             if ($response == "" || $response == null) {
                 throw new Exception("No se pudo obtener el contenido del nodo applicationResponse.");
             }
-
-            $cdr = base64_decode($response);
+        
+            $cdr = base64_decode($response);          
             $archivo = fopen('../files/R-' . $this->filename . '.zip', 'w+');
             fputs($archivo, $cdr);
             fclose($archivo);
