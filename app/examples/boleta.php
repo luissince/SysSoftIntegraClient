@@ -431,8 +431,8 @@ if (!is_array($detalleventa)) {
             VentasADO::CambiarEstadoSunatVentaUnico($idventa, $soapResult->getCode(), $soapResult->getDescription());
             $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
             header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
-
-            echo json_encode($soapResult->getDescription());
+      
+            echo json_encode(array("message" =>$soapResult->getDescription()));
         }
     }
 }

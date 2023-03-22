@@ -378,7 +378,7 @@ if (!is_array($result)) {
             $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
             header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
 
-            echo json_encode($soapResult->getDescription());
+            echo json_encode(array("message" =>$soapResult->getDescription()));
         }
     }
 }

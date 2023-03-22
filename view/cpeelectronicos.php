@@ -744,7 +744,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 tools.ModalAlertWarning("Factura/Boleta", "Código " + object.code + " " + object.description);
                             }
                         } catch (error) {
-                            tools.ModalAlertWarning("Factura/Boleta", error.responseText == "" || error.responseText == null ? "Se produjo un error interno, intente nuevamente por favor." : error.responseText);
+                            let message = error.responseJSON != undefined ? error.responseJSON["message"] : "Se produjo un error interno, intente nuevamente por favor.";
+                            tools.ModalAlertWarning("Factura/Boleta", message);
                         }
                     }
                 });
@@ -772,7 +773,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 tools.ModalAlertWarning("Nota de Crédito", "Código " + object.code + " " + object.description);
                             }
                         } catch (error) {
-                            tools.ModalAlertWarning("Nota de Crédito", error.responseText == "" || error.responseText == null ? "Se produjo un error interno, intente nuevamente por favor." : error.responseText);
+                            let message = error.responseJSON != undefined ? error.responseJSON["message"] : "Se produjo un error interno, intente nuevamente por favor.";
+                            tools.ModalAlertWarning("Nota de Crédito", message);
                         }
                     }
                 });
@@ -829,7 +831,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 tools.ModalAlertWarning("Resumen díario", "Código " + object.code + " " + object.description);
                             }
                         } catch (error) {
-                            tools.ModalAlertWarning("Resumen díario", error.responseText == "" || error.responseText == null ? "Se produjo un error interno, intente nuevamente por favor." : error.responseText);
+                            let message = error.responseJSON != undefined ? error.responseJSON["message"] : "Se produjo un error interno, intente nuevamente por favor.";
+                            tools.ModalAlertWarning("Resumen díario", message);
                         }
                     }
                 });
@@ -857,7 +860,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 tools.ModalAlertWarning("Comunicación de baja", "Código " + object.code + " " + object.description);
                             }
                         } catch (error) {
-                            tools.ModalAlertWarning("Comunicación de baja", error.responseText == "" || error.responseText == null ? "Se produjo un error interno, intente nuevamente por favor." : error.responseText);
+                            let message = error.responseJSON != undefined ? error.responseJSON["message"] : "Se produjo un error interno, intente nuevamente por favor.";
+                            tools.ModalAlertWarning("Comunicación de baja", message);
                         }
                     }
                 });
