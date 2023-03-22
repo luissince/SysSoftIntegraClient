@@ -77,7 +77,7 @@ if ($guiaremision->NumeroTicketSunat != "") {
             $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
             header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
 
-            echo json_encode($soapResult->getMessage());
+            echo json_encode(array("message" =>$soapResult->getMessage()));
         }
     }
 
@@ -546,6 +546,6 @@ if ($soapResult->isSuccess()) {
         $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
         header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
 
-        echo json_encode($soapResult->getMessage());
+        echo json_encode(array("message" =>$soapResult->getMessage()));
     }
 }

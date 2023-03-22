@@ -800,8 +800,8 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 tools.ModalAlertWarning("Guía remisión", "Código " + object.code + " " + object.description);
                             }
                         } catch (error) {
-                            console.log(error);
-                            tools.ModalAlertWarning("Guía remisión", error.responseText == "" || error.responseText == null ? "Se produjo un error interno, intente nuevamente por favor." : error.responseText);
+                            let message = error.responseJSON != undefined ? error.responseJSON["message"] : "Se produjo un error interno, intente nuevamente por favor.";
+                            tools.ModalAlertWarning("Guía remisión", message);
                         }
                     }
                 });
