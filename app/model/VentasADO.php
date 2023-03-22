@@ -2209,7 +2209,7 @@ class VentasADO
     public static function ListCpeComprobantesExternal(){
 
         try{
-            $cmdCpeComprobantes = Database::getInstance()->getDb()->prepare("{CALL Sp_Lista_Cpe_Comprobantes_External}");
+            $cmdCpeComprobantes = Database::getInstance()->getDb()->prepare("{CALL Sp_Lista_Cpe_Electronicos_Sunat}");
             $cmdCpeComprobantes->execute();
             $arrayCpeComprobantes = array();
             while($row = $cmdCpeComprobantes->fetch(PDO::FETCH_OBJ)){
