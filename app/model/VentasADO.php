@@ -2205,4 +2205,37 @@ class VentasADO
             return $ex->getMessage();
         }
     }
+
+    public static function ListCpeComprobantesExternal(){
+
+        try{
+            $cmdCpeComprobantes = Database::getInstance()->getDb()->prepare("{CALL Sp_Lista_Cpe_Comprobantes_External}");
+            $cmdCpeComprobantes->execute();
+            $arrayCpeComprobantes = array();
+            while($row = $cmdCpeComprobantes->fetch(PDO::FETCH_OBJ)){
+                array_push($arrayCpeComprobantes, $row);
+            }
+            
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 200 . ' ' . "OK");
+
+            return $arrayCpeComprobantes;
+
+        }
+        catch(PDOException $ex){
+            Database::getInstance()->getDb()->rollback();
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+
+            return array("estado" => 0, "message" => $ex->getMessage());
+        }
+        catch(Exception $ex){
+            Database::getInstance()->getDb()->rollback();
+            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+
+            return array("estado" => 0, "message" => $ex->getMessage());
+        }
+    }
+
 }
