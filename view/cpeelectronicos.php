@@ -501,7 +501,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         for (const venta of arrayVentas) {
                             count++;
 
-                            let reinicio = venta.Tipo == "gui" ? '<button class="btn btn-secondary btn-sm"  onclick="onEvetnReiniciar(\'' + venta.IdComprobante + '\')"><img src="./images/reload.svg" width="26" /> </button>' : "-";
+                            let reinicio = venta.Tipo == "gui" || venta.Tipo == "v" ? '<button class="btn btn-secondary btn-sm"  onclick="onEvetnReiniciar(\'' + venta.Tipo + '\',\'' + venta.IdComprobante + '\')"><img src="./images/reload.svg" width="26" /> </button>' : "-";
                             let pdf = '<button class="btn btn-secondary btn-sm"  onclick="openPdf(\'' + venta.Tipo + '\',\'' + venta.IdComprobante + '\')"><img src="./images/pdf.svg" width="26" /> </button>';
                             let ver = '<button class="btn btn-secondary btn-sm" onclick="opeModalDetalle(\'' + venta.Tipo + '\',\'' + venta.IdComprobante + '\')"><img src="./images/file.svg" width="26" /></button>';
                             let resumen = '<button class="btn btn-secondary btn-sm" onclick="resumenDiarioXml(\'' + venta.IdComprobante + '\',\'' + venta.Serie + "-" + venta.Numeracion + '\',\'' + tools.getDateYYMMDD(venta.Fecha) + '\')"><img src="./images/documentoanular.svg" width="26" /></button>';
@@ -944,26 +944,48 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 }
             }
 
-            function onEvetnReiniciar(idGuiaRemision) {
-                tools.ModalDialog("Reiniciar Envío", "¿Está seguro de reiniciar?", async function(value) {
-                    if (value == true) {
-                        try {
-                            const result = await tools.promiseFetchGet("../app/controller/GuiaRemisionController.php", {
-                                "type": "reinicio",
-                                "idGuiaRemision": idGuiaRemision
-                            }, function() {
-                                tools.ModalAlertInfo("Reiniciar Envío", "Procesando envío.");
-                            });
+            function onEvetnReiniciar(tipo, idComprobante) {
+                if (tipo == "v") {
+                    tools.ModalDialog("Reiniciar Envío", "¿Está seguro de reiniciar?", async function(value) {
+                        if (value == true) {
+                            try {
+                                const result = await tools.promiseFetchGet("../app/controller/VentaController.php", {
+                                    "type": "reinicio",
+                                    "idVenta": idComprobante
+                                }, function() {
+                                    tools.ModalAlertInfo("Reiniciar Envío", "Procesando envío.");
+                                });
 
-                            tools.ModalAlertSuccess("Reiniciar Envío", result);
-                            onEventPaginacion();
+                                tools.ModalAlertSuccess("Reiniciar Envío", result);
+                                onEventPaginacion();
 
-                        } catch (error) {
-                            const message = error.responseJSON != undefined ? error.responseJSON["message"] : "Se produjo un error interno, intente nuevamente por favor.";
-                            tools.ModalAlertWarning("Reiniciar Envío", message);
+                            } catch (error) {
+                                const message = error.responseJSON != undefined ? error.responseJSON["message"] : "Se produjo un error interno, intente nuevamente por favor.";
+                                tools.ModalAlertWarning("Reiniciar Envío", message);
+                            }
                         }
-                    }
-                });
+                    });
+                } else {
+                    tools.ModalDialog("Reiniciar Envío", "¿Está seguro de reiniciar?", async function(value) {
+                        if (value == true) {
+                            try {
+                                const result = await tools.promiseFetchGet("../app/controller/GuiaRemisionController.php", {
+                                    "type": "reinicio",
+                                    "idGuiaRemision": idComprobante
+                                }, function() {
+                                    tools.ModalAlertInfo("Reiniciar Envío", "Procesando envío.");
+                                });
+
+                                tools.ModalAlertSuccess("Reiniciar Envío", result);
+                                onEventPaginacion();
+
+                            } catch (error) {
+                                const message = error.responseJSON != undefined ? error.responseJSON["message"] : "Se produjo un error interno, intente nuevamente por favor.";
+                                tools.ModalAlertWarning("Reiniciar Envío", message);
+                            }
+                        }
+                    });
+                }
             }
 
             function limitar_cadena(cadena, limite, sufijo) {

@@ -57,13 +57,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             intval($_GET["posicionPagina"]),
             intval($_GET["filasPorPagina"])
         );
-        exit();
     } else if ($_GET["type"] == "ventaAgregar") {
-        print json_encode(VentasADO::VentaAgregarTerminar($_GET["idVenta"]));
-        exit();
-    } else if ($_GET["type"] == "listComprobantesExternal"){
-        print json_encode(VentasADO::ListCpeComprobantesExternal());
-        exit();
+        VentasADO::VentaAgregarTerminar($_GET["idVenta"]);
+    } else if ($_GET["type"] == "listComprobantesExternal") {
+        VentasADO::ListCpeComprobantesExternal();
+    }
+    if ($_GET["type"] == "reinicio") {
+        VentasADO::ReiniciarEnvio($_GET["idVenta"]);
     }
 } else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $body = json_decode(file_get_contents("php://input"), true);

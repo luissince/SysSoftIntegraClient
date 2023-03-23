@@ -513,18 +513,12 @@ class VentasADO
 
                 array_push($array,  $arrayDetalle);
 
-                $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-                header($protocol . ' ' . 200 . ' ' . "OK");
-
-                return $array;
+                Response::sendSuccess($array);
             } else {
-                throw new Exception("No hay datos para mostrar.");
+                Response::sendClient("No hay datos para mostrar.");
             }
         } catch (Exception $ex) {
-            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
-
-            return $ex->getMessage();
+            Response::sendError($ex->getMessage());
         }
     }
 
@@ -2207,8 +2201,7 @@ class VentasADO
 
     public static function ListCpeComprobantesExternal()
     {
-
-        try{
+        try {
             $cmdCpeComprobantes = Database::getInstance()->getDb()->prepare("{CALL Sp_Lista_Cpe_Electronicos_Sunat}");
             $cmdCpeComprobantes->execute();
             $arrayCpeComprobantes = array();
@@ -2216,22 +2209,39 @@ class VentasADO
                 array_push($arrayCpeComprobantes, $row);
             }
 
-            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-            header($protocol . ' ' . 200 . ' ' . "OK");
-
-            return $arrayCpeComprobantes;
+            Response::sendSuccess($arrayCpeComprobantes);
         } catch (PDOException $ex) {
             Database::getInstance()->getDb()->rollback();
-            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
-
-            return array("estado" => 0, "message" => $ex->getMessage());
+            Response::sendError(array("estado" => 0, "message" => $ex->getMessage()));
         } catch (Exception $ex) {
             Database::getInstance()->getDb()->rollback();
-            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
+            Response::sendError(array("estado" => 0, "message" => $ex->getMessage()));
+        }
+    }
 
-            return array("estado" => 0, "message" => $ex->getMessage());
+    public static function ReiniciarEnvio(string $idVenta)
+    {
+        try {
+            Database::getInstance()->getDb()->beginTransaction();
+
+            $validate = Database::getInstance()->getDb()->prepare("SELECT * FROM VentaTB 
+            WHERE IdVenta = ? AND Estado = 1 AND Xmlsunat = '0'");
+            $validate->bindParam(1, $idVenta, PDO::PARAM_STR);
+            $validate->execute();
+            if ($validate->fetchObject()) {
+                Database::getInstance()->getDb()->rollback();
+                Response::sendClient(array("message" => "El comprobante ya fue declarado correctamente."));
+            }
+
+            $comando = Database::getInstance()->getDb()->prepare("UPDATE VentaTB SET 
+            NumeroTicketSunat = '' WHERE IdVenta = ?");
+            $comando->bindParam(1, $idVenta, PDO::PARAM_STR);
+            $comando->execute();
+            Database::getInstance()->getDb()->commit();
+            Response::sendSuccess("Se completó el proceso correctamente.");
+        } catch (Exception $ex) {
+            Database::getInstance()->getDb()->rollback();
+            Response::sendError(array("message" => $ex->getMessage()));
         }
     }
 }
