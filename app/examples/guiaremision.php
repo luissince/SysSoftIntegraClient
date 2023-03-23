@@ -6,6 +6,7 @@ use SysSoftIntegra\Src\SoapResult;
 use SysSoftIntegra\Src\Sunat;
 use SysSoftIntegra\Model\GuiaRemisionADO;
 use SysSoftIntegra\Src\ConfigHeader;
+use SysSoftIntegra\Src\Response;
 
 require __DIR__ . './../src/autoload.php';
 
@@ -14,12 +15,18 @@ new ConfigHeader();
 $idGuiaRemision = $_GET['idGuiaRemision'];
 $respuesta = GuiaRemisionADO::ListarDetalleGuiaRemisionPorId($idGuiaRemision);
 
+if (is_string($respuesta) && $respuesta == "declarado") {
+    Response::sendClient(array("message" => "El comprobante ya fue declarado correctamente."));
+}
+
 $guiaremision = $respuesta["guiaremision"];
 $guiaremisiondetalle = $respuesta["guiaremisiondetalle"];
 $empresa = $respuesta["empresa"];
 
 if ($guiaremision->NumeroTicketSunat != "") {
-    $soapResult = new SoapResult("", "");
+    $filename = "" . $empresa->NumeroDocumento . "-" . $guiaremision->Codigo . "-" . $guiaremision->Serie . "-" . $guiaremision->Numeracion . "";
+
+    $soapResult = new SoapResult("",  $filename);
     $soapResult->setTicket($guiaremision->NumeroTicketSunat);
     $soapResult->sendGuiaRemision(
         [
@@ -40,10 +47,7 @@ if ($guiaremision->NumeroTicketSunat != "") {
     if ($soapResult->isSuccess()) {
         if ($soapResult->isAccepted()) {
             GuiaRemisionADO::CambiarEstadoSunatGuiaRemision($idGuiaRemision, $soapResult->getCode(), $soapResult->getMessage(), "", "", "");
-            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-            header($protocol . ' ' . 200 . ' ' . "OK");
-
-            echo json_encode(array(
+            Response::sendSuccess(array(
                 "state" => $soapResult->isSuccess(),
                 "accept" => $soapResult->isAccepted(),
                 "code" => $soapResult->getCode(),
@@ -51,10 +55,7 @@ if ($guiaremision->NumeroTicketSunat != "") {
             ));
         } else {
             GuiaRemisionADO::CambiarEstadoSunatGuiaRemisionUnico($idGuiaRemision, $soapResult->getCode(), $soapResult->getMessage());
-            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-            header($protocol . ' ' . 200 . ' ' . "OK");
-
-            echo json_encode(array(
+            Response::sendSuccess(array(
                 "state" => $soapResult->isSuccess(),
                 "accept" => $soapResult->isAccepted(),
                 "code" => $soapResult->getCode(),
@@ -64,20 +65,14 @@ if ($guiaremision->NumeroTicketSunat != "") {
     } else {
         if ($soapResult->getCode() == "1033") {
             GuiaRemisionADO::CambiarEstadoSunatGuiaRemisionUnico($idGuiaRemision, "0", $soapResult->getMessage());
-            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-            header($protocol . ' ' . 200 . ' ' . "OK");
-
-            echo json_encode(array(
+            Response::sendSuccess(array(
                 "state" => false,
                 "code" => $soapResult->getCode(),
                 "description" => $soapResult->getMessage()
             ));
         } else {
             GuiaRemisionADO::CambiarEstadoSunatGuiaRemisionUnico($idGuiaRemision, $soapResult->getCode(), $soapResult->getMessage());
-            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
-
-            echo json_encode(array("message" =>$soapResult->getMessage()));
+            Response::sendError(array("message" => $soapResult->getMessage()));
         }
     }
 
@@ -509,10 +504,7 @@ $soapResult->sendGuiaRemision(
 if ($soapResult->isSuccess()) {
     if ($soapResult->isAccepted()) {
         GuiaRemisionADO::CambiarEstadoSunatGuiaRemision($idGuiaRemision, $soapResult->getCode(), $soapResult->getMessage(), $soapResult->getHashCode(), Sunat::getXmlSign(), $soapResult->getTicket());
-        $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-        header($protocol . ' ' . 200 . ' ' . "OK");
-
-        echo json_encode(array(
+        Response::sendSuccess(array(
             "state" => $soapResult->isSuccess(),
             "accept" => $soapResult->isAccepted(),
             "code" => $soapResult->getCode(),
@@ -520,10 +512,7 @@ if ($soapResult->isSuccess()) {
         ));
     } else {
         GuiaRemisionADO::CambiarEstadoSunatGuiaRemisionUnico($idGuiaRemision, $soapResult->getCode(), $soapResult->getMessage());
-        $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-        header($protocol . ' ' . 200 . ' ' . "OK");
-
-        echo json_encode(array(
+        Response::sendSuccess(array(
             "state" => $soapResult->isSuccess(),
             "accept" => $soapResult->isAccepted(),
             "code" => $soapResult->getCode(),
@@ -533,19 +522,13 @@ if ($soapResult->isSuccess()) {
 } else {
     if ($soapResult->getCode() == "1033") {
         GuiaRemisionADO::CambiarEstadoSunatGuiaRemisionUnico($idGuiaRemision, "0", $soapResult->getMessage());
-        $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-        header($protocol . ' ' . 200 . ' ' . "OK");
-
-        echo json_encode(array(
+        Response::sendSuccess(array(
             "state" => false,
             "code" => $soapResult->getCode(),
             "description" => $soapResult->getMessage()
         ));
     } else {
         GuiaRemisionADO::CambiarEstadoSunatGuiaRemisionUnico($idGuiaRemision, $soapResult->getCode(), $soapResult->getMessage());
-        $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-        header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
-
-        echo json_encode(array("message" =>$soapResult->getMessage()));
+        Response::sendError(array("message" => $soapResult->getMessage()));
     }
 }

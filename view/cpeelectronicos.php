@@ -218,6 +218,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 <thead class="table-header-background">
                                     <tr>
                                         <th style="width:5%;">#</th>
+                                        <th style="width:5%;">Reiniciar</th>
                                         <th style="width:5%;">Anular</th>
                                         <th style="width:5%;">PDF</th>
                                         <th style="width:5%;">Detalle</th>
@@ -468,7 +469,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         },
                         function() {
                             tbody.empty();
-                            tbody.append('<tr><td class="text-center" colspan="11"><img src="./images/loading.gif" id="imgLoad" width="34" height="34" /> <p>Cargando información...</p></td></tr>');
+                            tbody.append('<tr><td class="text-center" colspan="12"><img src="./images/loading.gif" id="imgLoad" width="34" height="34" /> <p>Cargando información...</p></td></tr>');
                             state = true;
                             totalPaginacion = 0;
                             arrayVentas = [];
@@ -479,7 +480,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
                     tbody.empty();
                     if (arrayVentas.length == 0) {
-                        tbody.append('<tr><td class="text-center" colspan="11"><p>No hay datos para mostrar.</p></td></tr>');
+                        tbody.append('<tr><td class="text-center" colspan="12"><p>No hay datos para mostrar.</p></td></tr>');
                         ulPagination.html(`
                             <button class="btn btn-outline-secondary">
                                 <i class="fa fa-angle-double-left"></i>
@@ -497,9 +498,10 @@ if (!isset($_SESSION['IdEmpleado'])) {
                         state = false;
                     } else {
                         let count = 0;
-                        for (let venta of arrayVentas) {
+                        for (const venta of arrayVentas) {
                             count++;
 
+                            let reinicio = venta.Tipo == "gui" ? '<button class="btn btn-secondary btn-sm"  onclick="onEvetnReiniciar(\'' + venta.IdComprobante + '\')"><img src="./images/reload.svg" width="26" /> </button>' : "-";
                             let pdf = '<button class="btn btn-secondary btn-sm"  onclick="openPdf(\'' + venta.Tipo + '\',\'' + venta.IdComprobante + '\')"><img src="./images/pdf.svg" width="26" /> </button>';
                             let ver = '<button class="btn btn-secondary btn-sm" onclick="opeModalDetalle(\'' + venta.Tipo + '\',\'' + venta.IdComprobante + '\')"><img src="./images/file.svg" width="26" /></button>';
                             let resumen = '<button class="btn btn-secondary btn-sm" onclick="resumenDiarioXml(\'' + venta.IdComprobante + '\',\'' + venta.Serie + "-" + venta.Numeracion + '\',\'' + tools.getDateYYMMDD(venta.Fecha) + '\')"><img src="./images/documentoanular.svg" width="26" /></button>';
@@ -540,6 +542,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
 
                             tbody.append('<tr>' +
                                 ' <td class="text-center">' + (count + ((paginacion - 1) * filasPorPagina)) + '</td >' +
+                                ' <td class="text-center">' + reinicio + '</td>' +
                                 ' <td class="text-center">' + anular + '</td>' +
                                 ' <td class="text-center">' + pdf + '</td>' +
                                 ' <td class="text-centerr">' + ver + '</td>' +
@@ -726,13 +729,13 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 tools.ModalDialog("Factura/Boleta", "¿Está seguro de enviar la boleta/factura?", async function(value) {
                     if (value == true) {
                         try {
-                            let result = await tools.promiseFetchGet("../app/examples/boleta.php", {
+                            const result = await tools.promiseFetchGet("../app/examples/boleta.php", {
                                 "idventa": idventa
                             }, function() {
                                 tools.ModalAlertInfo("Factura/Boleta", "Firmando xml y enviando a la sunat.");
                             });
 
-                            let object = result;
+                            const object = result;
                             if (object.state === true) {
                                 if (object.accept === true) {
                                     tools.ModalAlertSuccess("Factura/Boleta", "Código " + object.code + " " + object.description);
@@ -744,7 +747,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 tools.ModalAlertWarning("Factura/Boleta", "Código " + object.code + " " + object.description);
                             }
                         } catch (error) {
-                            let message = error.responseJSON != undefined ? error.responseJSON["message"] : "Se produjo un error interno, intente nuevamente por favor.";
+                            const message = error.responseJSON != undefined ? error.responseJSON["message"] : "Se produjo un error interno, intente nuevamente por favor.";
                             tools.ModalAlertWarning("Factura/Boleta", message);
                         }
                     }
@@ -755,13 +758,13 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 tools.ModalDialog("Nota de Crédito", "¿Está seguro de enviar la nota de crédito?", async function(value) {
                     if (value == true) {
                         try {
-                            let result = await tools.promiseFetchGet("../app/examples/notacredito.php", {
+                            const result = await tools.promiseFetchGet("../app/examples/notacredito.php", {
                                 "idNotaCredito": idNotaCredito
                             }, function() {
                                 tools.ModalAlertInfo("Nota de Crédito", "Firmando xml y enviando a la sunat.");
                             });
 
-                            let object = result;
+                            const object = result;
                             if (object.state === true) {
                                 if (object.accept === true) {
                                     tools.ModalAlertSuccess("Nota de Crédito", "Código " + object.code + " " + object.description);
@@ -773,7 +776,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 tools.ModalAlertWarning("Nota de Crédito", "Código " + object.code + " " + object.description);
                             }
                         } catch (error) {
-                            let message = error.responseJSON != undefined ? error.responseJSON["message"] : "Se produjo un error interno, intente nuevamente por favor.";
+                            const message = error.responseJSON != undefined ? error.responseJSON["message"] : "Se produjo un error interno, intente nuevamente por favor.";
                             tools.ModalAlertWarning("Nota de Crédito", message);
                         }
                     }
@@ -802,7 +805,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 tools.ModalAlertWarning("Guía remisión", "Código " + object.code + " " + object.description);
                             }
                         } catch (error) {
-                            let message = error.responseJSON != undefined ? error.responseJSON["message"] : "Se produjo un error interno, intente nuevamente por favor.";
+                            const message = error.responseJSON != undefined ? error.responseJSON["message"] : "Se produjo un error interno, intente nuevamente por favor.";
                             tools.ModalAlertWarning("Guía remisión", message);
                         }
                     }
@@ -813,13 +816,13 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 tools.ModalDialog("Resumen díario", "¿Se anulará el documento: " + comprobante + ", y se creará el siguiente resumen individual: RC-" + resumen + "-1, estás seguro de anular el documento? los cambios no se podrán revertir!", async function(value) {
                     if (value == true) {
                         try {
-                            let result = await tools.promiseFetchGet("../app/examples/resumen.php", {
+                            const result = await tools.promiseFetchGet("../app/examples/resumen.php", {
                                 "idventa": idventa
                             }, function() {
                                 tools.ModalAlertInfo("Resumen díario", "Firmando xml y enviando a la sunat.");
                             });
 
-                            let object = result;
+                            const object = result;
                             if (object.state === true) {
                                 if (object.accept === true) {
                                     tools.ModalAlertSuccess("Resumen díario", "Código " + object.code + " " + object.description);
@@ -831,7 +834,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 tools.ModalAlertWarning("Resumen díario", "Código " + object.code + " " + object.description);
                             }
                         } catch (error) {
-                            let message = error.responseJSON != undefined ? error.responseJSON["message"] : "Se produjo un error interno, intente nuevamente por favor.";
+                            const message = error.responseJSON != undefined ? error.responseJSON["message"] : "Se produjo un error interno, intente nuevamente por favor.";
                             tools.ModalAlertWarning("Resumen díario", message);
                         }
                     }
@@ -842,13 +845,13 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 tools.ModalDialog("Comunicación de baja", "¿Se anulará el documento " + comprobante + "?", async function(value) {
                     if (value == true) {
                         try {
-                            let result = await tools.promiseFetchGet("../app/examples/comunicacionbaja.php", {
+                            const result = await tools.promiseFetchGet("../app/examples/comunicacionbaja.php", {
                                 "idventa": idventa
                             }, function() {
                                 tools.ModalAlertInfo("Comunicación de baja", "Firmando xml y enviando a la sunat.");
                             });
 
-                            let object = result;
+                            const object = result;
                             if (object.state === true) {
                                 if (object.accept === true) {
                                     tools.ModalAlertSuccess("Comunicación de baja", "Código " + object.code + " " + object.description);
@@ -860,7 +863,7 @@ if (!isset($_SESSION['IdEmpleado'])) {
                                 tools.ModalAlertWarning("Comunicación de baja", "Código " + object.code + " " + object.description);
                             }
                         } catch (error) {
-                            let message = error.responseJSON != undefined ? error.responseJSON["message"] : "Se produjo un error interno, intente nuevamente por favor.";
+                            const message = error.responseJSON != undefined ? error.responseJSON["message"] : "Se produjo un error interno, intente nuevamente por favor.";
                             tools.ModalAlertWarning("Comunicación de baja", message);
                         }
                     }
@@ -939,6 +942,28 @@ if (!isset($_SESSION['IdEmpleado'])) {
                 } else {
 
                 }
+            }
+
+            function onEvetnReiniciar(idGuiaRemision) {
+                tools.ModalDialog("Reiniciar Envío", "¿Está seguro de reiniciar?", async function(value) {
+                    if (value == true) {
+                        try {
+                            const result = await tools.promiseFetchGet("../app/controller/GuiaRemisionController.php", {
+                                "type": "reinicio",
+                                "idGuiaRemision": idGuiaRemision
+                            }, function() {
+                                tools.ModalAlertInfo("Reiniciar Envío", "Procesando envío.");
+                            });
+
+                            tools.ModalAlertSuccess("Reiniciar Envío", result);
+                            onEventPaginacion();
+
+                        } catch (error) {
+                            const message = error.responseJSON != undefined ? error.responseJSON["message"] : "Se produjo un error interno, intente nuevamente por favor.";
+                            tools.ModalAlertWarning("Reiniciar Envío", message);
+                        }
+                    }
+                });
             }
 
             function limitar_cadena(cadena, limite, sufijo) {

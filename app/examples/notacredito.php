@@ -7,6 +7,7 @@ use SysSoftIntegra\Src\Sunat;
 use SysSoftIntegra\Src\NumberLleters;
 use SysSoftIntegra\Model\NotaCreditoADO;
 use SysSoftIntegra\Src\ConfigHeader;
+use SysSoftIntegra\Src\Response;
 
 require __DIR__ . './../src/autoload.php';
 
@@ -17,11 +18,11 @@ $result = NotaCreditoADO::ObtenerNotaCreditoById($idNotaCredito);
 $gcl = new NumberLleters();
 
 if (!is_array($result)) {
-    echo json_encode(array(
+    Response::sendSuccess(array(
         "state" => false,
         "code" => "-1",
         "description" => $result
-    ));
+    ));   
 } else {
 
     $notacredito = $result[0];
@@ -336,15 +337,12 @@ if (!is_array($result)) {
     Sunat::createZip("../files/" . $filename . ".zip", "../files/" . $filename . ".xml", "" . $filename . ".xml");
 
     $soapResult = new SoapResult('../resources/wsdl/billService.wsdl', $filename);
-    $soapResult->sendBill(Sunat::xmlSendBill($empresa->NumeroDocumento, $empresa->UsuarioSol, $empresa->ClaveSol, $filename . '.zip',Sunat::generateBase64File('../files/' . $filename . '.zip')));
+    $soapResult->sendBill(Sunat::xmlSendBill($empresa->NumeroDocumento, $empresa->UsuarioSol, $empresa->ClaveSol, $filename . '.zip', Sunat::generateBase64File('../files/' . $filename . '.zip')));
 
     if ($soapResult->isSuccess()) {
         if ($soapResult->isAccepted()) {
             NotaCreditoADO::CambiarEstadoSunatNotaCredito($idNotaCredito,  $soapResult->getCode(), $soapResult->getDescription(), $soapResult->getHashCode(), Sunat::getXmlSign());
-            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-            header($protocol . ' ' . 200 . ' ' . "OK");
-
-            echo json_encode(array(
+            Response::sendSuccess(array(
                 "state" => $soapResult->isSuccess(),
                 "accept" => $soapResult->isAccepted(),
                 "code" => $soapResult->getCode(),
@@ -352,10 +350,7 @@ if (!is_array($result)) {
             ));
         } else {
             NotaCreditoADO::CambiarEstadoSunatNotaCreditoUnico($idNotaCredito, $soapResult->getCode(), $soapResult->getDescription());
-            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-            header($protocol . ' ' . 200 . ' ' . "OK");
-
-            echo json_encode(array(
+            Response::sendSuccess(array(
                 "state" => $soapResult->isSuccess(),
                 "accept" => $soapResult->isAccepted(),
                 "code" => $soapResult->getCode(),
@@ -365,20 +360,14 @@ if (!is_array($result)) {
     } else {
         if ($soapResult->getCode() == "1033") {
             NotaCreditoADO::CambiarEstadoSunatNotaCreditoUnico($idNotaCredito, "0", $soapResult->getDescription());
-            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-            header($protocol . ' ' . 200 . ' ' . "OK");
-
-            echo json_encode(array(
+            Response::sendSuccess(array(
                 "state" => false,
                 "code" => $soapResult->getCode(),
                 "description" => $soapResult->getDescription()
             ));
         } else {
             NotaCreditoADO::CambiarEstadoSunatNotaCreditoUnico($idNotaCredito, $soapResult->getCode(), $soapResult->getDescription());
-            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
-
-            echo json_encode(array("message" =>$soapResult->getDescription()));
+            Response::sendError(array("message" =>$soapResult->getDescription()));
         }
     }
 }

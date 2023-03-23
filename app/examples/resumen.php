@@ -6,6 +6,7 @@ use SysSoftIntegra\Src\SoapResult;
 use SysSoftIntegra\Src\Sunat;
 use SysSoftIntegra\Model\VentasADO;
 use SysSoftIntegra\Src\ConfigHeader;
+use SysSoftIntegra\Src\Response;
 
 require __DIR__ . './../src/autoload.php';
 
@@ -15,7 +16,7 @@ $idventa = $_GET['idventa'];
 $detalleventa = VentasADO::ListarDetalleVentaPorId($idventa);
 
 if (!is_array($detalleventa)) {
-    echo json_encode(array(
+    Response::sendSuccess(array(
         "state" => false,
         "code" => "-1",
         "description" => $detalleventa
@@ -28,6 +29,51 @@ if (!is_array($detalleventa)) {
     $venta = $detalleventa[3];
     $correlativoActual = $detalleventa[4];
     $correlativo = ($correlativoActual === 0) ? (intval($venta->Correlativo) + 1) : ($correlativoActual + 1);
+
+    if ($venta->NumeroTicketSunat != "") {
+        $date = new DateTime($venta->FechaCorrelativo);
+        $filename = $empresa->NumeroDocumento . '-RC-' . $date->format('Ymd') . '-' . $venta->Correlativo;
+        
+        $soapResult = new SoapResult('../resources/wsdl/billService.wsdl', $filename);
+        $soapResult->setTicket($venta->NumeroTicketSunat);
+        $soapResult->sendGetStatus(Sunat::xmlGetStatus($empresa->NumeroDocumento, $empresa->UsuarioSol, $empresa->ClaveSol, $soapResult->getTicket()));
+
+        if ($soapResult->isSuccess()) {
+            if ($soapResult->isAccepted()) {
+                VentasADO::CambiarEstadoSunatVentaUnico($idventa, "", $soapResult->getDescription());
+
+                Response::sendSuccess(array(
+                    "state" => $soapResult->isSuccess(),
+                    "accept" => $soapResult->isAccepted(),
+                    "code" => $soapResult->getCode(),
+                    "description" => $soapResult->getDescription()
+                ));
+            } else {
+                if ($soapResult->getCode() == "2987"  || $soapResult->getCode() == "1032") {
+                    VentasADO::CambiarEstadoSunatVentaUnico($idventa, "0", $soapResult->getDescription());
+
+                    Response::sendSuccess(array(
+                        "state" => $soapResult->isSuccess(),
+                        "accept" => $soapResult->isAccepted(),
+                        "code" => $soapResult->getCode(),
+                        "description" => $soapResult->getDescription()
+                    ));
+                } else {
+                    VentasADO::CambiarEstadoSunatVentaUnico($idventa, "", $soapResult->getDescription());
+                    Response::sendSuccess(array(
+                        "state" => $soapResult->isSuccess(),
+                        "accept" => $soapResult->isAccepted(),
+                        "code" => $soapResult->getCode(),
+                        "description" => $soapResult->getDescription()
+                    ));
+                }
+            }
+        } else {
+            Response::sendError(array("message" => $soapResult->getDescription()));
+        }
+    }
+
+
     date_default_timezone_set('America/Lima');
     $currentDate = new DateTime('now');
 
@@ -224,47 +270,24 @@ if (!is_array($detalleventa)) {
     $soapResult->sendSumary(Sunat::xmlSendSummary($empresa->NumeroDocumento, $empresa->UsuarioSol, $empresa->ClaveSol, $filename . '.zip', Sunat::generateBase64File('../files/' . $filename . '.zip')));
 
     if ($soapResult->isSuccess()) {
-        $soapResult->sendGetStatus(Sunat::xmlGetStatus($empresa->NumeroDocumento, $empresa->UsuarioSol, $empresa->ClaveSol, $soapResult->getTicket()));
-        if ($soapResult->isSuccess()) {
-            if ($soapResult->isAccepted()) {
-                VentasADO::CambiarEstadoSunatResumen($idventa, $soapResult->getCode(),  $soapResult->getDescription(), $correlativo, $currentDate->format('Y-m-d'));
-                $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-                header($protocol . ' ' . 200 . ' ' . "OK");
-
-                echo json_encode(array(
-                    "state" => $soapResult->isSuccess(),
-                    "accept" => $soapResult->isAccepted(),
-                    "code" => $soapResult->getCode(),
-                    "description" => $soapResult->getDescription()
-                ));
-            } else {
-                VentasADO::CambiarEstadoSunatResumen($idventa, $soapResult->getCode(),  $soapResult->getDescription(), $correlativo, $currentDate->format('Y-m-d'));
-                $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-                header($protocol . ' ' . 200 . ' ' . "OK");
-
-                echo json_encode(array(
-                    "state" => $soapResult->isSuccess(),
-                    "accept" => $soapResult->isAccepted(),
-                    "code" => $soapResult->getCode(),
-                    "description" => $soapResult->getDescription()
-                ));
-            }
+        if ($soapResult->isAccepted()) {
+            VentasADO::CambiarEstadoSunatResumen($idventa, $soapResult->getCode(),  $soapResult->getDescription(), $correlativo, $currentDate->format('Y-m-d'), $soapResult->getTicket());
+            Response::sendSuccess(array(
+                "state" => $soapResult->isSuccess(),
+                "accept" => $soapResult->isAccepted(),
+                "code" => $soapResult->getCode(),
+                "description" => $soapResult->getDescription()
+            ));
         } else {
-            VentasADO::CambiarEstadoSunatResumen($idventa, $soapResult->getCode(),  $soapResult->getDescription(), $correlativo, $currentDate->format('Y-m-d'));
-            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-            header($protocol . ' ' . 200 . ' ' . "OK");
-
-            echo json_encode(array(
+            VentasADO::CambiarEstadoSunatResumenUnico($idventa, $soapResult->getCode(),  $soapResult->getDescription(), $correlativo, $currentDate->format('Y-m-d'));
+            Response::sendSuccess(array(
                 "state" => false,
                 "code" => $soapResult->getCode(),
                 "description" => $soapResult->getDescription()
             ));
         }
     } else {
-        VentasADO::CambiarEstadoSunatResumen($idventa, $soapResult->getCode(),  $soapResult->getDescription(), $correlativo, $currentDate->format('Y-m-d'));
-        $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-        header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
-
-        echo json_encode(array("message" =>$soapResult->getDescription()));
+        VentasADO::CambiarEstadoSunatResumenUnico($idventa, $soapResult->getCode(),  $soapResult->getDescription(), $correlativo, $currentDate->format('Y-m-d'));
+        Response::sendError(array("message" => $soapResult->getDescription()));
     }
 }

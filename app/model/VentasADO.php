@@ -611,8 +611,6 @@ class VentasADO
             $resultEmpresa = null;
             $resultCliente = null;
 
-            
-
             $cmdVenta = Database::getInstance()->getDb()->prepare("SELECT 
             dbo.Fc_Obtener_Nombre_Moneda(v.Moneda) AS NombreMoneda,
 		    dbo.Fc_Obtener_Abreviatura_Moneda(v.Moneda) AS TipoMoneda,
@@ -625,7 +623,9 @@ class VentasADO
             ISNULL(v.Correlativo,0) AS Correlativo,
             v.Tipo,
             v.Estado,
-            v.TipoCredito
+            v.TipoCredito,
+            v.FechaCorrelativo,
+            ISNULL(v.NumeroTicketSunat,'') AS NumeroTicketSunat
             FROM VentaTB AS v 
             INNER JOIN TipoDocumentoTB AS td ON v.Comprobante = td.IdTipoDocumento
             WHERE v.IdVenta = ?");
@@ -778,7 +778,28 @@ class VentasADO
         }
     }
 
-    public static function CambiarEstadoSunatResumen($idVenta, $codigo, $descripcion, $correlativo, $fechaCorrelativo)
+    public static function CambiarEstadoSunatResumen($idVenta, $codigo, $descripcion, $correlativo, $fechaCorrelativo, $numeroTicket)
+    {
+        try {
+            Database::getInstance()->getDb()->beginTransaction();
+            $comando = Database::getInstance()->getDb()->prepare("UPDATE VentaTB SET 
+              Xmlsunat = ? , Xmldescripcion = ?,Correlativo=?,FechaCorrelativo=?,NumeroTicketSunat=? WHERE IdVenta = ?");
+            $comando->bindParam(1, $codigo, PDO::PARAM_STR);
+            $comando->bindParam(2, $descripcion, PDO::PARAM_STR);
+            $comando->bindParam(3, $correlativo, PDO::PARAM_INT);
+            $comando->bindParam(4, $fechaCorrelativo, PDO::PARAM_STR);
+            $comando->bindParam(5, $numeroTicket, PDO::PARAM_STR);
+            $comando->bindParam(6, $idVenta, PDO::PARAM_STR);
+            $comando->execute();
+            Database::getInstance()->getDb()->commit();
+            return "updated";
+        } catch (Exception $ex) {
+            Database::getInstance()->getDb()->rollback();
+            return $ex->getMessage();
+        }
+    }
+
+    public static function CambiarEstadoSunatResumenUnico($idVenta, $codigo, $descripcion, $correlativo, $fechaCorrelativo)
     {
         try {
             Database::getInstance()->getDb()->beginTransaction();
@@ -1076,7 +1097,7 @@ class VentasADO
             FROM VentaTB AS v 
             INNER JOIN TipoDocumentoTB AS td ON td.IdTipoDocumento = v.Comprobante            
             WHERE
-            td.Facturacion = 1 AND ISNULL(v.Xmlsunat,'') <> '0' AND ISNULL(v.Xmlsunat,'') <> '1032'
+            td.Facturacion = 1 AND ISNULL(v.Xmlsunat,'') <> '0' AND ISNULL(v.Xmlsunat,'') <> '1032' AND ISNULL(v.Xmlsunat,'') <> '2987'
             OR
             td.Facturacion = 1 AND ISNULL(v.Xmlsunat,'') = '0' AND v.Estado = 3
             GROUP BY v.Serie,td.Nombre,v.Estado");
@@ -1100,29 +1121,7 @@ class VentasADO
             FROM NotaCreditoTB AS nc
             INNER JOIN TipoDocumentoTB AS td ON td.IdTipoDocumento = nc.Comprobante            
             WHERE
-            td.Facturacion = 1 AND ISNULL(nc.Xmlsunat,'') <> '0' AND ISNULL(nc.Xmlsunat,'') <> '1032'
-            GROUP BY nc.Serie,td.Nombre,nc.Estado");
-            $cmdNotificaciones->execute();
-            while ($row =  $cmdNotificaciones->fetch()) {
-                array_push($array, array(
-                    "Nombre" => $row["Nombre"],
-                    "Estado" => $row["Estado"],
-                    "Cantidad" => $row["Cantidad"]
-                ));
-            }
-
-            $cmdNotificaciones = Database::getInstance()->getDb()->prepare("SELECT 
-            nc.Serie,
-            td.Nombre,
-            case nc.Estado 
-            when 3
-            then 'Dar de Baja'
-            else 'Por Declarar' end as Estado,
-            count(nc.Serie) AS Cantidad
-            FROM NotaCreditoTB AS nc
-            INNER JOIN TipoDocumentoTB AS td ON td.IdTipoDocumento = nc.Comprobante            
-            WHERE
-            td.Facturacion = 1 AND ISNULL(nc.Xmlsunat,'') <> '0' AND ISNULL(nc.Xmlsunat,'') <> '1032'
+            td.Facturacion = 1 AND ISNULL(nc.Xmlsunat,'') <> '0' AND ISNULL(nc.Xmlsunat,'') <> '1032' AND ISNULL(nc.Xmlsunat,'') <> '2987'
             GROUP BY nc.Serie,td.Nombre,nc.Estado");
             $cmdNotificaciones->execute();
             while ($row =  $cmdNotificaciones->fetch()) {
@@ -1185,7 +1184,7 @@ class VentasADO
             FROM VentaTB AS v 
 			INNER JOIN TipoDocumentoTB AS td ON td.IdTipoDocumento = v.Comprobante			
             WHERE
-			td.Facturacion = 1 AND ISNULL(v.Xmlsunat,'') <> '0' AND ISNULL(v.Xmlsunat,'') <> '1032'
+			td.Facturacion = 1 AND ISNULL(v.Xmlsunat,'') <> '0' AND ISNULL(v.Xmlsunat,'') <> '1032' AND ISNULL(v.Xmlsunat,'') <> '2987'
 			OR
 			td.Facturacion = 1 AND ISNULL(v.Xmlsunat,'') = '0' AND v.Estado = 3 
 			
@@ -1203,7 +1202,7 @@ class VentasADO
 			FROM NotaCreditoTB AS nc
 			INNER JOIN TipoDocumentoTB AS td ON td.IdTipoDocumento = nc.Comprobante			
 			WHERE
-			td.Facturacion = 1 AND ISNULL(nc.Xmlsunat,'') <> '0' AND ISNULL(nc.Xmlsunat,'') <> '1032'
+			td.Facturacion = 1 AND ISNULL(nc.Xmlsunat,'') <> '0' AND ISNULL(nc.Xmlsunat,'') <> '1032' AND ISNULL(nc.Xmlsunat,'') <> '2987'
 
             UNION
             
@@ -1234,7 +1233,7 @@ class VentasADO
             FROM VentaTB AS v 
 			INNER JOIN TipoDocumentoTB AS td ON td.IdTipoDocumento = v.Comprobante			
             WHERE
-			td.Facturacion = 1 AND ISNULL(v.Xmlsunat,'') <> '0' AND ISNULL(v.Xmlsunat,'') <> '1032'
+			td.Facturacion = 1 AND ISNULL(v.Xmlsunat,'') <> '0' AND ISNULL(v.Xmlsunat,'') <> '1032' AND ISNULL(v.Xmlsunat,'') <> '2987'
 			OR
 			td.Facturacion = 1 AND ISNULL(v.Xmlsunat,'') = '0' AND v.Estado = 3 
 
@@ -1245,7 +1244,7 @@ class VentasADO
 			FROM NotaCreditoTB AS nc
 			INNER JOIN TipoDocumentoTB AS td ON td.IdTipoDocumento = nc.Comprobante			
 			WHERE
-			td.Facturacion = 1 AND ISNULL(nc.Xmlsunat,'') <> '0' AND ISNULL(nc.Xmlsunat,'') <> '1032'
+			td.Facturacion = 1 AND ISNULL(nc.Xmlsunat,'') <> '0' AND ISNULL(nc.Xmlsunat,'') <> '1032' AND ISNULL(nc.Xmlsunat,'') <> '2987'
 
             UNION
             
@@ -2206,30 +2205,28 @@ class VentasADO
         }
     }
 
-    public static function ListCpeComprobantesExternal(){
+    public static function ListCpeComprobantesExternal()
+    {
 
-        try{
+        try {
             $cmdCpeComprobantes = Database::getInstance()->getDb()->prepare("{CALL Sp_Lista_Cpe_Comprobantes_External}");
             $cmdCpeComprobantes->execute();
             $arrayCpeComprobantes = array();
-            while($row = $cmdCpeComprobantes->fetch(PDO::FETCH_OBJ)){
+            while ($row = $cmdCpeComprobantes->fetch(PDO::FETCH_OBJ)) {
                 array_push($arrayCpeComprobantes, $row);
             }
-            
+
             $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
             header($protocol . ' ' . 200 . ' ' . "OK");
 
             return $arrayCpeComprobantes;
-
-        }
-        catch(PDOException $ex){
+        } catch (PDOException $ex) {
             Database::getInstance()->getDb()->rollback();
             $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
             header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
 
             return array("estado" => 0, "message" => $ex->getMessage());
-        }
-        catch(Exception $ex){
+        } catch (Exception $ex) {
             Database::getInstance()->getDb()->rollback();
             $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
             header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
@@ -2237,5 +2234,4 @@ class VentasADO
             return array("estado" => 0, "message" => $ex->getMessage());
         }
     }
-
 }

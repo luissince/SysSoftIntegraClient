@@ -62,8 +62,8 @@ class SoapResult
             if ($response == "" || $response == null) {
                 throw new Exception("No se pudo obtener el contenido del nodo applicationResponse.");
             }
-        
-            $cdr = base64_decode($response);          
+
+            $cdr = base64_decode($response);
             $archivo = fopen('../files/R-' . $this->filename . '.zip', 'w+');
             fputs($archivo, $cdr);
             fclose($archivo);
@@ -159,8 +159,17 @@ class SoapResult
                 $ticket = $Nodo->nodeValue;
             }
 
-            $this->setTicket($ticket);
-            $this->setSuccess(true);
+            if ($ticket != "") {
+                $this->setAccepted(true);
+                $this->setSuccess(true);
+                $this->setTicket($ticket);
+                $this->setDescription("Resumen o Comunicación de baja aceptada, consulte el estado en un par de minutos.");
+            } else {
+                $this->setAccepted(false);
+                $this->setSuccess(true);
+                $this->setTicket($ticket);
+                $this->setDescription("No se pudo obtener el número de ticket, intente en un par de minutos.");
+            }
         } catch (SoapFault $ex) {
             $code = preg_replace('/[^0-9]/', '', $ex->faultcode);
             $message = $ex->faultstring;
@@ -186,58 +195,97 @@ class SoapResult
             $DOM->preserveWhiteSpace = FALSE;
             $DOM->loadXML($result);
 
-            $DocXML = $DOM->getElementsByTagName('status');
-            $status = "";
+            $DocXML = $DOM->getElementsByTagName('statusCode');
+            $statusCode = "";
             foreach ($DocXML as $Nodo) {
-                $status = $Nodo->nodeValue;
-            }
-            if ($status == "") {
-                throw new Exception("No se pudo obtener el contenido del nodo status.");
-            }
-            $cdr = base64_decode($status);
-            $archivo = fopen('../files/R-' . $this->filename . '.zip', 'w+');
-            fputs($archivo, $cdr);
-            fclose($archivo);
-            chmod('../files/R-' . $this->filename . '.zip', 0777);
-
-            $isExtract = Sunat::extractZip('../files/R-' . $this->filename . '.zip', '../files/');
-            if (!$isExtract) {
-                throw new Exception("No se pudo extraer el contenido del archivo zip.");
+                $statusCode = $Nodo->nodeValue;
             }
 
-            $xml = file_get_contents('../files/R-' . $this->filename . '.xml');
-            $DOM = new DOMDocument('1.0', 'utf-8');
-            $DOM->preserveWhiteSpace = FALSE;
-            $DOM->loadXML($xml);
-
-            $DocXML = $DOM->getElementsByTagName('ResponseCode');
-            $code = "";
+            $DocXML = $DOM->getElementsByTagName('content');
+            $content = "";
             foreach ($DocXML as $Nodo) {
-                $code = $Nodo->nodeValue;
+                $content = $Nodo->nodeValue;
             }
 
-            $DocXML = $DOM->getElementsByTagName('Description');
-            $description = "";
-            foreach ($DocXML as $Nodo) {
-                $description = $Nodo->nodeValue;
-            }
+            if ($statusCode == "0") {
+                $cdr = base64_decode($content);
+                $archivo = fopen('../files/R-' . $this->filename . '.zip', 'w+');
+                fputs($archivo, $cdr);
+                fclose($archivo);
+                chmod('../files/R-' . $this->filename . '.zip', 0777);
 
-            if (file_exists('../files/' . $this->filename . '.zip')) {
-                unlink('../files/' . $this->filename . '.zip');
-            }
-            if (file_exists('../files/R-' . $this->filename . '.zip')) {
-                unlink('../files/R-' . $this->filename . '.zip');
-            }
+                $isExtract = Sunat::extractZip('../files/R-' . $this->filename . '.zip', '../files/');
+                if (!$isExtract) {
+                    throw new Exception("No se pudo extraer el contenido del archivo zip.");
+                }
 
-            if ($code == "0") {
+                $xml = file_get_contents('../files/R-' . $this->filename . '.xml');
+                $DOM = new DOMDocument('1.0', 'utf-8');
+                $DOM->preserveWhiteSpace = FALSE;
+                $DOM->loadXML($xml);
+
+                $DocXML = $DOM->getElementsByTagName('ResponseCode');
+                $code = "";
+                foreach ($DocXML as $Nodo) {
+                    $code = $Nodo->nodeValue;
+                }
+
+                $DocXML = $DOM->getElementsByTagName('Description');
+                $description = "";
+                foreach ($DocXML as $Nodo) {
+                    $description = $Nodo->nodeValue;
+                }
+
+                $this->setCode($code);
+                $this->setDescription($description);
+                $this->setSuccess(true);
                 $this->setAccepted(true);
+            } else if ($statusCode == "98") {
+
+                $this->setCode($statusCode);
+                $this->setDescription("El proceso de envío, consulte en un par de minutos nuevamente.");
+                $this->setSuccess(true);
+                $this->setAccepted(false);
+            } else if ($statusCode == "99") {
+
+                $cdr = base64_decode($content);
+                $archivo = fopen('../files/R-' . $this->filename . '.zip', 'w+');
+                fputs($archivo, $cdr);
+                fclose($archivo);
+                chmod('../files/R-' . $this->filename . '.zip', 0777);
+
+                $isExtract = Sunat::extractZip('../files/R-' . $this->filename . '.zip', '../files/');
+                if (!$isExtract) {
+                    throw new Exception("No se pudo extraer el contenido del archivo zip.");
+                }
+
+                $xml = file_get_contents('../files/R-' . $this->filename . '.xml');
+                $DOM = new DOMDocument('1.0', 'utf-8');
+                $DOM->preserveWhiteSpace = FALSE;
+                $DOM->loadXML($xml);
+
+                $DocXML = $DOM->getElementsByTagName('ResponseCode');
+                $code = "";
+                foreach ($DocXML as $Nodo) {
+                    $code = $Nodo->nodeValue;
+                }
+
+                $DocXML = $DOM->getElementsByTagName('Description');
+                $description = "";
+                foreach ($DocXML as $Nodo) {
+                    $description = $Nodo->nodeValue;
+                }
+
+                $this->setCode($code);
+                $this->setDescription($description);
+                $this->setSuccess(true);
+                $this->setAccepted(false);
             } else {
+                $this->setCode($statusCode);
+                $this->setDescription($content);
+                $this->setSuccess(true);
                 $this->setAccepted(false);
             }
-
-            $this->setCode($code);
-            $this->setDescription($description);
-            $this->setSuccess(true);
         } catch (SoapFault $ex) {
             if (file_exists('../files/' . $this->filename . '.xml')) {
                 unlink('../files/' . $this->filename . '.xml');
@@ -636,6 +684,23 @@ class SoapResult
                         throw new Exception("No se pudo extraer el contenido del archivo zip.");
                     }
 
+                    $xml = file_get_contents('../files/R-' . $this->filename . '.xml');
+                    $DOM = new DOMDocument('1.0', 'utf-8');
+                    $DOM->preserveWhiteSpace = FALSE;
+                    $DOM->loadXML($xml);
+
+                    $DocXML = $DOM->getElementsByTagName('ResponseCode');
+                    $code = "";
+                    foreach ($DocXML as $Nodo) {
+                        $code = $Nodo->nodeValue;
+                    }
+
+                    $DocXML = $DOM->getElementsByTagName('Description');
+                    $description = "";
+                    foreach ($DocXML as $Nodo) {
+                        $description = $Nodo->nodeValue;
+                    }
+
                     if (file_exists('../files/' . $this->filename . '.zip')) {
                         unlink('../files/' . $this->filename . '.zip');
                     }
@@ -644,8 +709,8 @@ class SoapResult
                     }
 
                     $this->setAccepted(true);
-                    $this->setCode($result->codRespuesta);
-                    $this->setMessage("La Guía de remisión fue declarada correctamente.");
+                    $this->setCode($code);
+                    $this->setMessage($description);
                     $this->setSuccess(true);
                 } else if ($result->codRespuesta == "98") {
                     if (file_exists('../files/' . $this->filename . '.xml')) {

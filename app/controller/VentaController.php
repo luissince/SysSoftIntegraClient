@@ -18,8 +18,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         $posicionPagina = $_GET['posicionPagina'];
         $filasPorPagina = $_GET['filasPorPagina'];
         VentasADO::ListVentas($opcion, $busqueda, $fechaInicial, $fechaFinal, $comprobante, $estado, $posicionPagina, $filasPorPagina);
+        exit();
     } else if ($_GET["type"] == "ventadetalle") {
         VentasADO::ListVentaDetalle($_GET['idVenta']);
+        exit();
     } else if ($_GET["type"] == "listComprobantes") {
         $opcion = $_GET['opcion'];
         $busqueda = $_GET['busqueda'];
@@ -55,6 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             intval($_GET["posicionPagina"]),
             intval($_GET["filasPorPagina"])
         );
+        exit();
     } else if ($_GET["type"] == "ventaAgregar") {
         print json_encode(VentasADO::VentaAgregarTerminar($_GET["idVenta"]));
         exit();

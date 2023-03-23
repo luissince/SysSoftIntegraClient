@@ -7,6 +7,7 @@ use SysSoftIntegra\Src\Sunat;
 use SysSoftIntegra\Src\NumberLleters;
 use SysSoftIntegra\Model\VentasADO;
 use SysSoftIntegra\Src\ConfigHeader;
+use SysSoftIntegra\Src\Response;
 
 require __DIR__ . './../src/autoload.php';
 
@@ -17,7 +18,7 @@ $detalleventa = VentasADO::ListarDetalleVentaPorId($idventa);
 $gcl = new NumberLleters();
 
 if (!is_array($detalleventa)) {
-    echo json_encode(array(
+    Response::sendSuccess(array(
         "state" => false,
         "code" => "-1",
         "description" => $detalleventa
@@ -395,10 +396,7 @@ if (!is_array($detalleventa)) {
     if ($soapResult->isSuccess()) {
         if ($soapResult->isAccepted()) {
             VentasADO::CambiarEstadoSunatVenta($idventa, $soapResult->getCode(), $soapResult->getDescription(), $soapResult->getHashCode(), Sunat::getXmlSign());
-            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-            header($protocol . ' ' . 200 . ' ' . "OK");
-
-            echo json_encode(array(
+            Response::sendSuccess(array(
                 "state" => $soapResult->isSuccess(),
                 "accept" => $soapResult->isAccepted(),
                 "code" => $soapResult->getCode(),
@@ -406,10 +404,7 @@ if (!is_array($detalleventa)) {
             ));
         } else {
             VentasADO::CambiarEstadoSunatVentaUnico($idventa, $soapResult->getCode(), $soapResult->getDescription());
-            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-            header($protocol . ' ' . 200 . ' ' . "OK");
-
-            echo json_encode(array(
+            Response::sendSuccess(array(
                 "state" => $soapResult->isSuccess(),
                 "accept" => $soapResult->isAccepted(),
                 "code" => $soapResult->getCode(),
@@ -419,20 +414,15 @@ if (!is_array($detalleventa)) {
     } else {
         if ($soapResult->getCode() == "1033") {
             VentasADO::CambiarEstadoSunatVentaUnico($idventa, "0", $soapResult->getDescription());
-            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-            header($protocol . ' ' . 200 . ' ' . "OK");
 
-            echo json_encode(array(
+            Response::sendSuccess(array(
                 "state" => false,
                 "code" => $soapResult->getCode(),
                 "description" => $soapResult->getDescription()
             ));
         } else {
             VentasADO::CambiarEstadoSunatVentaUnico($idventa, $soapResult->getCode(), $soapResult->getDescription());
-            $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-            header($protocol . ' ' . 500 . ' ' . "Internal Server Error");
-      
-            echo json_encode(array("message" =>$soapResult->getDescription()));
+            Response::sendError(array("message" => $soapResult->getDescription()));
         }
     }
 }

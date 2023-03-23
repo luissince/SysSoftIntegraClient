@@ -18,6 +18,14 @@ class GuiaRemisionADO
     public static function ListarDetalleGuiaRemisionPorId(string $idGuiaRemision)
     {
         try {
+
+            $validate = Database::getInstance()->getDb()->prepare("SELECT * FROM GuiaRemisionTB WHERE IdGuiaRemision = ? AND Estado = 1 AND Xmlsunat = '0'");
+            $validate->bindParam(1, $idGuiaRemision, PDO::PARAM_STR);
+            $validate->execute();
+            if($validate->fetchObject()){
+                return "declarado";
+            }
+
             $cmdGuiaRemision = Database::getInstance()->getDb()->prepare("SELECT 
             gui.IdGuiaRemision,
             td.CodigoAlterno AS Codigo,
@@ -126,6 +134,31 @@ class GuiaRemisionADO
         }
     }
 
+    public static function ReiniciarEnvio(string $idGuiaRemision)
+    {
+        try {
+            Database::getInstance()->getDb()->beginTransaction();
+
+            $validate = Database::getInstance()->getDb()->prepare("SELECT * FROM GuiaRemisionTB WHERE IdGuiaRemision = ? AND Estado = 1 AND Xmlsunat = '0'");
+            $validate->bindParam(1, $idGuiaRemision, PDO::PARAM_STR);
+            $validate->execute();
+            if($validate->fetchObject()){
+                Database::getInstance()->getDb()->rollback(); 
+                Response::sendClient(array("message"=>"El comprobante ya fue declarado correctamente."));
+            }
+
+            $comando = Database::getInstance()->getDb()->prepare("UPDATE GuiaRemisionTB SET 
+            NumeroTicketSunat = '' WHERE IdGuiaRemision = ?");
+            $comando->bindParam(1, $idGuiaRemision, PDO::PARAM_STR);
+            $comando->execute();
+            Database::getInstance()->getDb()->commit();    
+            Response::sendSuccess("Se completó el proceso correctamente.");   
+        } catch (Exception $ex) {
+            Database::getInstance()->getDb()->rollback(); 
+            Response::sendError(array("message"=>$ex->getMessage()));
+        }
+    }
+
     public static function CambiarEstadoSunatGuiaRemision(string $idGuiaRemision, string $codigo, string $descripcion, string $hash, string $xmlgenerado, string $numeroTicket)
     {
         try {
@@ -159,7 +192,7 @@ class GuiaRemisionADO
     public static function CambiarEstadoSunatGuiaRemisionUnico(string $idGuiaRemision, string $codigo, string $descripcion)
     {
         try {
-            Database::getInstance()->getDb()->beginTransaction();
+            Database::getInstance()->getDb()->beginTransaction();            
             $comando = Database::getInstance()->getDb()->prepare("UPDATE GuiaRemisionTB SET 
             Xmlsunat = ? , Xmldescripcion = ? WHERE IdGuiaRemision = ?");
             $comando->bindParam(1, $codigo, PDO::PARAM_STR);
